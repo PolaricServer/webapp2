@@ -1,0 +1,100 @@
+
+.map {
+        height: 100%;
+        width: 100%;
+        position: fixed; 
+        background: #b5c0c0;
+      }
+ 
+ 
+ body { margin: 0px; }
+
+ #layers {
+        position: absolute; 
+        background: white; 
+        border: 1px solid black;
+        padding: 1em;
+        top: 8px; 
+        right: 8px; 
+       } 
+       
+#layers h2 {
+         background: #666; 
+         color: white; 
+         font-family: helvetica; 
+         font-size: 1.2em; 
+         padding: 0px 0px 0px 5px; 
+         margin: 5px -5px 5px -5px
+       }
+
+.toolbar {
+    padding-left: 10px;
+    padding-right: 10px;
+    height: 32px; 
+    top: 2px; left: 8px; 
+    border: 1px solid #aaa; 
+    box-shadow: 1px 1px 12px #797;
+}
+
+.toolbar img {margin: 5px; margin-top: 3px}
+.toolbar img:hover {background: #ffe; border-radius: 6px}
+.toolbar .x-space {margin-right: 18px}
+
+.mousepos {
+        border: solid 1px #666;
+        bottom: 0.3em;
+        right: 0.3em;
+        width:14em;
+        text-align: center;
+        background:rgba(220,220,220,.7); 
+        box-shadow: 1px 1px 12px #797;
+}
+
+.scale {
+    border-bottom: 2px solid #888;
+    background:rgba(240,250,240,.5); 
+    padding-top: 0.3em;
+    padding-bottom: 0.2em;
+    font-size: 0.9em;
+}
+
+.mouse_utm {
+    padding-top: 0.4em;
+}
+
+
+.mouse_latlong span {background: #ffd}
+
+
+.mouse_latlong {
+    font-size: 0.8em;
+    padding-top: 0.15em;
+    padding-bottom: 0.15em;
+}
+
+.mouse_maidenhead {
+    font-size: 0.9em;
+    color: blue;
+}
+
+.ol-scale-line {
+	background:rgba(235,255,235,.6);
+	border-radius:4px;
+	bottom:6.8em;
+	left: unset;
+    right:0.7em
+}
+
+
+.ol-scale-line-inner {
+	border:1px solid #000;
+	border-top: dashed 1px;
+	border-bottom: dashed 1px;
+        border-left: 3px solid black; 
+	border-right: 3px solid black;
+	color: black;
+	font-size:10px;
+	text-align:center;
+	margin:-1px;padding: 1px;
+	will-change:contents,width
+}

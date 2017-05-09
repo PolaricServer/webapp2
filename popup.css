@@ -1,0 +1,65 @@
+ 
+
+div.POPUP, div.POPUPMENU
+{
+  font-family: Helvetica, sans-serif; 
+  font-size: 95%;
+  border: 1px solid #777;
+  box-shadow: 3px 3px 5px #242;
+}
+
+div.POPUP {
+  line-height: 1.2em;
+  background: #f0f5ec;
+  z-index: 1301 !important; 
+  padding: 0.3em !important;
+  min-width: 15em;
+}
+
+div.POPUPMENU {
+  padding-bottom: 0.3em;
+  margin-bottom: 0.7em;
+  line-height: 1.2em;
+  background: #fefeee; 
+  z-index: 1301 !important;
+}
+
+div.POPUPMENU > div > div
+{
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 80%;
+  padding-left: 0.6em;
+  padding-right: 0.5em; 
+}
+
+div.ITEM_sep {
+  padding-bottom: 2px;
+  margin-bottom: 2px;
+  border-bottom: solid 1px #555;
+}
+
+div.ITEM_hover, .link_id:hover
+{
+  background:#944;
+  color: white;
+}
+
+div.ITEM_selected
+{
+  background: yellow;
+  color: #400;
+}
+
+
+.POPUP h1, .POPUPMENU h1 { font-family: arial, helvetica, sans-serif; 
+  font-size: 1.2em; 
+  margin-bottom: 0.5em; 
+  background: #cfd5cc;
+  padding: 0.8em  0.8em 0.5em 0.5em;
+  border-bottom: dotted 1px #777;
+  margin: -4px;
+  margin-bottom: 0.8em;
+}
+
+
+.POPUPMENU h1 {margin: 0px; padding: 2px; font-size: 1.1em;margin-bottom: 3px}
