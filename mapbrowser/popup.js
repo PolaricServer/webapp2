@@ -115,7 +115,7 @@ polaric.Popup.prototype.showPopup = function (props)
     if (props.id && props.id != null) pdiv.id = props.id;
   
     pdiv.className = 'POPUP' + 
-       ((props.class && props.class != null) ? " "+props.class : ""); 
+       ((props.cclass && props.cclass != null) ? " "+props.cclass : ""); 
   
     setTimeout( function() {
        if (props.geoPos && props.geoPos != null) {

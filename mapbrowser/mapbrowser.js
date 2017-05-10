@@ -34,7 +34,7 @@
      t.view = new ol.View({   
           projection: t.config.get('projection'),                         
           center: ol.proj.fromLonLat(t.config.get('center'), t.config.get('projection')), 
-          zoom: 2,
+          zoom: 2
         });
   
      t.map = new ol.Map({

@@ -20,7 +20,7 @@
 */
 
 
-var polaric = polaric|| {}
+var polaric = polaric || {};
 
 
 
