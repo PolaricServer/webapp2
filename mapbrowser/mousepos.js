@@ -130,6 +130,46 @@ polaric.MousePos.prototype.setMap = function(map) {
 }
 
 
+
+
+/**
+ * Show position in UTM format, latlong format and as maidenhead locator.
+ */
+
+polaric.MousePos.prototype.updatePos = function(x) {
+    if (x==null) {
+       this.utm.innerHTML = "<span>(utm pos)</span>";
+       this.latlong.innerHTML = "<span>(latlong pos)</span>";
+       this.maidenhead.innerHTML = "<span>(locator)</span>";
+    }
+    else {
+       var map = this.getMap();
+       var coord = ol.proj.toLonLat(map.getCoordinateFromPixel(x), map.getView().getProjection());
+       var llref = new LatLng(coord[1], coord[0]);     
+       this.latlong.innerHTML = '<span>'+polaric.formatLL(coord)+'</span>';
+       this.utm.innerHTML = '<span>'+llref.toUTMRef()+'</span>'; 
+       this.maidenhead.innerHTML = '<span>'+polaric.ll2Maidenhead(coord);
+    }
+    
+}
+
+
+/* FIXME: Consider moving the following functions to separate file util.js */
+
+
+/**
+ * Format latlong position as degrees+minutes. 
+ */
+
+polaric.formatLL = function(llref) {
+       latD = Math.floor(Math.abs(llref[1])); 
+       lonD = Math.floor(Math.abs(llref[0]));
+       return latD+"\u00B0 " + Math.round((Math.abs(llref[1])-latD)*6000)/100+"\' " + (llref[1]<0 ? "S " : "N ") + "&nbsp;" + 
+              lonD+"\u00B0 " + Math.round((Math.abs(llref[0])-lonD)*6000)/100+"\' " + (llref[0]<0 ? "W" : "E") ;
+}
+  
+  
+  
 /**
  * Show position as maidenhead locator
  */
@@ -157,34 +197,4 @@ polaric.ll2Maidenhead = function(llref)
    var char6 = chr(97 + latZone6);
    
    return char1+char2+char3+char4+char5+char6;
-}
-
-
-
-/**
- * Show position in UTM format, latlong format and as maidenhead locator.
- */
-
-polaric.MousePos.prototype.updatePos = function(x) {
-    if (x==null) {
-       this.utm.innerHTML = "<span>(utm pos)</span>";
-       this.latlong.innerHTML = "<span>(latlong pos)</span>";
-       this.maidenhead.innerHTML = "<span>(locator)</span>";
-    }
-    else {
-       var map = this.getMap();
-       var coord = ol.proj.toLonLat(map.getCoordinateFromPixel(x), map.getView().getProjection());
-       var llref = new LatLng(coord[1], coord[0]);     
-       this.latlong.innerHTML = '<span>'+formatDeg(coord)+'</span>';
-       this.utm.innerHTML = '<span>'+llref.toUTMRef()+'</span>'; 
-       this.maidenhead.innerHTML = '<span>'+polaric.ll2Maidenhead(coord);
-    }
-    
-    /* Format latlong position as degrees+minutes. */
-    function formatDeg(llref) {
-       latD = Math.floor(Math.abs(llref[1])); 
-       lonD = Math.floor(Math.abs(llref[0]));
-       return latD+"\u00B0 " + Math.round((Math.abs(llref[1])-latD)*6000)/100+"\' " + (llref[1]<0 ? "S " : "N ") + "&nbsp;" + 
-              lonD+"\u00B0 " + Math.round((Math.abs(llref[0])-lonD)*6000)/100+"\' " + (llref[0]<0 ? "W" : "E") ;
-  }
 }

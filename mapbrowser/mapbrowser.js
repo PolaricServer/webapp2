@@ -85,6 +85,15 @@ polaric.MapBrowser.prototype.getBaseLayer = function() {
 }
 
 
+
+/**
+ * Get Long Lat coordinate from pixel
+ */
+
+polaric.MapBrowser.prototype.pix2LonLat = function(x)
+   { return ol.proj.toLonLat(this.map.getCoordinateFromPixel(x), this.map.getView().getProjection()); }
+   
+   
  
 /**
  * Select base layer

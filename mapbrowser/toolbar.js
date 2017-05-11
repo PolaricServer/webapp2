@@ -36,7 +36,7 @@ polaric.Toolbar = function(opt_options) {
       element: this.element,
       target: options.target
    });
-   this.addIcon("images/menu.png", function(){ alert("BERT");});
+   this.addIcon("images/menu.png", "toolbar");
    this.addSpacing();
    this.addIcon("images/layers.png");
    this.addIcon("images/filter.png");
@@ -55,13 +55,18 @@ polaric.Toolbar.prototype.setMap = function(map) {
 
 
 
-polaric.Toolbar.prototype.addIcon = function(f, action) {
+polaric.Toolbar.prototype.addIcon = function(f, id, action) {
     var x = document.createElement('img');
+    if (id != null)
+       x.setAttribute("id", id);
     x.setAttribute('src', f);
     this.element.appendChild(x, this.element);
     this.lastElem = x; 
-    if (action != null) x.onclick = action;
+    if (action != null) 
+        x.onclick = action;
 }
+
+
 
 polaric.Toolbar.prototype.addSpacing = function() {
     if (this.lastElem != null) 

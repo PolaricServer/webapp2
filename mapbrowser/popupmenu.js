@@ -265,19 +265,24 @@ polaric.PopupMenu.prototype.activate = function(x, y)
  
  
  
- polaric.ContextMenu.prototype.addMenu = function (element, name)
+ polaric.ContextMenu.prototype.addMenu = function (element, name, left)
  {
     var t = this;
+    if (left)
+        element.onclick = function(e)
+          { return t.showHandler(element, e, name); };
     element.oncontextmenu = function(e) 
-        { return t.showHandler(element, e, name); }
+        { return t.showHandler(element, e, name); };
  }
  
  
- polaric.ContextMenu.prototype.addMenuId = function(domId, name)
+ 
+ polaric.ContextMenu.prototype.addMenuId = function(domId, name, left)
  {
     var element = document.getElementById(domId);
-    this.addMenu(element, name);
+    this.addMenu(element, name, left);
  }
+ 
  
  
  polaric.ContextMenu.prototype.showHandler = function(element, e, ctxt)

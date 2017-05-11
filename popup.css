@@ -63,3 +63,33 @@ div.ITEM_selected
 
 
 .POPUPMENU h1 {margin: 0px; padding: 2px; font-size: 1.1em;margin-bottom: 3px}
+
+
+
+.leftlab, .sleftlab, label.lleftlab {
+  float: left;
+  width: 8.5em;
+  text-align: right;
+  padding-right: 7px;
+  color: gray;
+}
+
+.sleftlab {
+  width: 5.5em;
+} 
+
+.lleftlab {
+  width: 7em;
+}
+
+
+span.kartref {
+  padding: 0px 0px 0px 0px;
+  color: #880000;
+}
+
+
+span.kartref:hover {
+  font-weight: bold; 
+  border: solid 2px #eeaaaa;
+}
