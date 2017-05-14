@@ -20,7 +20,6 @@
 */
 
 
-
 var CONFIG = new polaric.Config(uid); 
 var uid = "ol4test"; // What is this? Still needed?
 
@@ -83,6 +82,22 @@ function LAYERS (attrs, layers)
          }
       } 
    }  
+}
+
+ 
+ 
+ 
+/**
+ * Map views (pre-selected areas). Initialize a dictionary 
+ * using name as index 
+ */
+function VIEWS(views)
+{
+  if (views != null)
+    for (var i = 0; i < views.length; i++) {
+      var x = views[i];
+      CONFIG.aMaps[x.name] = x;
+    }
 }
 
 

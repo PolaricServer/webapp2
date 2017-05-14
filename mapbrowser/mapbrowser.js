@@ -157,6 +157,14 @@ polaric.MapBrowser.prototype.setCenter = function(center) {
 };
 
 
+polaric.MapBrowser.prototype.fitExtent = function(extent) {
+    this.view.fit(
+        ol.proj.transformExtent(extent, "EPSG:4326", this.view.getProjection()),
+        {size: this.map.getSize(), nearest: true}
+    );
+}
+
+
 
 /**
  * Set/get the resolution of the map. 

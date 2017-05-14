@@ -93,3 +93,21 @@ span.kartref:hover {
   font-weight: bold; 
   border: solid 2px #eeaaaa;
 }
+
+
+
+h1, #layerSwitcher h2 { font-family: arial, helvetica, sans-serif; 
+  font-size: 1.2em; 
+  margin-bottom: 0.5em; 
+  background: #cfd5cc;
+  padding: 0.8em  0.8em 0.5em 0.5em;
+  border-bottom: dotted 1px #777;
+  margin: -4px;
+  margin-bottom: 0.8em;
+}
+
+#layerSwitcher h2{ padding: 0.2em 0.8em 0.2em 0.5em; margin-bottom: 0.4em;}
+
+#layerSwitcher {line-height: 1.6em}
+#layerSwitcher h2:last-of-type {margin-top: 0.2em}
+#layerSwitcher form {margin-left: 0.4em}

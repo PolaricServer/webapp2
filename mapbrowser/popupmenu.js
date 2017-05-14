@@ -241,8 +241,7 @@ polaric.PopupMenu.prototype.activate = function(x, y)
     * to find the context-name? 
     */
    
-   _doCallback(context);
-//   menuMouseSelect();           
+   _doCallback(context);         
    
    /* Activate menu and add the context-name as a CSS class */
    this.txt.activate(x, y).className += ' ctxt_'+context;
@@ -264,33 +263,78 @@ polaric.PopupMenu.prototype.activate = function(x, y)
  } 
  
  
+ /**
+  * Add handler for mouse event
+  */
  
- polaric.ContextMenu.prototype.addMenu = function (element, name, left)
+ polaric.addHandler = function (element, icon, func)
  {
     var t = this;
-    if (left)
-        element.onclick = function(e)
-          { return t.showHandler(element, e, name); };
-    element.oncontextmenu = function(e) 
-        { return t.showHandler(element, e, name); };
+    var rect = null; 
+    if (icon) {      
+        var rect = element.getBoundingClientRect();
+        element.onclick = _handler;
+    }
+    element.oncontextmenu = _handler;
+    
+    function _handler(e) {
+        if (rect != null) {
+            e.iconX = rect.right-10;
+            e.iconY = rect.bottom-6;
+        }
+        func(e);
+        e.cancelBubble = true;   
+        return false;
+    }
+ }
+ 
+ 
+ /**
+  * Add handler for mouse event
+  */
+  
+ polaric.addHandlerId = function (domId, icon, func)
+ {    
+    var element = document.getElementById(domId);
+    polaric.addHandler(element,icon,func);
  }
  
  
  
- polaric.ContextMenu.prototype.addMenuId = function(domId, name, left)
+ /**
+  * Associate a popup menu with a DOM element. 
+  */
+ 
+ polaric.ContextMenu.prototype.addMenu = function (element, name, icon)
+ {
+    var t = this;
+    polaric.addHandler(element, icon, function(e)
+        { return t.showHandler(element, e, name, icon); } );
+ }
+ 
+ 
+  
+ /**
+  * Associate a popup menu with a DOM element. 
+  */
+ 
+ polaric.ContextMenu.prototype.addMenuId = function(domId, name, icon)
  {
     var element = document.getElementById(domId);
-    this.addMenu(element, name, left);
+    this.addMenu(element, name, icon);
  }
  
  
  
- polaric.ContextMenu.prototype.showHandler = function(element, e, ctxt)
+ polaric.ContextMenu.prototype.showHandler = function(element, e, name, icon)
  {
    e = (e)?e:((event)?event:null);
-   this.show(ctxt, e.clientX, e.clientY);
-   e.cancelBubble = true;   
-   return false; 
+   
+   /* If icon, use position relative to icon instead of mouse pos */
+   if (icon) { 
+      this.show(name, e.iconX, e.iconY);
+   }
+   this.show(name, e.clientX, e.clientY); 
  }
  
  

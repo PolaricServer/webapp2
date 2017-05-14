@@ -38,8 +38,8 @@ polaric.Toolbar = function(opt_options) {
    });
    this.addIcon("images/menu.png", "toolbar");
    this.addSpacing();
-   this.addIcon("images/layers.png");
-   this.addIcon("images/filter.png");
+   this.addIcon("images/layers.png", "tb_layers");
+   this.addIcon("images/areaselect.png", "tb_area");
 };
 ol.inherits(polaric.Toolbar, ol.control.Control);
 
@@ -64,6 +64,7 @@ polaric.Toolbar.prototype.addIcon = function(f, id, action) {
     this.lastElem = x; 
     if (action != null) 
         x.onclick = action;
+    return x;
 }
 
 

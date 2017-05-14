@@ -78,6 +78,7 @@ polaric.Popup.prototype.removePopup = function()
   this.activepopup.style.display = "none" ;
   this.activepopup.parentNode.removeChild(this.activepopup);
   this.activepopup = null;
+  this.geoPos = null;
 }
 
 
@@ -130,7 +131,7 @@ polaric.Popup.prototype.showPopup = function (props)
           { x = props.pixPos[0]; y=props.pixPos[1]; }
         
        t.popup_(pdiv, x, y, props.image);
-    }, 900);
+    }, 200);
     
     pdiv.onmousedown = function(e) 
        { e = (e)?e:((event)?event:null); e.cancelBubble = true; return null; };
