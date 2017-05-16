@@ -1,86 +1,42 @@
      
    var browser = new polaric.MapBrowser('map', CONFIG);
-   
-  // var ls = new polaric.LayerSwitcher(browser);   
-  // ls.displayLayers(document.getElementById('layers'));
-   
-   
-   
-   /* Popup windows and context menus */
-   browser.ctxMenu.addMenuId("map", "MAP");
 
+
+   /* Set up app specific context menus */
    browser.ctxMenu.addCallback("MAP", function(m) {
-     m.add('Show map reference', function () { show_Mapref( m.x, m.y ); });
+     m.add('Show map reference', function () { show_MaprefPix( [m.x, m.y] ); });
      m.add(null);
      m.add('Center point', function()   { browser.view.setCenter( browser.map.getCoordinateFromPixel([m.x, m.y])); } );
      m.add('Zoom in', function()        { browser.view.setZoom(browser.view.getZoom()+1); } );
      m.add('Zoom out',  function()      { browser.view.setZoom(browser.view.getZoom()-1); } );
    });
-   
-   
-   
-   browser.ctxMenu.addMenuId("toolbar", "TOOLBAR", true);
-   
+
    browser.ctxMenu.addCallback("TOOLBAR", function(m) {
+     m.add('Find position', function () { show_refSearch(); });
      m.add('Blow up all', function () { alert("Boom!"); });
      m.add('Do nothing', function () { alert("What?"); });
    });
    
-   
-  polaric.addHandlerId("tb_layers", true,  
-        function(e) {show_Layers(e.iconX, e.iconY);} );
-  
-  
 
   
-  browser.ctxMenu.addMenuId('tb_area', 'AREASELECT', true);
-  
-  browser.ctxMenu.addCallback('AREASELECT', function (m) {
-
-      for (var i in browser.config.aMaps) 
-         if (browser.config.aMaps[i] && browser.config.aMaps[i].name && browser.config.aMaps[i].name.length > 1 && 
-              !browser.config.aMaps[i].hidden)
-            m.add(browser.config.aMaps[i].title, handleSelect(i));
-      
-      function handleSelect(i) {
-         return function() {
-           browser.fitExtent(browser.config.aMaps[i].extent);
-         } 
-      }
-    });
 
  
   
    
 /*
-   gui.showPopup( { html:   "Bla bla",
-                    pixPos: [400, 400],
-                    geoPos: [19, 69],
-                    image:  true, 
-                    id:     "test" } );
+   gui.showPopup( { html:      "Bla bla",
+                    pixPos:    [400, 400],
+                    geoPos:    [19, 69],
+                    image:     true, 
+                    draggable: true,
+                    id:        "test" } );
 */
 
 
-
-var ls = null;
-   
-function show_Layers(x,y) {
-   browser.gui.showPopup( { 
-            html:   '<div id="layers_"><H1>LAYERS</H1></div>',
-            pixPos: [x, y],
-            id:     "layerswitcher" } );
-   
-   setTimeout(function() {
-       ls = new polaric.LayerSwitcher(browser); 
-       ls.displayLayers(document.getElementById('layers_'));
-   }, 200);
-}
-
    
 
-function show_Mapref(x,y) 
+function show_Mapref(coord) 
 {
-     var coord = browser.pix2LonLat([x,y]);
      var llref = new LatLng(coord[1], coord[0]);
      var utmref = llref.toUTMRef();
     
@@ -92,9 +48,127 @@ function show_Mapref(x,y)
 }
 
 
+
+function show_MaprefPix(pix)
+   { show_Mapref(browser.pix2LonLat(pix)); }
+   
+
+
+
 function showUTMstring(sref)
 {
    return sref.substring(0,5)+'<span class="kartref">' + sref.substring(5,8) + '</span>'+
           sref.substring(8,13)+'<span class="kartref">' + sref.substring(13,16) + '</span>'+
           sref.substring(16);
 }
+
+
+
+
+/* Autojump stuff */
+var downStrokeField;
+function autojump(fieldId, nextFieldId)
+{
+   var myField=document.getElementById(fieldId);             
+   myField.nextField=document.getElementById(nextFieldId); 
+   myField.onkeydown=autojump_keyDown;
+   myField.onkeyup=autojump_keyUp;
+}
+
+
+
+
+function autojump_keyDown()
+{
+   this.beforeLength=this.value.length;
+   downStrokeField=this;
+}
+
+
+
+
+function autojump_keyUp()
+{
+   if (
+    (this == downStrokeField) && 
+    (this.value.length > this.beforeLength) && 
+    (this.value.length >= this.maxLength)
+   )
+      this.nextField.focus();
+   downStrokeField=null;
+}
+
+/* End of autojump stuff */
+
+
+
+
+function show_refSearch()
+{
+    var center = browser.getCenter();
+    var cref = new LatLng(center[1], center[0]);
+    uref = cref.toUTMRef(); 
+
+   var x = browser.gui.showPopup( {
+      html:
+     '<h1>'+'Show reference on map'+'</h1>' +
+     '<form class="mapref">'+
+          
+     '<span class="sleftlab">MGRS ref: </span>' +
+     '<div><input id="locx" type="text" size="3" maxlength="3">'+
+     '<input id="locy" type="text" size="3" maxlength="3">&nbsp;'+
+     '<input type="button" id="butt_mgrs"'+
+     '   value="'+'Find'+'">&nbsp;</div>'+
+     
+     '<hr><span class="sleftlab">UTM: </span>'+
+     '<nobr><div><input id="utmz" type="text" size="2" maxlength="2" value="' +uref.lngZone+ '">' +
+     '<input id="utmnz" type="text" size="1" maxlength="1" value="' +uref.latZone+ '">' +
+     '&nbsp;&nbsp<input id="utmx" type="text" size="6" maxlength="6">'+
+     '<input id="utmy" type="text" size="7" maxlength="7">&nbsp;'+
+     
+     '<input type="button" id="butt_utm"'+
+     '   value="'+'Find'+'" style="margin-right:3.5em">&nbsp;</div></nobr>' +
+     
+     '<hr><span class="sleftlab">LatLong: </span>' +
+     '<nobr><div><input id="ll_Nd" type="text" size="2" maxlength="2">°&nbsp;'+
+     '<input id="ll_Nm" type="text" size="6" maxlength="6">\'&nbsp;N&nbsp;&nbsp;'+
+     '<input id="ll_Ed" type="text" size="2" maxlength="2">°&nbsp;' +
+     '<input id="ll_Em" type="text" size="6" maxlength="6">\'&nbsp;E&nbsp;' +
+     '<input type="button" id="butt_ll"'+
+     '   value="'+'Find'+'">&nbsp;</div></nobr>'+
+     '</form>', 
+     pixPos: [50,70],
+     draggable: true
+   });  
+   
+   setTimeout(function() {
+      autojump('utmz', 'utmnz');
+      autojump('utmnz', 'utmx');
+      autojump('utmx', 'utmy');
+      autojump('locx', 'locy');
+      autojump('ll_Nd', 'll_Nm');
+      autojump('ll_Nm', 'll_Ed');
+      autojump('ll_Ed', 'll_Em'); 
+ 
+      /*
+      $('#butt_mgrs').click( function() {
+              doRefSearchLocal( $('#locx').val(), $('#locy').val() );  
+           });
+      
+      $('#butt_utm').click( function() {
+              doRefSearchUtm( $('#utmx').val(), $('#utmy').val(), $('#utmnz').val(), $('#utmz').val() );  
+           });
+      
+      $('#butt_ll').click( function() {
+              doRefSearchDM( $('#ll_Nd').val(), $('#ll_Nm').val(), $('#ll_Ed').val(), $('#ll_Em').val() );  
+           }); */
+   }, 1000);
+}
+
+
+ 
+ function doRefSearch(ref, hide) {
+   myKaMap.zoomTo(ref.lng, ref.lat);
+   setTimeout( function() { popup_posInfo(ref, hide);}, 1500 );
+ }
+

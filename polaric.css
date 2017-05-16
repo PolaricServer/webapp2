@@ -9,23 +9,6 @@
  
  body { margin: 0px; }
 
- #layers {
-        position: absolute; 
-        background: white; 
-        border: 1px solid black;
-        padding: 1em;
-        top: 8px; 
-        right: 8px; 
-       } 
-       
-#layers h2 {
-         background: #666; 
-         color: white; 
-         font-family: helvetica; 
-         font-size: 1.2em; 
-         padding: 0px 0px 0px 5px; 
-         margin: 5px -5px 5px -5px
-       }
 
 .toolbar {
     padding-left: 10px;

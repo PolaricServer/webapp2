@@ -1,4 +1,11 @@
  
+div.POPUP img.popup_pin {
+  position: inherit;
+  top: 6px;
+  right: 6px;
+  background: ;
+}
+
 
 div.POPUP, div.POPUPMENU
 {
@@ -14,6 +21,7 @@ div.POPUP {
   z-index: 1301 !important; 
   padding: 0.3em !important;
   min-width: 15em;
+  border-radius: 4px;
 }
 
 div.POPUPMENU {
@@ -111,3 +119,19 @@ h1, #layerSwitcher h2 { font-family: arial, helvetica, sans-serif;
 #layerSwitcher {line-height: 1.6em}
 #layerSwitcher h2:last-of-type {margin-top: 0.2em}
 #layerSwitcher form {margin-left: 0.4em}
+
+
+
+form.mapref { min-width: 28em; margin-bottom: 0.5em }
+form.mapref hr { border: dotted 1px #888 }
+
+
+#utmz {width: 2.5ch;}
+#utmnz {width: 2ch; }
+#utmx {width: 6.3ch; }
+#utmy {width: 7.3ch; }
+#locx,#locy {width: 4ch; }
+#ll_Nd {width: 2.2ch}
+#ll_Nm {width: 7ch}
+#ll_Ed {width: 3.1ch}
+#ll_Em {width: 7ch}

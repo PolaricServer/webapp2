@@ -32,7 +32,7 @@ var isMobile = false;
 
 polaric.Popup = function(mb) {
    this.mb            = mb;
-   this.onDiv         = mb.map.getViewport();
+   this.onDiv         = document.getElementById("map"); 
    this.activepopup   = null;
    this.psubdiv       = null;
    this.allowedPopups = 1; 
@@ -45,7 +45,6 @@ polaric.Popup = function(mb) {
    this.mb.view.on('change:center', onChangeCenter);
    this.mb.map.on('click', onClick);
    this.mb.map.on('change:view', onChangeView);
-   
    
    function onChangeCenter() {
        if (t.geoPos && t.geoPos != null) t.setPositionGeo(t.geoPos); 
@@ -75,6 +74,7 @@ polaric.Popup.prototype.removePopup = function()
     this.offCallback(); 
   this.isMenu = false;
   this.allowedPopups++;
+                   
   this.activepopup.style.display = "none" ;
   this.activepopup.parentNode.removeChild(this.activepopup);
   this.activepopup = null;
@@ -129,16 +129,42 @@ polaric.Popup.prototype.showPopup = function (props)
        
        if (props.pixPos && props.pixPos != null)
           { x = props.pixPos[0]; y=props.pixPos[1]; }
-        
        t.popup_(pdiv, x, y, props.image);
     }, 200);
     
+    if (props.draggable) {
+       var pinimage = document.createElement('img');
+       pinimage.className = "popup_pin";
+       pinimage.src = "images/pin-green.png";
+       pdiv.appendChild(pinimage);
+ 
+       pinimage.onclick = function(e) {
+          pdiv._pinned = (pdiv._pinned ? false : true); 
+          if (pdiv._pinned) {
+              pinimage.src = "images/pin-red.png";
+              t.activepopup = null;
+              t.allowedPopups++;
+          } 
+          else {
+              pinimage.src = "images/pin-green.png";
+              t.removePopup();
+              t.activepopup = pdiv;
+              t.allowedPopups--;
+          }
+       };
+    }
+    
     pdiv.onmousedown = function(e) 
-       { e = (e)?e:((event)?event:null); e.cancelBubble = true; return null; };
+       { e = (e)?e:((event)?event:null); e.stopPropagation(); return null; };
     pdiv.onmouseup = function(e) 
-       { e = (e)?e:((event)?event:null); e.cancelBubble = true; return null; };
+       { e = (e)?e:((event)?event:null); return null; };
     pdiv.onclick = function(e)   
-       { e = (e)?e:((event)?event:null); e.cancelBubble = true; return null; };
+       { e = (e)?e:((event)?event:null); e.stopPropagation(); return null; }; 
+   
+   if (props.resizable) 
+       $(pdiv).resizable();
+   if (props.draggable) 
+       $(pdiv).draggable({ delay: 100, opacity: 0.7 }  );
    return pdiv;
 }
 

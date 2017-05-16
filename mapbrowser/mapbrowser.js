@@ -30,7 +30,8 @@
      var t = this;
      config.mb = this;
      t.config = config; 
-
+     t.toolbar = new polaric.Toolbar({}, t);
+     
      t.view = new ol.View({   
           projection: t.config.get('projection'),                         
           center: ol.proj.fromLonLat(t.config.get('center'), t.config.get('projection')), 
@@ -44,7 +45,7 @@
         controls: [
             new ol.control.ScaleLine({}),
             new polaric.MousePos({}),
-            new polaric.Toolbar({})
+            t.toolbar
         ],
         view: t.view
      });
@@ -56,13 +57,12 @@
      t.addLayers(config);
      t.setResolution(t.config.get('resolution'));
      
-     // Set up map-areas
-     // Set up controls, etc..
-     
      // Popup windows and context menus */
      t.gui = new polaric.Popup(t);
      t.ctxMenu = new polaric.ContextMenu(t.gui);
-     
+     t.toolbar.setDefaultItems();
+     t.ctxMenu.addMenuId("map", "MAP");
+   
      /* Set up handler for move and zoom. Store new center and scale */
      t.map.on('moveend', onMove);
      
@@ -155,6 +155,14 @@ polaric.MapBrowser.prototype.setCenter = function(center) {
       ol.proj.fromLonLat(center, this.view.getProjection())
    ); 
 };
+
+
+
+polaric.MapBrowser.prototype.getCenter = function() {
+   return ol.proj.toLonLat(this.view.getCenter(), this.view.getProjection());
+};
+
+
 
 
 polaric.MapBrowser.prototype.fitExtent = function(extent) {

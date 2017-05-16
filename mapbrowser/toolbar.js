@@ -22,12 +22,14 @@
 /**
  * @constructor
  */
-polaric.Toolbar = function(opt_options) {
+polaric.Toolbar = function(opt_options, br) {
 
    var options = opt_options || {};
 
    var t = this;
    var map = this.getMap();
+   
+   this.browser = br;
    this.element = document.createElement('div');
    this.element.className = 'toolbar ol-unselectable ol-control';
    this.lastElem = null; 
@@ -36,14 +38,57 @@ polaric.Toolbar = function(opt_options) {
       element: this.element,
       target: options.target
    });
-   this.addIcon("images/menu.png", "toolbar");
-   this.addSpacing();
-   this.addIcon("images/layers.png", "tb_layers");
-   this.addIcon("images/areaselect.png", "tb_area");
 };
 ol.inherits(polaric.Toolbar, ol.control.Control);
 
       
+
+/**
+ * Activate default icons and menus on toolbar
+ */
+polaric.Toolbar.prototype.setDefaultItems = function() 
+{
+   this.addIcon("images/menu.png", "toolbar");
+   this.addSpacing();
+   this.addIcon("images/layers.png", "tb_layers");
+   this.addIcon("images/areaselect.png", "tb_area");
+         
+   polaric.addHandlerId("tb_layers", true,  
+        function(e) {show_Layers(e.iconX, e.iconY);} );
+   
+   this.browser.ctxMenu.addMenuId("toolbar", "TOOLBAR", true);
+   this.browser.ctxMenu.addMenuId('tb_area', 'AREASELECT', true);
+   
+   this.browser.ctxMenu.addCallback('AREASELECT', function (m) {
+      for (var i in browser.config.aMaps) 
+         if (browser.config.aMaps[i] && browser.config.aMaps[i].name && browser.config.aMaps[i].name.length > 1 && 
+              !browser.config.aMaps[i].hidden)
+            m.add(browser.config.aMaps[i].title, handleSelect(i));
+      
+      function handleSelect(i) {
+         return function() {
+           browser.fitExtent(browser.config.aMaps[i].extent);
+         } 
+      }
+    });
+   
+   
+   function show_Layers(x,y) {
+      var ls = null;
+      browser.gui.showPopup( { 
+            html:   '<div id="layers_"><H1>LAYERS</H1></div>',
+            pixPos: [x, y],
+            id:     "layerswitcher" } );
+   
+      setTimeout(function() {
+         ls = new polaric.LayerSwitcher(browser); 
+         ls.displayLayers(document.getElementById('layers_'));
+      }, 200);
+   }
+   
+}
+
+
 
 
 /**
