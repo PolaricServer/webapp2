@@ -79,7 +79,6 @@
 /**
  * Get base layer
  */
-
 polaric.MapBrowser.prototype.getBaseLayer = function() {
     return this.config.baseLayers[this.baseLayerIdx]; 
 }
@@ -89,9 +88,9 @@ polaric.MapBrowser.prototype.getBaseLayer = function() {
 /**
  * Get Long Lat coordinate from pixel
  */
-
 polaric.MapBrowser.prototype.pix2LonLat = function(x)
-   { return ol.proj.toLonLat(this.map.getCoordinateFromPixel(x), this.map.getView().getProjection()); }
+   { return ol.proj.toLonLat(this.map.getCoordinateFromPixel(x), 
+           this.map.getView().getProjection()); }
    
    
  
@@ -99,7 +98,6 @@ polaric.MapBrowser.prototype.pix2LonLat = function(x)
  * Select base layer
  * 
  */
- 
  polaric.MapBrowser.prototype.changeBaseLayer = function(idx) {
     var ls = this.config.baseLayers[idx];
     if ( !ls || ls==null)
@@ -149,7 +147,6 @@ polaric.MapBrowser.prototype.addLayers = function(config) {
  * Center the map around given coordinates [longitude, latitude]. 
  * 
  */
-
 polaric.MapBrowser.prototype.setCenter = function(center) {
    this.view.setCenter(
       ol.proj.fromLonLat(center, this.view.getProjection())
@@ -157,14 +154,20 @@ polaric.MapBrowser.prototype.setCenter = function(center) {
 };
 
 
-
+/**
+ * Get coordinates [longitude, latitude] of center of current map. 
+ * 
+ */
 polaric.MapBrowser.prototype.getCenter = function() {
    return ol.proj.toLonLat(this.view.getCenter(), this.view.getProjection());
 };
 
 
 
-
+/**
+ * Zoom and center map to fit the given extent.  
+ * 
+ */
 polaric.MapBrowser.prototype.fitExtent = function(extent) {
     this.view.fit(
         ol.proj.transformExtent(extent, "EPSG:4326", this.view.getProjection()),
@@ -178,7 +181,6 @@ polaric.MapBrowser.prototype.fitExtent = function(extent) {
  * Set/get the resolution of the map. 
  * 
  */
-
 polaric.MapBrowser.prototype.getResolution = function() {
    this.config.get('resolution');
 };
@@ -193,7 +195,6 @@ polaric.MapBrowser.prototype.setResolution = function(res) {
  * Return a geodetic adjustment for the current view 
  * 
  */
-
 polaric.MapBrowser.prototype.geodeticAdjustment = function() {
     if (/EPSG:(900913|3857|4326)/.test(this.view.getProjection().getCode()) && this.view.getCenter() != null) { 
        var center = ol.proj.toLonLat(this.view.getCenter(), this.view.getProjection()); 
@@ -210,7 +211,6 @@ polaric.MapBrowser.prototype.geodeticAdjustment = function() {
  * Change the projection of the map
  * 
  */
-
 polaric.MapBrowser.prototype.changeView = function(proj) {
     
     /* Do nothing if no change of projection? */
@@ -241,3 +241,48 @@ polaric.MapBrowser.prototype.changeView = function(proj) {
     this.map.setView(this.view);
     this.view.changed();
 }
+
+
+   
+/**
+ * Show map reference on map. 
+ */
+polaric.MapBrowser.prototype.show_Mapref = function(coord) 
+{
+     var h = '<span class="sleftlab">UTM:</span>' + polaric.formatUTM(coord) +'<br>' +
+             '<nobr><span class="sleftlab">Latlong:</span>' + polaric.formatDM(coord) +'<br>'  + 
+             '</nobr><span class="sleftlab">Loc:</span>' + polaric.formatMaidenhead(coord);    
+     this.gui.removePopup();       
+     this.gui.showPopup( 
+        {html: h, geoPos: coord, image: true} );
+}
+
+
+
+
+/**
+ * Show map reference on pixel position on map. 
+ */
+polaric.MapBrowser.prototype.show_MaprefPix = function(pix)
+   { this.show_Mapref(browser.pix2LonLat(pix)); }
+
+
+
+/**
+ * Go to and mark a given position on map. 
+ */
+polaric.MapBrowser.prototype.goto_Pos = function(ref, showinfo) 
+{
+   this.setCenter(ref);
+   if (showinfo)
+      this.show_Mapref(ref);
+   else
+      this.gui.showImageGeo(ref);
+}
+
+
+
+
+
+
+

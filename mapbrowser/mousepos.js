@@ -144,57 +144,11 @@ polaric.MousePos.prototype.updatePos = function(x) {
     }
     else {
        var map = this.getMap();
-       var coord = ol.proj.toLonLat(map.getCoordinateFromPixel(x), map.getView().getProjection());
-       var llref = new LatLng(coord[1], coord[0]);     
-       this.latlong.innerHTML = '<span>'+polaric.formatLL(coord)+'</span>';
-       this.utm.innerHTML = '<span>'+llref.toUTMRef()+'</span>'; 
-       this.maidenhead.innerHTML = '<span>'+polaric.ll2Maidenhead(coord);
+       var coord = ol.proj.toLonLat(map.getCoordinateFromPixel(x), map.getView().getProjection());    
+       this.latlong.innerHTML = '<span>'+polaric.formatDM(coord)+'</span>';
+       this.utm.innerHTML = '<span>'+polaric.formatUTM(coord)+'</span>'; 
+       this.maidenhead.innerHTML = '<span>'+polaric.formatMaidenhead(coord);
     }
     
 }
 
-
-/* FIXME: Consider moving the following functions to separate file util.js */
-
-
-/**
- * Format latlong position as degrees+minutes. 
- */
-
-polaric.formatLL = function(llref) {
-       latD = Math.floor(Math.abs(llref[1])); 
-       lonD = Math.floor(Math.abs(llref[0]));
-       return latD+"\u00B0 " + Math.round((Math.abs(llref[1])-latD)*6000)/100+"\' " + (llref[1]<0 ? "S " : "N ") + "&nbsp;" + 
-              lonD+"\u00B0 " + Math.round((Math.abs(llref[0])-lonD)*6000)/100+"\' " + (llref[0]<0 ? "W" : "E") ;
-}
-  
-  
-  
-/**
- * Show position as maidenhead locator
- */
-
-polaric.ll2Maidenhead = function(llref) 
-{
-   var z1 = llref[0] + 180;
-   var longZone1 = Math.floor( z1 / 20);
-   var char1 = chr(65 + longZone1);
-
-   var z2 = llref[1] + 90;
-   var latZone1 = Math.floor(z2 / 10);
-   var char2 = chr(65 + latZone1);
-
-   var longZone2 = Math.floor((z1 % 20) / 2);
-   var char3 = chr(48 + longZone2);
-
-   var latZone4 = Math.floor(z2 % 10);
-   var char4 = chr(48 + latZone4);
-
-   var longZone5 = Math.floor(((llref[0] + 180) % 2) * 12);
-   var char5 = chr(97 + longZone5);
-
-   var latZone6 = Math.floor(((llref[1] + 90) % 1) * 24);
-   var char6 = chr(97 + latZone6);
-   
-   return char1+char2+char3+char4+char5+char6;
-}

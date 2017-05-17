@@ -4,7 +4,7 @@
 
    /* Set up app specific context menus */
    browser.ctxMenu.addCallback("MAP", function(m) {
-     m.add('Show map reference', function () { show_MaprefPix( [m.x, m.y] ); });
+     m.add('Show map reference', function () { browser.show_MaprefPix( [m.x, m.y] ); });
      m.add(null);
      m.add('Center point', function()   { browser.view.setCenter( browser.map.getCoordinateFromPixel([m.x, m.y])); } );
      m.add('Zoom in', function()        { browser.view.setZoom(browser.view.getZoom()+1); } );
@@ -18,11 +18,6 @@
    });
    
 
-  
-
- 
-  
-   
 /*
    gui.showPopup( { html:      "Bla bla",
                     pixPos:    [400, 400],
@@ -31,36 +26,6 @@
                     draggable: true,
                     id:        "test" } );
 */
-
-
-   
-
-function show_Mapref(coord) 
-{
-     var llref = new LatLng(coord[1], coord[0]);
-     var utmref = llref.toUTMRef();
-    
-     var h = '<span class="sleftlab">UTM:</span>' + showUTMstring(""+utmref) +'<br>' +
-             '<nobr><span class="sleftlab">Latlong:</span>' + polaric.formatLL(coord) +'<br>'  + 
-             '</nobr><span class="sleftlab">Loc:</span>' + polaric.ll2Maidenhead(coord);       
-     browser.gui.showPopup( 
-        {html: h, geoPos: coord, image: true} );
-}
-
-
-
-function show_MaprefPix(pix)
-   { show_Mapref(browser.pix2LonLat(pix)); }
-   
-
-
-
-function showUTMstring(sref)
-{
-   return sref.substring(0,5)+'<span class="kartref">' + sref.substring(5,8) + '</span>'+
-          sref.substring(8,13)+'<span class="kartref">' + sref.substring(13,16) + '</span>'+
-          sref.substring(16);
-}
 
 
 
@@ -73,29 +38,25 @@ function autojump(fieldId, nextFieldId)
    myField.nextField=document.getElementById(nextFieldId); 
    myField.onkeydown=autojump_keyDown;
    myField.onkeyup=autojump_keyUp;
-}
 
 
+   function autojump_keyDown()
+   {
+      this.beforeLength=this.value.length;
+      downStrokeField=this;
+   }
 
 
-function autojump_keyDown()
-{
-   this.beforeLength=this.value.length;
-   downStrokeField=this;
-}
-
-
-
-
-function autojump_keyUp()
-{
-   if (
-    (this == downStrokeField) && 
-    (this.value.length > this.beforeLength) && 
-    (this.value.length >= this.maxLength)
-   )
-      this.nextField.focus();
-   downStrokeField=null;
+   function autojump_keyUp()
+   {
+      if (
+       (this == downStrokeField) && 
+       (this.value.length > this.beforeLength) && 
+       (this.value.length >= this.maxLength)
+      )
+         this.nextField.focus();
+      downStrokeField=null;
+   }
 }
 
 /* End of autojump stuff */
@@ -114,7 +75,7 @@ function show_refSearch()
      '<h1>'+'Show reference on map'+'</h1>' +
      '<form class="mapref">'+
           
-     '<span class="sleftlab">MGRS ref: </span>' +
+     '<span title="100x100m square relative to map center" class="sleftlab">Local ref: </span>' +
      '<div><input id="locx" type="text" size="3" maxlength="3">'+
      '<input id="locy" type="text" size="3" maxlength="3">&nbsp;'+
      '<input type="button" id="butt_mgrs"'+
@@ -150,7 +111,7 @@ function show_refSearch()
       autojump('ll_Nm', 'll_Ed');
       autojump('ll_Ed', 'll_Em'); 
  
-      /*
+      
       $('#butt_mgrs').click( function() {
               doRefSearchLocal( $('#locx').val(), $('#locy').val() );  
            });
@@ -161,14 +122,32 @@ function show_refSearch()
       
       $('#butt_ll').click( function() {
               doRefSearchDM( $('#ll_Nd').val(), $('#ll_Nm').val(), $('#ll_Ed').val(), $('#ll_Em').val() );  
-           }); */
+           });
    }, 1000);
 }
 
 
  
- function doRefSearch(ref, hide) {
-   myKaMap.zoomTo(ref.lng, ref.lat);
-   setTimeout( function() { popup_posInfo(ref, hide);}, 1500 );
+ function doRefSearchDM(nd, nm, ed, em) 
+ {  
+   var pos = polaric.parseDM(nd, nm, ed, em);
+   browser.goto_Pos(pos, true );
  }
+ 
+
+ 
+ function doRefSearchUtm(ax, ay, nz, zz)
+ {
+   var pos = polaric.parseUTM(ax, ay, nz, zz);
+   browser.goto_Pos(pos, true);
+ }
+ 
+ 
+ 
+ function doRefSearchLocal(ax, ay)
+ {   
+    var pos = polaric.parseLocal(browser, ax, ay);
+    browser.goto_Pos(pos, true);
+ }
+
 
