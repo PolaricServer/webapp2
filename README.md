@@ -15,7 +15,7 @@ mapbrowser:
   stylesheets polaric.css and popup.css
   
   
-  To run this you will also need OpenLayers (ol.js and ol.css), Jquery (jquery.js) and Proj4 (proj4.js) placed in a subdirectory called lib.
+  To run this you will also need OpenLayers (ol.js and ol.css), Jquery (jquery.js), Jquery-ui (jquery-ui/*) and Proj4 (proj4.js) placed in a subdirectory called lib.
   
   Use compile-js.sh to minify the javascript code. 
   
