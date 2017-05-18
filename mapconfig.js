@@ -31,7 +31,7 @@
   
   /* Default center and scale */
   CENTER    ( 14, 66 );
-  SCALE     ( 3000 );
+  SCALE     ( 20000 );
     
   
   /* Layers */

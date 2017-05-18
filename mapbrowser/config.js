@@ -87,8 +87,8 @@ polaric.Config.prototype.get = function(id)
     if (data == null)
        data = this.storage[this.uid+'.'+id];
     
-    var x = (data ? JSON.parse(data) : null ); 
-    if (x==null && this.props[id] && this.props[id] != null)
+    var x = (data ? JSON.parse(data) : null );
+    if (x==null && this.props[id] != null) 
         return this.props[id]; 
     return x;
 }

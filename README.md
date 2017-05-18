@@ -1,6 +1,8 @@
 # webapp2
 Re-write of client app. Based on OpenLayers 4+
 
+Demo on http://test.aprs.no
+
 Old webapp code is in https://github.com/PolaricServer/webapp
 
 mapbrowser:

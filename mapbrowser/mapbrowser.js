@@ -51,7 +51,8 @@
      });
 
      t.prevGda = 1;
-     t.baseLayerIdx = t.config.get('baselayer', 0);
+     t.config.set('baselayer', 0);
+     t.baseLayerIdx = t.config.get('baselayer');
      
      // Set up layers, initial scale, etc..
      t.addLayers(config);
