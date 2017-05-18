@@ -109,6 +109,11 @@ polaric.Popup.prototype.showPopup = function (props)
 {
     var t = this;
     var x, y; 
+    if (props.id && props.id != null && document.getElementById(props.id) != null) {
+        $('#'+props.id).effect('bounce');
+        return null;
+    }
+    
     var pdiv = ((props.elem && props.elem!=null)  
         ? props.elem : document.createElement('div'));
     if (props.html)

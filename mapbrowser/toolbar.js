@@ -76,9 +76,11 @@ polaric.Toolbar.prototype.setDefaultItems = function()
    function show_Layers(x,y) {
       var ls = null;
       browser.gui.showPopup( { 
-            html:   '<div id="layers_"><H1>LAYERS</H1></div>',
-            pixPos: [x, y],
-            id:     "layerswitcher" } );
+            html:      '<div id="layers_"><H1>LAYERS</H1></div>',
+            pixPos:    [x, y],
+            id:        "layerswitcher",
+            draggable: true
+       } );
    
       setTimeout(function() {
          ls = new polaric.LayerSwitcher(browser); 
