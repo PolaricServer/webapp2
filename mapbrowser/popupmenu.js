@@ -20,7 +20,10 @@
 */ 
 
 
-
+/**
+ * Popup Menu class.
+ * @constructor
+ */
 polaric.PopupMenu = function(popupmgr, heading)
 {
     this.popupmgr = popupmgr;

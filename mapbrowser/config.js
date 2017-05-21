@@ -51,6 +51,7 @@ ol.inherits(polaric.Config, ol.Object);
 
 
 /**  
+ * Get array of configured based layers. 
  */
 
 polaric.Config.prototype.getBaseLayers = function()

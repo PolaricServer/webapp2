@@ -62,7 +62,10 @@ polaric.formatMaidenhead = function(llref)
 }
 
  
-
+ 
+/**
+ * Show position as UTM reference. 
+ */
 polaric.formatUTM = function(llref)
 {
    var ref = new LatLng(llref[1], llref[0]);
@@ -72,6 +75,7 @@ polaric.formatUTM = function(llref)
           sref.substring(8,13)+'<span class="kartref">' + sref.substring(13,16) + '</span>'+
           sref.substring(16);
 }
+
 
 
 /**
@@ -85,6 +89,7 @@ polaric.parseDM = function(nd, nm, ed, em)
    var xm = parseFloat(em);
    return [xd+xm/60, yd+ym/60];
 }
+
 
 
 /**

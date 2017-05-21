@@ -58,7 +58,9 @@ function SCALE(res)
    { CONFIG.set('resolution', res); }
 
    
-
+/**
+ * Configure some layers. 
+ */
 function LAYERS (attrs, layers) 
 {
    if (layers != null && layers.length > 0) 
@@ -102,7 +104,9 @@ function VIEWS(views)
 
 
 
-/* Note that POLYGON is defined in standard lat long projection (EPSG:4326)
+/**
+ * Define a polygon.
+ * Note that POLYGON is defined in standard lat long projection (EPSG:4326)
  */ 
 function POLYGON( points ) {
     var plist = []; 

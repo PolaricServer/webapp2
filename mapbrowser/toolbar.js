@@ -20,6 +20,7 @@
  
  
 /**
+ * Toolbar class.
  * @constructor
  */
 polaric.Toolbar = function(opt_options, br) {
@@ -48,6 +49,7 @@ ol.inherits(polaric.Toolbar, ol.control.Control);
  */
 polaric.Toolbar.prototype.setDefaultItems = function() 
 {
+   /* Default icons */
    this.addIcon("images/menu.png", "toolbar");
    this.addSpacing();
    this.addIcon("images/layers.png", "tb_layers");
@@ -59,6 +61,7 @@ polaric.Toolbar.prototype.setDefaultItems = function()
    this.browser.ctxMenu.addMenuId("toolbar", "TOOLBAR", true);
    this.browser.ctxMenu.addMenuId('tb_area', 'AREASELECT', true);
    
+   /* Generate menu of predefined areas (defined in mapconfig.js */
    this.browser.ctxMenu.addCallback('AREASELECT', function (m) {
       for (var i in browser.config.aMaps) 
          if (browser.config.aMaps[i] && browser.config.aMaps[i].name && browser.config.aMaps[i].name.length > 1 && 
@@ -101,7 +104,9 @@ polaric.Toolbar.prototype.setMap = function(map) {
 }
 
 
-
+/**
+ * Add icon to toolbar. 
+ */
 polaric.Toolbar.prototype.addIcon = function(f, id, action) {
     var x = document.createElement('img');
     if (id != null)
@@ -115,7 +120,9 @@ polaric.Toolbar.prototype.addIcon = function(f, id, action) {
 }
 
 
-
+/**
+ * Add spacing betwen icons on toolbar. 
+ */
 polaric.Toolbar.prototype.addSpacing = function() {
     if (this.lastElem != null) 
         this.lastElem.className += " x-space"; 
