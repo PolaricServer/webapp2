@@ -24,10 +24,12 @@ var isMobile = false;
 
 
 /**
+ * @classdesc
  * Popup window manager class. 
  * For now, there is only one active popup at a time. 
  *
  * @constructor
+ * @param {polaric.MapBrowser} mb - Map browser instance.
  */
 
 polaric.Popup = function(mb) {
@@ -85,6 +87,7 @@ polaric.Popup.prototype.removePopup = function()
 
 /**
  * Return true if popup is active. 
+ * @returns {boolean}
  */ 
 
 polaric.Popup.prototype.popupActive = function()
@@ -95,6 +98,8 @@ polaric.Popup.prototype.popupActive = function()
 /**
  * Register callback functions
  * For popup activation (on) and deactivation (off)
+ * @param {function} on - Callback to be invoked when popup is activated.
+ * @param {function} off - Callback to be invoked when popup is deactivated.
  */
 
 polaric.Popup.prototype.onPopup = function(on, off) 
@@ -104,7 +109,16 @@ polaric.Popup.prototype.onPopup = function(on, off)
 
 /**
  * Activate popup. 
+ * @param {Object.<string,*>} props - Options
+ * @param {string|undefined} props.html - HTML code to render inside the popup.
+ * @param {ol.Pixel|undefined} props.pixPos - Pixel position of upper left corner of popup.
+ * @param {ol.Coordinate|undefined} props.geoPos - LatLong position of upper left corner of popup.
+ * @param {boolean|undefined} props.image - true if we want a cross to be displayed at the position.
+ * @param {boolean|undefined} props.draggable - true if we want the popup to be draggable and pinnable.
+ * @param {string|undefined} props.id - unique identifier (used as id of element).
+ * 
  */
+
 polaric.Popup.prototype.showPopup = function (props) 
 {
     var t = this;
@@ -177,34 +191,45 @@ polaric.Popup.prototype.showPopup = function (props)
 
 /**
  * Activate popup with content from remote server. 
+ * @param {string} url - URL of remote content. 
+ * @param {Object.<string,*>} props - Options, see showPopup()
  */
+// FIXME: Needs testing.
 
-polaric.Popup.prototype.remotePopup = function(url, x, y, id)
+polaric.Popup.prototype.remotePopup = function(url, props)
 {
-    var d =  this.showPopup("", x, y, false, id, false);
+    var d =  this.showPopup(props);
     call(url, null, function(txt) { d.innerHTML = txt; } );
     return d;
 }
 
 
+
 /**
  * Activate popup with content from remote server and with 
  * a stylesheet.  
+ * @param {string} url - URL of remote content.
+ * @param {string} css - CSS-class to add to the popup. 
+ * @param {Object.<string,*>} props - Options, see showPopup()
+ * 
  */
+// FIXME: Needs testing.
 
-polaric.Popup.prototype.remotePopupCSS = function(url, x, y, css)
+polaric.Popup.prototype.remotePopupCSS = function(url, css, props)
 {
-   call(url, null, function(txt) 
-   { var div = this.showPopup(txt, 1, 1, false, null, false); 
-     if (css != null) 
-          div.className = css;
-   } );
+   var d = this.remotePopup(url, props)
+        if (css != null) 
+           setTimeout(function() {
+              div.className = css;
+           }, 900); 
+    
 }
 
 
 
 /**
- * Show a image at a given map position. 
+ * Show a cross at a given map position. 
+ * @param {ol.Coordinate} geoPos - LatLong position of where to put upper left corner of popup.
  */
 
 polaric.Popup.prototype.showImageGeo = function(geoPos) {
@@ -221,6 +246,7 @@ polaric.Popup.prototype.showImageGeo = function(geoPos) {
 
 /**
  * Change the position of a popup or image. 
+ * @param {ol.Coordinate} geoPos - LatLong position of upper left corner of popup.
  */
 
 polaric.Popup.prototype.setPositionGeo = function(geoPos) {
@@ -235,6 +261,7 @@ polaric.Popup.prototype.setPositionGeo = function(geoPos) {
 
 /**
  * Change the position of a popup or image. Pixel position on screen. 
+ * @param {ol.Coordinate} pixPos - Pixel position of upper left corner of popup.
  */
 
 polaric.Popup.prototype.setPositionPix = function(pixPos) {
@@ -250,7 +277,7 @@ polaric.Popup.prototype.setPositionPix = function(pixPos) {
  */
 
 polaric.Popup.prototype.setPosition_ = function(x, y)
-    {   
+  {   
       var xoff=0;
       var yoff=0;
       var xoffs = yoffs = false;
@@ -288,7 +315,7 @@ polaric.Popup.prototype.setPosition_ = function(x, y)
 
       if (xoffs && yoffs && this.image != null) 
          this.image.style.display = "none";
-     }
+  }
      
      
      

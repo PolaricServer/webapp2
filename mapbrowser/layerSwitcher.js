@@ -23,8 +23,8 @@
  /**
   * @classdesc 
   * Layer manager/layer switcher.
-  * 
   * @constructor
+  * @param {polaric.MapBrowser} mb - Map browser instance. 
   */
  
  polaric.LayerSwitcher = function(mb) {
@@ -40,9 +40,12 @@
  };
  
 
+ 
  /**
-  * Turn on/off a given overlay. 
+  * Turn on/off a given overlay layer.
+  * @param {number} i - index of layer.  
   */
+ 
  polaric.LayerSwitcher.prototype.toggleOverlay = function(i)
  {
      var prev = this.mb.config.oLayers[i].getVisible(); 
@@ -76,7 +79,8 @@
  
  
  /** 
-  * Display layers in the given DOM element 
+  * Display layers in the given DOM element. 
+  * @param {Element} w - DOM element to display the layer switcher.  
   */
  
  polaric.LayerSwitcher.prototype.displayLayers = function(w) 

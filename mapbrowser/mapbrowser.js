@@ -20,9 +20,11 @@
 
  /**
   * @classdesc 
-  * Map browser class.
+  * Map browser class. Creates a map browser in the given div element. 
   * 
   * @constructor
+  * @param {Element|string} targ - target DOM element or id of element
+  * @param {polaric.Config} config - Configuration class instance
   */
  
  polaric.MapBrowser = function(targ, config) 
@@ -79,6 +81,7 @@
  
 /**
  * Get base layer
+ * @returns The current base layer. 
  */
 polaric.MapBrowser.prototype.getBaseLayer = function() {
     return this.config.baseLayers[this.baseLayerIdx]; 
@@ -87,7 +90,8 @@ polaric.MapBrowser.prototype.getBaseLayer = function() {
 
 
 /**
- * Get Long Lat coordinate from pixel
+ * Get Long Lat coordinate from pixel.
+ * @param {ol.Pixel} x - pixel position
  */
 polaric.MapBrowser.prototype.pix2LonLat = function(x)
    { return ol.proj.toLonLat(this.map.getCoordinateFromPixel(x), 
@@ -96,7 +100,8 @@ polaric.MapBrowser.prototype.pix2LonLat = function(x)
    
  
 /**
- * Select base layer
+ * Select base layer. 
+ * @param {number} idx - index of base layer to select. 
  * 
  */
  polaric.MapBrowser.prototype.changeBaseLayer = function(idx) {
@@ -125,9 +130,11 @@ polaric.MapBrowser.prototype.pix2LonLat = function(x)
  
  
 /**
- * Add the layers from the config to the OpenLayers map 
+ * Add the layers from the config to the OpenLayers map. 
+ * @param {polaric.Config} config - instance of Config class.
  * 
  */
+// FIXME: Move this to constructor or make it private?  
 
 polaric.MapBrowser.prototype.addLayers = function(config) {
   
@@ -146,6 +153,7 @@ polaric.MapBrowser.prototype.addLayers = function(config) {
 
 /**
  * Center the map around given coordinates [longitude, latitude]. 
+ * @param {ol.Coordinate} center - Coordinate where map is to be centered (in latlong projection).
  * 
  */
 polaric.MapBrowser.prototype.setCenter = function(center) {
@@ -156,8 +164,8 @@ polaric.MapBrowser.prototype.setCenter = function(center) {
 
 
 /**
- * Get coordinates [longitude, latitude] of center of current map. 
- * 
+ * Get coordinates [longitude, latitude] of center of current map view. 
+ * @returns position
  */
 polaric.MapBrowser.prototype.getCenter = function() {
    return ol.proj.toLonLat(this.view.getCenter(), this.view.getProjection());
@@ -167,7 +175,7 @@ polaric.MapBrowser.prototype.getCenter = function() {
 
 /**
  * Zoom and center map to fit the given extent.  
- * 
+ * @param {ol.Extent} extent - Extent (in latlong projection)
  */
 polaric.MapBrowser.prototype.fitExtent = function(extent) {
     this.view.fit(
@@ -209,7 +217,8 @@ polaric.MapBrowser.prototype.geodeticAdjustment = function() {
 
 
 /**
- * Change the projection of the map
+ * Change the projection of the map view.
+ * @param {ol.ProjectionLike} proj - New projection
  * 
  */
 polaric.MapBrowser.prototype.changeView = function(proj) {
@@ -247,6 +256,7 @@ polaric.MapBrowser.prototype.changeView = function(proj) {
    
 /**
  * Show map reference on map. 
+ * @param {ol.Coordinate} coord - position to be shown (in latlong projection).
  */
 polaric.MapBrowser.prototype.show_Mapref = function(coord) 
 {
@@ -263,6 +273,7 @@ polaric.MapBrowser.prototype.show_Mapref = function(coord)
 
 /**
  * Show map reference on pixel position on map. 
+ * @param {pixel} pix - pixel on current map view where position is. 
  */
 polaric.MapBrowser.prototype.show_MaprefPix = function(pix)
    { this.show_Mapref(browser.pix2LonLat(pix)); }
@@ -271,6 +282,8 @@ polaric.MapBrowser.prototype.show_MaprefPix = function(pix)
 
 /**
  * Go to and mark a given position on map. 
+ * @param {ol.Coordinate} ref - position to be shown (in latlong projection).
+ * @param {boolean|undefined} showinfo - true if we should show map reference info in a popup as well.
  */
 polaric.MapBrowser.prototype.goto_Pos = function(ref, showinfo) 
 {

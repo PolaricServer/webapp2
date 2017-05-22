@@ -21,28 +21,32 @@
  
 /**
  * Format latlong position as degrees+minutes. 
+ * @param {ol.Coordinate} ref - Coordinate to be formatted. 
+ * @returns {string}
  */
-polaric.formatDM = function(llref) {
-       latD = Math.floor(Math.abs(llref[1])); 
-       lonD = Math.floor(Math.abs(llref[0]));
-       return latD+"\u00B0 " + Math.round((Math.abs(llref[1])-latD)*6000)/100+"\' " + 
-                (llref[1]<0 ? "S " : "N ") + "&nbsp;" + 
+polaric.formatDM = function(ref) {
+       latD = Math.floor(Math.abs(ref[1])); 
+       lonD = Math.floor(Math.abs(ref[0]));
+       return latD+"\u00B0 " + Math.round((Math.abs(ref[1])-latD)*6000)/100+"\' " + 
+                (ref[1]<0 ? "S " : "N ") + "&nbsp;" + 
               lonD+"\u00B0 " + Math.round((Math.abs(llref[0])-lonD)*6000)/100+"\' " + 
-                (llref[0]<0 ? "W" : "E") ;
+                (ref[0]<0 ? "W" : "E") ;
 }
   
   
   
 /**
- * Show position as maidenhead locator
+ * Format latlong position as maidenhead locator.
+ * @param {ol.Coordinate} ref - Coordinate to be formatted. 
+ * @returns {string}
  */
-polaric.formatMaidenhead = function(llref) 
+polaric.formatMaidenhead = function(ref) 
 {
-   var z1 = llref[0] + 180;
+   var z1 = ref[0] + 180;
    var longZone1 = Math.floor( z1 / 20);
    var char1 = chr(65 + longZone1);
 
-   var z2 = llref[1] + 90;
+   var z2 = ref[1] + 90;
    var latZone1 = Math.floor(z2 / 10);
    var char2 = chr(65 + latZone1);
 
@@ -64,11 +68,13 @@ polaric.formatMaidenhead = function(llref)
  
  
 /**
- * Show position as UTM reference. 
+ * Format latlong position as UTM reference. 
+ * @param {ol.Coordinate} ref - Coordinate to be formatted. 
+ * @returns {string}
  */
-polaric.formatUTM = function(llref)
+polaric.formatUTM = function(ref)
 {
-   var ref = new LatLng(llref[1], llref[0]);
+   var ref = new LatLng(ref[1], ref[0]);
    var uref = ref.toUTMRef();
    var sref = ""+uref; 
    return sref.substring(0,5)+'<span class="kartref">' + sref.substring(5,8) + '</span>'+
@@ -80,6 +86,11 @@ polaric.formatUTM = function(llref)
 
 /**
  * Parse latlong (degrees, minutes) position.
+ * @param {string} nd - Latitude degrees
+ * @param {string} nm - Latitude decimal minutes
+ * @param {string} nd - Longitude degrees
+ * @param {string} nm - Longitude decimal minutes
+ * @returns {ol.Coordinate}
  */
 polaric.parseDM = function(nd, nm, ed, em)
 {  
@@ -94,8 +105,11 @@ polaric.parseDM = function(nd, nm, ed, em)
 
 /**
  * Parse UTM position.  
- *   ax, ay - coordinates in UTM projection
- *   nz, zz - UTM zone (letter, number)
+ * @param {string} ax - UTM x coordinate 
+ * @param {string} ay - UTM y coordinate
+ * @param {string} nz - UTM zone letter 
+ * @param {string} zz - UTM zone number
+ * @returns {ol.Coordinate}
  */
 
 polaric.parseUTM = function(ax, ay, nz, zz)
@@ -115,6 +129,10 @@ polaric.parseUTM = function(ax, ay, nz, zz)
 /**
  * Parse reference to 100x100m square relative to map center.
  * (c.f. MGRS)
+ * @param {polaric.MapBrowser} browser - Map browser instance
+ * @param {string} ax - x coordinate (3 digits)
+ * @param {string} ay - y coordinate (3 digits)
+ * @returns {ol.Coordinate}
  */
 polaric.parseLocal = function(browser, ax, ay)
  {   

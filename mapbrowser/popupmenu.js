@@ -21,9 +21,13 @@
 
 
 /**
+ * @classdesc 
  * Popup Menu class.
  * @constructor
+ * @param {polaric.Popup} popupmgr - Instance of Popup class. 
+ * @param {Element|null} heading - Heading on top of menu (null = no heading)
  */
+
 polaric.PopupMenu = function(popupmgr, heading)
 {
     this.popupmgr = popupmgr;
@@ -51,7 +55,8 @@ polaric.PopupMenu.prototype.clear = function()
 
 
 /**
- * Add a heading to the menu. 
+ * Add a heading to the menu.
+ * @param {Element|null} heading - Heading on top of menu (null = no heading)
  */
 
 polaric.PopupMenu.prototype.setHeading = function(hd)
@@ -61,23 +66,26 @@ polaric.PopupMenu.prototype.setHeading = function(hd)
 
 
 
-/*
+/**
  * Add a item to the menu (text, function, function-argument). 
  * If text is null, this is meant a section separator. 
+ * @param {string|null} txt - Text of menu item 
+ * @param {function} func - Function to be executed when item is selected.
+ * @param {*} arg - Argument to function.
  */
 
 polaric.PopupMenu.prototype.add = function(txt, func, arg)
 {
    if (txt == null) { 
-     this.lastItem.className = 'ITEM_sep';
-     this.sections[this.secNo++] = this.lastItem;
+      this.lastItem.className = 'ITEM_sep';
+      this.sections[this.secNo++] = this.lastItem;
    }
    else {
-     var atxt  = (txt == null ? '' : txt);
-     var alink = (func == null ? '' : func);
-     this.lastItem = this.createItem_(atxt, alink, arg);
-     this.menudiv.appendChild(this.lastItem);
-  }
+      var atxt  = (txt == null ? '' : txt);
+      var alink = (func == null ? '' : func);
+      this.lastItem = this.createItem_(atxt, alink, arg);
+      this.menudiv.appendChild(this.lastItem);
+   }
 }
 
 
@@ -86,13 +94,18 @@ polaric.PopupMenu.prototype.add = function(txt, func, arg)
  * Add a section separator to the menu. 
  */
 
-polaric.PopupMenu.prototype.addSeparator = function(txt, func, arg)
+polaric.PopupMenu.prototype.addSeparator = function()
    { this.add(null); }
 
 
    
 /**
- * Add a item to a given section in a menu 
+ * Add a item to a given section in a menu. Sections are numbered 
+ * from 0 (first section) and up.
+ * @param {number} sect - Section index. 
+ * @param {string|null} txt - Text of menu item 
+ * @param {function} func - Function to be executed when item is selected.
+ * @param {*} arg - Argument to function.
  */
 
 polaric.PopupMenu.prototype.insert = function(sect, txt, func, arg)

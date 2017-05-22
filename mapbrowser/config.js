@@ -19,7 +19,7 @@
  along with this program. If not, see <http://www.gnu.org/licenses/>.
 */
 
-
+/** @namespace */
 var polaric = polaric || {};
 
 
@@ -27,8 +27,8 @@ var polaric = polaric || {};
 /** 
  *  @classdesc 
  *  Configuration of map browser application.
- * 
  *  @constructor 
+ *  @param {string} uid - Identifier of configuration (see also setUid).
  */
 
 polaric.Config = function(uid) {
@@ -60,12 +60,11 @@ polaric.Config.prototype.getBaseLayers = function()
    
 
 /**
- *  Config class: set an id to distinguish between different 
- *   users or sessions when using local-storage to store
- *   config-values persistently.
+ *  Set an id to distinguish between different users or sessions 
+ *  when using local-storage to store config-values persistently.
+ *  @param {string} uid - Identifier. 
  * 
  */
-
 polaric.Config.prototype.setUid = function(uid)
    { this.uid = uid; }
 
@@ -73,14 +72,15 @@ polaric.Config.prototype.setUid = function(uid)
    
    
 /**
- *  Config class: get a setting. 
- *   If stored in browser local storage (store method) return this. 
- *   If not, return the default setting (set method). 
- * 
+ *  Get a setting. If stored in browser local storage (store method) return this. 
+ *  If not, return the default setting (see set method). 
+ *  @param {string} id - key of setting. 
+ *  @returns The value of the setting.
  */
-
 polaric.Config.prototype.get = function(id)
-{
+{ 
+    console.assert(id && id!=null);
+    
     /* Look in session-storage first, if not found there, 
      * look in local-storage. 
      */
@@ -97,15 +97,17 @@ polaric.Config.prototype.get = function(id)
 
 
 /**
- *  Config class: store value in browser session storage. 
- *    To be used in application.
- *    If save=true, value will be persistent between browser sessions
- *    (saved in local-storage). 
+ *  Store value in browser session storage. To be used in application.
+ *  If save=true, value will be persistent between browser sessions
+ *  (saved in local-storage). 
+ *  @param {string} id - Key of setting.
+ *  @param {any} value - Value of setting. 
+ *  @param {boolean|undefined} save - Set to true to make setting persistent.
  * 
  */
-
 polaric.Config.prototype.store = function(id, value, save)
 { 
+    console.assert(id && id != null && value && value != null); 
     var val = JSON.stringify(value);
     this.sstorage[id] = val; 
     if (save)
@@ -116,13 +118,16 @@ polaric.Config.prototype.store = function(id, value, save)
    
    
 /**
- *  Config class: set a config value. Used as default settings.
- *    To be used in config file. 
+ *  Set a config value. Used as default setting. To be used in config file. 
+ *  @param {string} id - Key of setting. 
+ *  @param {any} value - Value of setting 
  * 
  */
-
 polaric.Config.prototype.set = function(id, value)
-   { this.props[id] = value; }
+{ 
+    console.assert(id && id != null && value && value != null);
+    this.props[id] = value; 
+}
 
 
    
