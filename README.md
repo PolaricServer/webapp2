@@ -1,5 +1,5 @@
 # webapp2
-Re-write of client app. Based on OpenLayers 4+
+Re-write/port of client webapp. Based on OpenLayers 4+ and it is a hope that this will be more modular and more user- and developer friendly. There are some options in designing this: Make a complete application, an extensible application with core map browsing functionality or an application framework. Ideas and contributions are welcome. 
 
 Demo on http://test.aprs.no
 
@@ -20,5 +20,8 @@ mapbrowser:
   Use compile-js.sh to minify the javascript code. 
   
   For development use index-debug.html instead of index.html. 
+  
+## Licence
+This is free software. License is GNU Affero General Public License. See <http://www.gnu.org/licenses/>.
 
 
