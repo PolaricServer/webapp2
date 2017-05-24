@@ -29,7 +29,7 @@ polaric.formatDM = function(ref) {
        lonD = Math.floor(Math.abs(ref[0]));
        return latD+"\u00B0 " + Math.round((Math.abs(ref[1])-latD)*6000)/100+"\' " + 
                 (ref[1]<0 ? "S " : "N ") + "&nbsp;" + 
-              lonD+"\u00B0 " + Math.round((Math.abs(llref[0])-lonD)*6000)/100+"\' " + 
+              lonD+"\u00B0 " + Math.round((Math.abs(ref[0])-lonD)*6000)/100+"\' " + 
                 (ref[0]<0 ? "W" : "E") ;
 }
   
@@ -56,10 +56,10 @@ polaric.formatMaidenhead = function(ref)
    var latZone4 = Math.floor(z2 % 10);
    var char4 = chr(48 + latZone4);
 
-   var longZone5 = Math.floor(((llref[0] + 180) % 2) * 12);
+   var longZone5 = Math.floor(((ref[0] + 180) % 2) * 12);
    var char5 = chr(97 + longZone5);
 
-   var latZone6 = Math.floor(((llref[1] + 90) % 1) * 24);
+   var latZone6 = Math.floor(((ref[1] + 90) % 1) * 24);
    var char6 = chr(97 + latZone6);
    
    return char1+char2+char3+char4+char5+char6;
@@ -88,8 +88,8 @@ polaric.formatUTM = function(ref)
  * Parse latlong (degrees, minutes) position.
  * @param {string} nd - Latitude degrees
  * @param {string} nm - Latitude decimal minutes
- * @param {string} nd - Longitude degrees
- * @param {string} nm - Longitude decimal minutes
+ * @param {string} ed - Longitude degrees
+ * @param {string} em - Longitude decimal minutes
  * @returns {ol.Coordinate}
  */
 polaric.parseDM = function(nd, nm, ed, em)
@@ -98,6 +98,11 @@ polaric.parseDM = function(nd, nm, ed, em)
    var ym = parseFloat(nm);
    var xd = parseInt(ed, 10);
    var xm = parseFloat(em);
+   if (yd || yd<-90 || yd>90 || ym || ym<0 || ym>60 || xd ||
+       xm || xm<0 || xm>60) {
+        console.log("ERROR: degrees/minutes out of bounds or input not numeric");
+        return [0,0];
+   }
    return [xd+xm/60, yd+ym/60];
 }
 
@@ -117,8 +122,12 @@ polaric.parseUTM = function(ax, ay, nz, zz)
    var x = parseInt(ax, 10);
    var y = parseInt(ay, 10);
    var z = parseInt(zz, 10);
-   if (isNaN(x) || isNaN(y) || isNaN(z))
-     return;
+   if (isNaN(x) || isNaN(y) || isNaN(z) ||
+       x<0 || x>999999 || y<0 || y>9999999 || z<0 || z>60) {
+      console.log("ERROR: UTM zone/northing/easting out of bounds or input not numeric");
+      return [0,0];
+   }
+    
    var uref = new UTMRef(x, y, nz, z);
    var ref = uref.toLatLng();
    return ( [ref.lng, ref.lat] );
@@ -138,8 +147,10 @@ polaric.parseLocal = function(browser, ax, ay)
  {   
     var x = parseInt(ax, 10);
     var y = parseInt(ay, 10);
-    if (isNaN(x) || isNaN(y))
-      return;
+    if (isNaN(x) || isNaN(y) || x<0 || x>999 || y<0 || y>999) {
+      console.log("ERROR: 3-digit number out of bounds or input not numeric");
+      return [0,0];
+    }
     
     /* find center of map */
     var center = browser.getCenter();

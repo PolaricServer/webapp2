@@ -22,10 +22,12 @@
 /**
  * Toolbar class.
  * @constructor
+ * @param {Object.<string,*>} opt - Options
+ * @param {polaric.MapBrowser} br - Map browser instance
  */
-polaric.Toolbar = function(opt_options, br) {
+polaric.Toolbar = function(opt, br) {
 
-   var options = opt_options || {};
+   var options = opt || {};
 
    var t = this;
    var map = this.getMap();
@@ -45,7 +47,7 @@ ol.inherits(polaric.Toolbar, ol.control.Control);
       
 
 /**
- * Activate default icons and menus on toolbar
+ * Activate default icons and menus on toolbar.
  */
 polaric.Toolbar.prototype.setDefaultItems = function() 
 {
@@ -106,6 +108,10 @@ polaric.Toolbar.prototype.setMap = function(map) {
 
 /**
  * Add icon to toolbar. 
+ * @param {string} f - Filename/url for icon.
+ * @param {String} id - Id for DOM element.
+ * @param {function|null} action - Handler function. 
+ * @return DOM element for the icon. 
  */
 polaric.Toolbar.prototype.addIcon = function(f, id, action) {
     var x = document.createElement('img');

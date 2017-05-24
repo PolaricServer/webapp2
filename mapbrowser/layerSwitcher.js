@@ -28,6 +28,7 @@
   */
  
  polaric.LayerSwitcher = function(mb) {
+   console.assert(mb != null, "Assertion failed");
    var t = this;
    this.mb = mb;
    this.storage = null;
@@ -48,6 +49,8 @@
  
  polaric.LayerSwitcher.prototype.toggleOverlay = function(i)
  {
+     assert(i >= 0 && i <= this.mp.config.oLayers.length, "Assertion failed");
+     
      var prev = this.mb.config.oLayers[i].getVisible(); 
      this.mb.config.oLayers[i].setVisible(!prev);
      this.mb.config.store('olayer.' + i, !prev); 
@@ -85,8 +88,9 @@
  
  polaric.LayerSwitcher.prototype.displayLayers = function(w) 
  { 
+     console.assert(w && w != null, "Assertion failed");
      var t = this;
-     if (w) t.delement = w; 
+     t.delement = w; 
      w.innerHTML = generateForm();
      addHandlers();
      

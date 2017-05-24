@@ -29,6 +29,8 @@
  
  polaric.MapBrowser = function(targ, config) 
  {
+     console.assert(targ && targ != null && config && config != null, "Assertion failed");
+     
      var t = this;
      config.mb = this;
      t.config = config; 
@@ -105,6 +107,8 @@ polaric.MapBrowser.prototype.pix2LonLat = function(x)
  * 
  */
  polaric.MapBrowser.prototype.changeBaseLayer = function(idx) {
+    console.assert(idx >= 0 && idx <= this.config.baseLayers.length, "Assertion failed");
+    
     var ls = this.config.baseLayers[idx];
     if ( !ls || ls==null)
         return;
@@ -273,7 +277,7 @@ polaric.MapBrowser.prototype.show_Mapref = function(coord)
 
 /**
  * Show map reference on pixel position on map. 
- * @param {pixel} pix - pixel on current map view where position is. 
+ * @param {ol.Pixel} pix - pixel on current map view where position is. 
  */
 polaric.MapBrowser.prototype.show_MaprefPix = function(pix)
    { this.show_Mapref(browser.pix2LonLat(pix)); }

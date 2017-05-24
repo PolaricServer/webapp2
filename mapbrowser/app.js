@@ -19,10 +19,19 @@
 */
 
 
-/* Autojump stuff */
-var downStrokeField;
-function autojump(fieldId, nextFieldId)
+
+/**
+ * Autojump between two fields.
+ * @param {string} fieldId - Id of DOM field elelent to jump from.
+ * @param {string} nextFieldId - Id of DOM field element to jump to.
+ */
+polaric.autojump = function(fieldId, nextFieldId)
 {
+   if (fieldId==null || nextFieldId==null) {
+       console.error("Field id is null");
+       return;
+   }
+   var downStrokeField;
    var myField=document.getElementById(fieldId);             
    myField.nextField=document.getElementById(nextFieldId); 
    myField.onkeydown=autojump_keyDown;
@@ -52,8 +61,10 @@ function autojump(fieldId, nextFieldId)
 
 
 
-
-function show_refSearch()
+/**
+ * Reference search in a popup window. 
+ */
+polaric.refSearch = function()
 {
     var center = browser.getCenter();
     var cref = new LatLng(center[1], center[0]);
@@ -92,13 +103,13 @@ function show_refSearch()
    });  
    
    setTimeout(function() {
-      autojump('utmz', 'utmnz');
-      autojump('utmnz', 'utmx');
-      autojump('utmx', 'utmy');
-      autojump('locx', 'locy');
-      autojump('ll_Nd', 'll_Nm');
-      autojump('ll_Nm', 'll_Ed');
-      autojump('ll_Ed', 'll_Em'); 
+      polaric.autojump('utmz', 'utmnz');
+      polaric.autojump('utmnz', 'utmx');
+      polaric.autojump('utmx', 'utmy');
+      polaric.autojump('locx', 'locy');
+      polaric.autojump('ll_Nd', 'll_Nm');
+      polaric.autojump('ll_Nm', 'll_Ed');
+      polaric.autojump('ll_Ed', 'll_Em'); 
  
        
       $('#ll_NS').click( click_NS );

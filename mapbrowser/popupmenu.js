@@ -110,6 +110,8 @@ polaric.PopupMenu.prototype.addSeparator = function()
 
 polaric.PopupMenu.prototype.insert = function(sect, txt, func, arg)
 {
+   assert(sect>=0 && sect<this.sections.length, "Assertion failed");
+   
    if (this.secNo == 0) {
       this.add(txt,func,arg);
       return;
@@ -130,51 +132,16 @@ polaric.PopupMenu.prototype.insert = function(sect, txt, func, arg)
 
 
 /**
- * Create item. 
- * @private
- */
-
-polaric.PopupMenu.prototype.createItem_ = function(text, actn, arg)
-{
-  var t = this;
-    
-  function _executeItem(elem, actn, arg)
-  { 
-    if (elem.active)
-        return;
-    elem.className += ' ITEM_selected';
-    elem.active=true;
-    setTimeout(function() { 
-        t.popupmgr.removePopup(); 
-        actn(arg); 
-        elem.active=false; 
-    }, 300); 
-  }
- 
-  var elem = document.createElement('div');
-  elem.origCls = '';
-  if (isMobile)
-      // FIXME
-     elem.addEventListener('tap', function() 
-       { _executeItem(elem, actn, arg);  e.cancelBubble=true; }, false); 
- 
-  elem.onmouseup   = function(e) { _executeItem(elem, actn, arg); }
-  elem.onmousedown = function(e) { _executeItem(elem, actn, arg);  e.cancelBubble=true;}
-  elem.onmouseover = function(e) { elem.origCls = elem.className; 
-                                   elem.className += ' ITEM_hover'; }                                
-  elem.onmouseout  = function(e) { elem.className = elem.origCls;}
-  elem.appendChild(document.createTextNode(text));
-  return elem;
-}
-
-
-
-/**
- * Activate a menu, i.e. show it on the screen.
+ * Activate a menu on a specific point on the screen, i.e. show it on the screen.
+ * @param {number} x - Pixel position x. 
+ * @param {number} y - Pixel position y.
+ * @returns {Element} DOM element of menu.
  */
 
 polaric.PopupMenu.prototype.activate = function(x, y)
 {
+    console.assert(x>0 && y>0, "Assertion failed");
+    
     if (this.lastItem != null)
        this.lastItem.className = 'ITEM_last';
     isMenu = true;
@@ -197,12 +164,55 @@ polaric.PopupMenu.prototype.activate = function(x, y)
 
 
 
- /************************************************************************/
+/**
+ * Create item. 
+ * @private
+ */
+
+polaric.PopupMenu.prototype.createItem_ = function(text, actn, arg)
+{
+  var t = this;
+  var elem = document.createElement('div');
+  elem.origCls = '';
+  if (isMobile)
+      // FIXME
+     elem.addEventListener('tap', function() 
+       { _executeItem(elem, actn, arg);  e.cancelBubble=true; }, false); 
+ 
+  elem.onmouseup   = function(e) { _executeItem(elem, actn, arg); }
+  elem.onmousedown = function(e) { _executeItem(elem, actn, arg);  e.cancelBubble=true;}
+  elem.onmouseover = function(e) { elem.origCls = elem.className; 
+                                   elem.className += ' ITEM_hover'; }                                
+  elem.onmouseout  = function(e) { elem.className = elem.origCls;}
+  elem.appendChild(document.createTextNode(text));
+  return elem;
+  
+      
+  function _executeItem(elem, actn, arg)
+  { 
+    if (elem.active)
+        return;
+    elem.className += ' ITEM_selected';
+    elem.active=true;
+    setTimeout(function() { 
+        t.popupmgr.removePopup(); 
+        actn(arg); 
+        elem.active=false; 
+    }, 300); 
+  }
+}
+
+
+/************************************************************************/
+ 
+ 
+ 
  
  
  /**
   * CONTEXT MENU CLASS.
   * @constructor.
+  * @param {polaric.Popup} mgr - Popup manager.
   */
  
  polaric.ContextMenu = function(mgr)
@@ -219,6 +229,9 @@ polaric.PopupMenu.prototype.activate = function(x, y)
   * If context exists, the function will typically add to existing menu items. 
   * 
   * Builtin contexts are 'MAP' and 'TOOLBAR'. More context can be added. 
+  * 
+  * @param {string} context - Name of the context. 
+  * @param {function} func - Callback function.
   */
  
  polaric.ContextMenu.prototype.addCallback = function (context, func)
@@ -228,15 +241,17 @@ polaric.PopupMenu.prototype.activate = function(x, y)
    this.callbacks[context].push(func);
  }
   
+  
  
  /**
-  * Show the menu for a context
-  * i identifier
-  * e event object
-  * ax and ay position on screen
+  * Show the menu for a context.
+  * @param {string} i - Context identifier
+  * @param {number} x - Pixel position x. 
+  * @param {number} y - Pixel position y.
   */ 
  polaric.ContextMenu.prototype.show = function (i, x, y)
  {
+   console.assert(i != null && x>0 && y>0, "Assertion failed");
    var t = this; 
    t.txt.clear();
    t.txt.x = x; 
@@ -279,8 +294,13 @@ polaric.PopupMenu.prototype.activate = function(x, y)
  } 
  
  
+ 
+ 
  /**
-  * Add handler for mouse event
+  * Add handler for mouse event.
+  * @param {Element} element - DOM element. 
+  * @param {boolean} icon - True if element is a icon that can react on left mouse click.
+  * @param {function} func - Handler function to be invoked on click. 
   */
  
  polaric.addHandler = function (element, icon, func)
@@ -305,8 +325,12 @@ polaric.PopupMenu.prototype.activate = function(x, y)
  }
  
  
+ 
  /**
-  * Add handler for mouse event
+  * Add handler for mouse event.
+  * @param {String} domId - Id of DOM element 
+  * @param {boolean} icon - True if element is a icon that can react on left mouse click.
+  * @param {function} func - Handler function to be invoked on click. 
   */
   
  polaric.addHandlerId = function (domId, icon, func)
@@ -319,19 +343,25 @@ polaric.PopupMenu.prototype.activate = function(x, y)
  
  /**
   * Associate a popup menu with a DOM element. 
+  * @param {Element} element - DOM element. 
+  * @param {string} name - Name of menu context.
+  * @param {boolean} icon - True if element is a icon that can react on left mouse click.
   */
  
  polaric.ContextMenu.prototype.addMenu = function (element, name, icon)
  {
     var t = this;
     polaric.addHandler(element, icon, function(e)
-        { return t.showHandler(element, e, name, icon); } );
+        { t.showHandler(element, e, name, icon); } );
  }
  
  
   
  /**
   * Associate a popup menu with a DOM element. 
+  * @param {string} domId - Id of DOM element. 
+  * @param {string} name - Name of menu context.
+  * @param {boolean} icon - True if element is a icon that can react on left mouse click.
   */
  
  polaric.ContextMenu.prototype.addMenuId = function(domId, name, icon)

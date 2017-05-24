@@ -22,6 +22,7 @@
 /** @namespace */
 var polaric = polaric || {};
 
+console.assert = console.assert || function() {};
 
 
 /** 
@@ -79,7 +80,7 @@ polaric.Config.prototype.setUid = function(uid)
  */
 polaric.Config.prototype.get = function(id)
 { 
-    console.assert(id && id!=null);
+    console.assert(id!=null, "Assertion failed");
     
     /* Look in session-storage first, if not found there, 
      * look in local-storage. 
@@ -101,13 +102,13 @@ polaric.Config.prototype.get = function(id)
  *  If save=true, value will be persistent between browser sessions
  *  (saved in local-storage). 
  *  @param {string} id - Key of setting.
- *  @param {any} value - Value of setting. 
+ *  @param {*} value - Value of setting. 
  *  @param {boolean|undefined} save - Set to true to make setting persistent.
  * 
  */
 polaric.Config.prototype.store = function(id, value, save)
 { 
-    console.assert(id && id != null && value && value != null); 
+    console.assert(id != null && value != null, "Assertion failed"); 
     var val = JSON.stringify(value);
     this.sstorage[id] = val; 
     if (save)
@@ -120,12 +121,12 @@ polaric.Config.prototype.store = function(id, value, save)
 /**
  *  Set a config value. Used as default setting. To be used in config file. 
  *  @param {string} id - Key of setting. 
- *  @param {any} value - Value of setting 
+ *  @param {*} value - Value of setting 
  * 
  */
 polaric.Config.prototype.set = function(id, value)
 { 
-    console.assert(id && id != null && value && value != null);
+    console.assert(id != null && value != null, "Assertion failed");
     this.props[id] = value; 
 }
 
