@@ -83,6 +83,42 @@ polaric.formatUTM = function(ref)
 }
 
 
+   
+polaric.mgrs = polaric.mgrs || {};
+polaric.mgrs.latBands = 'CDEFGHJKLMNPQRSTUVWXX'; 
+polaric.mgrs.e100kLetters = [ 'ABCDEFGH', 'JKLMNPQR', 'STUVWXYZ' ];
+polaric.mgrs.n100kLetters = [ 'ABCDEFGHJKLMNPQRSTUV', 'FGHJKLMNPQRSTUVABCDE' ];
+
+/**
+ * Get MGRS prefix, i.e. zone+band+100km grid. 
+ * @param {ol.Coordinate} - Long Lat coordinate. 
+ * @returns MGRS prefix.
+ */
+// Adapted from https://github.com/chrisveness/geodesy/blob/master/mgrs.js (MIT Licence).
+
+polaric.MGRSprefix = function(x)
+{
+    var ref = new LatLng(x[1], x[0]);
+    var uref = ref.toUTMRef();
+    
+    // MGRS zone is same as UTM zone
+    var zone = uref.lngZone;
+
+    // grid zones are 8° tall, 0°N is 10th band
+    var band = polaric.mgrs.latBands.charAt(Math.floor(ref.lat/8+10)); // latitude band
+
+    // columns in zone 1 are A-H, zone 2 J-R, zone 3 S-Z, then repeating every 3rd zone
+    var col = Math.floor(uref.easting / 100e3);
+    var e100k = polaric.mgrs.e100kLetters[(zone-1)%3].charAt(col-1); // col-1 since 1*100e3 -> A (index 0), 2*100e3 -> B (index 1), etc.
+
+    // rows in even zones are A-V, in odd zones are F-E
+    var row = Math.floor(uref.northing / 100e3) % 20;
+    var n100k = polaric.mgrs.n100kLetters[(zone-1)%2].charAt(row);
+    return zone+band+e100k+n100k;
+}
+
+
+
 
 /**
  * Parse latlong (degrees, minutes) position.
@@ -136,14 +172,14 @@ polaric.parseUTM = function(ax, ay, nz, zz)
  
   
 /**
- * Parse reference to 100x100m square relative to map center.
- * (c.f. MGRS)
+ * Parse MGRS grid reference to 100x100m square.
  * @param {polaric.MapBrowser} browser - Map browser instance
  * @param {string} ax - x coordinate (3 digits)
  * @param {string} ay - y coordinate (3 digits)
  * @returns {ol.Coordinate}
  */
-polaric.parseLocal = function(browser, ax, ay)
+
+polaric.parseMGRS = function(browser, prefix, ax, ay)
  {   
     var x = parseInt(ax, 10);
     var y = parseInt(ay, 10);
@@ -151,16 +187,46 @@ polaric.parseLocal = function(browser, ax, ay)
       console.log("ERROR: 3-digit number out of bounds or input not numeric");
       return [0,0];
     }
+    var llref; 
     
-    /* find center of map */
-    var center = browser.getCenter();
-    var ref = new LatLng(center[1], center[0]);
-    var cref = ref.toUTMRef();
+    if (prefix && prefix != null && prefix.length == 5) 
+    {
+       // Adapted from https://github.com/chrisveness/geodesy/blob/master/mgrs.js (MIT Licence).
+       if (prefix.length > 5) 
+           prefix = "0"+prefix; 
+       var zone = parseInt(prefix.substring(0,2)); 
+       var col = polaric.mgrs.e100kLetters[(zone-1)%3].indexOf(prefix[3]) + 1; 
+       var e100kNum = col * 100e3; // e100k in metres
+    
+        /* get northing specified by n100k */
+       var row = polaric.mgrs.n100kLetters[(zone-1)%2].indexOf(prefix[4]);
+       var n100kNum = row * 100e3; // n100k in metres
+
+        /* get latitude of (bottom of) band */
+       var latBand = (polaric.mgrs.latBands.indexOf(prefix[2])-10)*8;
+
+        /* northing of bottom of band, extended to include entirety of bottommost 100km square
+         * (100km square boundaries are aligned with 100km UTM northing intervals) */
+       var nBand = Math.floor(new LatLng(latBand, 0).toUTMRef().northing/100e3)*100e3;
+       
+        /* 100km grid square row letters repeat every 2,000km north; add enough 2,000km blocks to get
+         * into required band */
+       var n2M = 0; // northing of 2,000km block
+       while (n2M + n100kNum + y < nBand) n2M += 2000e3; 
+       llref = new UTMRef(e100kNum + x * 100,  n2M + n100kNum + y * 100, 'X', zone).toLatLng(); 
+    }
+    else {
+       console.log("WARNING: invalid MGRS prefix. Using center of map as reference");
+       /* find center of map */
+       var center = browser.getCenter();
+       var ref = new LatLng(center[1], center[0]);
+       var cref = ref.toUTMRef();
         
-    /* Replace part of the UTM reference with arguments */
-    var bx = Math.floor(cref.easting  / 100000) * 100000;
-    var by = Math.floor(cref.northing / 100000) * 100000; 
-    var llref = new UTMRef(bx + x * 100,  by + y * 100, cref.latZone, cref.lngZone).toLatLng(); 
+       /* Replace part of the UTM reference with arguments */
+       var bx = Math.floor(cref.easting  / 100000) * 100000;
+       var by = Math.floor(cref.northing / 100000) * 100000; 
+       llref = new UTMRef(bx + x * 100,  by + y * 100, cref.latZone, cref.lngZone).toLatLng(); 
+    }
     return [llref.lng, llref.lat];
  }
  

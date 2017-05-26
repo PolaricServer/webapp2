@@ -75,13 +75,16 @@ polaric.refSearch = function()
      '<h1>'+'Show reference on map'+'</h1>' +
      '<form class="mapref">'+
           
-     '<span title="100x100m square relative to map center" class="sleftlab">Local ref: </span>' +
-     '<div><input id="locx" type="text" size="3" maxlength="3">'+
+     '<span title="MGRS 100x100m square" class="sleftlab">MGRS ref: </span>' +
+     
+     '<div>' +
+     '<input id="mgrsprefix" type="text" size="5" maxlength="5" value="' + polaric.MGRSprefix(center) +'">'+
+     '<input id="locx" type="text" size="3" maxlength="3">'+
      '<input id="locy" type="text" size="3" maxlength="3">&nbsp;'+
      '<input type="button" id="butt_mgrs"'+
      '   value="'+'Find'+'">&nbsp;</div>'+
      
-     '<hr><span class="sleftlab">UTM: </span>'+
+     '<hr><span class="sleftlab">UTM ref: </span>'+
      '<nobr><div><input id="utmz" type="text" size="2" maxlength="2" value="' +uref.lngZone+ '">' +
      '<input id="utmnz" type="text" size="1" maxlength="1" value="' +uref.latZone+ '">' +
      '&nbsp;&nbsp<input id="utmx" type="text" size="6" maxlength="6">'+
@@ -114,12 +117,10 @@ polaric.refSearch = function()
        
       $('#ll_NS').click( click_NS );
       
-      $('#ll_EW').click( function() {
-              console.log("CLICK EW");
-           });
+      $('#ll_EW').click( click_EW );
       
       $('#butt_mgrs').click( function() {
-              var pos = polaric.parseLocal(browser, $('#locx').val(), $('#locy').val());
+              var pos = polaric.parseMGRS(browser, $('#mgrsprefix').val(), $('#locx').val(), $('#locy').val());
               browser.goto_Pos(pos, true);
            });
       
