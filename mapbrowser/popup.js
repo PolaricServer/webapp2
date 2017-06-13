@@ -132,6 +132,9 @@ polaric.Popup.prototype.showPopup = function (props)
         ? props.elem : document.createElement('div'));
     if (props.html)
         pdiv.innerHTML = props.html;
+    if (props.vnode)
+        m.mount(pdiv, props.vnode);
+    
     if (props.id && props.id != null) pdiv.id = props.id;
   
     pdiv.className = 'POPUP' + 
@@ -183,8 +186,9 @@ polaric.Popup.prototype.showPopup = function (props)
    if (props.resizable) 
        $(pdiv).resizable();
    if (props.draggable) 
-       $(pdiv).draggable({ delay: 100, opacity: 0.7 }  );
+       $(pdiv).draggable({ delay: 100, opacity: 0.7, start: props.dragStart, stop: props.dragStop }  );
    return pdiv;
+
 }
 
 

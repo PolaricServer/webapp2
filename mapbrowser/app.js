@@ -20,105 +20,46 @@
 
 
 
-/**
- * Autojump between two fields.
- * @param {string} fieldId - Id of DOM field elelent to jump from.
- * @param {string} nextFieldId - Id of DOM field element to jump to.
- */
-polaric.autojump = function(fieldId, nextFieldId)
-{
-   if (fieldId==null || nextFieldId==null) {
-       console.error("Field id is null");
-       return;
-   }
-   var downStrokeField;
-   var myField=document.getElementById(fieldId);             
-   myField.nextField=document.getElementById(nextFieldId); 
-   myField.onkeydown=autojump_keyDown;
-   myField.onkeyup=autojump_keyUp;
-
-
-   function autojump_keyDown()
-   {
-      this.beforeLength=this.value.length;
-      downStrokeField=this;
-   }
-
-
-   function autojump_keyUp()
-   {
-      if (
-       (this == downStrokeField) && 
-       (this.value.length > this.beforeLength) && 
-       (this.value.length >= this.maxLength)
-      )
-         this.nextField.focus();
-      downStrokeField=null;
-   }
-}
-
-/* End of autojump stuff */
-
-
 
 /**
  * Reference search in a popup window. 
  */
 polaric.refSearch = function()
 {
-    var center = browser.getCenter();
-    var cref = new LatLng(center[1], center[0]);
-    uref = cref.toUTMRef(); 
+    var widget = {
+     view: function() {
+        return m("div", [       
+            m("h1", "Show reference on map"),
+            m("form.mapref", [  
+               m("span.sleftlab", {title: "MGRS 100x100m square"}, "MGRS ref: "), 
+               m(mgrsInput),
+               m("input#butt_mgrs", {type: "button", value: "Find"}), hr,
+              
+               m("span.sleftlab", "UTM ref: "),
+               m(utmInput), 
+               m("input#butt_utm", {type: "button", value: "Find", style: "margin-right:3.5em"}), hr,
+	       
+	           m("span.sleftlab", "LatLong: "),
+	           m(latLngInput),
+	           m("input#butt_ll", {type: "button", value: "Find"})
+            ])
+        ])
+      }
+   };
+
 
    var x = browser.gui.showPopup( {
-      html:
-     '<h1>'+'Show reference on map'+'</h1>' +
-     '<form class="mapref">'+
-          
-     '<span title="MGRS 100x100m square" class="sleftlab">MGRS ref: </span>' +
-     
-     '<div>' +
-     '<input id="mgrsprefix" type="text" size="5" maxlength="5" value="' + polaric.MGRSprefix(center) +'">'+
-     '<input id="locx" type="text" size="3" maxlength="3">'+
-     '<input id="locy" type="text" size="3" maxlength="3">&nbsp;'+
-     '<input type="button" id="butt_mgrs"'+
-     '   value="'+'Find'+'">&nbsp;</div>'+
-     
-     '<hr><span class="sleftlab">UTM ref: </span>'+
-     '<nobr><div><input id="utmz" type="text" size="2" maxlength="2" value="' +uref.lngZone+ '">' +
-     '<input id="utmnz" type="text" size="1" maxlength="1" value="' +uref.latZone+ '">' +
-     '&nbsp;&nbsp<input id="utmx" type="text" size="6" maxlength="6">'+
-     '<input id="utmy" type="text" size="7" maxlength="7">&nbsp;'+
-     '<input type="button" id="butt_utm"'+
-     '   value="'+'Find'+'" style="margin-right:3.5em">&nbsp;</div></nobr>' +
-     
-     '<hr><span class="sleftlab">LatLong: </span>' +
-     '<nobr><div><input id="ll_Nd" type="text" size="2" maxlength="2">°&nbsp;'+
-     '<input id="ll_Nm" type="text" size="6" maxlength="6">\'&nbsp;<span id="ll_NS">N</span>&nbsp;&nbsp;'+
-     '<input id="ll_Ed" type="text" size="2" maxlength="2">°&nbsp;' +
-     '<input id="ll_Em" type="text" size="6" maxlength="6">\'&nbsp;<span id="ll_EW">E</span>&nbsp;' +
-     '<input type="button" id="butt_ll"'+
-     '   value="'+'Find'+'">&nbsp;</div></nobr>'+
-     '</form>', 
+     vnode: widget,
      pixPos: [50,70],
      draggable: true,
-     id: "refsearch"
+     dragStop: dragStop
    });  
    
-   setTimeout(function() {
-      polaric.autojump('utmz', 'utmnz');
-      polaric.autojump('utmnz', 'utmx');
-      polaric.autojump('utmx', 'utmy');
-      polaric.autojump('locx', 'locy');
-      polaric.autojump('ll_Nd', 'll_Nm');
-      polaric.autojump('ll_Nm', 'll_Ed');
-      polaric.autojump('ll_Ed', 'll_Em'); 
- 
-       
-      $('#ll_NS').click( click_NS );
-      
-      $('#ll_EW').click( click_EW );
-      
+   browser.map.on('moveend', function() { m.redraw();});
+
+   
+   setTimeout(function() 
+   {
       $('#butt_mgrs').click( function() {
               var pos = polaric.parseMGRS(browser, $('#mgrsprefix').val(), $('#locx').val(), $('#locy').val());
               browser.goto_Pos(pos, true);
@@ -140,15 +81,10 @@ polaric.refSearch = function()
    }, 1000);
    
    
-   function click_NS() {
-       var val = $("#ll_NS").html();
-       $("#ll_NS").html( (val=="N" ? "S" : "N"));
-   }
    
-   function click_EW() {
-       var val = $("#ll_EW").html();
-       $("#ll_EW").html( (val=="E" ? "W" : "E"));
+   function dragStop( event, ui ) {
+      console.log("DRAG STOP: x="+ui.position.left+", y="+ui.position.top);
    }
-   
+
 }
 

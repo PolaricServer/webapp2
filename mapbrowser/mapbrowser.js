@@ -175,6 +175,12 @@ polaric.MapBrowser.prototype.getCenter = function() {
    return ol.proj.toLonLat(this.view.getCenter(), this.view.getProjection());
 };
 
+polaric.MapBrowser.prototype.getCenterUTM = function() {    
+    var center = browser.getCenter();
+    var cref = new LatLng(center[1], center[0]);
+    return cref.toUTMRef(); 
+}
+
 
 
 /**
