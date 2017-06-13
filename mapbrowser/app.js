@@ -52,7 +52,8 @@ polaric.refSearch = function()
      vnode: widget,
      pixPos: [50,70],
      draggable: true,
-     dragStop: dragStop
+     dragStop: dragStop,
+     id: "refSearch"
    });  
    
    browser.map.on('moveend', function() { m.redraw();});
