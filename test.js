@@ -12,7 +12,7 @@
    });
 
    browser.ctxMenu.addCallback("TOOLBAR", function(m) {
-     m.add('Find position', function () { show_refSearch(); });
+     m.add('Find position', function () { var x = new polaric.refSearch(); });
      m.add('Blow up all', function () { alert("Boom!"); });
      m.add('Do nothing', function () { alert("What?"); });
    });
@@ -26,5 +26,4 @@
                     draggable: true,
                     id:        "test" } );
 */
-
 
