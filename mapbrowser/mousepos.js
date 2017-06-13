@@ -20,8 +20,6 @@
  
  
 /**
- * @classdesc
- * Control to display map scale and geographical position of mouse pointer.
  * @constructor
  */
 polaric.MousePos = function(opt_options) {
@@ -136,12 +134,10 @@ polaric.MousePos.prototype.setMap = function(map) {
 
 /**
  * Show position in UTM format, latlong format and as maidenhead locator.
- * @param {ol.Pixel} x - Mouse position on screen [x,y].
  */
 
-polaric.MousePos.prototype.updatePos = function(x) 
-{
-    if (x==null || x[0]<0 || x[1]<0) {
+polaric.MousePos.prototype.updatePos = function(x) {
+    if (x==null) {
        this.utm.innerHTML = "<span>(utm pos)</span>";
        this.latlong.innerHTML = "<span>(latlong pos)</span>";
        this.maidenhead.innerHTML = "<span>(locator)</span>";

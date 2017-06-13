@@ -49,7 +49,7 @@
  
  polaric.LayerSwitcher.prototype.toggleOverlay = function(i)
  {
-     assert(i >= 0 && i <= this.mp.config.oLayers.length, "Assertion failed");
+     console.assert(i >= 0 && i <= this.mb.config.oLayers.length, "Assertion failed");
      
      var prev = this.mb.config.oLayers[i].getVisible(); 
      this.mb.config.oLayers[i].setVisible(!prev);
