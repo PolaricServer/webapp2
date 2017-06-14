@@ -29,15 +29,65 @@
  
  polaric.LayerSwitcher = function(mb) {
    console.assert(mb != null, "Assertion failed");
+
    var t = this;
    this.mb = mb;
    this.storage = null;
    this.delement = null;
-   this.mb.map.on('moveend', onMove);
-   
-   function onMove() {
-       t.evaluateLayers();
-   }
+   this.mb.map.on('moveend', function() {t.evaluateLayers();});
+
+   /* UI component */
+   this.widget = {
+       view: function() {
+         var i=0;
+         return m("div#layerSwitcher", [
+         
+            /* Display list of base layers */
+            m("h2", "Base layer"), m("form", 
+                t.mb.config.baseLayers.map(function(x) {
+                   return (x.predicate() ? 
+                      m("span", [ 
+                         m("input#blayer"+i, {
+                             onclick: handleSelect(i), 
+                             type:"radio", name:"layer", value:"layer"+ (i++), 
+                             checked: (x== t.mb.map.getLayers().item(0) ? "checked" : null) 
+                         }),
+                         x.get("name"), br])
+                      : null) 
+                })),
+                
+            /* Display list of overlays */        
+            m("h2", "Overlays"), m("form", 
+                t.mb.config.oLayers.map(function(x) {
+                   return (x.predicate() ?
+                      m("span", [
+                         m("input#layer"+i, {
+                             onclick: handleToggle(i),
+                             type:"checkbox", name:"overlay", value:"layer"+ (i++), 
+                             checked: (x.getVisible() ? "checked" : null) 
+                         }),
+                         x.get("name"), br])
+                      : null) 
+                })) 
+          ]);                             
+       }
+    }
+    
+    
+    /* Handler to use when selecting base layer */
+    function handleSelect(arg) {
+        return function() {
+          t.mb.changeBaseLayer(arg);
+          t.evaluateLayers();
+       } 
+     }
+    
+    
+    /* Handler to use when toggling overlay */  
+    function handleToggle(arg) {
+       return function() 
+          { t.toggleOverlay(arg);} }
+       
  };
  
 
@@ -49,14 +99,16 @@
  
  polaric.LayerSwitcher.prototype.toggleOverlay = function(i)
  {
+     i -= this.mb.config.baseLayers.length;
      console.assert(i >= 0 && i <= this.mb.config.oLayers.length, "Assertion failed");
      
      var prev = this.mb.config.oLayers[i].getVisible(); 
      this.mb.config.oLayers[i].setVisible(!prev);
      this.mb.config.store('olayer.' + i, !prev); 
- }
+ };
  
 
+ 
  
  /**
   * Re-evaluate what layers to be shown in layer switcher list. 
@@ -76,87 +128,23 @@
           }
       }
    }
-   this.displayLayers(this.delement);
+   m.redraw();
  };
  
- 
+
+     
  
  /** 
   * Display layers in the given DOM element. 
   * @param {Element} w - DOM element to display the layer switcher.  
   */
  
- polaric.LayerSwitcher.prototype.displayLayers = function(w) 
+ polaric.LayerSwitcher.prototype.activate = function(w) 
  { 
      console.assert(w && w != null, "Assertion failed");
      var t = this;
      t.delement = w; 
-     w.innerHTML = generateForm();
-     addHandlers();
-     
-     
-     /* Handler to use when selecting base layer */
-     function handleSelect(arg) {
-       return function() {
-          t.mb.changeBaseLayer(arg);
-          t.evaluateLayers();
-       } 
-     }
-
-     
-     /* Handler to use when toggling overlay */  
-     function handleToggle(arg) {return function() 
-       { t.toggleOverlay(arg);} }
-     
-     
-     /* Generate list of layers as HTML forms */
-     function generateForm() {  
-        var html = '<div id="layerSwitcher">';
-        
-        /* Base layers */
-        html+='<h2>'+'Base layer'+'</h2><form>';
-        for (var i=0; i < t.mb.config.baseLayers.length; i++) 
-        { 
-          /* Display radio button and text for base layer */
-          var x = t.mb.config.baseLayers[i];
-          if (x.predicate()) {
-             html += '<input id="blayer'+i+'" type="radio" name="layer" value="layer'+i+'"';
-             if (x == t.mb.map.getLayers().item(0)) 
-               html += ' checked';
-             html += '> <span>'+x.get('name')+'</span><br>';
-          }
-        }
- 
-        /* Overlays */
-        html+='</form><h2>'+'Overlays'+'</h2><form>';
-        for (var i=0; i < t.mb.config.oLayers.length; i++)  
-        {  
-          /* Display tick button for overlay layer */
-          var x = t.mb.config.oLayers[i];
-          if (x.predicate()) {
-             html += '<input id="layer'+i+'" type="checkbox" name="overlay" value="layer'+i+'"';
-             if (x.getVisible()) 
-                html += ' checked';
-             html += '> <span>'+x.get('name')+'</span><br>';
-          }
-        }
-         
-        html += '</form></div>';
-        return html;
-     }
-     
-     
-     /* Add click-handlers for each layer in list */
-     function addHandlers() {
-       /* Base layers */
-       for (var i=0; i < t.mb.config.baseLayers.length; i++) 
-          $('#blayer'+i).click( handleSelect(i) );
-       
-       /* Overlays */
-       for (var i=0; i < t.mb.config.oLayers.length; i++)
-          $('#layer'+i).click( handleToggle(i) );
-     }
-     
+     m.mount(t.delement, t.widget);
  };
  
  
