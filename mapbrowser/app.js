@@ -22,11 +22,16 @@
 
 
 /**
- * Reference search in a popup window. 
+ * @classdesc
+ * Reference search (in a popup window). 
+ * @constructor
  */
+
 polaric.refSearch = function()
 {
-    var widget = {
+   polaric.Widget.call(this);
+   
+   this.widget = {
      view: function() {
         return m("div", [       
             m("h1", "Show reference on map"),
@@ -37,9 +42,10 @@ polaric.refSearch = function()
               
                m("span.sleftlab", "UTM ref: "),
                m(utmInput), 
-               m("input#butt_utm", {type: "button", value: "Find", style: "margin-right:3.5em"}), hr,
-	       
-	           m("span.sleftlab", "LatLong: "),
+               m("input#butt_utm", {type: "button", value: "Find", style: "margin-right:3.5em"}), hr,     
+	           m("span.sleftlab", 
+                 {title: "Degrees, decimal-minutes (click to change hemisphere)"}, 
+                   "Lat Long: "),
 	           m(latLngInput),
 	           m("input#butt_ll", {type: "button", value: "Find"})
             ])
@@ -47,18 +53,7 @@ polaric.refSearch = function()
       }
    };
 
-
-   var x = browser.gui.showPopup( {
-     vnode: widget,
-     pixPos: [50,70],
-     draggable: true,
-     dragStop: dragStop,
-     id: "refSearch"
-   });  
-   
-   browser.map.on('moveend', function() { m.redraw();});
-
-   
+   /* Add actions to buttons */
    setTimeout(function() 
    {
       $('#butt_mgrs').click( function() {
@@ -80,12 +75,11 @@ polaric.refSearch = function()
               browser.goto_Pos(pos, true );
            });
    }, 1000);
-   
-   
-   
-   function dragStop( event, ui ) {
-      console.log("DRAG STOP: x="+ui.position.left+", y="+ui.position.top);
-   }
+
+   browser.map.on('moveend', function() { m.redraw();});
 
 }
+ol.inherits(polaric.refSearch, polaric.Widget);
+
+
 

@@ -12,7 +12,7 @@
    });
 
    browser.ctxMenu.addCallback("TOOLBAR", function(m) {
-     m.add('Find position', function () { var x = new polaric.refSearch(); });
+     m.add('Find position', function () { var x = new polaric.refSearch(); x.activatePopup("refSearch", [50,70]) });
      m.add('Blow up all', function () { alert("Boom!"); });
      m.add('Do nothing', function () { alert("What?"); });
    });

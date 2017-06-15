@@ -27,11 +27,11 @@
   * @param {polaric.MapBrowser} mb - Map browser instance. 
   */
  
- polaric.LayerSwitcher = function(mb) {
-   console.assert(mb != null, "Assertion failed");
-
+ polaric.LayerSwitcher = function() {
+   polaric.Widget.call(this);
+   
    var t = this;
-   this.mb = mb;
+   this.mb = CONFIG.mb;
    this.storage = null;
    this.delement = null;
    this.mb.map.on('moveend', function() {t.evaluateLayers();});
@@ -51,7 +51,7 @@
                              onclick: handleSelect(i), 
                              type:"radio", name:"layer", value:"layer"+ (i++), 
                              checked: (x== t.mb.map.getLayers().item(0) ? "checked" : null) 
-                         }),
+                         }), nbsp,
                          x.get("name"), br])
                       : null) 
                 })),
@@ -65,7 +65,7 @@
                              onclick: handleToggle(i),
                              type:"checkbox", name:"overlay", value:"layer"+ (i++), 
                              checked: (x.getVisible() ? "checked" : null) 
-                         }),
+                         }), nbsp,
                          x.get("name"), br])
                       : null) 
                 })) 
@@ -89,8 +89,10 @@
           { t.toggleOverlay(arg);} }
        
  };
- 
+ ol.inherits(polaric.LayerSwitcher, polaric.Widget);
 
+ 
+ 
  
  /**
   * Turn on/off a given overlay layer.
@@ -130,21 +132,3 @@
    }
    m.redraw();
  };
- 
-
-     
- 
- /** 
-  * Display layers in the given DOM element. 
-  * @param {Element} w - DOM element to display the layer switcher.  
-  */
- 
- polaric.LayerSwitcher.prototype.activate = function(w) 
- { 
-     console.assert(w && w != null, "Assertion failed");
-     var t = this;
-     t.delement = w; 
-     m.mount(t.delement, t.widget);
- };
- 
- 

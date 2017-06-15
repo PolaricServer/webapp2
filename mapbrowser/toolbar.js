@@ -58,7 +58,10 @@ polaric.Toolbar.prototype.setDefaultItems = function()
    this.addIcon("images/areaselect.png", "tb_area");
          
    polaric.addHandlerId("tb_layers", true,  
-        function(e) {show_Layers(e.iconX, e.iconY);} );
+        function(e) {
+	       var ls = new polaric.LayerSwitcher();
+           ls.activatePopup("layerswitcher", [e.iconX, e.iconY]);
+	 } );
    
    this.browser.ctxMenu.addMenuId("toolbar", "TOOLBAR", true);
    this.browser.ctxMenu.addMenuId('tb_area', 'AREASELECT', true);
@@ -77,22 +80,6 @@ polaric.Toolbar.prototype.setDefaultItems = function()
       }
     });
    
-   
-   function show_Layers(x,y) {
-      var ls = null;
-      browser.gui.showPopup( { 
-            html:      '<div id="layers_"><H1>LAYERS</H1></div>',
-            pixPos:    [x, y],
-            id:        "layerswitcher",
-            draggable: true
-       } );
-   
-      setTimeout(function() {
-         ls = new polaric.LayerSwitcher(browser); 
-         ls.displayLayers(document.getElementById('layers_'));
-      }, 200);
-   }
-   
 }
 
 
@@ -104,6 +91,7 @@ polaric.Toolbar.prototype.setDefaultItems = function()
 polaric.Toolbar.prototype.setMap = function(map) {
    ol.control.Control.prototype.setMap.call(this, map);
 }
+
 
 
 /**
