@@ -155,23 +155,32 @@ polaric.Popup.prototype.showPopup = function (props)
     }, 200);
     
     if (props.draggable) {
+       if (props.pinned)
+           pdiv._pinned = true;
        var pinimage = document.createElement('img');
        pinimage.className = "popup_pin";
-       pinimage.src = "images/pin-green.png";
+       if (pdiv._pinned) { 
+           pinimage.src = "images/pin-red.png";
+           t.allowedPopups++;
+           t.activepopup = null;
+       } else
+           pinimage.src = "images/pin-green.png";
        pdiv.appendChild(pinimage);
  
        pinimage.onclick = function(e) {
           pdiv._pinned = (pdiv._pinned ? false : true); 
+	      if (props.pin)
+	   	     props.pin(pdiv._pinned); // Pin callback
           if (pdiv._pinned) {
-              pinimage.src = "images/pin-red.png";
-              t.activepopup = null;
-              t.allowedPopups++;
+             pinimage.src = "images/pin-red.png";
+             t.activepopup = null;
+             t.allowedPopups++;
           } 
           else {
-              pinimage.src = "images/pin-green.png";
-              t.removePopup();
-              t.activepopup = pdiv;
-              t.allowedPopups--;
+             pinimage.src = "images/pin-green.png";
+       //      t.removePopup();
+             t.activepopup = pdiv;
+             t.allowedPopups--;
           }
        };
     }

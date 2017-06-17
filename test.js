@@ -1,6 +1,6 @@
      
    var browser = new polaric.MapBrowser('map', CONFIG);
-
+   setTimeout(widget.restore, 500);
 
    /* Set up app specific context menus */
    browser.ctxMenu.addCallback("MAP", function(m) {

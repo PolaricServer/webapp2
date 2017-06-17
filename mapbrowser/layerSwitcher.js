@@ -29,6 +29,7 @@
  
  polaric.LayerSwitcher = function() {
    polaric.Widget.call(this);
+   this.classname = "polaric.LayerSwitcher";
    
    var t = this;
    this.mb = CONFIG.mb;
@@ -132,3 +133,11 @@
    }
    m.redraw();
  };
+
+ 
+ 
+ widget.setRestoreFunc("polaric.LayerSwitcher", function(id, pos) {
+    var x = new polaric.LayerSwitcher(); 
+    x.activatePopup(id, pos, true); 
+ }); 
+ 

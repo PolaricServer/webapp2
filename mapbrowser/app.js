@@ -30,6 +30,7 @@
 polaric.refSearch = function()
 {
    polaric.Widget.call(this);
+   this.classname = "polaric.refSearch"; 
    
    this.widget = {
      view: function() {
@@ -78,8 +79,16 @@ polaric.refSearch = function()
 
    browser.map.on('moveend', function() { m.redraw();});
 
+
+   
+   
 }
 ol.inherits(polaric.refSearch, polaric.Widget);
 
 
+
+widget.setRestoreFunc("polaric.refSearch", function(id, pos) {
+    var x = new polaric.refSearch(); 
+    x.activatePopup(id, pos, true); 
+}); 
 

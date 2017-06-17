@@ -25,6 +25,8 @@ var polaric = polaric || {};
 console.assert = console.assert || function() {};
 
 
+
+
 /** 
  *  @classdesc 
  *  Configuration of map browser application.
@@ -115,6 +117,16 @@ polaric.Config.prototype.store = function(id, value, save)
        this.storage[this.uid+'.'+id] = val;
 }
 
+/** 
+ *  Remove value from session/local storage. 
+ * @param {string} id - Key of setting. 
+ */
+
+polaric.Config.prototype.delete = function(id)
+{
+    this.sstorage.removeItem(id);
+    this.storage.removeItem(id);
+}
 
    
    
