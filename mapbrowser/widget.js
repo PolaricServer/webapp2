@@ -151,7 +151,7 @@ polaric.Widget = function() {
      
      function unSave() {
         console.log("UNSAVE POPUP POS: "+t.pos+", id="+id);
-        CONFIG.delete("polaric.widget."+id, t.pos);
+        CONFIG.remove("polaric.widget."+id, t.pos);
         
         if (widget._stored[id] && widget._stored[id] != null) {
             widget._stored[id] = null;
