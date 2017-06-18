@@ -152,38 +152,38 @@ polaric.Popup.prototype.showPopup = function (props)
        if (props.pixPos && props.pixPos != null)
           { x = props.pixPos[0]; y=props.pixPos[1]; }
        t.popup_(pdiv, x, y, props.image);
-    }, 200);
+
     
-    if (props.draggable) {
-       if (props.pinned)
-           pdiv._pinned = true;
-       var pinimage = document.createElement('img');
-       pinimage.className = "popup_pin";
-       if (pdiv._pinned) { 
-           pinimage.src = "images/pin-red.png";
-           t.allowedPopups++;
-           t.activepopup = null;
-       } else
-           pinimage.src = "images/pin-green.png";
-       pdiv.appendChild(pinimage);
- 
-       pinimage.onclick = function(e) {
-          pdiv._pinned = (pdiv._pinned ? false : true); 
-	      if (props.pin)
-	   	     props.pin(pdiv._pinned); // Pin callback
-          if (pdiv._pinned) {
-             pinimage.src = "images/pin-red.png";
-             t.activepopup = null;
-             t.allowedPopups++;
-          } 
-          else {
+       if (props.draggable) {
+          if (props.pinned)
+              pdiv._pinned = true;
+          var pinimage = document.createElement('img');
+          pinimage.className = "popup_pin";
+          if (pdiv._pinned) { 
+              pinimage.src = "images/pin-red.png";
+              t.allowedPopups++;
+              t.activepopup = null;
+          } else
              pinimage.src = "images/pin-green.png";
-       //      t.removePopup();
-             t.activepopup = pdiv;
-             t.allowedPopups--;
-          }
-       };
-    }
+          pdiv.appendChild(pinimage);
+ 
+         pinimage.onclick = function(e) {
+             pdiv._pinned = (pdiv._pinned ? false : true); 
+	         if (props.pin)
+                props.pin(pdiv._pinned); // Pin callback
+             if (pdiv._pinned) {
+                pinimage.src = "images/pin-red.png";
+                t.activepopup = null;
+                t.allowedPopups++;
+             } 
+             else {
+                pinimage.src = "images/pin-green.png";
+                t.removePopup();
+                t.activepopup = pdiv;
+                t.allowedPopups--;
+             }
+         };
+    }  }, 200);
     
     pdiv.onmousedown = function(e) 
        { e = (e)?e:((event)?event:null); e.stopPropagation(); return null; };
