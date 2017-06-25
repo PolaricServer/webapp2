@@ -69,6 +69,50 @@ var hr = m("hr");
 var nbsp = m.trust("&nbsp;");
 
 
+/**
+ * Input field with default values and syntax checking. 
+ * @param {string} id - DOM element identifier. 
+ * @param {number} size - size of field. 
+ * @param {number} maxlength - max length of field.
+ * @param {boolean} contentEditable - true if field can be edited by user. 
+ * @param {regex} regex - Regular expression that defines what input is valid. 
+ */
+var textInput = {
+ 
+    view: function(vn) {
+       return m("input#"+vn.attrs.id, 
+        { type: "text", size: vn.attrs.size, maxlength: vn.attrs.maxlength, 
+          contentEditable: (vn.attrs.contentEditable ? vn.attrs.contentEditable : true),
+            oninput: function() {
+                if (!vn.attrs.regex) 
+                    return;                
+                vn.state.data=vn.dom.value;
+                if (vn.attrs.regex.test(vn.dom.value)) {
+                    vn.state.class = "valid";
+                    vn.dom.title = "Input OK";
+                }
+                else {
+                    vn.state.class = "invalid";
+                    vn.dom.title = "Invalid input!";
+                }    
+            },
+            onchange: function() {
+                if (!vn.attrs.regex.test(vn.dom.value) && vn.attrs.value) 
+                    setTimeout(function() {
+                        vn.state.class = "";
+                        vn.dom.title = "Default from center of map";
+                        vn.state.data = NaN;
+                        m.redraw();
+                    }, 4000);
+            },
+            
+            value: (vn.state.data || vn.state.data == "" ? vn.state.data : vn.attrs.value),
+            class: (vn.state.class ? vn.state.class : "")
+        });
+   }
+}
+
+
 /** 
  * MGRS input fields. 
  */
@@ -77,9 +121,10 @@ var mgrsInput = {
         var center = CONFIG.mb.getCenter();
         return m("span", 
                {onclick: function() { polaric.autojump("locx", "locy"); }},
-            m("input#mgrsprefix", {type: "text", size: "5", maxlength: "5", value: polaric.MGRSprefix(center)}), nbsp,
-            m("input#locx", {type: "text", size: "3", maxlength: "3"}),
-            m("input#locy", {type: "text", size: "3", maxlength: "3"}), nbsp )
+            m(textInput, {id:"mgrsprefix", size: 5, maxlength: 5, 
+                regex: /^[0-9]{2}[C-X][A-Z][A-V]$/i, value: polaric.MGRSprefix(center)}), nbsp,
+            m(textInput, {id:"locx", size: 3, maxlength: 3, regex: /^[0-9]{3}$/ }),
+            m(textInput, {id:"locy", size: "3", maxlength: "3", regex: /^[0-9]{3}$/ }), nbsp )
     }
  }
  
@@ -96,10 +141,11 @@ var utmInput = {
                      polaric.autojump('utmnz', 'utmx');
                      polaric.autojump('utmx', 'utmy');
                  }},
-            m("input#utmz",  {type: "text", size: "2", maxlength: "2", value: uref.lngZone}), 
-            m("input#utmnz", {type: "text", size: "1", maxlength: "1", value: uref.latZone}), nbsp, nbsp,
-            m("input#utmx",  {type: "text", size: "6", maxlength: "6"}),
-            m("input#utmy",  {type: "text", size: "7", maxlength: "7"}), nbsp)
+            m(textInput, {id:"utmz", size: "2", maxlength: "2", value: uref.lngZone, regex:/^[0-9]{2}$/}), 
+            m(textInput, {id:"utmnz", size: "1", maxlength: "1", value: uref.latZone, 
+                 contentEditable: false}), nbsp, nbsp,
+            m(textInput, {id:"utmx", size: "6", maxlength: "6", regex:/^[0-9]{6}$/}),
+            m(textInput, {id:"utmy", size: "7", maxlength: "7", regex:/^[0-9]{7}$/}), nbsp)
     }
  }
  
@@ -107,6 +153,8 @@ var utmInput = {
  /**
   * Lat long input fields.
   */
+var reg_MIN =  /^(([0-5]?[0-9])|60)(\.([0-9]{1,4}))?$/;
+ 
 var latLngInput = {
     view: function() {
         var center = CONFIG.mb.getCenter();
@@ -116,11 +164,11 @@ var latLngInput = {
                      polaric.autojump('ll_Nm', 'll_Ed');
                      polaric.autojump('ll_Ed', 'll_Em'); 
                  }},
-            m("input#ll_Nd",  {type: "text", size: "2", maxlength: "2"}), "°", nbsp,
-            m("input#ll_Nm",  {type: "text", size: "6", maxlength: "6"}), "\'", nbsp, 
+            m(textInput, {id:"ll_Nd", size: "2", maxlength: "2", regex:/^(([0-8]?[0-9])|90)$/}), "°", nbsp,nbsp,
+            m(textInput, {id:"ll_Nm", size: "6", maxlength: "6", regex: reg_MIN }), "\'", nbsp, 
             m("span#ll_NS",   {onclick:this.clickNS}, (center[1] < 0 ? "S":"N")), nbsp, nbsp,
-            m("input#ll_Ed",  {type: "text", size: "2", maxlength: "2"}), "°", nbsp,
-            m("input#ll_Em",  {type: "text", size: "6", maxlength: "6"}), "\'", nbsp,  
+            m(textInput, {id:"ll_Ed", size: "3", maxlength: "3", regex:/^[0-9]{1,3}$/}), "°", nbsp,nbsp,
+            m(textInput, {id:"ll_Em", size: "6", maxlength: "6", regex: reg_MIN }), "\'", nbsp,  
             m("span#ll_EW",   {onclick:this.clickEW}, (center[0] < 0 ? "W":"E")), nbsp, nbsp)
     },
     
