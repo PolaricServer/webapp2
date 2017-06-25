@@ -68,8 +68,8 @@ polaric.refSearch = function()
            });
       
       $('#butt_ll').click( function() {
-              var lat_sign = ( $("ll_NS").html=="N" ? "" : "-");
-              var lng_sign = ( $("ll_EW").html=="E" ? "" : "-");
+              var lat_sign = ( $("#ll_NS").html()=="N" ? "" : "-");
+              var lng_sign = ( $("#ll_EW").html()=="E" ? "" : "-");
               var pos = polaric.parseDM(
                   lat_sign+$('#ll_Nd').val(), $('#ll_Nm').val(), 
                   lng_sign+$('#ll_Ed').val(), $('#ll_Em').val());
@@ -78,9 +78,6 @@ polaric.refSearch = function()
    }, 1000);
 
    browser.map.on('moveend', function() { m.redraw();});
-
-
-   
    
 }
 ol.inherits(polaric.refSearch, polaric.Widget);
@@ -91,4 +88,9 @@ widget.setRestoreFunc("polaric.refSearch", function(id, pos) {
     var x = new polaric.refSearch(); 
     x.activatePopup(id, pos, true); 
 }); 
+
+
+
+
+
 

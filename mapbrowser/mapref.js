@@ -134,8 +134,8 @@ polaric.parseDM = function(nd, nm, ed, em)
    var ym = parseFloat(nm);
    var xd = parseInt(ed, 10);
    var xm = parseFloat(em);
-   if (yd || yd<-90 || yd>90 || ym || ym<0 || ym>60 || xd ||
-       xm || xm<0 || xm>60) {
+   if (isNaN(yd) || yd<-90 || yd>90 || isNaN(ym) || ym<0 || ym>60 || isNaN(xd) ||
+       isNaN(xm) || xm<0 || xm>60) {
         console.log("ERROR: degrees/minutes out of bounds or input not numeric");
         return [0,0];
    }
@@ -183,27 +183,37 @@ polaric.parseMGRS = function(browser, prefix, ax, ay)
  {   
     var x = parseInt(ax, 10);
     var y = parseInt(ay, 10);
-    if (isNaN(x) || isNaN(y) || x<0 || x>999 || y<0 || y>999) {
-      console.log("ERROR: 3-digit number out of bounds or input not numeric");
-      return [0,0];
+    if (isNaN(x) || x<0 || x>999) {
+      console.log("ERROR: 3-digit X number out of bounds or input not numeric");
+      x = 555;
+    }  
+    if (isNaN(y) || y<0 || y>999) {
+      console.log("ERROR: 3-digit Y number out of bounds or input not numeric");
+      y = 555;
     }
     var llref; 
     
     if (prefix && prefix != null && prefix.length == 5) 
     {
+       prefix = prefix.toUpperCase();
        // Adapted from https://github.com/chrisveness/geodesy/blob/master/mgrs.js (MIT Licence).
        if (prefix.length > 5) 
            prefix = "0"+prefix; 
        var zone = parseInt(prefix.substring(0,2)); 
+       
        var col = polaric.mgrs.e100kLetters[(zone-1)%3].indexOf(prefix[3]) + 1; 
-       var e100kNum = col * 100e3; // e100k in metres
-    
-        /* get northing specified by n100k */
        var row = polaric.mgrs.n100kLetters[(zone-1)%2].indexOf(prefix[4]);
+       if (col == 0 || row == -1)
+           console.log("ERROR: Invalid row or column letter in MGRS prefix");
+       
+       var e100kNum = col * 100e3; // e100k in metres
+        /* get northing specified by n100k */
        var n100kNum = row * 100e3; // n100k in metres
 
         /* get latitude of (bottom of) band */
        var latBand = (polaric.mgrs.latBands.indexOf(prefix[2])-10)*8;
+       if (latBand < -80)
+           console.log("ERROR: Invalid latitude band letter in MGRS prefix");
 
         /* northing of bottom of band, extended to include entirety of bottommost 100km square
          * (100km square boundaries are aligned with 100km UTM northing intervals) */
