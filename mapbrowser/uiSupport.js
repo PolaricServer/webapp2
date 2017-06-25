@@ -88,18 +88,18 @@ var textInput = {
                     return;                
                 vn.state.data=vn.dom.value;
                 if (vn.attrs.regex.test(vn.dom.value)) {
-                    vn.state.class = "valid";
+                    vn.state.cssclass = "valid";
                     vn.dom.title = "Input OK";
                 }
                 else {
-                    vn.state.class = "invalid";
+                    vn.state.cssclass = "invalid";
                     vn.dom.title = "Invalid input!";
                 }    
             },
             onchange: function() {
                 if (!vn.attrs.regex.test(vn.dom.value) && vn.attrs.value) 
                     setTimeout(function() {
-                        vn.state.class = "";
+                        vn.state.cssclass = "";
                         vn.dom.title = "Default from center of map";
                         vn.state.data = NaN;
                         m.redraw();
@@ -107,7 +107,7 @@ var textInput = {
             },
             
             value: (vn.state.data || vn.state.data == "" ? vn.state.data : vn.attrs.value),
-            class: (vn.state.class ? vn.state.class : "")
+            cssclass: (vn.state.cssclass ? vn.state.cssclass : "")
         });
    }
 }
