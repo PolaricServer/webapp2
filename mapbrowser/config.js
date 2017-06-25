@@ -122,7 +122,7 @@ polaric.Config.prototype.store = function(id, value, save)
  * @param {string} id - Key of setting. 
  */
 
-polaric.Config.prototype.remove = function(id)
+polaric.Config.prototype.delete = function(id)
 {
     this.sstorage.removeItem(id);
     this.storage.removeItem(id);

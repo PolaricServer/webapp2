@@ -69,7 +69,8 @@ polaric.Toolbar.prototype.setDefaultItems = function()
    /* Generate menu of predefined areas (defined in mapconfig.js */
    this.browser.ctxMenu.addCallback('AREASELECT', function (m) {
       for (var i in browser.config.aMaps) 
-         if (browser.config.aMaps[i] && browser.config.aMaps[i].name && browser.config.aMaps[i].name.length > 1 && 
+         if (browser.config.aMaps[i] && browser.config.aMaps[i].name && 
+              browser.config.aMaps[i].name.length > 1 && 
               !browser.config.aMaps[i].hidden)
             m.add(browser.config.aMaps[i].title, handleSelect(i));
       
