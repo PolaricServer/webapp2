@@ -107,7 +107,7 @@ var textInput = {
             },
             
             value: (vn.state.data || vn.state.data == "" ? vn.state.data : vn.attrs.value),
-            cssclass: (vn.state.cssclass ? vn.state.cssclass : "")
+            className: (vn.state.cssclass ? vn.state.cssclass : "")
         });
    }
 }
