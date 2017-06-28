@@ -84,9 +84,9 @@ var textInput = {
         { type: "text", size: vn.attrs.size, maxlength: vn.attrs.maxlength, 
           contentEditable: (vn.attrs.contentEditable ? vn.attrs.contentEditable : true),
             oninput: function() {
+                vn.state.data=vn.dom.value;
                 if (!vn.attrs.regex) 
                     return;                
-                vn.state.data=vn.dom.value;
                 if (vn.attrs.regex.test(vn.dom.value)) {
                     vn.state.cssclass = "valid";
                     vn.dom.title = "Input OK";
@@ -97,6 +97,7 @@ var textInput = {
                 }    
             },
             onchange: function() {
+                vn.state.data=vn.dom.value;
                 if (!vn.attrs.regex.test(vn.dom.value) && vn.attrs.value) 
                     setTimeout(function() {
                         vn.state.cssclass = "";
@@ -106,7 +107,10 @@ var textInput = {
                     }, 4000);
             },
             
-            value: (vn.state.data || vn.state.data == "" ? vn.state.data : vn.attrs.value),
+            value:
+               ((vn.state.data || vn.state.data == "") ? vn.state.data : 
+                  (vn.attrs.value ? vn.attrs.value: "")),
+                
             className: (vn.state.cssclass ? vn.state.cssclass : "")
         });
    }

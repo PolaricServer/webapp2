@@ -182,6 +182,11 @@ polaric.MapBrowser.prototype.getCenterUTM = function() {
 }
 
 
+polaric.MapBrowser.prototype.getExtent = function() {
+    return ol.proj.transformExtent(
+        this.view.calculateExtent(), this.view.getProjection(), "EPSG:4326"); 
+}
+
 
 /**
  * Zoom and center map to fit the given extent.  

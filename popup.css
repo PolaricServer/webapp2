@@ -136,6 +136,7 @@ form.mapref hr { border: dotted 1px #888 }
 #ll_Ed {width: 3.1ch}
 #ll_Em {width: 7ch}
 
+#editArea {margin: 0.25em}
 
 .valid {background: #dfd}
 .invalid {background: #fdd}
