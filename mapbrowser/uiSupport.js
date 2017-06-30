@@ -81,7 +81,7 @@ var textInput = {
  
     view: function(vn) {
        return m("input#"+vn.attrs.id, 
-        { type: "text", size: vn.attrs.size, maxlength: vn.attrs.maxlength, 
+        { type: "text", size: vn.attrs.size, maxLength: vn.attrs.maxLength, 
           contentEditable: (vn.attrs.contentEditable ? vn.attrs.contentEditable : true),
             oninput: function() {
                 vn.state.data=vn.dom.value;

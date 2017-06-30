@@ -3,7 +3,6 @@ div.POPUP img.popup_pin {
   position: inherit;
   top: 6px;
   right: 6px;
-  background: ;
 }
 
 
@@ -22,7 +21,11 @@ div.POPUP {
   padding: 0.3em !important;
   min-width: 15em;
   border-radius: 4px;
+  max-height: 95%; 
 }
+
+div.widget { overflow: hidden !important;}
+
 
 div.POPUPMENU {
   padding-bottom: 0.3em;

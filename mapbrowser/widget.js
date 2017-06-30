@@ -116,9 +116,10 @@ polaric.Widget = function() {
         pixPos: pixPos,
         draggable: true,
         dragStop: dragStop,
-	    pin: pinCb,
+	pin: pinCb,
         pinned: pinned,
-        id: id
+        id: id,
+        cclass: "widget"
      });
      
      
