@@ -36,6 +36,7 @@ polaric.Toolbar = function(opt, br) {
    this.element = document.createElement('div');
    this.element.className = 'toolbar ol-unselectable ol-control';
    this.lastElem = null; 
+   this.arealist = new polaric.AreaList();
    
    ol.control.Control.call(this, {
       element: this.element,
@@ -56,7 +57,8 @@ polaric.Toolbar.prototype.setDefaultItems = function()
    this.addSpacing();
    this.addIcon("images/layers.png", "tb_layers");
    this.addIcon("images/areaselect.png", "tb_area");
-         
+   var t = this; 
+   
    polaric.addHandlerId("tb_layers", true,  
         function(e) {
 	       var ls = new polaric.LayerSwitcher();
@@ -68,15 +70,30 @@ polaric.Toolbar.prototype.setDefaultItems = function()
    
    /* Generate menu of predefined areas (defined in mapconfig.js */
    this.browser.ctxMenu.addCallback('AREASELECT', function (m) {
-      for (var i in browser.config.aMaps) 
-         if (browser.config.aMaps[i] && browser.config.aMaps[i].name && 
-              browser.config.aMaps[i].name.length > 1 && 
-              !browser.config.aMaps[i].hidden)
-            m.add(browser.config.aMaps[i].title, handleSelect(i));
+      for (var i in t.arealist.myAreas) {
+         var area = t.arealist.myAreas[i];   
+         if (area && area != null)
+             m.add(area.name, handleSelect(t.arealist.myAreas, i)); 
+      }
       
-      function handleSelect(i) {
+      if (t.arealist.myAreas.length > 0)
+         m.add(null);
+      m.add("Edit YOUR areas..", 
+        function() {t.arealist.activatePopup("AreaList", [90,70])});
+      m.add(null);
+      
+      for (var i in browser.config.aMaps) {
+         var aMap = browser.config.aMaps[i]; 
+         if (aMap && aMap.name && 
+              aMap.name.length > 1 && 
+              !aMap.hidden)
+            m.add(aMap.title, handleSelect(browser.config.aMaps, i));
+      }
+
+      
+      function handleSelect(a, i) {
          return function() {
-           browser.fitExtent(browser.config.aMaps[i].extent);
+           browser.fitExtent(a[i].extent);
          } 
       }
     });

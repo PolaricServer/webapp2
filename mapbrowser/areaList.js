@@ -35,24 +35,36 @@ polaric.AreaList = function() {
         var i=0;
         return m("div", [       
             m("h1", "My map areas"),  
-            m("table.mapAreas", t.myAreas.map(function(x) {
+            m("table.mapAreas", m("tbody", t.myAreas.map(function(x) {
                 return m("tr", [
-                   m("td", m("img", {src:"images/edit-delete.png", onclick: handler(removeArea, i) })), 
-                   m("td", m("img", {src:"images/edit.png", onclick: handler(editArea, i) })),
-                   m("td", {onclick: handler(gotoExtent, i++) }, x.name) ]);
-             })),
-             m(textInput, {id:"editArea", value: t.currName, size: 16, maxLength:30, regex: /^[^\<\>\'\"]+$/i }),
+                   m("td", m("img", {src:"images/edit-delete.png", onclick: apply(removeArea, i) })), 
+                   m("td", m("img", {src:"images/edit.png", onclick: apply(editArea, i) })),
+                   m("td", {onclick: apply(gotoExtent, i++) }, x.name) ]);
+             }))),
+             m(textInput, {id:"editArea", value: t.currName, size: 16, maxLength:25, regex: /^[^\<\>\'\"]+$/i }),
              m("button", {onclick: add}, "Add")
         ])
       }
    };
    
-   function handler(f, id) {return function() {f(id); }};  
    
+   /* Get stored areas */
+   t.myAreas = CONFIG.get("polaric.AreaList");
+   if (t.myAreas == null)
+       t.myAreas = [];
+   
+   
+   /* Apply a function to an argument. Returns a new function */
+   function apply(f, id) {return function() {f(id); }};  
+   
+   
+   /* Remove area from list */
    function removeArea(id) {
        t.myAreas.splice(id,1);
+       CONFIG.store("polaric.AreaList", t.myAreas, true);
    }
    
+   /* Move map area name to editable textInput */
    function editArea(id) {
        gotoExtent(id);
        $("#editArea").val(t.myAreas[id].name);
@@ -61,11 +73,19 @@ polaric.AreaList = function() {
        m.redraw();
    }
    
+   /* Add map extent to list */
    function add() {
+       var ext = CONFIG.mb.getExtent();
+       var name = $("#editArea").val(); 
+       
+       console.log("Add area: "+name + " = ["+
+          ext.map(function(x) {return Math.round(x*1000)/1000;}) +"]");
        t.myAreas.push(
-         {name: $("#editArea").val(), extent: CONFIG.mb.getExtent()});
+         {name: name, extent: ext});
+       CONFIG.store("polaric.AreaList", t.myAreas, true);
    }
    
+   /* Zoom and move map to extent */
    function gotoExtent(id) {
        var ext = t.myAreas[id].extent; 
        if (ext && ext != null) 
