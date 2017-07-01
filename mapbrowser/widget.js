@@ -47,14 +47,13 @@ widget.setRestoreFunc = function(id, f) {
 
 
 widget.restore = function() {
-    console.log("RESTORE widgets");
-    widget._stored = CONFIG.get("polaric.widget._stored");
+    widget._stored = CONFIG.get("widget._stored");
     if (widget._stored == null)
         widget._stored = {};
     
     for (var x in widget._stored) {
         var f = widget._restore[widget._stored[x]];
-        var arg = CONFIG.get("polaric.widget."+x);
+        var arg = CONFIG.get("widget."+x);
         if (f != null)
            f(x, arg);
     }
@@ -116,7 +115,7 @@ polaric.Widget = function() {
         pixPos: pixPos,
         draggable: true,
         dragStop: dragStop,
-	pin: pinCb,
+	    pin: pinCb,
         pinned: pinned,
         id: id,
         cclass: "widget"
@@ -141,22 +140,22 @@ polaric.Widget = function() {
      
      function save() {
         console.log("SAVE POPUP POS: "+t.pos+", id="+id);
-        CONFIG.store("polaric.widget."+id, t.pos, true);
+        CONFIG.store("widget."+id, t.pos, true);
         
         if (!widget._stored[id] || widget._stored[id] == null) {
             widget._stored[id] = t.classname;
-            CONFIG.store("polaric.widget._stored", widget._stored, true); 
+            CONFIG.store("widget._stored", widget._stored, true); 
         }
      }
      
      
      function unSave() {
         console.log("UNSAVE POPUP POS: "+t.pos+", id="+id);
-        CONFIG.remove("polaric.widget."+id, t.pos);
+        CONFIG.remove("widget."+id, t.pos);
         
         if (widget._stored[id] && widget._stored[id] != null) {
             widget._stored[id] = null;
-            CONFIG.store("polaric.widget._stored", widget._stored, true); 
+            CONFIG.store("widget._stored", widget._stored, true); 
         }
      }
  }

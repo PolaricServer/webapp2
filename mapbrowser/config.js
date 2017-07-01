@@ -35,7 +35,7 @@ console.assert = console.assert || function() {};
  */
 
 polaric.Config = function(uid) {
-   this.uid = uid;
+   this.uid = (uid ? uid : "0");
    this.mb = null;
    this.storage = window.localStorage;
    this.sstorage = window.sessionStorage;
@@ -87,9 +87,9 @@ polaric.Config.prototype.get = function(id)
     /* Look in session-storage first, if not found there, 
      * look in local-storage. 
      */
-    var data = this.sstorage[id]; 
+    var data = this.sstorage["polaric."+id]; 
     if (data == null)
-       data = this.storage[this.uid+'.'+id];
+       data = this.storage["polaric."+id + ":" + this.uid];
     
     var x = (data ? JSON.parse(data) : null );
     if (x==null && this.props[id] != null) 
@@ -112,9 +112,9 @@ polaric.Config.prototype.store = function(id, value, save)
 { 
     console.assert(id != null && value != null, "Assertion failed"); 
     var val = JSON.stringify(value);
-    this.sstorage[id] = val; 
+    this.sstorage["polaric." + id] = val; 
     if (save)
-       this.storage[this.uid+'.'+id] = val;
+       this.storage["polaric." + id + ":" + this.uid] = val;
 }
 
 /** 
@@ -124,8 +124,8 @@ polaric.Config.prototype.store = function(id, value, save)
 
 polaric.Config.prototype.remove = function(id)
 {
-    this.sstorage.removeItem(id);
-    this.storage.removeItem(id);
+    this.sstorage.removeItem("polaric."+id);
+    this.storage.removeItem("polaric."+id+":"+this.uid);
 }
 
    
