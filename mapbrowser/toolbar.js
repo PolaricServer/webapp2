@@ -57,6 +57,9 @@ polaric.Toolbar.prototype.setDefaultItems = function()
    this.addSpacing();
    this.addIcon("images/layers.png", "tb_layers");
    this.addIcon("images/areaselect.png", "tb_area");
+   this.addSpacing();
+   this.addIcon("images/ruler1.png", "tb_measure");
+   
    var t = this; 
    
    polaric.addHandlerId("tb_layers", true,  
@@ -65,8 +68,25 @@ polaric.Toolbar.prototype.setDefaultItems = function()
            ls.activatePopup("layerswitcher", [e.iconX, e.iconY]);
 	 } );
    
+   
+   var measure_on = false; 
+   polaric.addHandlerId("tb_measure", true, 
+	function(e) {
+	   measure_on = (measure_on ? false : true);
+	   if (measure_on){
+            measure = new polaric.Measure();
+	        $("#tb_measure").attr("class", "selected");
+       }
+	   else {
+	        $("#tb_measure").attr("class", "");
+	        measure.deactivate();
+       }
+	} );
+   
+   
    this.browser.ctxMenu.addMenuId("toolbar", "TOOLBAR", true);
    this.browser.ctxMenu.addMenuId('tb_area', 'AREASELECT', true);
+   
    
    /* Generate menu of predefined areas (defined in mapconfig.js */
    this.browser.ctxMenu.addCallback('AREASELECT', function (m) {
@@ -79,7 +99,7 @@ polaric.Toolbar.prototype.setDefaultItems = function()
       if (t.arealist.myAreas.length > 0)
          m.add(null);
       m.add("Edit YOUR areas..", 
-        function() {t.arealist.activatePopup("AreaList", [90,70])});
+         function() {t.arealist.activatePopup("AreaList", [90,70])});
       m.add(null);
       
       for (var i in browser.config.aMaps) {

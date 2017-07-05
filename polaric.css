@@ -23,6 +23,8 @@
 .toolbar img:hover {background: #ffe; border-radius: 6px}
 .toolbar .x-space {margin-right: 18px}
 
+img.selected {background: #f60 !important}
+
 .mousepos {
         border: solid 1px #666;
         bottom: 0.3em;
@@ -79,6 +81,43 @@
 	font-size:10px;
 	text-align:center;
 	margin:-1px;padding: 1px;
-    left: unset;
+        left: unset;
 	will-change:contents,width
+}
+
+
+.tooltip {
+   position: relative;
+   background: rgba(0, 0, 0, 0.5);
+   border-radius: 4px;
+   color: white;
+   padding: 2px 6px;
+   opacity: 0.8;
+   white-space: nowrap;
+   box-shadow: 3px 3px 5px #242;
+   font-size: 0.9em;
+}
+.tooltip-measure {
+   opacity: 1;
+   font-weight: bold;
+}
+.tooltip-static {
+   background-color: #e5f5e5;
+   color: black;
+   border: 1px solid #555;
+}
+
+.tooltip-measure:before,
+.tooltip-static:before {
+   border-top: 7px solid rgba(0, 0, 0, 0.5);
+   border-right: 7px solid transparent;
+   border-left: 7px solid transparent;
+   content: "";
+   position: absolute;
+   bottom: -7px;
+   margin-left: -7px;
+   left: 50%;
+}
+.tooltip-static:before {
+   border-top-color: #11e;
 }

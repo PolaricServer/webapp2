@@ -155,6 +155,31 @@ polaric.MapBrowser.prototype.addLayers = function(config) {
 
 
 
+polaric.MapBrowser.prototype.addLayer = function(layer) {
+   this.map.addLayer(layer);
+   // FIXME: Keep track of layers added this way. They should not interfere with configured layers. 
+   // consider naming this function addExtraLayer.... 
+}
+
+polaric.MapBrowser.prototype.removeLayer = function(layer) {
+   this.map.removeLayer(layer);
+}
+
+
+polaric.MapBrowser.prototype.addVectorLayer = function(style) {
+   var source = new ol.source.Vector({wrapX: false});
+   var vector = new ol.layer.Vector({
+       source: source,
+       style: style
+    });
+   this.addLayer(vector);
+   return vector; 
+}
+
+
+
+
+
 /**
  * Center the map around given coordinates [longitude, latitude]. 
  * @param {ol.Coordinate} center - Coordinate where map is to be centered (in latlong projection).
