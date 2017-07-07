@@ -36,7 +36,11 @@
    this.storage = null;
    this.delement = null;
    this.mb.map.on('moveend', function() {t.evaluateLayers();});
-
+   this.mb.map.getLayers().on('add', function() {t.evaluateLayers();});
+   this.mb.map.getLayers().on('remove', function() {t.evaluateLayers();});
+   
+   
+   
    /* UI component */
    this.widget = {
        view: function() {

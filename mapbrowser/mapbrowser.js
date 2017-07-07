@@ -59,8 +59,9 @@
      t.baseLayerIdx = t.config.get('baselayer');
      
      // Set up layers, initial scale, etc..
-     t.addLayers(config);
+     t.initializeLayers(config);
      t.setResolution(t.config.get('resolution'));
+     t.xLayers = [];
      
      // Popup windows and context menus */
      t.gui = new polaric.Popup(t);
@@ -138,9 +139,8 @@ polaric.MapBrowser.prototype.pix2LonLat = function(x)
  * @param {polaric.Config} config - instance of Config class.
  * 
  */
-// FIXME: Move this to constructor or make it private?  
 
-polaric.MapBrowser.prototype.addLayers = function(config) {
+polaric.MapBrowser.prototype.initializeLayers = function(config) {
   
   this.map.getLayers().clear();
   
@@ -151,19 +151,25 @@ polaric.MapBrowser.prototype.addLayers = function(config) {
   if (config.oLayers.length > 0) 
     for (var i=0; i < config.oLayers.length; i++) 
         this.map.addLayer(config.oLayers[i]);
+   
 };
 
 
 
 polaric.MapBrowser.prototype.addLayer = function(layer) {
    this.map.addLayer(layer);
-   // FIXME: Keep track of layers added this way. They should not interfere with configured layers. 
-   // consider naming this function addExtraLayer.... 
+   this.xLayers.push(layer);
 }
+
 
 polaric.MapBrowser.prototype.removeLayer = function(layer) {
    this.map.removeLayer(layer);
+   for(var i in this.xLayers) {
+      if(this.xLayers[i] === layer) 
+         this.xLayers.splice(i, 1);
+   }
 }
+
 
 
 polaric.MapBrowser.prototype.addVectorLayer = function(style) {
@@ -177,6 +183,22 @@ polaric.MapBrowser.prototype.addVectorLayer = function(style) {
 }
 
 
+
+polaric.MapBrowser.prototype.addConfiguredLayer = function(layer, name) {
+   this.config.addLayer(layer, name);
+    /* FIXME: Be sure that the layerswitcher is updated accordingly */
+    
+   /* Remove extra layers to keep the order */
+   for (var i in this.xLayers)
+     this.map.removeLayer(this.xLayers[i]);
+  
+   /* Add configured layer */
+   this.map.addLayer(layer);
+   
+   /* And put the extra layers back on top of the stack */
+   for (var i in this.xLayers)
+     this.map.addLayer(this.xLayers[i]);
+}
 
 
 
@@ -200,6 +222,11 @@ polaric.MapBrowser.prototype.getCenter = function() {
    return ol.proj.toLonLat(this.view.getCenter(), this.view.getProjection());
 };
 
+
+/**
+ * Get UTM reference of center of current map view. 
+ * @returns position
+ */
 polaric.MapBrowser.prototype.getCenterUTM = function() {    
     var center = browser.getCenter();
     var cref = new LatLng(center[1], center[0]);
@@ -207,6 +234,9 @@ polaric.MapBrowser.prototype.getCenterUTM = function() {
 }
 
 
+/**
+ * Return the geographical extent of the map shown on screen. 
+ */
 polaric.MapBrowser.prototype.getExtent = function() {
     return ol.proj.transformExtent(
         this.view.calculateExtent(), this.view.getProjection(), "EPSG:4326"); 

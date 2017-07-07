@@ -40,7 +40,7 @@ polaric.Config = function(uid) {
    this.storage = window.localStorage;
    this.sstorage = window.sessionStorage;
    this.baseLayers = [];
-   this.oLayers = []
+   this.oLayers = [];
    this.oLayersCount = 0;
    this.aMaps = new Array(); 
    
@@ -54,14 +54,42 @@ ol.inherits(polaric.Config, ol.Object);
 
 
 /**  
- * Get array of configured based layers. 
+ * Get array of configured base layers. 
  */
 
 polaric.Config.prototype.getBaseLayers = function()
    { return this.baseLayers; }
    
-   
 
+   
+/**  
+ * Get array of configured overlay layers. 
+ */
+
+polaric.Config.prototype.getOLayers = function()
+   { return this.oLayers; }
+
+   
+   
+/**
+ * Add to the configured list of layers. 
+ * @param {Layer} layer to be added.
+ * @param {String|undefined} Name/decription to be used in layer switcher.
+ */
+
+polaric.Config.prototype.addLayer = function(layer, name) 
+{
+  console.assert(layer != null, "Assertion failed");
+  if (name && name != null) 
+       layer.set("name", name);
+  if (!layer.predicate) 
+       layer.predicate = function() {return true;}
+  this.oLayers.push(layer);
+  // FIXME: Store in local storage???
+}
+   
+   
+   
 /**
  *  Set an id to distinguish between different users or sessions 
  *  when using local-storage to store config-values persistently.
