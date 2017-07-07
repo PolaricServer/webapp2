@@ -70,7 +70,6 @@ widget.restore = function() {
  */
 
 polaric.Widget = function() {
-   console.log("Widget constructor"); 
    this.pos = null;
    this.pinned = false;
    this.classname = null;

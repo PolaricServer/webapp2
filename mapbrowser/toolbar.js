@@ -53,12 +53,12 @@ ol.inherits(polaric.Toolbar, ol.control.Control);
 polaric.Toolbar.prototype.setDefaultItems = function() 
 {
    /* Default icons */
-   this.addIcon("images/menu.png", "toolbar");
+   this.addIcon("images/menu.png", "toolbar", null, "Main menu");
    this.addSpacing();
-   this.addIcon("images/layers.png", "tb_layers");
-   this.addIcon("images/areaselect.png", "tb_area");
+   this.addIcon("images/layers.png", "tb_layers", null, "Layer selector");
+   this.addIcon("images/areaselect.png", "tb_area", null, "Area menu");
    this.addSpacing();
-   this.addIcon("images/ruler1.png", "tb_measure");
+   this.addIcon("images/ruler1.png", "tb_measure", null, "Measure distance");
    
    var t = this; 
    
@@ -90,13 +90,14 @@ polaric.Toolbar.prototype.setDefaultItems = function()
    
    /* Generate menu of predefined areas (defined in mapconfig.js */
    this.browser.ctxMenu.addCallback('AREASELECT', function (m) {
-      for (var i in t.arealist.myAreas) {
-         var area = t.arealist.myAreas[i];   
+      var areas = t.arealist.getMyAreas(); 
+      for (var i in areas) {
+         var area = areas[i];   
          if (area && area != null)
-             m.add(area.name, handleSelect(t.arealist.myAreas, i)); 
+             m.add(area.name, handleSelect(areas, i)); 
       }
       
-      if (t.arealist.myAreas.length > 0)
+      if (areas.length > 0)
          m.add(null);
       m.add("Edit YOUR areas..", 
          function() {t.arealist.activatePopup("AreaList", [90,70])});
@@ -137,13 +138,17 @@ polaric.Toolbar.prototype.setMap = function(map) {
  * @param {string} f - Filename/url for icon.
  * @param {String} id - Id for DOM element.
  * @param {function|null} action - Handler function. 
+ * @param {string|undefined} title
  * @return DOM element for the icon. 
  */
-polaric.Toolbar.prototype.addIcon = function(f, id, action) {
+polaric.Toolbar.prototype.addIcon = function(f, id, action, title) {
     var x = document.createElement('img');
     if (id != null)
        x.setAttribute("id", id);
     x.setAttribute('src', f);
+    if (title)
+        x.setAttribute('title', title);
+    
     this.element.appendChild(x, this.element);
     this.lastElem = x; 
     if (action != null) 

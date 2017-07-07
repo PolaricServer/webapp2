@@ -39,23 +39,24 @@ polaric.autojump = function(fieldId, nextFieldId)
    myField.nextField=document.getElementById(nextFieldId); 
    myField.onkeydown=autojump_keyDown;
    myField.onkeyup=autojump_keyUp;
+   var beforeLength = 0;
 
-
+   
    function autojump_keyDown()
    {
-      this.beforeLength=this.value.length;
-      downStrokeField=this;
+      beforeLength=myField.value.length;
+      downStrokeField=myField;
    }
 
 
    function autojump_keyUp()
-   {
+   {     
       if (
-       (this == downStrokeField) && 
-       (this.value.length > this.beforeLength) && 
-       (this.value.length >= this.maxLength)
-      )
-         this.nextField.focus();
+       (myField == downStrokeField) && 
+       (myField.value.length > beforeLength) && 
+       (myField.value.length >= myField.maxLength)
+      ) 
+         myField.nextField.focus();
       downStrokeField=null;
    }
 }
@@ -127,8 +128,8 @@ var mgrsInput = {
                {onclick: function() { polaric.autojump("locx", "locy"); }},
             m(textInput, {id:"mgrsprefix", size: 5, maxlength: 5, 
                 regex: /^[0-9]{2}[C-X][A-Z][A-V]$/i, value: polaric.MGRSprefix(center)}), nbsp,
-            m(textInput, {id:"locx", size: 3, maxlength: 3, regex: /^[0-9]{3}$/ }),
-            m(textInput, {id:"locy", size: "3", maxlength: "3", regex: /^[0-9]{3}$/ }), nbsp )
+            m(textInput, {id:"locx", size: "3", maxLength: "3", regex: /^[0-9]{3}$/ }),
+            m(textInput, {id:"locy", size: "3", maxLength: "3", regex: /^[0-9]{3}$/ }), nbsp )
     }
  }
  
@@ -145,11 +146,11 @@ var utmInput = {
                      polaric.autojump('utmnz', 'utmx');
                      polaric.autojump('utmx', 'utmy');
                  }},
-            m(textInput, {id:"utmz", size: "2", maxlength: "2", value: uref.lngZone, regex:/^[0-9]{2}$/}), 
-            m(textInput, {id:"utmnz", size: "1", maxlength: "1", value: uref.latZone, 
+            m(textInput, {id:"utmz", size: "2", maxLength: "2", value: uref.lngZone, regex:/^[0-9]{2}$/}), 
+            m(textInput, {id:"utmnz", size: "1", maxLength: "1", value: uref.latZone, 
                  contentEditable: false}), nbsp, nbsp,
-            m(textInput, {id:"utmx", size: "6", maxlength: "6", regex:/^[0-9]{6}$/}),
-            m(textInput, {id:"utmy", size: "7", maxlength: "7", regex:/^[0-9]{7}$/}), nbsp)
+            m(textInput, {id:"utmx", size: "6", maxLength: "6", regex:/^[0-9]{6}$/}),
+            m(textInput, {id:"utmy", size: "7", maxLength: "7", regex:/^[0-9]{7}$/}), nbsp)
     }
  }
  
@@ -168,11 +169,11 @@ var latLngInput = {
                      polaric.autojump('ll_Nm', 'll_Ed');
                      polaric.autojump('ll_Ed', 'll_Em'); 
                  }},
-            m(textInput, {id:"ll_Nd", size: "2", maxlength: "2", regex:/^(([0-8]?[0-9])|90)$/}), "°", nbsp,nbsp,
-            m(textInput, {id:"ll_Nm", size: "6", maxlength: "6", regex: reg_MIN }), "\'", nbsp, 
+            m(textInput, {id:"ll_Nd", size: "2", maxLength: "2", regex:/^(([0-8]?[0-9])|90)$/}), "°", nbsp,nbsp,
+            m(textInput, {id:"ll_Nm", size: "6", maxLength: "6", regex: reg_MIN }), "\'", nbsp, 
             m("span#ll_NS",   {onclick:this.clickNS}, (center[1] < 0 ? "S":"N")), nbsp, nbsp,
-            m(textInput, {id:"ll_Ed", size: "3", maxlength: "3", regex:/^[0-9]{1,3}$/}), "°", nbsp,nbsp,
-            m(textInput, {id:"ll_Em", size: "6", maxlength: "6", regex: reg_MIN }), "\'", nbsp,  
+            m(textInput, {id:"ll_Ed", size: "3", maxLength: "3", regex:/^[0-9]{1,3}$/}), "°", nbsp,nbsp,
+            m(textInput, {id:"ll_Em", size: "6", maxLength: "6", regex: reg_MIN }), "\'", nbsp,  
             m("span#ll_EW",   {onclick:this.clickEW}, (center[0] < 0 ? "W":"E")), nbsp, nbsp)
     },
     

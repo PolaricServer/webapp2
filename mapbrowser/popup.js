@@ -368,7 +368,7 @@ polaric.Popup.prototype.popup_ = function(elem, x, y, img)
      /* If viewport is less than 500 pixels wide and content is 
       * wider than the viewport, let popup be as wide as the viewport 
       */
-     if (this.onDiv.clientWidth < 500 && this.elem.clientWidth > this.onDiv.clientWidth)
+     if (this.onDiv.clientWidth < 500 && elem.clientWidth > this.onDiv.clientWidth)
         this.activepopup.style.minWidth = this.onDiv.clientWidth+'px'; 
      
      /* Is the height of the content more than the available height?

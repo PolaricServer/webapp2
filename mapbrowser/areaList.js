@@ -49,9 +49,7 @@ polaric.AreaList = function() {
    
    
    /* Get stored areas */
-   t.myAreas = CONFIG.get("polaric.AreaList");
-   if (t.myAreas == null)
-       t.myAreas = [];
+   this.getMyAreas();
    
    
    /* Apply a function to an argument. Returns a new function */
@@ -95,6 +93,14 @@ polaric.AreaList = function() {
 }
 ol.inherits(polaric.AreaList, polaric.Widget);
 
+
+
+polaric.AreaList.prototype.getMyAreas = function() {
+  this.myAreas = CONFIG.get("polaric.AreaList");
+  if (this.myAreas == null)
+       this.myAreas = [];
+  return this.myAreas;   
+}
 
 
 
