@@ -85,10 +85,23 @@ polaric.Config.prototype.addLayer = function(layer, name)
   if (!layer.predicate) 
        layer.predicate = function() {return true;}
   this.oLayers.push(layer);
-  // FIXME: Store in local storage???
 }
+
+
+
    
-   
+polaric.Config.prototype.removeLayer = function(layer) 
+{
+  console.assert(layer != null, "Assertion failed");
+  for (i in this.oLayers)
+    if (this.oLayers[i] === layer) {
+        this.oLayers.splice(i, 1);
+	    return;
+    }
+}
+
+
+
    
 /**
  *  Set an id to distinguish between different users or sessions 

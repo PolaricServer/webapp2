@@ -36,8 +36,7 @@
    this.storage = null;
    this.delement = null;
    this.mb.map.on('moveend', function() {t.evaluateLayers();});
-   this.mb.map.getLayers().on('add', function() {t.evaluateLayers();});
-   this.mb.map.getLayers().on('remove', function() {t.evaluateLayers();});
+   this.mb.map.getLayers().on('change:length', function() {t.evaluateLayers();});
    
    
    
@@ -50,11 +49,12 @@
             /* Display list of base layers */
             m("h2", "Base layer"), m("form", 
                 t.mb.config.baseLayers.map(function(x) {
+                   var idx = i++;
                    return (x.predicate() ? 
                       m("span", [ 
-                         m("input#blayer"+i, {
-                             onclick: handleSelect(i), 
-                             type:"radio", name:"layer", value:"layer"+ (i++), 
+                         m("input#blayer"+idx, {
+                             onclick: handleSelect(idx), 
+                             type:"radio", name:"layer", value:"layer"+ (idx), 
                              checked: (x== t.mb.map.getLayers().item(0) ? "checked" : null) 
                          }), nbsp,
                          x.get("name"), br])
@@ -64,15 +64,15 @@
             /* Display list of overlays */        
             m("h2", "Overlays"), m("form", 
                 t.mb.config.oLayers.map(function(x) {
+                   var idx = i++;
                    return (x.predicate() ?
-                      m("span", [
-                         m("input#layer"+i, {
-                             onclick: handleToggle(i),
-                             type:"checkbox", name:"overlay", value:"layer"+ (i++), 
-                             checked: (x.getVisible() ? "checked" : null) 
-                         }), nbsp,
-                         x.get("name"), br])
-                      : null) 
+                       m(checkBox, {
+                             id: "layer"+idx, 
+                             onclick: handleToggle(idx),
+                             checked: x.getVisible()
+                           },  x.get("name"), br
+                         )
+                       : null) 
                 })) 
           ]);                             
        }
@@ -108,7 +108,6 @@
  {
      i -= this.mb.config.baseLayers.length;
      console.assert(i >= 0 && i <= this.mb.config.oLayers.length, "Assertion failed");
-     
      var prev = this.mb.config.oLayers[i].getVisible(); 
      this.mb.config.oLayers[i].setVisible(!prev);
      this.mb.config.store('olayer.' + i, !prev); 
@@ -128,13 +127,25 @@
     */
    if (!this.mb.getBaseLayer().predicate()) {
       var layers = this.mb.config.baseLayers; 
-      for (var i=0; i < layers.length; i++) {
+      for (var i in layers) {
           if (layers[i].predicate()) {
               this.mb.setBaseLayer(i);
               break;
           }
       }
    }
+   layers = this.mb.config.oLayers;
+   for (var i in layers)
+      if (!layers[i].predicate()) {
+           if (layers[i].getVisible() == true)
+               layers[i].wasOn = true; 
+           layers[i].setVisible(false);
+      }
+      else
+          if (layers[i].wasOn) {
+             layers[i].setVisible(true);
+             layers[i].wasOn = NaN;
+          }
    m.redraw();
  };
 

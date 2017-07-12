@@ -118,6 +118,19 @@ var textInput = {
 }
 
 
+var checkBox = {
+    view: function(vn) {
+        return m("span", m("input#" + vn.attrs.id, 
+         {
+            onclick: vn.attrs.onclick,
+            type:"checkbox", name: vn.attrs.name, value: vn.attrs.id, 
+            checked: (vn.attrs.checked ? "checked" : null) 
+         }), nbsp, vn.children);
+    }
+}
+
+
+
 /** 
  * MGRS input fields. 
  */
@@ -127,9 +140,9 @@ var mgrsInput = {
         return m("span", 
                {onclick: function() { polaric.autojump("locx", "locy"); }},
             m(textInput, {id:"mgrsprefix", size: 5, maxlength: 5, 
-                regex: /^[0-9]{2}[C-X][A-Z][A-V]$/i, value: polaric.MGRSprefix(center)}), nbsp,
+               regex: /^[0-9]{2}[C-X][A-Z][A-V]$/i, value: polaric.MGRSprefix(center) }), nbsp,
             m(textInput, {id:"locx", size: "3", maxLength: "3", regex: /^[0-9]{3}$/ }),
-            m(textInput, {id:"locy", size: "3", maxLength: "3", regex: /^[0-9]{3}$/ }), nbsp )
+            m(textInput, {id:"locy", size: "3", maxLength: "3", regex: /^[0-9]{3}$/ }), nbsp );
     }
  }
  

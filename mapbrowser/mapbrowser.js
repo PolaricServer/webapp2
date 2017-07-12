@@ -185,8 +185,8 @@ polaric.MapBrowser.prototype.addVectorLayer = function(style) {
 
 
 polaric.MapBrowser.prototype.addConfiguredLayer = function(layer, name) {
+   console.assert(layer != null && name != null, "Assertion failed");
    this.config.addLayer(layer, name);
-    /* FIXME: Be sure that the layerswitcher is updated accordingly */
     
    /* Remove extra layers to keep the order */
    for (var i in this.xLayers)
@@ -198,6 +198,15 @@ polaric.MapBrowser.prototype.addConfiguredLayer = function(layer, name) {
    /* And put the extra layers back on top of the stack */
    for (var i in this.xLayers)
      this.map.addLayer(this.xLayers[i]);
+}
+
+
+polaric.MapBrowser.prototype.removeConfiguredLayer = function(layer) {
+   console.assert(layer != null, "Assertion failed");
+   this.map.removeLayer(layer);   
+//   this.map.addLayer(layer);   // Ugly hack to force it to trigger a change event.
+//   this.map.removeLayer(layer);
+   this.config.removeLayer(layer);
 }
 
 
@@ -261,8 +270,10 @@ polaric.MapBrowser.prototype.fitExtent = function(extent) {
  * 
  */
 polaric.MapBrowser.prototype.getResolution = function() {
-   this.config.get('resolution');
+   return this.config.get('resolution');
 };
+
+
 
 polaric.MapBrowser.prototype.setResolution = function(res) {
    this.view.setResolution(res); 
