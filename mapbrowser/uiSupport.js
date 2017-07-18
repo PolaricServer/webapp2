@@ -130,6 +130,13 @@ var checkBox = {
 }
 
 
+var select = {
+    view: function(vn) {
+        return m("select", {onchange: vn.attrs.onchange}, vn.attrs.list.map(function(x) {
+            return m("option", {value: x.val}, x.label);
+        }));
+    }
+}
 
 /** 
  * MGRS input fields. 
