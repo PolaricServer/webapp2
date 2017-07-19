@@ -146,4 +146,135 @@ function selectedBase(x)
   { return  CONFIG.mb != null && CONFIG.mb.getBaseLayer().get('name') == x; }
   
   
+  
+  
+/************************ WFS Layer and Style config *****************************/
+
+
+
+// Options: url, ftype, outputFormat, style
+
+function createLayer_WFS(opts) 
+{
+   if (!opts.outputFormat)
+   opts.outputFormat = "text/xml; subtype\=gml/3.1.1";
+
+   var vectorSource = new ol.source.Vector({
+     format: new ol.format.WFS(),  // Oops! GML version 3.1.1 only! 
+
+     url: function(extent) {
+     if (!opts.srs)
+        opts.srs = CONFIG.mb.view.getProjection().getCode();
+
+        return opts.url +'?service=WFS&' +
+           'version=1.1.0&request=GetFeature&typename='+opts.ftype+'&' +
+           'outputFormat='+opts.outputFormat+'&srsname='+opts.srs+'&' +
+           'bbox=' + extent.join(',');
+     },
+
+     strategy: ol.loadingstrategy.bbox
+   });
+
+   
+   return new ol.layer.Vector({
+      name: opts.name,
+      source: vectorSource,
+      style: opts.style
+   });
+}
+   
+
+function STYLES( st ) {
+    for (i in st) {
+       var x = st[i];
+       var ident = (x.id ? x.id : 'style_'+i);
+       delete x.id;
+       
+       if (x.stroke)
+	      x.stroke = new ol.style.Stroke(x.stroke);
+       if (x.fill)
+	      x.fill = new ol.style.Fill({color: x.fill});
+       if (x.text) {
+          if (x.text.fill) 
+	         x.text.fill = new ol.style.Fill({color: x.text.fill});
+	      if (x.text.stroke)
+	         x.text.stroke = new ol.style.Stroke(x.text.stroke);
+	      x.text = new ol.style.Text(x.text);
+       }
+       if (x.image) 
+	      x.image = x.image;
+    
+       CONFIG.styles[ident] = new ol.style.Style(x);   
+       console.log("Config: Add style: "+ident) 
+   }
+}
+
+
+function getStyle(id)
+   { return CONFIG.styles[id]; }
+
+   
+   
+function GETSTYLE(id)
+   { return function(f,r) {return getStyle(id);}}
+
+   
+   
+function setLabel(id, label) {
+   var x = CONFIG.styles[id].clone(); 
+   if (label && label != null)
+         x.getText().setText(label);
+   return x;
+}
+
+function SETLABEL(id, label) {
+   return function(f,r) {
+       return setLabel(id, f.get(label));}
+}
+
+
+function TESTRES(r, lt, gt) {
+    return function(f, res) {
+        if (res < r)
+           return lt(f,res);
+        else
+           return gt(f,res);
+    }
+}
+
+
+
+/**
+ * Icon style. See
+ *    http://openlayers.org/en/latest/apidoc/ol.style.Icon.html
+ *  for options. 
+ */
+
+function ICON(url, opts) {
+  if (!opts) opts = {};
+  opts.src = url;
+  return new ol.style.Icon(opts);
+}
+
+
+/**
+ * Circle style. See
+ *    http://openlayers.org/en/latest/apidoc/ol.style.Circle.html
+ * for options.
+ */
+
+function CIRCLE(radius, opts) {
+  if (!opts) opts = {};
+  opts.radius = radius; 
+  if (opts.fill) 
+      opts.fill = new ol.style.Fill({color: opts.fill});
+  if (opts.stroke)
+      opts.stroke = new ol.style.Stroke(opts.stroke);
+  else
+      opts.stroke = new ol.style.Stroke({color:'#000', width: 1}); 
+     
+  return new ol.style.Circle(opts);
+}
+
+
 
