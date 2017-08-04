@@ -1,4 +1,4 @@
- 
+
 /*
  Map browser based on OpenLayers 4. 
  configuration support. 
@@ -58,6 +58,9 @@ function SCALE(res)
    { CONFIG.set('resolution', res); }
 
    
+   
+   
+   
 /**
  * Configure some layers. 
  */
@@ -91,7 +94,7 @@ function LAYERS (attrs, layers)
  
 /**
  * Map views (pre-selected areas). Initialize a dictionary 
- * using name as index 
+ * using name as index. 
  */
 function VIEWS(views)
 {
@@ -110,7 +113,7 @@ function VIEWS(views)
  */ 
 function POLYGON( points ) {
     var plist = []; 
-    for (var i=0; i < points.length; i++)
+    for (var i in points)
       plist.push( new ol.geom.Point(points[i].lng, points[i].lat));
     var ring = new ol.geom.LinearRing(plist);
     return new ol.geom.Polygon([ring]);
@@ -119,33 +122,51 @@ function POLYGON( points ) {
 
 
 
-/* 
- * Returns true if (parts of) the given polygon intersects the selected map extent.
- *
+/** 
+ * Returns true if (parts of) the given polygon intersects the current map extent.
+ */
 function is_visible(polygon)
 {
-   var extent = CONFIG.mb.calculateExtent(CONFIG.mb.map.getSize()); 
+   var extent = CONFIG.mb.getExtent();
    if (extent != null) {
-     var ex = ol.proj.transformExtent(extent, CONFIG.mb.view.getMapProjection() ,"EPSG:4326");  
-     if (polygon.intersectsExtent(ex)) 
+     if (polygon.intersectsExtent(extent)) 
         return true;
    }
    return false; 
 } 
-*/
 
 
+function IN_EXTENT(polygon) {
+  return function() 
+    {return is_visible(polygon);}
+}
+    
 
 function scale() 
   { return (!CONFIG.mb ? -1 : CONFIG.get('resolution')); }
-
-
 
   
 function selectedBase(x)
   { return  CONFIG.mb != null && CONFIG.mb.getBaseLayer().get('name') == x; }
   
-  
+     
+function RESOLUTION_LT (res)
+   { return function() {return CONFIG.mb.getResolution() < res; }}
+
+
+function RESOLUTION_GT (res)
+   { return function() {return CONFIG.mb.getResolution() > res; }}
+
+   
+function AND(a, b)
+   { return function() {return a() && b();} }
+   
+   
+function OR(a, b)
+   { return function() {return a() || b();} }
+   
+   
+   
   
   
 /************************ WFS Layer and Style config *****************************/
@@ -159,7 +180,7 @@ function createLayer_WFS(opts)
    if (!opts.outputFormat)
    opts.outputFormat = "text/xml; subtype\=gml/3.1.1";
 
-   var vectorSource = new ol.source.Vector({
+   var vSource = new ol.source.Vector({
      format: new ol.format.WFS(),  // Oops! GML version 3.1.1 only! 
 
      url: function(extent) {
@@ -174,11 +195,15 @@ function createLayer_WFS(opts)
 
      strategy: ol.loadingstrategy.bbox
    });
-
+   
+   vSource.url = opts.url;
+   vSource.ftype = opts.ftype;
+   vSource.oformat = opts.oformat;
+   vSource.srs = opts.srs;
    
    return new ol.layer.Vector({
       name: opts.name,
-      source: vectorSource,
+      source: vSource,
       style: opts.style
    });
 }
@@ -207,6 +232,7 @@ function STYLES( st ) {
        CONFIG.styles[ident] = new ol.style.Style(x);   
        console.log("Config: Add style: "+ident) 
    }
+   var keys = Object.keys(CONFIG.styles);
 }
 
 
@@ -215,8 +241,19 @@ function getStyle(id)
 
    
    
-function GETSTYLE(id)
-   { return function(f,r) {return getStyle(id);}}
+function GETSTYLE(id) { 
+  var gotit = false;
+  return function(f,r) {
+     if (gotit==false) {
+         var ll = "";
+         for (x in f.getProperties())
+	    ll += (x + " ");
+	 console.log("FEATURE PROPERTIES: "+ll);
+	 gotit = true;
+     }
+     return getStyle(id);
+  }
+}
 
    
    
@@ -227,9 +264,13 @@ function setLabel(id, label) {
    return x;
 }
 
+
 function SETLABEL(id, label) {
    return function(f,r) {
-       return setLabel(id, f.get(label));}
+       var lbl = label.replace( /\$\([^\)]+\)/g, function(x) 
+         { return f.get( x.substring(2, x.length-1)); });
+       return setLabel(id, lbl); 
+   }
 }
 
 
