@@ -14,6 +14,7 @@
    browser.ctxMenu.addCallback("TOOLBAR", function(m) {
      m.add('Find position', function () { var x = new polaric.refSearch(); x.activatePopup("refSearch", [50,70]) });
      m.add('Area List', function () { browser.toolbar.arealist.activatePopup("AreaList", [50,70]) });
+     m.add('Layer List', function () { var x = new polaric.LayerList(); x.activatePopup("LayerList", [50,70]) });
      m.add('Blow up all', function () { alert("Boom!"); });
      m.add('Do nothing', function () { alert("What?"); });
    });
@@ -27,4 +28,3 @@
                     draggable: true,
                     id:        "test" } );
 */
-
