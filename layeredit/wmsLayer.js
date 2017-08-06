@@ -45,6 +45,17 @@ ol.inherits(polaric.WmsLayer, polaric.LayerEdit);
 
 
 
+/**
+ * Return true if add button can be enabled 
+ */
+
+polaric.WmsLayer.prototype.enabled = function() {
+    return  $("#editLayer").attr("ok") && 
+            $("#wmsUrl").attr("ok") && 
+            $("#wmsLayers").attr("ok") ; 
+}
+
+
 
 /**
  * Create a layer. 
@@ -75,8 +86,8 @@ polaric.WmsLayer.prototype.createLayer = function(name) {
 polaric.WmsLayer.prototype.edit = function(layer) {
    polaric.LayerEdit.prototype.edit.call(this, layer);
    
-   $("#wmsUrl").val(layer.getSource().getUrl()).trigger("change");
-   $("#wmsLayers").val(layer.getSource().getParams().LAYERS).trigger("change");
+   $("#wmsUrl").val(layer.getSource().getUrl()).trigger("change").attr("ok", true);
+   $("#wmsLayers").val(layer.getSource().getParams().LAYERS).trigger("change").attr("ok", true);
 }
 
 

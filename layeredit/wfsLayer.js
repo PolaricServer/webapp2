@@ -46,11 +46,22 @@ polaric.WfsLayer = function(list) {
            ]);
        }
    }  
-   
+      
 }
 ol.inherits(polaric.WfsLayer, polaric.LayerEdit);
 
 
+
+/**
+ * Return true if add button can be enabled 
+ */
+
+polaric.WfsLayer.prototype.enabled = function() {
+    return  $("#editLayer").attr("ok") && 
+            $("#wfsUrl").attr("ok") && 
+            $("#wfsFtype").attr("ok"); 
+}
+      
       
       
  /**
@@ -89,8 +100,8 @@ polaric.WfsLayer.prototype.createLayer = function(name)
 polaric.WfsLayer.prototype.edit = function(layer) {
    polaric.LayerEdit.prototype.edit.call(this, layer);
    
-   $("#wfsUrl").val(layer.getSource().url).trigger("change");
-   $("#wfsFtype").val(layer.getSource().ftype).trigger("change");
+   $("#wfsUrl").val(layer.getSource().url).trigger("change").attr("ok", true);;
+   $("#wfsFtype").val(layer.getSource().ftype).trigger("change").attr("ok", true);;
    $("#wfsStyle").val(layer.styleId).trigger("change");
    $("#wfsLabel").val(layer.label).trigger("change");
 }

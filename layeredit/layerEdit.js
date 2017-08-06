@@ -23,6 +23,7 @@
 /**
  * @classdesc
  * Base class for layer editors
+ * @constructor
  */
 
 polaric.LayerEdit = function(list) {
@@ -47,8 +48,8 @@ polaric.LayerEdit = function(list) {
              m(t.fields),
              
              m("div.buttons", [
-                m("input.button", { type: "button", onclick: add, value: "Add" } ),
-                m("input.button", { type: "reset", onclick: reset, value: "Reset" } )
+                m("input#addButton", { disabled: !t.enabled(), type: "button", onclick: add, value: "Add" } ),
+                m("input", { type: "reset", onclick: reset, value: "Reset" } )
              ])
         ]);
       }
@@ -118,6 +119,10 @@ polaric.LayerEdit = function(list) {
 
 
 
+polaric.LayerEdit.prototype.enabled = function()
+   { return false; }
+
+
 /**
  * Create a filter function (a predicate) with the parameters 
  * (extent, zoom-level, projection) set by user
@@ -145,7 +150,7 @@ polaric.LayerEdit.prototype.createFilter = function (f) {
  * To be extended in subclass. 
  */
 polaric.LayerEdit.prototype.edit = function(layer) {
-    $("#editLayer").val(layer.get("name")).trigger("change");
+    $("#editLayer").val(layer.get("name")).trigger("change").attr("ok", true);
     this.filt = layer.filt;
     $("#vis.extent").prop("checked", (this.filt.ext != null));
     $("#vis.zoom").prop("checked", (this.filt.zoom != null));
