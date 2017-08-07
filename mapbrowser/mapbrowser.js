@@ -186,8 +186,13 @@ polaric.MapBrowser.prototype.addVectorLayer = function(style) {
 
 polaric.MapBrowser.prototype.addConfiguredLayer = function(layer, name) {
    console.assert(layer != null && name != null, "Assertion failed");
-   this.config.addLayer(layer, name);
-    
+   var i = this.config.addLayer(layer, name);
+   var visible = this.config.get('olayer.'+i);
+   if (visible == null)
+      this.config.store('olayer.' + i, true); 
+   else
+      this.config.oLayers[i].setVisible(visible);
+   
    /* Remove extra layers to keep the order */
    for (var i in this.xLayers)
      this.map.removeLayer(this.xLayers[i]);
@@ -201,11 +206,10 @@ polaric.MapBrowser.prototype.addConfiguredLayer = function(layer, name) {
 }
 
 
+
 polaric.MapBrowser.prototype.removeConfiguredLayer = function(layer) {
    console.assert(layer != null, "Assertion failed");
    this.map.removeLayer(layer);   
-//   this.map.addLayer(layer);   // Ugly hack to force it to trigger a change event.
-//   this.map.removeLayer(layer);
    this.config.removeLayer(layer);
 }
 
