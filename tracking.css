@@ -1,0 +1,43 @@
+
+        
+div.lstill, div.lobject, div.lmoving {
+   border: 1px solid #766;   
+   font-family: Arial, sans-serif;   
+   font-weight: bold;
+   font-size: 100%;
+   white-space: nowrap;
+   padding: 1px 3px 1px 3px; 
+   opacity: 0.88;
+   border-radius: 0.3em;
+   box-shadow: 2px 2px 5px #242;
+}
+
+div.lstill {
+      background: #ffffb8;
+}
+
+div.lmoving {
+      background: #ffdd87;
+}
+
+
+div.lobject {
+      background: #e7f4ff;
+      font-weight: normal;
+      opacity: 0.88;
+}
+
+div.lflash {
+   text-decoration: blink;
+   border: solid 3px red;
+   color: #c44;
+}
+
+
+div.tracked {
+   color: #60d;
+   border: #45e 5px double;
+}
+div.igate { background: #dfc; border: 2px solid #262}
+div.wdigi { background: #fcc; border: 2px solid #522}
+div.own   { background: #ccffcc; color: #0000cc }

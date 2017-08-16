@@ -20,6 +20,9 @@
    });
    
 
+   mu = new polaric.Tracking("http://aprs.no");
+   
+   
 /*
    gui.showPopup( { html:      "Bla bla",
                     pixPos:    [400, 400],
