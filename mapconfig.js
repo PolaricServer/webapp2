@@ -124,7 +124,7 @@
 /* Overlays for all projections */
 LAYERS ( 
    { base: false, 
-     predicate: function() { return scale() < 800; }
+     predicate: RESOLUTION_LT (3600)  
    },
    [  
       new ol.layer.Image({
@@ -147,7 +147,7 @@ LAYERS (
           name : "O-kart dekning",
           url  : "http://gis.umb.no/nof/o_kart_wfs",
           ftype: "okart:o-kart_nof",
-          style: TESTRES( 50, SETLABEL("Blue", "id"), GETSTYLE("Red"))
+          style: TESTRES( 50, SETLABEL("Blue", "$(id): $(kartnavn)"), GETSTYLE("Red"))
       })
       
        /* TESTRES, SETLABEL and GETSTYLE return functions that return styles. 
@@ -155,8 +155,9 @@ LAYERS (
         * the third argument if it is greater. 
         * 
         * GETSTYLE just return the named style (see STYLES below). 
-        * SETLABEL return the named style but adds text for labels using a named attribute 
-        * of each feature. In this example, 'id' is such an attribute. 
+        * SETLABEL return the named style and adds text for labels, using named attributes 
+        * of each feature. Any $(attr) is replaced with the value of the attribute. 
+	    * In this example, 'id' is such an attribute. 
         */
     
    ]);
@@ -182,10 +183,21 @@ STYLES ([
 	    fill  : 'rgba(255,240,220,0.3)', 
 	    text  : {scale: 1.2, fill: '#300', stroke: {color: '#fff', width: 3} }, 
 	    image : CIRCLE(7, {fill: '#f66'})
-   },   
+   }, 
+   { id: "Green",
+        stroke: {color: 'rgba(0,100,0,1)', width: 1.5}, 
+	    fill  : 'rgba(220,255,220,0.3)', 
+	    text  : {scale: 1.2, fill: '#300', stroke: {color: '#fff', width: 3} }, 
+	    image : CIRCLE(7, {fill: '#f66'})
+   }, 
    { id: "Blue",
         stroke: {color: 'rgba(0,0,200,1)', width: 1.5, lineDash: [3,3]}, 
 	    fill  : 'rgba(200,220,253,0.3)', 
+	    text  : {scale: 1.2, fill: '#003', stroke: {color: '#fff', width: 3} }, 
+	    image : CIRCLE(7, {fill: '#66f'})
+   },
+   { id: "Blue - No fill",
+        stroke: {color: 'rgba(0,0,200,1)', width: 1.5}, 
 	    text  : {scale: 1.2, fill: '#003', stroke: {color: '#fff', width: 3} }, 
 	    image : CIRCLE(7, {fill: '#66f'})
    }
