@@ -69,15 +69,30 @@
      t.toolbar.setDefaultItems();
      t.ctxMenu.addMenuId("map", "MAP");
    
+     
      /* Set up handler for move and zoom. Store new center and scale */
      t.map.on('moveend', onMove);
+   
+     /* Screen pixels per meter */
+     t.dpm = dotsPerInch()*39.37;
      
      function onMove() {
          t.config.store('center', 
             ol.proj.toLonLat(t.view.getCenter(), t.view.getProjection()), true); 
     	 t.config.store('resolution', t.view.getResolution(), true);
      }
+    
      
+     /* Hack to find the actual screen resolution in dots per inch */
+     function dotsPerInch() {
+        var div = document.createElement("div");
+        div.style.width="1in";
+        var body = document.getElementsByTagName("body")[0];
+        body.appendChild(div);
+        var ppi = document.defaultView.getComputedStyle(div, null).getPropertyValue('width');
+        body.removeChild(div); 
+        return parseFloat(ppi);
+     }
  }
 
  
@@ -249,11 +264,25 @@ polaric.MapBrowser.prototype.getCenterUTM = function() {
 
 /**
  * Return the geographical extent of the map shown on screen. 
+ * In some cases it is better to use the limits at the center when transforming between projections. 
  */
 polaric.MapBrowser.prototype.getExtent = function() {
-    return ol.proj.transformExtent(
-        this.view.calculateExtent(), this.view.getProjection(), "EPSG:4326"); 
+    var proj = this.view.getProjection();
+    var center = this.view.getCenter();
+    var ext = this.view.calculateExtent();
+    var midTop  =  [center[0], ext[3]];
+    var midBot  =  [center[0], ext[1]];
+    var midLeft =  [ext[0], center[1]];
+    var midRight = [ext[2], center[1]];
+    
+    xmTop  = ol.proj.transform(midTop, proj, "EPSG:4326");
+    xmBot  = ol.proj.transform(midBot, proj, "EPSG:4326");
+    xmLeft = ol.proj.transform(midLeft, proj, "EPSG:4326");
+    xmRight = ol.proj.transform(midRight, proj, "EPSG:4326");
+    
+    return [xmLeft[0], xmBot[1], xmRight[0], xmTop[1]];
 }
+
 
 
 /**
@@ -282,6 +311,19 @@ polaric.MapBrowser.prototype.getResolution = function() {
 polaric.MapBrowser.prototype.setResolution = function(res) {
    this.view.setResolution(res); 
 };
+
+
+/**
+ * Get scale of the map (center of map) as it is displayed on the screen.  
+ */
+polaric.MapBrowser.prototype.getScale = function() {
+   var res = this.view.getResolution();
+   var center = this.view.getCenter();
+   var mpu = this.view.getProjection().getMetersPerUnit();
+   
+   return ol.proj.getPointResolution(
+         this.view.getProjection(), res, center) * mpu * this.dpm;
+}
 
 
 
