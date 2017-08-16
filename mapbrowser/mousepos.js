@@ -98,15 +98,7 @@ polaric.MousePos.prototype.setMap = function(map) {
   
    /* Handler for change of map zoom-level. Compute scale and show it */
    function onMapMove(e) {
-      var view = t.getMap().getView();
-      var mpu = view.getProjection().getMetersPerUnit();
-      var res = t.getMap().getView().getResolution();
-      var center = view.getCenter();
-      var dpm = dotsPerInch()*39.37; 
-      
-      var scale = ol.proj.getPointResolution(
-         view.getProjection(), res, center) * mpu * dpm;
-      
+      var scale = CONFIG.mb.getScale(); 
 
       if (scale >= 1000)
             scale = Math.round(scale / 100) * 100;

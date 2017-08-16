@@ -91,10 +91,12 @@ var textInput = {
                 if (vn.attrs.regex.test(vn.dom.value)) {
                     vn.state.cssclass = "valid";
                     vn.dom.title = "Input OK";
+                    $(vn.dom).attr("ok", true);
                 }
                 else {
                     vn.state.cssclass = "invalid";
                     vn.dom.title = "Invalid input!";
+                    $(vn.dom).attr("ok", false);
                 }    
             },
             onchange: function() {
@@ -102,7 +104,6 @@ var textInput = {
                 if (!vn.attrs.regex.test(vn.dom.value) && vn.attrs.value) 
                     setTimeout(function() {
                         vn.state.cssclass = "";
-                        vn.dom.title = "Default from center of map";
                         vn.state.data = NaN;
                         m.redraw();
                     }, 4000);

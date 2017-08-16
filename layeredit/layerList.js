@@ -1,6 +1,5 @@
-
 /*
- Map browser based on OpenLayers 4. 
+ Map browser based on OpenLayers 4. Layer editor.
  
  Copyright (C) 2017 Øyvind Hanssen, LA7ECA, ohanssen@acm.org
  

@@ -76,6 +76,7 @@ polaric.Config.prototype.getOLayers = function()
  * Add to the configured list of layers. 
  * @param {Layer} layer to be added.
  * @param {String|undefined} Name/decription to be used in layer switcher.
+ * @returns Index of new layer. 
  */
 
 polaric.Config.prototype.addLayer = function(layer, name) 
@@ -85,7 +86,7 @@ polaric.Config.prototype.addLayer = function(layer, name)
        layer.set("name", name);
   if (!layer.predicate) 
        layer.predicate = function() {return true;}
-  this.oLayers.push(layer);
+  return this.oLayers.push(layer) - 1;
 }
 
 

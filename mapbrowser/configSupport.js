@@ -31,6 +31,10 @@ var uid = "ol4test"; // What is this? Still needed?
  */
 
 
+function ll2proj(p)
+ { return ol.proj.transform(p, 'EPSG:4326', CONFIG.mb.view.getProjection()); }
+ 
+
 var TRUE = function() { return true; }
 
 

@@ -38,7 +38,7 @@
 polaric.Measure = function() 
 {
     
-    this.vector = browser.addVectorLayer(
+    this.vector = CONFIG.mb.addVectorLayer(
        new ol.style.Style({
           fill: new ol.style.Fill({
             color: 'rgba(255, 255, 255, 0.2)'
@@ -164,5 +164,5 @@ polaric.Measure.prototype.deactivate = function(a) {
    CONFIG.mb.map.removeInteraction(this.draw);
    CONFIG.mb.removeLayer(this.vector);
    for (i in this.tooltips)
-     CONFIG.mb.map.removeOverlay(this.tooltips[i]);
+      CONFIG.mb.map.removeOverlay(this.tooltips[i]);
 }
