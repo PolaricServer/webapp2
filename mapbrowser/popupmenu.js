@@ -346,13 +346,20 @@ polaric.PopupMenu.prototype.createItem_ = function(text, actn, arg)
   * @param {Element} element - DOM element. 
   * @param {string} name - Name of menu context.
   * @param {boolean} icon - True if element is a icon that can react on left mouse click.
+  * @param {Function|undefined} namefunc - Function that return a menu name. If null the default name will be used.
   */
  
- polaric.ContextMenu.prototype.addMenu = function (element, name, icon)
+ polaric.ContextMenu.prototype.addMenu = function (element, name, icon, func)
  {
     var t = this;
     polaric.addHandler(element, icon, function(e)
-        { t.showHandler(element, e, name, icon); } );
+        {   var n = null;
+            if (func) n = func(e);
+            if (n == null)
+               t.showHandler(element, e, name, icon); 
+            else
+               t.showHandler(element, e, n, icon); 
+        } );
  }
  
  
@@ -362,12 +369,13 @@ polaric.PopupMenu.prototype.createItem_ = function(text, actn, arg)
   * @param {string} domId - Id of DOM element. 
   * @param {string} name - Name of menu context.
   * @param {boolean} icon - True if element is a icon that can react on left mouse click.
+  * @param {Function|undefined} namefunc - Function that return a menu name. If null the default name will be used.
   */
  
- polaric.ContextMenu.prototype.addMenuId = function(domId, name, icon)
+ polaric.ContextMenu.prototype.addMenuId = function(domId, name, icon, func)
  {
     var element = document.getElementById(domId);
-    this.addMenu(element, name, icon);
+    this.addMenu(element, name, icon, func);
  }
  
  

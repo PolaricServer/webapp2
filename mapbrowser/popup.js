@@ -153,7 +153,9 @@ polaric.Popup.prototype.showPopup = function (props)
           { x = props.pixPos[0]; y=props.pixPos[1]; }
        t.popup_(pdiv, x, y, props.image);
 
-    
+       if (props.label)
+	   t.allowedPopups++;
+       
        if (props.draggable) {
           if (props.pinned)
               pdiv._pinned = true;
@@ -212,7 +214,7 @@ polaric.Popup.prototype.showPopup = function (props)
 polaric.Popup.prototype.remotePopup = function(url, props)
 {
     var d =  this.showPopup(props);
-    call(url, null, function(txt) { d.innerHTML = txt; } );
+    $.get(url, function(txt) { d.innerHTML = txt; } );
     return d;
 }
 

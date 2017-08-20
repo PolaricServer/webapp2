@@ -67,7 +67,6 @@
      t.gui = new polaric.Popup(t);
      t.ctxMenu = new polaric.ContextMenu(t.gui);
      t.toolbar.setDefaultItems();
-     t.ctxMenu.addMenuId("map", "MAP");
    
      
      /* Set up handler for move and zoom. Store new center and scale */
@@ -95,6 +94,13 @@
      }
  }
 
+ 
+ 
+polaric.MapBrowser.prototype.addContextMenu = function(name, func) {
+   this.ctxMenu.addMenuId("map", "MAP", false, func);
+}
+ 
+ 
  
  
 /**

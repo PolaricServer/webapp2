@@ -51,6 +51,61 @@ polaric.Tracking = function(url)
    t.source = this.layer.getSource();;     
    
    
+   /*
+    * Define the 'MAP' context as the default context used when right-clicking on the map. 
+    * We check if there are any tracking-points at the clicked positions and if this 
+    * is the case, we use the 'POINT' context. 
+    */
+   browser.addContextMenu("MAP", function(e) {  
+       if (mu.getPointsAt([e.clientX, e.clientY]) != null) 
+           return "POINT";
+       else return null;
+   }); 
+  
+   
+   /* Add click handler for tracking-features. Click on icons and pop up some info... */
+   browser.map.on("click", function(e) { 
+       var points = mu.getPointsAt(e.pixel);
+       var txt = "";
+       if (points != null && points.length > 0) {
+          if (points.length == 1)
+              infoPopup(points[0].getId());
+          else 
+              showList(points);
+       }
+       
+       /* Show list of points. Clickable to show info about each. */
+       function showList(points) {
+          var widget =  {
+            view: function() {
+              return m("div", [       
+                 m("table", points.map(function(x) 
+                    { return m("tr", [ m("td", 
+                        { onclick: function() {infoPopup(x.getId())}, 
+                          title: x.getId()}, x.alias), m("td", x.title) ] ); }))
+               ])
+            }
+          }
+          browser.gui.showPopup( {vnode: widget, geoPos: browser.pix2LonLat(e.pixel)} );
+       }
+       
+       
+       /* Get info about point from server */
+       function infoPopup(id) {
+           browser.gui.removePopup();
+           browser.gui.remotePopup(
+               /* FIXME: This is a call to the old polaric-aprsd webservice that return a HTML document.
+                * In the future we may define a REST service that returns a JSON object that is
+                * rendered by the client 
+                */
+              url+"/srv/station?ajax=true&simple=true&id="+id,
+              {id: "infopopup", geoPos: browser.pix2LonLat(e.pixel)});
+       }
+       
+    });
+   
+   
+   
    /* Called when (Web socket) connection to server is opened. */
    t.producer.onopen = function() {   
       CONFIG.mb.map.on('movestart', onMoveStart);
@@ -59,6 +114,8 @@ polaric.Tracking = function(url)
       t.producer.subscribe(t.filter, function(x) {t.update(x);} );
    }
 
+   
+   
    
    /* Called when move of map starts */
    function onMoveStart() {
@@ -104,8 +161,10 @@ polaric.Tracking.prototype.addPoint = function(p) {
     else if (!p.redraw) 
         return;
     
-    /* update position */
+    /* update position, etc. */
     feature.getGeometry().setCoordinates(c);
+    feature.title = p.title; 
+    feature.alias = p.label.id;
     
     /* Update style (icon) */
     var style = new ol.style.Style({
@@ -119,7 +178,7 @@ polaric.Tracking.prototype.addPoint = function(p) {
 
 
     /* Update label. Just replace it. */
-    if (p.label != null) {
+    if (!p.label.hidden) {
        if (feature.label) 
            CONFIG.mb.map.removeOverlay(feature.label);
        feature.label = createLabel(c, p);
@@ -127,6 +186,8 @@ polaric.Tracking.prototype.addPoint = function(p) {
     else if (feature.label)
        CONFIG.mb.map.removeOverlay(feature.label);
 
+    /* Trail */
+    this.addTrail(p);
    
     /** Create label using a OL overlay. */
     function createLabel(pos, p) {
@@ -155,9 +216,15 @@ polaric.Tracking.prototype.addTrail = function(p) {
     if (feature != null && !p.redraw) 
         return;
     
-    /* Just replace it with a new one */
+    /* Just replace it with a new one. Remove the old one. */
     if (feature !=null) 
         this.source.removeFeature(feature);
+    
+    /* If no new trail, just return */
+    if (p.trail == null)
+        return;
+        
+    
     feature = new ol.Feature(new ol.geom.LineString([ll2proj(p.pos)]));
     feature.setId(p.ident+'.trail');
     this.source.addFeature(feature);
@@ -184,9 +251,13 @@ polaric.Tracking.prototype.addTrail = function(p) {
  */   
 polaric.Tracking.prototype.removePoint = function(x) {
     var feature = this.source.getFeatureById(x);
+    var trail = this.source.getFeatureById(x + ".trail");
+    
     if (feature != null) {
         CONFIG.mb.map.removeOverlay(feature.label);
         this.source.removeFeature(feature);
+        if (trail != null)
+            this.source.removeFeature(trail);
     }
 }
 
@@ -204,23 +275,20 @@ polaric.Tracking.prototype.getPointsAt = function(pix) {
    
    if (pp == null) 
       return null;
-   else return pp.map(
-      function(x) {return x.getId();});
+   else return pp.filter(function(x) {return x.alias}); 
 }
 
 
 
 
 /** 
- * Update using JSON data from Polaric server backend 
+ * Update using JSON data from Polaric Server backend 
  */
 polaric.Tracking.prototype.update = function(ov) {
    console.log("Tracking.update: view="+ov.view+", sesId="+ov.sesId);
-   for (i in ov.points) {
+   for (i in ov.points) 
       this.addPoint(ov.points[i]);
-      if (ov.points[i].trail != null) 
-         this.addTrail(ov.points[i]);
-   }
+   
    for (i in ov["delete"])
       this.removePoint(ov["delete"][i]); 
        
