@@ -76,6 +76,24 @@ div.ITEM_selected
 
 .POPUPMENU h1 {margin: 0px; padding: 2px; font-size: 1.1em;margin-bottom: 3px}
 
+table {border-collapse: collapse}
+td {
+  padding-left: 0.5em; 
+  padding-right: 0.5em;
+  padding-bottom: 0.2em;
+  padding-top: 0.2em;
+  line-height: 1em;
+  border: 1px #d86 dotted
+}
+
+tr {height: 12px;}
+
+tr:hover {background: #ff8}
+
+
+#infopopup {
+min-width: 26em;
+}
 
 
 .leftlab, .sleftlab, label.lleftlab {
@@ -126,6 +144,13 @@ h1, #layerSwitcher h2 {
 #layerSwitcher form {margin-left: 0.4em}
 
 
+div.trblock, label {display: block; overflow: hidden; 
+margin-bottom: 0.07em; max-width: 45em; vertical-align: top}
+
+div.trblock {margin-bottom: 0.2em}
+div.trblock {margin-bottom: 0.2em}
+div#traffic, div#wpsresult {margin-top: 0.4em}
+
 
 form.mapref { min-width: 28em; margin-bottom: 0.5em }
 form.mapref hr { border: dotted 1px #888 }
@@ -156,4 +181,3 @@ form.mapref hr { border: dotted 1px #888 }
 #wmsUrl, #wfsUrl, #wfsFtype, #wmsLayers {width: 28em}
 #editLayer, #wfsLabel {width: 16em}
 #layerEdit div.buttons {padding-left: 5.7em; padding-top: 0.4em; margin-top: 0.1em; }
-
