@@ -44,6 +44,7 @@ polaric.Config = function(uid) {
    this.oLayersCount = 0;
    this.aMaps = new Array(); 
    this.styles = {};
+   this.server = null;
    
    this.props = {
       projection: "EPSG:900913",

@@ -136,7 +136,9 @@ polaric.MousePos.prototype.updatePos = function(x) {
     }
     else {
        var map = this.getMap();
-       var coord = ol.proj.toLonLat(map.getCoordinateFromPixel(x), map.getView().getProjection());    
+       var c = map.getCoordinateFromPixel(x);
+       if (c == null) c = [0,0];
+       var coord = ol.proj.toLonLat(c, map.getView().getProjection());    
        this.latlong.innerHTML = '<span>'+polaric.formatDM(coord)+'</span>';
        this.utm.innerHTML = '<span>'+polaric.formatUTM(coord)+'</span>'; 
        this.maidenhead.innerHTML = '<span>'+polaric.formatMaidenhead(coord);

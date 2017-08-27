@@ -26,7 +26,7 @@
  * @constructor
  */
 
-polaric.MapUpdate = function(url) {
+polaric.MapUpdate = function() {
    this.suspend = false;
    this.retry = 0;
    var t = this;
@@ -34,7 +34,7 @@ polaric.MapUpdate = function(url) {
    t.subscriber = null;
      /* Should be a (callback function). 
       * We may have an array of subscribers instead? */
-     
+   var url = CONFIG.get("server");
    var uparts = url.split(/:\/\//);
    url = (uparts[0] === 'https' ? 'wss' : 'ws'); 
    url = url + "://"+ uparts[1] + '/ws/jmapdata';

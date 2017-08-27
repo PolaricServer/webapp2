@@ -197,7 +197,7 @@ polaric.Popup.prototype.showPopup = function (props)
    if (props.resizable) 
        $(pdiv).resizable();
    if (props.draggable) 
-       $(pdiv).draggable({ delay: 100, opacity: 0.7, start: props.dragStart, stop: props.dragStop }  );
+       $(pdiv).draggable({ handle: "h1,h2,.handle", delay: 100, opacity: 0.7, start: props.dragStart, stop: props.dragStop }  );
    return pdiv;
 
 }
@@ -299,7 +299,7 @@ polaric.Popup.prototype.setPosition_ = function(x, y)
         
       if (this.image != null) {
          this.image.style.left= -9+'px';
-         this.image.style.top= -12+'px';
+         this.image.style.top= -9+'px';
       }
       
      /* 
@@ -322,7 +322,7 @@ polaric.Popup.prototype.setPosition_ = function(x, y)
         y -= yoff;
         if (y < 1) y=1;
         if (this.image!=null)
-          this.image.style.top =(yoff-12)+'px';
+          this.image.style.top =(yoff-9)+'px';
       }
       
       this.activepopup.style.left = x-3+"px";
@@ -355,7 +355,7 @@ polaric.Popup.prototype.popup_ = function(elem, x, y, img)
          this.activepopup.appendChild(this.image);
       	 this.image.src='images/cross.png';
     	 this.image.style.position='absolute';
-         this.image.style.zIndex = 1001;
+  //       this.image.style.zIndex = 1001;
      }
 
      /* Add the popup window div to the viewport */
@@ -396,7 +396,7 @@ polaric.Popup.prototype.popup_ = function(elem, x, y, img)
         this.activepopup.style.overflowY = 'visible';
      
      this.setPosition_(x, y);
-     this.activepopup.style.zIndex  = 1301;
+ //    this.activepopup.style.zIndex  = 1301;
      
      this.allowedPopups--;
      if (this.onCallback != null)

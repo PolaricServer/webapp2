@@ -37,6 +37,10 @@
    * 
    */
    
+  /* Backend server base URL */
+  SERVER("http://localhost/aprs");
+  
+  
   /* Default projection */
   PROJECTION( "EPSG:900913" );
   

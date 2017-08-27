@@ -1,8 +1,18 @@
-     
+
+   /* 
+    * Instantiate the map browser and restore widgets from a previous session. 
+    */  
    var browser = new polaric.MapBrowser('map', CONFIG);
    setTimeout(widget.restore, 500);
+   
+   
 
-   /* Set up app specific context menus */
+   /* Set up application-specific context menus. We may define named contexts. The toolbar 
+    * define its own context, 'TOOLBAR'. See below how we define 'MAP' and 'POINT'. 
+    * 
+    * A callback function is associated with a named context and is called when we need to 
+    * activate the menu. Use it to add menu items. Adding null means adding a separator. 
+    */ 
    browser.ctxMenu.addCallback("MAP", function(m) {
      m.add('Show map reference', function () { browser.show_MaprefPix( [m.x, m.y] ); });
      m.add(null);
@@ -12,6 +22,10 @@
    });
 
    browser.ctxMenu.addCallback("TOOLBAR", function(m) {
+     m.add('Search items', function () 
+       { var x = new polaric.trackerSearch(); 
+         x.activatePopup("trackerSearch", [50,70]) }); 
+     
      m.add('Find position', function () { var x = new polaric.refSearch(); x.activatePopup("refSearch", [50,70]) });
      m.add('Area List', function () { browser.toolbar.arealist.activatePopup("AreaList", [50,70]) });
      m.add('Layer List', function () { var x = new polaric.LayerList(); x.activatePopup("LayerList", [50,70]) });
@@ -19,15 +33,17 @@
      m.add('Do nothing', function () { alert("What?"); });
    });
    
-
-   mu = new polaric.Tracking("http://aprs.no");
+   browser.ctxMenu.addCallback("POINT", function(m) {
+      m.add('Do something', function () { alert("Something?"); });
+      m.add('Do nothing', function () { alert("What?"); });
+   });
    
    
-/*
-   gui.showPopup( { html:      "Bla bla",
-                    pixPos:    [400, 400],
-                    geoPos:    [19, 69],
-                    image:     true, 
-                    draggable: true,
-                    id:        "test" } );
-*/
+   /*
+    * Add a tracking-layer using a polaric server backend.
+    */
+   mu = new polaric.Tracking();
+   
+   
+   function findItem(x) 
+   { mu.goto_Point(x); }

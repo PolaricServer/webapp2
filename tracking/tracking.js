@@ -26,18 +26,22 @@
  * @constructor
  */
  
-polaric.Tracking = function(url) 
+polaric.Tracking = function() 
 {
    var t = this; 
-   t.producer = new polaric.MapUpdate(url);
+   t.producer = new polaric.MapUpdate();
    t.filter = "track";
-   t.url = url;
+   t.url = CONFIG.get('server');
    t.zIndex = 1000;
    var init = true;
    
    
    /* Set up vector layer and source */
    t.layer = CONFIG.mb.addVectorLayer(
+       
+       /* Style. 
+        * FIXME: Consider supporting alternative trail-styles. 
+        */
        new ol.style.Style({
           fill: new ol.style.Fill({
             color: 'rgba(255, 255, 255, 0.2)'
@@ -79,7 +83,7 @@ polaric.Tracking = function(url)
           var widget =  {
             view: function() {
               return m("div", [       
-                 m("table", points.map(function(x) 
+                 m("table.items", points.map(function(x) 
                     { return m("tr", [ m("td", 
                         { onclick: function() {infoPopup(x.getId())}, 
                           title: x.getId()}, x.alias), m("td", x.title) ] ); }))
@@ -98,7 +102,7 @@ polaric.Tracking = function(url)
                 * In the future we may define a REST service that returns a JSON object that is
                 * rendered by the client 
                 */
-              url+"/srv/station?ajax=true&simple=true&id="+id,
+              t.url+"/srv/station?ajax=true&simple=true&id="+id,
               {id: "infopopup", geoPos: browser.pix2LonLat(e.pixel)});
        }
        
@@ -120,7 +124,7 @@ polaric.Tracking = function(url)
    /* Called when move of map starts */
    function onMoveStart() {
       if (!init) {
-         /* Clear the layer while moving */
+         /* Clear the layer while moving the map */
          t.layer.setVisible(false);
          var ft = t.source.getFeatures()
          for (i in ft) 
@@ -278,6 +282,32 @@ polaric.Tracking.prototype.getPointsAt = function(pix) {
    else return pp.filter(function(x) {return x.alias}); 
 }
 
+
+
+
+/**
+ * Move the map to a given point. Since the point may not be a feature on client yet, 
+ * we need to fetch it from the server. 
+ */
+polaric.Tracking.prototype.goto_Point = function(ident) {
+    
+   $.get(this.url + "/srv/finditem?ajax=true&id="+ident, function(info) {
+       if (info == null)
+          return; 
+     
+       /* The returned info should be three tokens delimited by commas: 
+        * an id (string) and x and y coordinates (number)
+        */
+       var args = info.split(/\s*,\s*/g);
+       if (args == null || args.length < 3)
+          return;
+       var x = parseFloat(args[1]);
+       var y = parseFloat(args[2]);
+       if (isNaN(x) || isNaN(y))
+          return;
+      CONFIG.mb.goto_Pos([x,y], false);
+   });
+}
 
 
 

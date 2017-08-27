@@ -30,11 +30,20 @@ var uid = "ol4test"; // What is this? Still needed?
  * 
  */
 
+function SERVER(url) 
+ { CONFIG.set('server', url); }
+
+
 
 function ll2proj(p)
  { return ol.proj.transform(p, 'EPSG:4326', CONFIG.mb.view.getProjection()); }
  
+ 
+function proj2ll(p)
+ { return ol.proj.transform(p, CONFIG.mb.view.getProjection(), 'EPSG:4326'); }
 
+ 
+ 
 var TRUE = function() { return true; }
 
 
