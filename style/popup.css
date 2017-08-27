@@ -76,8 +76,21 @@ div.ITEM_selected
 
 .POPUPMENU h1 {margin: 0px; padding: 2px; font-size: 1.1em;margin-bottom: 3px}
 
-table {border-collapse: collapse}
-td {
+
+th, td {font-size: 90%;}
+
+th { 
+  text-align: left;  
+  background: #fb9; 
+  border: #d86 1px solid; 
+  padding: 0 0 0 0.5em
+}
+
+
+table.items, #searchresult table 
+{border-collapse: collapse}
+
+table.items td, #searchresult td {
   padding-left: 0.5em; 
   padding-right: 0.5em;
   padding-bottom: 0.2em;
@@ -89,11 +102,6 @@ td {
 tr {height: 12px;}
 
 tr:hover {background: #ff8}
-
-
-#infopopup {
-min-width: 26em;
-}
 
 
 .leftlab, .sleftlab, label.lleftlab {
@@ -125,6 +133,21 @@ span.kartref:hover {
 }
 
 
+div#tags { 
+  columns: 3; 
+  column-width: 1em; 
+  -moz-columns: 3; 
+  -moz-column-width: 1em; 
+  -webkit-columns: 3; 
+  -webkit-column-width: 1em; 
+  border:1px dotted #555; 
+  background: #ddc; 
+  width: 32em; 
+  padding: 3px
+}
+input#search {margin-top: 0.7em; width: 18em}
+
+
 
 h1, #layerSwitcher h2 { 
   font-family: arial, helvetica, sans-serif; 
@@ -144,12 +167,18 @@ h1, #layerSwitcher h2 {
 #layerSwitcher form {margin-left: 0.4em}
 
 
+
+#infopopup {
+  min-width: 26em;
+}
+
 div.trblock, label {display: block; overflow: hidden; 
 margin-bottom: 0.07em; max-width: 45em; vertical-align: top}
 
 div.trblock {margin-bottom: 0.2em}
 div.trblock {margin-bottom: 0.2em}
 div#traffic, div#wpsresult {margin-top: 0.4em}
+
 
 
 form.mapref { min-width: 28em; margin-bottom: 0.5em }
