@@ -30,9 +30,9 @@ polaric.Tracking = function()
 {
    var t = this; 
    t.producer = new polaric.MapUpdate();
-   t.filter = "track";
+   t.filter = null;
+   t.ready = false;
    t.url = CONFIG.get('server');
-   t.zIndex = 1000;
    var init = true;
    
    
@@ -112,10 +112,12 @@ polaric.Tracking = function()
    
    /* Called when (Web socket) connection to server is opened. */
    t.producer.onopen = function() {   
+      t.ready = true;
       CONFIG.mb.map.on('movestart', onMoveStart);
       CONFIG.mb.map.on('moveend', onMoveEnd);
       /* Subscribe to updates from server */
-      t.producer.subscribe(t.filter, function(x) {t.update(x);} );
+      if (t.filter != null)
+          t.producer.subscribe(t.filter, function(x) {t.update(x);} );
    }
 
    
@@ -126,10 +128,7 @@ polaric.Tracking = function()
       if (!init) {
          /* Clear the layer while moving the map */
          t.layer.setVisible(false);
-         var ft = t.source.getFeatures()
-         for (i in ft) 
-            /* For some strange reason, removing feature directly doesn't work */
-            t.removePoint(ft[i].getId());
+         t.clear();
       }
    }
    
@@ -145,6 +144,30 @@ polaric.Tracking = function()
    }
    
 }
+
+
+
+polaric.Tracking.prototype.clear = function() {
+    var ft = this.source.getFeatures()
+    for (i in ft) 
+       /* For some strange reason, removing feature directly doesn't work */
+       this.removePoint(ft[i].getId());
+}
+
+
+/**
+ * Set filter and re-subscribe. 
+ */
+polaric.Tracking.prototype.setFilter = function(flt) {
+   var t = this;
+   t.filter = flt;
+   if (t.ready) {
+      t.clear();
+      console.log("Tracking.setFilter: "+flt);
+      t.producer.subscribe(t.filter, function(x) {t.update(x);} );
+   }
+}
+
 
 
 
@@ -237,11 +260,11 @@ polaric.Tracking.prototype.addTrail = function(p) {
     for (i in p.trail.linestring) 
         feature.getGeometry().appendCoordinate(ll2proj(p.trail.linestring[i].pos));
     
-    /* Update style (icon) */
+    /* Update style */
     var style = new ol.style.Style({
       stroke:
         new ol.style.Stroke( ({
-          color: "#00c", width: 2.1}))
+          color: "#"+p.trail.style, width: 1.9}))
       });   
     feature.setStyle(style);
     

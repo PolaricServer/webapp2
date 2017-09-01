@@ -39,11 +39,15 @@
    });
    
    
+   
+   
    /*
     * Add a tracking-layer using a polaric server backend.
     */
-   mu = new polaric.Tracking();
-   
+   var mu = new polaric.Tracking();
+   var flt = new polaric.Filters(mu);
+
+
    
    function findItem(x) 
-   { mu.goto_Point(x); }
+      { mu.goto_Point(x); }

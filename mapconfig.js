@@ -238,5 +238,18 @@ VIEWS ([
 
 
 
-
-
+/*
+ * Menu of predefined tracking filters
+ * The actual filters are defined by aprsd in
+ * /etc/polaric-aprsd/view.profiles. The name attribute refers to a profile-name. 
+ * For non-public profiles, add attribute: restricted: 'true' 
+ */
+var defaultFilter = 'track';
+FILTERS ([
+   { name: 'alle',   title: 'Alle / Alt' },
+   { name: 'track',  title: 'Sporing 1' },
+   { name: 'le',     title: 'Kun LE kall' }, 
+   { name: 'infra',  title: 'Infrastruktur'},
+   { name: 'ainfra', title: 'Aktiv Infrastr'},
+   { name: 'moving', title: 'Bevegelige'}
+]);

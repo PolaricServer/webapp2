@@ -41,3 +41,10 @@ div.tracked {
 div.igate { background: #dfc; border: 2px solid #262}
 div.wdigi { background: #fcc; border: 2px solid #522}
 div.own   { background: #ccffcc; color: #0000cc }
+
+
+#filterChoice {
+   font-size: 0.75em; font-family: sans-serif;  font-weight: bold; 
+   color: #060; padding-top: 9px; height: 23px; 
+   display: inline; float: right
+}

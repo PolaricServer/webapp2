@@ -9,10 +9,9 @@
  
  body { margin: 0px; }
 
-
 .toolbar {
-    padding-left: 10px;
-    padding-right: 10px;
+    padding-left: 12px;
+    padding-right: 0px;
     height: 32px; 
     top: 2px; left: 8px; 
     border: 1px solid #aaa; 
@@ -21,7 +20,10 @@
 
 .toolbar img {margin: 5px; margin-top: 3px}
 .toolbar img:hover {background: #ffe; border-radius: 6px}
-.toolbar .x-space {margin-right: 18px}
+.toolbar .x-space {margin-right: 15px}
+.toolbar>div {height: 32px;float: left; display: inline; margin-right: 15px}
+
+
 
 img.selected {background: #f60 !important}
 

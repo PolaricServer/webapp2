@@ -37,6 +37,8 @@ polaric.Toolbar = function(opt, br) {
    this.element.className = 'toolbar ol-unselectable ol-control';
    this.lastElem = null; 
    this.arealist = new polaric.AreaList();
+   this.sections = [];
+   this.nextSect = 0;
    
    ol.control.Control.call(this, {
       element: this.element,
@@ -45,7 +47,16 @@ polaric.Toolbar = function(opt, br) {
 };
 ol.inherits(polaric.Toolbar, ol.control.Control);
 
-      
+
+
+polaric.Toolbar.prototype.addSection = function() 
+{
+    var sx = document.createElement('div');
+    this.element.appendChild(sx);
+    this.sections[this.nextSect++] = sx;
+}
+
+
 
 /**
  * Activate default icons and menus on toolbar.
@@ -53,12 +64,15 @@ ol.inherits(polaric.Toolbar, ol.control.Control);
 polaric.Toolbar.prototype.setDefaultItems = function() 
 {
    /* Default icons */
-   this.addIcon("images/menu.png", "toolbar", null, "Main menu");
-   this.addSpacing();
-   this.addIcon("images/layers.png", "tb_layers", null, "Layer selector");
-   this.addIcon("images/areaselect.png", "tb_area", null, "Area menu");
-   this.addSpacing();
-   this.addIcon("images/ruler1.png", "tb_measure", null, "Measure distance");
+   this.addSection();
+   this.addIcon(0, "images/menu.png", "toolbar", null, "Main menu");
+   
+   this.addSection();
+   this.addIcon(1, "images/layers.png", "tb_layers", null, "Layer selector");
+   this.addIcon(1, "images/areaselect.png", "tb_area", null, "Area menu");
+   
+   this.addSection();
+   this.addIcon(2, "images/ruler1.png", "tb_measure", null, "Measure distance");
    
    var t = this; 
    
@@ -141,7 +155,7 @@ polaric.Toolbar.prototype.setMap = function(map) {
  * @param {string|undefined} title
  * @return DOM element for the icon. 
  */
-polaric.Toolbar.prototype.addIcon = function(f, id, action, title) {
+polaric.Toolbar.prototype.addIcon = function(i, f, id, action, title) {
     var x = document.createElement('img');
     if (id != null)
        x.setAttribute("id", id);
@@ -149,10 +163,23 @@ polaric.Toolbar.prototype.addIcon = function(f, id, action, title) {
     if (title)
         x.setAttribute('title', title);
     
-    this.element.appendChild(x, this.element);
+    this.sections[i].appendChild(x); // FIXME: Legal index? 
     this.lastElem = x; 
     if (action != null) 
         x.onclick = action;
+    return x;
+}
+
+
+
+polaric.Toolbar.prototype.addDiv = function(i, id, title) {
+    var x = document.createElement('div');
+    if (id != null)
+       x.setAttribute("id", id);
+    if (title)
+       x.setAttribute("title", title);
+    this.sections[i].appendChild(x);
+    this.lastElem = x;
     return x;
 }
 
