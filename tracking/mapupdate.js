@@ -87,6 +87,7 @@ polaric.MapUpdate = function() {
 
 /** Suspend the map-updater for a given time */
 polaric.MapUpdate.prototype.suspend = function(time) {
+   console.assert(time>0, "Assertion failed");
    this.suspend = true; 
    setTimeout( function() {this.suspend = false; }, time);
 }
@@ -106,6 +107,7 @@ function roundDeg(x)
 /** Subscribe to updates from the server */
 polaric.MapUpdate.prototype.subscribe = function(flt, c) 
 {
+  console.assert(flt!=null && flt!="" && c!=null, "Assertion failed");
   this.subscriber = c;  
   this.suspend = false; 
   var ext = CONFIG.mb.getExtent(); 

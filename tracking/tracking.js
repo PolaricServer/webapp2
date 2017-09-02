@@ -39,8 +39,7 @@ polaric.Tracking = function()
    /* Set up vector layer and source */
    t.layer = CONFIG.mb.addVectorLayer(
        
-       /* Style. 
-        * FIXME: Consider supporting alternative trail-styles. 
+       /* Default style. 
         */
        new ol.style.Style({
           fill: new ol.style.Fill({
@@ -96,6 +95,7 @@ polaric.Tracking = function()
        
        /* Get info about point from server */
        function infoPopup(id) {
+           console.assert(id!=null && id != "", "Assertion failed"); 
            browser.gui.removePopup();
            browser.gui.remotePopup(
                /* FIXME: This is a call to the old polaric-aprsd webservice that return a HTML document.
@@ -103,7 +103,7 @@ polaric.Tracking = function()
                 * rendered by the client 
                 */
               t.url+"/srv/station?ajax=true&simple=true&id="+id,
-              {id: "infopopup", geoPos: browser.pix2LonLat(e.pixel)});
+                {id: "infopopup", geoPos: browser.pix2LonLat(e.pixel)});
        }
        
     });
@@ -115,6 +115,7 @@ polaric.Tracking = function()
       t.ready = true;
       CONFIG.mb.map.on('movestart', onMoveStart);
       CONFIG.mb.map.on('moveend', onMoveEnd);
+      
       /* Subscribe to updates from server */
       if (t.filter != null)
           t.producer.subscribe(t.filter, function(x) {t.update(x);} );
@@ -159,11 +160,11 @@ polaric.Tracking.prototype.clear = function() {
  * Set filter and re-subscribe. 
  */
 polaric.Tracking.prototype.setFilter = function(flt) {
+   console.assert(flt!=null && flt!="", "Assertion failed");
    var t = this;
    t.filter = flt;
    if (t.ready) {
       t.clear();
-      console.log("Tracking.setFilter: "+flt);
       t.producer.subscribe(t.filter, function(x) {t.update(x);} );
    }
 }
@@ -176,6 +177,7 @@ polaric.Tracking.prototype.setFilter = function(flt) {
  */
 
 polaric.Tracking.prototype.addPoint = function(p) {
+    console.assert(p!=null, "Assertion failed");
     var t = this;
     var c = ll2proj(p.pos);
     var feature = this.source.getFeatureById(p.ident);
@@ -237,6 +239,7 @@ polaric.Tracking.prototype.addPoint = function(p) {
 
  
 polaric.Tracking.prototype.addTrail = function(p) {
+    console.assert(p!=null, "Assertion failed");
     var t = this;
     var feature = this.source.getFeatureById(p.ident+'.trail');    
     /* If feature exists and redraw flag is false. Just return */
@@ -264,7 +267,7 @@ polaric.Tracking.prototype.addTrail = function(p) {
     var style = new ol.style.Style({
       stroke:
         new ol.style.Stroke( ({
-          color: "#"+p.trail.style, width: 1.9}))
+          color: "#"+p.trail.style, width: 2.0}))
       });   
     feature.setStyle(style);
     
@@ -277,6 +280,7 @@ polaric.Tracking.prototype.addTrail = function(p) {
  * Remove a feature from map.
  */   
 polaric.Tracking.prototype.removePoint = function(x) {
+    console.assert(x!=null && x!="", "Assertion failed");
     var feature = this.source.getFeatureById(x);
     var trail = this.source.getFeatureById(x + ".trail");
     
@@ -296,6 +300,7 @@ polaric.Tracking.prototype.removePoint = function(x) {
  * @returns Array of point identifiers
  */
 polaric.Tracking.prototype.getPointsAt = function(pix) {
+   console.assert(pix!=null && pix[0]>=0 && pix[1]>=null, "Assertion failed");
    var t=this;
    var pp = CONFIG.mb.map.getFeaturesAtPixel(pix, 
       {hitTolerance: 3, layerFilter: function(x) {return (x == t.layer)}});
@@ -313,11 +318,13 @@ polaric.Tracking.prototype.getPointsAt = function(pix) {
  * we need to fetch it from the server. 
  */
 polaric.Tracking.prototype.goto_Point = function(ident) {
-    
+   console.assert(ident!=null && ident!="", "Assertion failed");
+   
    $.get(this.url + "/srv/finditem?ajax=true&id="+ident, function(info) {
-       if (info == null)
+       if (info == null) {
+          console.log("Goto point: Not found on server");
           return; 
-     
+       }  
        /* The returned info should be three tokens delimited by commas: 
         * an id (string) and x and y coordinates (number)
         */
