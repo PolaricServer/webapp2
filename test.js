@@ -6,6 +6,14 @@
    setTimeout(widget.restore, 500);
    
    
+   /*
+    * Add a tracking-layer using a polaric server backend.
+    */
+   var mu = new polaric.Tracking();
+   var flt = new polaric.Filters(mu);
+
+   
+   
 
    /* Set up application-specific context menus. We may define named contexts. The toolbar 
     * define its own context, 'TOOLBAR'. See below how we define 'MAP' and 'POINT'. 
@@ -29,23 +37,19 @@
      m.add('Find position', function () { var x = new polaric.refSearch(); x.activatePopup("refSearch", [50,70]) });
      m.add('Area List', function () { browser.toolbar.arealist.activatePopup("AreaList", [50,70]) });
      m.add('Layer List', function () { var x = new polaric.LayerList(); x.activatePopup("LayerList", [50,70]) });
-     m.add('Blow up all', function () { alert("Boom!"); });
-     m.add('Do nothing', function () { alert("What?"); });
    });
    
    browser.ctxMenu.addCallback("POINT", function(m) {
+      if (mu.labelHidden(m.ctxt.ident))
+          m.add('Show label', function() { mu.hideLabel(m.ctxt.ident, false); });
+      else
+          m.add('Hide label', function() { mu.hideLabel(m.ctxt.ident, true); });
+          
       m.add('Do something', function () { alert("Something?"); });
       m.add('Do nothing', function () { alert("What?"); });
    });
    
    
-   
-   
-   /*
-    * Add a tracking-layer using a polaric server backend.
-    */
-   var mu = new polaric.Tracking();
-   var flt = new polaric.Filters(mu);
 
 
    

@@ -35,6 +35,11 @@ polaric.Tracking = function()
    t.url = CONFIG.get('server');
    var init = true;
    
+   t.showLabel = CONFIG.get("tracking.showlabel");
+   if (t.showLabel == null)
+     t.showLabel = {};
+   
+   
    
    /* Set up vector layer and source */
    t.layer = CONFIG.mb.addVectorLayer(
@@ -57,11 +62,11 @@ polaric.Tracking = function()
    /*
     * Define the 'MAP' context as the default context used when right-clicking on the map. 
     * We check if there are any tracking-points at the clicked positions and if this 
-    * is the case, we use the 'POINT' context. 
+    * is the case, we create a context with name 'POINT'. 
     */
    browser.addContextMenu("MAP", function(e) {  
-       if (mu.getPointsAt([e.clientX, e.clientY]) != null) 
-           return "POINT";
+       if ((pts = t.getPointsAt([e.clientX, e.clientY])) != null) 
+           return {name: "POINT", ident: pts[0].getId()};
        else return null;
    }); 
   
@@ -148,12 +153,16 @@ polaric.Tracking = function()
 
 
 
+/**
+ * Remove all features from map. 
+ */
 polaric.Tracking.prototype.clear = function() {
     var ft = this.source.getFeatures()
     for (i in ft) 
        /* For some strange reason, removing feature directly doesn't work */
        this.removePoint(ft[i].getId());
 }
+
 
 
 /**
@@ -194,6 +203,7 @@ polaric.Tracking.prototype.addPoint = function(p) {
     feature.getGeometry().setCoordinates(c);
     feature.title = p.title; 
     feature.alias = p.label.id;
+    feature.lblinfo = p.label; 
     
     /* Update style (icon) */
     var style = new ol.style.Style({
@@ -207,37 +217,86 @@ polaric.Tracking.prototype.addPoint = function(p) {
 
 
     /* Update label. Just replace it. */
-    if (!p.label.hidden) {
+    if (!this._labelHidden(p.ident, p.label.hidden)) {
        if (feature.label) 
            CONFIG.mb.map.removeOverlay(feature.label);
-       feature.label = createLabel(c, p);
+       feature.label = this.createLabel(c, p.label);
     }
     else if (feature.label)
        CONFIG.mb.map.removeOverlay(feature.label);
 
     /* Trail */
     this.addTrail(p);
-   
-    /** Create label using a OL overlay. */
-    function createLabel(pos, p) {
-       element = document.createElement('div');
-       element.className = p.label.style;
-       element.innerHTML = p.label.id;
-       
-       lbl = new ol.Overlay({
-           element: element,
-           offset: [14, 0],
-           positioning: 'center-left'
-       });
-       lbl.setPosition(pos);
-       CONFIG.mb.map.addOverlay(lbl);
-       return lbl;
-    }
-    
 } /* AddPoint */
 
 
- 
+
+/**
+ * Create a label. Use overlay.
+ */
+polaric.Tracking.prototype.createLabel = function(pos, label) {
+   console.assert(pos!=null && label != null, "Assertion failed");
+   var element = document.createElement('div');
+   element.className = label.style;
+   element.innerHTML = label.id;
+   
+   var lbl = new ol.Overlay({
+       element: element,
+       offset: [14, 0],
+       positioning: 'center-left'
+   });
+   lbl.setPosition(pos);
+   CONFIG.mb.map.addOverlay(lbl);
+   return lbl;
+}
+
+
+/**
+ * Return true if label is hidden. 
+ */
+polaric.Tracking.prototype._labelHidden = function(id, dfl) {
+    if (this.showLabel[id] != null) 
+        return this.showLabel[id]==false; 
+    return dfl;
+}
+
+
+/**
+ * Return true if label is hidden.
+ */
+polaric.Tracking.prototype.labelHidden = function(id) {
+    var feature = this.source.getFeatureById(id);
+    if (feature == null)
+        return false;
+    return this._labelHidden(id, !feature.label || feature.label == null); 
+}
+
+
+/**
+ * Hide label.
+ */
+polaric.Tracking.prototype.hideLabel = function(id, hide) {
+    this.showLabel[id] = !hide;  
+    var feature = this.source.getFeatureById(id);
+    if (feature == null)
+        return;
+    if (hide) {
+        CONFIG.mb.map.removeOverlay(feature.label);
+        feature.label = null;
+    }
+    else
+        feature.label = this.createLabel(
+            feature.getGeometry().getCoordinates(), feature.lblinfo);    
+    CONFIG.mb.map.render();
+    CONFIG.store("tracking.showlabel", this.showLabel);
+}
+
+
+/**
+ * Add a trail. 
+ * TODO: Add some method to disable/enable this for a point?
+ */
+
 polaric.Tracking.prototype.addTrail = function(p) {
     console.assert(p!=null, "Assertion failed");
     var t = this;
@@ -262,16 +321,48 @@ polaric.Tracking.prototype.addTrail = function(p) {
     /* update position */   
     for (i in p.trail.linestring) 
         feature.getGeometry().appendCoordinate(ll2proj(p.trail.linestring[i].pos));
-    
+
     /* Update style */
     var style = new ol.style.Style({
       stroke:
         new ol.style.Stroke( ({
-          color: "#"+p.trail.style, width: 2.0}))
+          color: "#"+p.trail.style[0], width: 2.0}))
       });   
     feature.setStyle(style);
     
+    if (CONFIG.mb.getResolution() < 20)
+       this.addTrailPoints(p);
 } /* addTrail */
+
+
+
+
+/**
+ * Add points to a trail. 
+ * TODO: Should there be a method to enable/disable this?
+ * TODO: Should points be clickable, to pop up some info? 
+ */
+
+polaric.Tracking.prototype.addTrailPoints = function(p) {
+    console.assert(p!=null, "Assertion failed");
+    feature = new ol.Feature(new ol.geom.MultiPoint([]));
+    feature.setId(p.ident+'.trailpoints');
+    
+    /* update position */   
+    for (i in p.trail.linestring) 
+        feature.getGeometry().appendPoint(
+            new ol.geom.Point( ll2proj(p.trail.linestring[i].pos)));
+    
+    /* Update style */
+    var style = new ol.style.Style({
+        image: new ol.style.Circle({
+          fill:  new ol.style.Fill({ color: "#"+p.trail.style[1]}),
+          radius: 2.1
+        })
+      });   
+    feature.setStyle(style);  
+    this.source.addFeature(feature);
+}
 
 
 
@@ -335,6 +426,7 @@ polaric.Tracking.prototype.goto_Point = function(ident) {
        var y = parseFloat(args[2]);
        if (isNaN(x) || isNaN(y))
           return;
+      CONFIG.mb.gui.removePopup();
       CONFIG.mb.goto_Pos([x,y], false);
    });
 }

@@ -245,45 +245,39 @@ polaric.PopupMenu.prototype.createItem_ = function(text, actn, arg)
  
  /**
   * Show the menu for a context.
-  * @param {string} i - Context identifier
+  * @param {string} ctxt - Context identifier
   * @param {number} x - Pixel position x. 
   * @param {number} y - Pixel position y.
   */ 
- polaric.ContextMenu.prototype.show = function (i, x, y)
+ polaric.ContextMenu.prototype.show = function (ctxt, x, y)
  {
-   console.assert(i != null && x>0 && y>0, "Assertion failed");
+   console.assert(ctxt != null && ctxt.name && x>0 && y>0, "Assertion failed");
    var t = this; 
    t.txt.clear();
    t.txt.x = x; 
    t.txt.y = y;
+   t.txt.ctxt = ctxt;
    
    /* Try to find the context. By default it is the id of the 
     * element we clicked on. 
     */
-   var context = ident = i;
+   var cname = ident = ctxt.name;
    if (ident == null) {   
-     context = 'MAP';
+     cname = 'MAP';
    }
    
-   /* FIXME: also check if we clicked on some features on the map. 
-    * Some features may be contexts?? Tracker items??
-    * 
-    * We may use regular expressions on feature or element id's 
-    * to find the context-name? 
-    */
-   
-   _doCallback(context);         
+   _doCallback(cname);         
    
    /* Activate menu and add the context-name as a CSS class */
-   this.txt.activate(x, y).className += ' ctxt_'+context;
+   this.txt.activate(x, y).className += ' ctxt_'+cname;
    
    
    /*
     * Internal function that executes plugin callbacks
     */
-   function _doCallback(ctxt)
+   function _doCallback(cname)
    {
-     var lst = t.callbacks[ctxt]; 
+     var lst = t.callbacks[cname]; 
      if (lst)
        for (i=0; i<lst.length; i++) {
          f = lst[i]; 
@@ -346,7 +340,7 @@ polaric.PopupMenu.prototype.createItem_ = function(text, actn, arg)
   * @param {Element} element - DOM element. 
   * @param {string} name - Name of menu context.
   * @param {boolean} icon - True if element is a icon that can react on left mouse click.
-  * @param {Function|undefined} namefunc - Function that return a menu name. If null the default name will be used.
+  * @param {Function|undefined} contextfunc - Function that return a context. If null the default name will be used.
   */
  
  polaric.ContextMenu.prototype.addMenu = function (element, name, icon, func)
@@ -356,7 +350,7 @@ polaric.PopupMenu.prototype.createItem_ = function(text, actn, arg)
         {   var n = null;
             if (func) n = func(e);
             if (n == null)
-               t.showHandler(element, e, name, icon); 
+               t.showHandler(element, e, {name:name}, icon); 
             else
                t.showHandler(element, e, n, icon); 
         } );
@@ -369,7 +363,7 @@ polaric.PopupMenu.prototype.createItem_ = function(text, actn, arg)
   * @param {string} domId - Id of DOM element. 
   * @param {string} name - Name of menu context.
   * @param {boolean} icon - True if element is a icon that can react on left mouse click.
-  * @param {Function|undefined} namefunc - Function that return a menu name. If null the default name will be used.
+  * @param {Function|undefined} contextfunc - Function that return a context. If null the default name will be used.
   */
  
  polaric.ContextMenu.prototype.addMenuId = function(domId, name, icon, func)
@@ -380,15 +374,15 @@ polaric.PopupMenu.prototype.createItem_ = function(text, actn, arg)
  
  
  
- polaric.ContextMenu.prototype.showHandler = function(element, e, name, icon)
+ polaric.ContextMenu.prototype.showHandler = function(element, e, ctxt, icon)
  {
    e = (e)?e:((event)?event:null);
    
    /* If icon, use position relative to icon instead of mouse pos */
    if (icon) { 
-      this.show(name, e.iconX, e.iconY);
+      this.show(ctxt, e.iconX, e.iconY);
    }
-   this.show(name, e.clientX, e.clientY); 
+   this.show(ctxt, e.clientX, e.clientY); 
  }
  
  
