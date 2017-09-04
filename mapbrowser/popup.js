@@ -169,7 +169,7 @@ polaric.Popup.prototype.showPopup = function (props)
              pinimage.src = "images/pin-green.png";
           pdiv.appendChild(pinimage);
  
-         pinimage.onclick = function(e) {
+          pinimage.onclick = function(e) {
              pdiv._pinned = (pdiv._pinned ? false : true); 
 	         if (props.pin)
                 props.pin(pdiv._pinned); // Pin callback
@@ -344,7 +344,6 @@ polaric.Popup.prototype.popup_ = function(elem, x, y, img)
      var t = this;
      if (this.allowedPopups <= 0)
          return;
-     ;
      
      if (elem == null) 
          elem = document.createElement('div');
@@ -355,7 +354,6 @@ polaric.Popup.prototype.popup_ = function(elem, x, y, img)
          this.activepopup.appendChild(this.image);
       	 this.image.src='images/cross.png';
     	 this.image.style.position='absolute';
-  //       this.image.style.zIndex = 1001;
      }
 
      /* Add the popup window div to the viewport */
@@ -379,24 +377,12 @@ polaric.Popup.prototype.popup_ = function(elem, x, y, img)
      if (elem.clientHeight+10 > this.onDiv.clientHeight) {
          this.activepopup.style.maxHeight = this.onDiv.clientHeight-5 + "px";
          elem.id = 'wrapper'; // FIXME?
-         
-         /* Activate scroller */
-         /* FIXME: Special treatment of mobile devices? */
-         if (isMobile) 
-            setTimeout(function () {
-              myScroll = new IScroll(activepopup, {
-                    scrollbars : true, 
-                    tap : true
-                 });
-            }, 1000);
-         else
-            this.activepopup.style.overflowY  = 'scroll';
+         this.activepopup.style.overflowY  = 'scroll';
      }
      else
-        this.activepopup.style.overflowY = 'visible';
+         this.activepopup.style.overflowY = 'visible';
      
      this.setPosition_(x, y);
- //    this.activepopup.style.zIndex  = 1301;
      
      this.allowedPopups--;
      if (this.onCallback != null)
