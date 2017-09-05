@@ -26,7 +26,7 @@
  * @constructor
  */
 
-polaric.MapUpdate = function() {
+pol.tracking.MapUpdate = function() {
    this.suspend = false;
    this.retry = 0;
    var t = this;
@@ -85,27 +85,29 @@ polaric.MapUpdate = function() {
 
 
 
-/** Suspend the map-updater for a given time */
-polaric.MapUpdate.prototype.suspend = function(time) {
+/** 
+ * Suspend the map-updater for a given time 
+ */
+pol.tracking.MapUpdate.prototype.suspend = function(time) {
    console.assert(time>0, "Assertion failed");
    this.suspend = true; 
    setTimeout( function() {this.suspend = false; }, time);
 }
 
 
-/** Close the map-updater */
-polaric.MapUpdate.prototype.close = function() {
+/** 
+ * Close the map-updater 
+ */
+pol.tracking.MapUpdate.prototype.close = function() {
    this.websocket.close();
 }
 
-
-function roundDeg(x)
-   { return Math.round(x*1000)/1000; }
    
    
-   
-/** Subscribe to updates from the server */
-polaric.MapUpdate.prototype.subscribe = function(flt, c) 
+/** 
+ * Subscribe to updates from the server 
+ */
+pol.tracking.MapUpdate.prototype.subscribe = function(flt, c) 
 {
   console.assert(flt!=null && flt!="" && c!=null, "Assertion failed");
   this.subscriber = c;  
@@ -121,5 +123,9 @@ polaric.MapUpdate.prototype.subscribe = function(flt, c)
      roundDeg(ext[0])+ ',' + roundDeg(bottom)+ ',' + roundDeg(ext[2])+ ',' + roundDeg(top)+ ',' + Math.round(scale);
   console.log(msg);
   this.websocket.send(msg);
+  
+  
+  function roundDeg(x)
+   { return Math.round(x*1000)/1000; }
 }
 

@@ -24,11 +24,11 @@
  * @classdesc 
  * Popup Menu class.
  * @constructor
- * @param {polaric.Popup} popupmgr - Instance of Popup class. 
+ * @param {pol.core.Popup} popupmgr - Instance of Popup class. 
  * @param {Element|null} heading - Heading on top of menu (null = no heading)
  */
 
-polaric.PopupMenu = function(popupmgr, heading)
+pol.core.PopupMenu = function(popupmgr, heading)
 {
     this.popupmgr = popupmgr;
     this.lastItem = null;
@@ -44,7 +44,7 @@ polaric.PopupMenu = function(popupmgr, heading)
  * Clear content of menu.
  */
 
-polaric.PopupMenu.prototype.clear = function()
+pol.core.PopupMenu.prototype.clear = function()
 {  
    this.lastItem = null;
    this.menudiv = document.createElement('div');
@@ -59,7 +59,7 @@ polaric.PopupMenu.prototype.clear = function()
  * @param {Element|null} heading - Heading on top of menu (null = no heading)
  */
 
-polaric.PopupMenu.prototype.setHeading = function(hd)
+pol.core.PopupMenu.prototype.setHeading = function(hd)
 {
   this.heading = hd; 
 }
@@ -74,7 +74,7 @@ polaric.PopupMenu.prototype.setHeading = function(hd)
  * @param {*} arg - Argument to function.
  */
 
-polaric.PopupMenu.prototype.add = function(txt, func, arg)
+pol.core.PopupMenu.prototype.add = function(txt, func, arg)
 {
    if (txt == null) { 
       this.lastItem.className = 'ITEM_sep';
@@ -94,7 +94,7 @@ polaric.PopupMenu.prototype.add = function(txt, func, arg)
  * Add a section separator to the menu. 
  */
 
-polaric.PopupMenu.prototype.addSeparator = function()
+pol.core.PopupMenu.prototype.addSeparator = function()
    { this.add(null); }
 
 
@@ -108,7 +108,7 @@ polaric.PopupMenu.prototype.addSeparator = function()
  * @param {*} arg - Argument to function.
  */
 
-polaric.PopupMenu.prototype.insert = function(sect, txt, func, arg)
+pol.core.PopupMenu.prototype.insert = function(sect, txt, func, arg)
 {
    assert(sect>=0 && sect<this.sections.length, "Assertion failed");
    
@@ -138,7 +138,7 @@ polaric.PopupMenu.prototype.insert = function(sect, txt, func, arg)
  * @returns {Element} DOM element of menu.
  */
 
-polaric.PopupMenu.prototype.activate = function(x, y)
+pol.core.PopupMenu.prototype.activate = function(x, y)
 {
     console.assert(x>0 && y>0, "Assertion failed");
     
@@ -169,7 +169,7 @@ polaric.PopupMenu.prototype.activate = function(x, y)
  * @private
  */
 
-polaric.PopupMenu.prototype.createItem_ = function(text, actn, arg)
+pol.core.PopupMenu.prototype.createItem_ = function(text, actn, arg)
 {
   var t = this;
   var elem = document.createElement('div');
@@ -212,13 +212,13 @@ polaric.PopupMenu.prototype.createItem_ = function(text, actn, arg)
  /**
   * CONTEXT MENU CLASS.
   * @constructor.
-  * @param {polaric.Popup} mgr - Popup manager.
+  * @param {pol.core.Popup} mgr - Popup manager.
   */
  
- polaric.ContextMenu = function(mgr)
+ pol.core.ContextMenu = function(mgr)
  {
    this.callbacks = new Array(); 
-   this.txt = new polaric.PopupMenu(mgr, null);
+   this.txt = new pol.core.PopupMenu(mgr, null);
  }
  
  
@@ -234,7 +234,7 @@ polaric.PopupMenu.prototype.createItem_ = function(text, actn, arg)
   * @param {function} func - Callback function.
   */
  
- polaric.ContextMenu.prototype.addCallback = function (context, func)
+ pol.core.ContextMenu.prototype.addCallback = function (context, func)
  {
    if (!this.callbacks[context])
      this.callbacks[context] = new Array();
@@ -249,7 +249,7 @@ polaric.PopupMenu.prototype.createItem_ = function(text, actn, arg)
   * @param {number} x - Pixel position x. 
   * @param {number} y - Pixel position y.
   */ 
- polaric.ContextMenu.prototype.show = function (ctxt, x, y)
+ pol.core.ContextMenu.prototype.show = function (ctxt, x, y)
  {
    console.assert(ctxt != null && ctxt.name && x>0 && y>0, "Assertion failed");
    var t = this; 
@@ -297,7 +297,7 @@ polaric.PopupMenu.prototype.createItem_ = function(text, actn, arg)
   * @param {function} func - Handler function to be invoked on click. 
   */
  
- polaric.addHandler = function (element, icon, func)
+ pol.core.addHandler = function (element, icon, func)
  {
     var t = this;
     var rect = null; 
@@ -327,10 +327,10 @@ polaric.PopupMenu.prototype.createItem_ = function(text, actn, arg)
   * @param {function} func - Handler function to be invoked on click. 
   */
   
- polaric.addHandlerId = function (domId, icon, func)
+ pol.core.addHandlerId = function (domId, icon, func)
  {    
     var element = document.getElementById(domId);
-    polaric.addHandler(element,icon,func);
+    pol.core.addHandler(element,icon,func);
  }
  
  
@@ -343,10 +343,10 @@ polaric.PopupMenu.prototype.createItem_ = function(text, actn, arg)
   * @param {Function|undefined} contextfunc - Function that return a context. If null the default name will be used.
   */
  
- polaric.ContextMenu.prototype.addMenu = function (element, name, icon, func)
+ pol.core.ContextMenu.prototype.addMenu = function (element, name, icon, func)
  {
     var t = this;
-    polaric.addHandler(element, icon, function(e)
+    pol.core.addHandler(element, icon, function(e)
         {   var n = null;
             if (func) n = func(e);
             if (n == null)
@@ -366,7 +366,7 @@ polaric.PopupMenu.prototype.createItem_ = function(text, actn, arg)
   * @param {Function|undefined} contextfunc - Function that return a context. If null the default name will be used.
   */
  
- polaric.ContextMenu.prototype.addMenuId = function(domId, name, icon, func)
+ pol.core.ContextMenu.prototype.addMenuId = function(domId, name, icon, func)
  {
     var element = document.getElementById(domId);
     this.addMenu(element, name, icon, func);
@@ -374,7 +374,7 @@ polaric.PopupMenu.prototype.createItem_ = function(text, actn, arg)
  
  
  
- polaric.ContextMenu.prototype.showHandler = function(element, e, ctxt, icon)
+ pol.core.ContextMenu.prototype.showHandler = function(element, e, ctxt, icon)
  {
    e = (e)?e:((event)?event:null);
    

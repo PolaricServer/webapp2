@@ -17,7 +17,7 @@
  along with this program. If not, see <http://www.gnu.org/licenses/>.
 */
 
-
+pol.layers = pol.layers || {};
 
 /**
  * @classdesc
@@ -25,7 +25,7 @@
  * @constructor
  */
 
-polaric.LayerEdit = function(list) {
+pol.layers.Edit = function(list) {
    var t = this;
    t.list = list;
    t.filt = {ext: null, zoom: null, proj: null};
@@ -107,9 +107,9 @@ polaric.LayerEdit = function(list) {
        list.myLayers.push( layer );
 
         // Save the layer name list. 
-       CONFIG.store("polaric.LayerList", list.myLayerNames, true);
+       CONFIG.store("layers.list", list.myLayerNames, true);
         // Save the layer using the concrete subclass
-       CONFIG.store("polaric.Layer."+name.replace(/\s/g, "_"), t.layer2json(layer), true);       
+       CONFIG.store("layers.layer."+name.replace(/\s/g, "_"), t.layer2json(layer), true);       
        
        return false;
    }
@@ -118,7 +118,7 @@ polaric.LayerEdit = function(list) {
 
 
 
-polaric.LayerEdit.prototype.enabled = function()
+pol.layers.Edit.prototype.enabled = function()
    { return false; }
 
 
@@ -126,7 +126,7 @@ polaric.LayerEdit.prototype.enabled = function()
  * Create a filter function (a predicate) with the parameters 
  * (extent, zoom-level, projection) set by user
  */
-polaric.LayerEdit.prototype.createFilter = function (f) {
+pol.layers.Edit.prototype.createFilter = function (f) {
     var filt = f;
     
     if (!filt)
@@ -148,7 +148,7 @@ polaric.LayerEdit.prototype.createFilter = function (f) {
  * Move settings to web-form. 
  * To be extended in subclass. 
  */
-polaric.LayerEdit.prototype.edit = function(layer) {
+pol.layers.Edit.prototype.edit = function(layer) {
     $("#editLayer").val(layer.get("name")).trigger("change").attr("ok", true);
     this.filt = layer.filt;
     $("#vis.extent").prop("checked", (this.filt.ext != null));
@@ -162,7 +162,7 @@ polaric.LayerEdit.prototype.edit = function(layer) {
   * Create a layer. 
   * To be defined in subclass 
   */
-polaric.LayerEdit.prototype.createLayer = function(n) {
+pol.layers.Edit.prototype.createLayer = function(n) {
     return null; 
 }
 
@@ -171,7 +171,7 @@ polaric.LayerEdit.prototype.createLayer = function(n) {
  * Stringify settings for a layer to JSON format. 
  * To be defined in subclass. 
  */
-polaric.LayerEdit.prototype.layer2json = function(layer) { 
+pol.layers.Edit.prototype.layer2json = function(layer) { 
     return "dummy";
 }
 
@@ -180,17 +180,17 @@ polaric.LayerEdit.prototype.layer2json = function(layer) {
  * Restore a layer from JSON format (see layer2json). 
  * To be defined in subclass. 
  */
-polaric.LayerEdit.prototype.json2layer = function(js) {
+pol.layers.Edit.prototype.json2layer = function(js) {
     return null; 
 }
 
 
 
 
-polaric.DummyLayer = function(list) {
-   polaric.LayerEdit.call(this, list);
+pol.layers.Dummy = function(list) {
+   pol.layers.Edit.call(this, list);
 }
-ol.inherits(polaric.DummyLayer, polaric.LayerEdit);
+ol.inherits(pol.layers.Dummy, pol.layers.Edit);
 
 
 

@@ -20,7 +20,11 @@
 */
 
 /** @namespace */
-var polaric = polaric || {};
+var pol = pol || {};
+pol.core = pol.core || {};
+pol.widget = pol.widget || {};
+pol.ui = pol.ui || {};
+pol.mapref = pol.mapref || {};
 
 console.assert = console.assert || function() {};
 
@@ -34,7 +38,7 @@ console.assert = console.assert || function() {};
  *  @param {string} uid - Identifier of configuration (see also setUid).
  */
 
-polaric.Config = function(uid) {
+pol.core.Config = function(uid) {
    this.uid = (uid ? uid : "0");
    this.mb = null;
    this.storage = window.localStorage;
@@ -51,7 +55,7 @@ polaric.Config = function(uid) {
       center: [0,0]
    }
 }
-ol.inherits(polaric.Config, ol.Object);
+ol.inherits(pol.core.Config, ol.Object);
 
 
 
@@ -59,7 +63,7 @@ ol.inherits(polaric.Config, ol.Object);
  * Get array of configured base layers. 
  */
 
-polaric.Config.prototype.getBaseLayers = function()
+pol.core.Config.prototype.getBaseLayers = function()
    { return this.baseLayers; }
    
 
@@ -68,7 +72,7 @@ polaric.Config.prototype.getBaseLayers = function()
  * Get array of configured overlay layers. 
  */
 
-polaric.Config.prototype.getOLayers = function()
+pol.core.Config.prototype.getOLayers = function()
    { return this.oLayers; }
 
    
@@ -80,7 +84,7 @@ polaric.Config.prototype.getOLayers = function()
  * @returns Index of new layer. 
  */
 
-polaric.Config.prototype.addLayer = function(layer, name) 
+pol.core.Config.prototype.addLayer = function(layer, name) 
 {
   console.assert(layer != null, "Assertion failed");
   if (name && name != null) 
@@ -93,7 +97,7 @@ polaric.Config.prototype.addLayer = function(layer, name)
 
 
    
-polaric.Config.prototype.removeLayer = function(layer) 
+pol.core.Config.prototype.removeLayer = function(layer) 
 {
   console.assert(layer != null, "Assertion failed");
   for (i in this.oLayers)
@@ -112,7 +116,7 @@ polaric.Config.prototype.removeLayer = function(layer)
  *  @param {string} uid - Identifier. 
  * 
  */
-polaric.Config.prototype.setUid = function(uid)
+pol.core.Config.prototype.setUid = function(uid)
    { this.uid = uid; }
 
    
@@ -124,7 +128,7 @@ polaric.Config.prototype.setUid = function(uid)
  *  @param {string} id - key of setting. 
  *  @returns The value of the setting.
  */
-polaric.Config.prototype.get = function(id)
+pol.core.Config.prototype.get = function(id)
 { 
     console.assert(id!=null, "Assertion failed");
     
@@ -152,7 +156,7 @@ polaric.Config.prototype.get = function(id)
  *  @param {boolean|undefined} save - Set to true to make setting persistent.
  * 
  */
-polaric.Config.prototype.store = function(id, value, save)
+pol.core.Config.prototype.store = function(id, value, save)
 { 
     console.assert(id != null && value != null, "Assertion failed"); 
     var val = JSON.stringify(value);
@@ -161,12 +165,14 @@ polaric.Config.prototype.store = function(id, value, save)
        this.storage["polaric." + id + ":" + this.uid] = val;
 }
 
+
+
 /** 
  *  Remove value from session/local storage. 
  * @param {string} id - Key of setting. 
  */
 
-polaric.Config.prototype.remove = function(id)
+pol.core.Config.prototype.remove = function(id)
 {
     this.sstorage.removeItem("polaric."+id);
     this.storage.removeItem("polaric."+id+":"+this.uid);
@@ -180,7 +186,7 @@ polaric.Config.prototype.remove = function(id)
  *  @param {*} value - Value of setting 
  * 
  */
-polaric.Config.prototype.set = function(id, value)
+pol.core.Config.prototype.set = function(id, value)
 { 
     console.assert(id != null && value != null, "Assertion failed");
     this.props[id] = value; 

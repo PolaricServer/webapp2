@@ -27,10 +27,10 @@
  * @constructor
  */
 
-polaric.refSearch = function()
+pol.core.refSearch = function()
 {
-   polaric.Widget.call(this);
-   this.classname = "polaric.refSearch"; 
+   pol.core.Widget.call(this);
+   this.classname = "pol.core.refSearch"; 
    
    this.widget = {
      view: function() {
@@ -58,19 +58,19 @@ polaric.refSearch = function()
    setTimeout(function() 
    {
       $('#butt_mgrs').click( function() {
-              var pos = polaric.parseMGRS(browser, $('#mgrsprefix').val(), $('#locx').val(), $('#locy').val());
+              var pos = pol.mapref.parseMGRS(browser, $('#mgrsprefix').val(), $('#locx').val(), $('#locy').val());
               browser.goto_Pos(pos, true);
            });
       
       $('#butt_utm').click( function() {
-              var pos = polaric.parseUTM( $('#utmx').val(), $('#utmy').val(), $('#utmnz').val(), $('#utmz').val());
+              var pos = pol.mapref.parseUTM( $('#utmx').val(), $('#utmy').val(), $('#utmnz').val(), $('#utmz').val());
               browser.goto_Pos(pos, true);
            });
       
       $('#butt_ll').click( function() {
               var lat_sign = ( $("#ll_NS").html()=="N" ? "" : "-");
               var lng_sign = ( $("#ll_EW").html()=="E" ? "" : "-");
-              var pos = polaric.parseDM(
+              var pos = pol.mapref.parseDM(
                   lat_sign+$('#ll_Nd').val(), $('#ll_Nm').val(), 
                   lng_sign+$('#ll_Ed').val(), $('#ll_Em').val());
               browser.goto_Pos(pos, true );
@@ -80,12 +80,12 @@ polaric.refSearch = function()
    browser.map.on('moveend', function() { m.redraw();});
    
 }
-ol.inherits(polaric.refSearch, polaric.Widget);
+ol.inherits(pol.core.refSearch, pol.core.Widget);
 
 
 
-widget.setRestoreFunc("polaric.refSearch", function(id, pos) {
-    var x = new polaric.refSearch(); 
+pol.widget.setRestoreFunc("polaric.refSearch", function(id, pos) {
+    var x = new pol.core.refSearch(); 
     x.activatePopup(id, pos, true); 
 }); 
 

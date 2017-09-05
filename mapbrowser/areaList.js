@@ -24,9 +24,10 @@
  * User defined areas (in a popup window). 
  * @constructor
  */
-polaric.AreaList = function() {
-   polaric.Widget.call(this);
-   this.classname = "polaric.AreaList"; 
+
+pol.core.AreaList = function() {
+   pol.core.Widget.call(this);
+   this.classname = "core.AreaList"; 
    this.myAreas = [];
    var t = this;
 
@@ -59,8 +60,9 @@ polaric.AreaList = function() {
    /* Remove area from list */
    function removeArea(id) {
        t.myAreas.splice(id,1);
-       CONFIG.store("polaric.AreaList", t.myAreas, true);
+       CONFIG.store("core.AreaList", t.myAreas, true);
    }
+   
    
    /* Move map area name to editable textInput */
    function editArea(id) {
@@ -71,6 +73,7 @@ polaric.AreaList = function() {
        m.redraw();
    }
    
+   
    /* Add map extent to list */
    function add() {
        var ext = CONFIG.mb.getExtent();
@@ -79,9 +82,10 @@ polaric.AreaList = function() {
        console.log("Add area: "+name + " = ["+
           ext.map(function(x) {return Math.round(x*1000)/1000;}) +"]");
        t.myAreas.push(
-         {name: name, extent: ext});
-       CONFIG.store("polaric.AreaList", t.myAreas, true);
+          {name: name, extent: ext});
+       CONFIG.store("core.AreaList", t.myAreas, true);
    }
+   
    
    /* Zoom and move map to extent */
    function gotoExtent(id) {
@@ -91,12 +95,13 @@ polaric.AreaList = function() {
    }
    
 }
-ol.inherits(polaric.AreaList, polaric.Widget);
+ol.inherits(pol.core.AreaList, pol.core.Widget);
 
 
 
-polaric.AreaList.prototype.getMyAreas = function() {
-  this.myAreas = CONFIG.get("polaric.AreaList");
+
+pol.core.AreaList.prototype.getMyAreas = function() {
+  this.myAreas = CONFIG.get("core.AreaList");
   if (this.myAreas == null)
        this.myAreas = [];
   return this.myAreas;   
@@ -104,7 +109,7 @@ polaric.AreaList.prototype.getMyAreas = function() {
 
 
 
-widget.setRestoreFunc("polaric.AreaList", function(id, pos) {
-    var x = new polaric.AreaList(); 
+pol.widget.setRestoreFunc("pol.core.AreaList", function(id, pos) {
+    var x = new pol.core.AreaList(); 
     x.activatePopup(id, pos, true); 
 }); 

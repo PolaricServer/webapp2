@@ -25,8 +25,8 @@
  * WFS layer editor.
  */
 
-polaric.WfsLayer = function(list) {
-   polaric.LayerEdit.call(this, list);
+pol.layers.Wfs = function(list) {
+   pol.layers.Edit.call(this, list);
       
        
    this.fields = {
@@ -49,7 +49,7 @@ polaric.WfsLayer = function(list) {
    }  
       
 }
-ol.inherits(polaric.WfsLayer, polaric.LayerEdit);
+ol.inherits(pol.layers.Wfs, pol.layers.Edit);
 
 
 
@@ -57,7 +57,7 @@ ol.inherits(polaric.WfsLayer, polaric.LayerEdit);
  * Return true if add button can be enabled 
  */
 
-polaric.WfsLayer.prototype.enabled = function() {
+pol.layers.Wfs.prototype.enabled = function() {
     return  $("#editLayer").attr("ok") && 
             $("#wfsUrl").attr("ok") && 
             $("#wfsFtype").attr("ok"); 
@@ -69,7 +69,7 @@ polaric.WfsLayer.prototype.enabled = function() {
   * Create a layer. 
   */
  
-polaric.WfsLayer.prototype.createLayer = function(name) 
+pol.layers.Wfs.prototype.createLayer = function(name) 
 {
     var url = $("#wfsUrl").val();
     var ftype = $("#wfsFtype").val();
@@ -98,8 +98,8 @@ polaric.WfsLayer.prototype.createLayer = function(name)
  * Move settings to web-form. 
  */
 
-polaric.WfsLayer.prototype.edit = function(layer) {
-   polaric.LayerEdit.prototype.edit.call(this, layer);
+pol.layers.Wfs.prototype.edit = function(layer) {
+   pol.layers.Edit.prototype.edit.call(this, layer);
    
    $("#wfsUrl").val(layer.getSource().url).trigger("change").attr("ok", true);;
    $("#wfsFtype").val(layer.getSource().ftype).trigger("change").attr("ok", true);;
@@ -113,7 +113,7 @@ polaric.WfsLayer.prototype.edit = function(layer) {
  * Stringify settings for a layer to JSON format. 
  */   
 
-polaric.WfsLayer.prototype.layer2json = function(layer) { 
+pol.layers.Wfs.prototype.layer2json = function(layer) { 
     var lx = {
       name:    layer.get("name"),
       filter:  layer.filt,
@@ -132,7 +132,7 @@ polaric.WfsLayer.prototype.layer2json = function(layer) {
  * Restore a layer from JSON format (see layer2json). 
  */
 
-polaric.WfsLayer.prototype.json2layer = function(js) {
+pol.layers.Wfs.prototype.json2layer = function(js) {
     var lx = JSON.parse(js);
     if (lx == null) {
         console.warn("WfsLayer.json2layer: Resulting Layer is null");

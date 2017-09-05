@@ -26,11 +26,11 @@
  * @constructor
  */
    
-polaric.Filters = function(tr) 
+pol.tracking.Filters = function(tr) 
 {
    var tbar = CONFIG.mb.toolbar;
    var t = this;
-   var filterViews = CONFIG.get("filters");
+   var filterViews = CONFIG.get("tracking.filters");
    t.tracker = tr; 
          
    tbar.addIcon(1, "images/filter.png", "tb_filter", null, "Filter selector");
@@ -38,7 +38,7 @@ polaric.Filters = function(tr)
    CONFIG.mb.ctxMenu.addMenuId('tb_filter', 'FILTERSELECT', true);
    
    /* Set default or saved filter selection */   
-   var filt = CONFIG.mb.config.get('polaric.filter');
+   var filt = CONFIG.mb.config.get('tracking.selectedfilt');
    if (filt == null) 
       filt = defaultFilter;
 
@@ -62,7 +62,7 @@ polaric.Filters = function(tr)
           return function() {
              $("#filterChoice").html(filterViews[i].title);
              t.tracker.setFilter(filterViews[i].name);
-             CONFIG.store('polaric.filter', filterViews[i].name, true);
+             CONFIG.store('tracking.selectedfilt', filterViews[i].name, true);
           } 
        }
    });
@@ -75,5 +75,5 @@ polaric.Filters = function(tr)
  */
 
 function FILTERS(x) {
-    CONFIG.set("filters", x);
+    CONFIG.set("tracking.filters", x);
 }

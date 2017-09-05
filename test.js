@@ -2,15 +2,15 @@
    /* 
     * Instantiate the map browser and restore widgets from a previous session. 
     */  
-   var browser = new polaric.MapBrowser('map', CONFIG);
-   setTimeout(widget.restore, 500);
+   var browser = new pol.core.MapBrowser('map', CONFIG);
+   setTimeout(pol.widget.restore, 500);
    
    
    /*
     * Add a tracking-layer using a polaric server backend.
     */
-   var mu = new polaric.Tracking();
-   var flt = new polaric.Filters(mu);
+   var mu = new pol.tracking.Tracking();
+   var flt = new pol.tracking.Filters(mu);
 
    
    
@@ -31,12 +31,12 @@
 
    browser.ctxMenu.addCallback("TOOLBAR", function(m) {
      m.add('Search items', function () 
-       { var x = new polaric.trackerSearch(); 
+       { var x = new pol.tracking.Search(); 
          x.activatePopup("trackerSearch", [50,70]) }); 
      
-     m.add('Find position', function () { var x = new polaric.refSearch(); x.activatePopup("refSearch", [50,70]) });
+     m.add('Find position', function () { var x = new pol.core.refSearch(); x.activatePopup("refSearch", [50,70]) });
      m.add('Area List', function () { browser.toolbar.arealist.activatePopup("AreaList", [50,70]) });
-     m.add('Layer List', function () { var x = new polaric.LayerList(); x.activatePopup("LayerList", [50,70]) });
+     m.add('Layer List', function () { var x = new pol.core.LayerList(); x.activatePopup("LayerList", [50,70]) });
    });
    
    browser.ctxMenu.addCallback("POINT", function(m) {

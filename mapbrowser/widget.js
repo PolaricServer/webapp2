@@ -21,18 +21,20 @@
 
 
 /** @namespace */
-widget =  {};
+pol.widget =  {};
 
 
 /**
  * Array of subclasses with functions to restore persistent widgets.. 
  */
-widget._restore = {};
+pol.widget._restore = {};
 
 /**
  * What widget-instances are actually stored. Maps to class-names (see above).
  */
-widget._stored = {};
+pol.widget._stored = {};
+
+
 
 
  /**
@@ -40,19 +42,24 @@ widget._stored = {};
   * @param {string} id, name of the class. 
   * @param {function} f, function that restore the widget. Should take a element id and pixPos as arguments. 
   */
-widget.setRestoreFunc = function(id, f) {
+pol.widget.setRestoreFunc = function(id, f) {
     console.assert(id != null && f != null, "Assertion failed");
-    widget._restore[id] = f; 
+    pol.widget._restore[id] = f; 
 }
 
 
-widget.restore = function() {
-    widget._stored = CONFIG.get("widget._stored");
-    if (widget._stored == null)
-        widget._stored = {};
+
+
+/**
+ * Restore. 
+ */
+pol.widget.restore = function() {
+    pol.widget._stored = CONFIG.get("widget._stored");
+    if (pol.widget._stored == null)
+        pol.widget._stored = {};
     
-    for (var x in widget._stored) {
-        var f = widget._restore[widget._stored[x]];
+    for (var x in pol.widget._stored) {
+        var f = pol.widget._restore[pol.widget._stored[x]];
         var arg = CONFIG.get("widget."+x);
         if (f != null)
            f(x, arg);
@@ -69,7 +76,7 @@ widget.restore = function() {
  * @constructor
  */
 
-polaric.Widget = function() {
+pol.core.Widget = function() {
    this.pos = null;
    this.pinned = false;
    this.classname = null;
@@ -82,7 +89,7 @@ polaric.Widget = function() {
   * @param {Element} w - DOM element to display the layer switcher.  
   */
  
- polaric.Widget.prototype.activate = function(w) 
+ pol.core.Widget.prototype.activate = function(w) 
  { 
      console.assert(w && w != null, "Assertion failed");
      this.delement = w; 
@@ -98,11 +105,11 @@ polaric.Widget = function() {
   * @param pixPos - Where on screen to put it.
   */
   
- polaric.Widget.prototype.activatePopup = function(id, pixPos, pinned) 
+ pol.core.Widget.prototype.activatePopup = function(id, pixPos, pinned) 
  {
      console.assert(this.widget && id != null 
             && pixPos[0] >= 0 && pixPos[1] >= 0, "Assertion failed");
-    
+
      this.pos = pixPos;
      var t = this; 
      if (!pinned)
@@ -138,7 +145,6 @@ polaric.Widget = function() {
      
      
      function save() {
-        console.log("SAVE POPUP POS: "+t.pos+", id="+id);
         CONFIG.store("widget."+id, t.pos, true);
         
         if (!widget._stored[id] || widget._stored[id] == null) {
@@ -149,7 +155,6 @@ polaric.Widget = function() {
      
      
      function unSave() {
-        console.log("UNSAVE POPUP POS: "+t.pos+", id="+id);
         CONFIG.remove("widget."+id, t.pos);
         
         if (widget._stored[id] && widget._stored[id] != null) {

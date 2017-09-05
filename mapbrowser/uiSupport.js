@@ -28,7 +28,7 @@
  * @param {string} nextFieldId - Id of DOM field element to jump to.
  */
 
-polaric.autojump = function(fieldId, nextFieldId)
+pol.ui.autojump = function(fieldId, nextFieldId)
 {
    if (fieldId==null || nextFieldId==null) {
        console.error("Field id is null");
@@ -146,9 +146,9 @@ var mgrsInput = {
     view: function() {
         var center = CONFIG.mb.getCenter();
         return m("span", 
-               {onclick: function() { polaric.autojump("locx", "locy"); }},
+               {onclick: function() { pol.ui.autojump("locx", "locy"); }},
             m(textInput, {id:"mgrsprefix", size: 5, maxlength: 5, 
-               regex: /^[0-9]{2}[C-X][A-Z][A-V]$/i, value: polaric.MGRSprefix(center) }), nbsp,
+               regex: /^[0-9]{2}[C-X][A-Z][A-V]$/i, value: pol.mapref.MGRSprefix(center) }), nbsp,
             m(textInput, {id:"locx", size: "3", maxLength: "3", regex: /^[0-9]{3}$/ }),
             m(textInput, {id:"locy", size: "3", maxLength: "3", regex: /^[0-9]{3}$/ }), nbsp );
     }
@@ -163,9 +163,9 @@ var utmInput = {
         var uref = CONFIG.mb.getCenterUTM();
         return m("span", 
                  { onclick: function() {     
-                     polaric.autojump('utmz', 'utmnz');
-                     polaric.autojump('utmnz', 'utmx');
-                     polaric.autojump('utmx', 'utmy');
+                     pol.ui.autojump('utmz', 'utmnz');
+                     pol.ui.autojump('utmnz', 'utmx');
+                     pol.ui.autojump('utmx', 'utmy');
                  }},
             m(textInput, {id:"utmz", size: "2", maxLength: "2", value: uref.lngZone, regex:/^[0-9]{2}$/}), 
             m(textInput, {id:"utmnz", size: "1", maxLength: "1", value: uref.latZone, 
@@ -186,9 +186,9 @@ var latLngInput = {
         var center = CONFIG.mb.getCenter();
         return m("span",                 
                  { onclick: function() {     
-                     polaric.autojump('ll_Nd', 'll_Nm');
-                     polaric.autojump('ll_Nm', 'll_Ed');
-                     polaric.autojump('ll_Ed', 'll_Em'); 
+                     pol.ui.autojump('ll_Nd', 'll_Nm');
+                     pol.ui.autojump('ll_Nm', 'll_Ed');
+                     pol.ui.autojump('ll_Ed', 'll_Em'); 
                  }},
             m(textInput, {id:"ll_Nd", size: "2", maxLength: "2", regex:/^(([0-8]?[0-9])|90)$/}), "°", nbsp,nbsp,
             m(textInput, {id:"ll_Nm", size: "6", maxLength: "6", regex: reg_MIN }), "\'", nbsp, 

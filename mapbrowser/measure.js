@@ -35,7 +35,7 @@
  */
 
 
-polaric.Measure = function() 
+pol.core.Measure = function() 
 {
     
     this.vector = CONFIG.mb.addVectorLayer(
@@ -159,7 +159,7 @@ polaric.Measure = function()
 
 
 
-polaric.Measure.prototype.deactivate = function(a) {
+pol.core.Measure.prototype.deactivate = function(a) {
    this.draw.setActive(false);
    CONFIG.mb.map.removeInteraction(this.draw);
    CONFIG.mb.removeLayer(this.vector);

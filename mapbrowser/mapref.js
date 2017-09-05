@@ -24,7 +24,7 @@
  * @param {ol.Coordinate} ref - Coordinate to be formatted. 
  * @returns {string}
  */
-polaric.formatDM = function(ref) {
+pol.mapref.formatDM = function(ref) {
        latD = Math.floor(Math.abs(ref[1])); 
        lonD = Math.floor(Math.abs(ref[0]));
        return latD+"\u00B0 " + Math.round((Math.abs(ref[1])-latD)*6000)/100+"\' " + 
@@ -40,7 +40,7 @@ polaric.formatDM = function(ref) {
  * @param {ol.Coordinate} ref - Coordinate to be formatted. 
  * @returns {string}
  */
-polaric.formatMaidenhead = function(ref) 
+pol.mapref.formatMaidenhead = function(ref) 
 {
    var z1 = ref[0] + 180;
    var longZone1 = Math.floor( z1 / 20);
@@ -72,7 +72,7 @@ polaric.formatMaidenhead = function(ref)
  * @param {ol.Coordinate} ref - Coordinate to be formatted. 
  * @returns {string}
  */
-polaric.formatUTM = function(ref)
+pol.mapref.formatUTM = function(ref)
 {
    var ref = new LatLng(ref[1], ref[0]);
    var uref = ref.toUTMRef();
@@ -84,10 +84,10 @@ polaric.formatUTM = function(ref)
 
 
    
-polaric.mgrs = polaric.mgrs || {};
-polaric.mgrs.latBands = 'CDEFGHJKLMNPQRSTUVWXX'; 
-polaric.mgrs.e100kLetters = [ 'ABCDEFGH', 'JKLMNPQR', 'STUVWXYZ' ];
-polaric.mgrs.n100kLetters = [ 'ABCDEFGHJKLMNPQRSTUV', 'FGHJKLMNPQRSTUVABCDE' ];
+pol.mapref.mgrs = pol.mapref.mgrs || {};
+pol.mapref.mgrs.latBands = 'CDEFGHJKLMNPQRSTUVWXX'; 
+pol.mapref.mgrs.e100kLetters = [ 'ABCDEFGH', 'JKLMNPQR', 'STUVWXYZ' ];
+pol.mapref.mgrs.n100kLetters = [ 'ABCDEFGHJKLMNPQRSTUV', 'FGHJKLMNPQRSTUVABCDE' ];
 
 /**
  * Get MGRS prefix, i.e. zone+band+100km grid. 
@@ -96,7 +96,7 @@ polaric.mgrs.n100kLetters = [ 'ABCDEFGHJKLMNPQRSTUV', 'FGHJKLMNPQRSTUVABCDE' ];
  */
 // Adapted from https://github.com/chrisveness/geodesy/blob/master/mgrs.js (MIT Licence).
 
-polaric.MGRSprefix = function(x)
+pol.mapref.MGRSprefix = function(x)
 {
     var ref = new LatLng(x[1], x[0]);
     var uref = ref.toUTMRef();
@@ -105,15 +105,15 @@ polaric.MGRSprefix = function(x)
     var zone = uref.lngZone;
 
     // grid zones are 8° tall, 0°N is 10th band
-    var band = polaric.mgrs.latBands.charAt(Math.floor(ref.lat/8+10)); // latitude band
+    var band = pol.mapref.mgrs.latBands.charAt(Math.floor(ref.lat/8+10)); // latitude band
 
     // columns in zone 1 are A-H, zone 2 J-R, zone 3 S-Z, then repeating every 3rd zone
     var col = Math.floor(uref.easting / 100e3);
-    var e100k = polaric.mgrs.e100kLetters[(zone-1)%3].charAt(col-1); // col-1 since 1*100e3 -> A (index 0), 2*100e3 -> B (index 1), etc.
+    var e100k = pol.mapref.mgrs.e100kLetters[(zone-1)%3].charAt(col-1); // col-1 since 1*100e3 -> A (index 0), 2*100e3 -> B (index 1), etc.
 
     // rows in even zones are A-V, in odd zones are F-E
     var row = Math.floor(uref.northing / 100e3) % 20;
-    var n100k = polaric.mgrs.n100kLetters[(zone-1)%2].charAt(row);
+    var n100k = pol.mapref.mgrs.n100kLetters[(zone-1)%2].charAt(row);
     return zone+band+e100k+n100k;
 }
 
@@ -128,7 +128,7 @@ polaric.MGRSprefix = function(x)
  * @param {string} em - Longitude decimal minutes
  * @returns {ol.Coordinate}
  */
-polaric.parseDM = function(nd, nm, ed, em)
+pol.mapref.parseDM = function(nd, nm, ed, em)
 {  
    var yd = parseInt(nd, 10);
    var ym = parseFloat(nm);
@@ -153,7 +153,7 @@ polaric.parseDM = function(nd, nm, ed, em)
  * @returns {ol.Coordinate}
  */
 
-polaric.parseUTM = function(ax, ay, nz, zz)
+pol.mapref.parseUTM = function(ax, ay, nz, zz)
  {
    var x = parseInt(ax, 10);
    var y = parseInt(ay, 10);
@@ -173,13 +173,13 @@ polaric.parseUTM = function(ax, ay, nz, zz)
   
 /**
  * Parse MGRS grid reference to 100x100m square.
- * @param {polaric.MapBrowser} browser - Map browser instance
+ * @param {pol.core.MapBrowser} browser - Map browser instance
  * @param {string} ax - x coordinate (3 digits)
  * @param {string} ay - y coordinate (3 digits)
  * @returns {ol.Coordinate}
  */
 
-polaric.parseMGRS = function(browser, prefix, ax, ay)
+pol.mapref.parseMGRS = function(browser, prefix, ax, ay)
  {   
     var x = parseInt(ax, 10);
     var y = parseInt(ay, 10);
@@ -201,8 +201,8 @@ polaric.parseMGRS = function(browser, prefix, ax, ay)
            prefix = "0"+prefix; 
        var zone = parseInt(prefix.substring(0,2)); 
        
-       var col = polaric.mgrs.e100kLetters[(zone-1)%3].indexOf(prefix[3]) + 1; 
-       var row = polaric.mgrs.n100kLetters[(zone-1)%2].indexOf(prefix[4]);
+       var col = pol.mapref.mgrs.e100kLetters[(zone-1)%3].indexOf(prefix[3]) + 1; 
+       var row = pol.mapref.mgrs.n100kLetters[(zone-1)%2].indexOf(prefix[4]);
        if (col == 0 || row == -1)
            console.log("ERROR: Invalid row or column letter in MGRS prefix");
        
@@ -211,7 +211,7 @@ polaric.parseMGRS = function(browser, prefix, ax, ay)
        var n100kNum = row * 100e3; // n100k in metres
 
         /* get latitude of (bottom of) band */
-       var latBand = (polaric.mgrs.latBands.indexOf(prefix[2])-10)*8;
+       var latBand = (pol.mapref.mgrs.latBands.indexOf(prefix[2])-10)*8;
        if (latBand < -80)
            console.log("ERROR: Invalid latitude band letter in MGRS prefix");
 

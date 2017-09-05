@@ -29,10 +29,10 @@ var isMobile = false;
  * For now, there is only one active popup at a time. 
  *
  * @constructor
- * @param {polaric.MapBrowser} mb - Map browser instance.
+ * @param {pol.core.MapBrowser} mb - Map browser instance.
  */
 
-polaric.Popup = function(mb) {
+pol.core.Popup = function(mb) {
    this.mb            = mb;
    this.onDiv         = document.getElementById("map"); 
    this.activepopup   = null;
@@ -68,7 +68,7 @@ polaric.Popup = function(mb) {
 /**
  * Deactivate popup.
  */ 
-polaric.Popup.prototype.removePopup = function()
+pol.core.Popup.prototype.removePopup = function()
 {
   if (this.activepopup == null)
     return;
@@ -90,7 +90,7 @@ polaric.Popup.prototype.removePopup = function()
  * @returns {boolean}
  */ 
 
-polaric.Popup.prototype.popupActive = function()
+pol.core.Popup.prototype.popupActive = function()
    { return (this.activepopup != null); }
 
 
@@ -102,7 +102,7 @@ polaric.Popup.prototype.popupActive = function()
  * @param {function} off - Callback to be invoked when popup is deactivated.
  */
 
-polaric.Popup.prototype.onPopup = function(on, off) 
+pol.core.Popup.prototype.onPopup = function(on, off) 
    { this.onCallback = on; this.offCallback = off; }
    
 
@@ -119,7 +119,7 @@ polaric.Popup.prototype.onPopup = function(on, off)
  * 
  */
 
-polaric.Popup.prototype.showPopup = function (props) 
+pol.core.Popup.prototype.showPopup = function (props) 
 {
     var t = this;
     var x, y; 
@@ -209,9 +209,8 @@ polaric.Popup.prototype.showPopup = function (props)
  * @param {string} url - URL of remote content. 
  * @param {Object.<string,*>} props - Options, see showPopup()
  */
-// FIXME: Needs testing.
 
-polaric.Popup.prototype.remotePopup = function(url, props)
+pol.core.Popup.prototype.remotePopup = function(url, props)
 {
     var d =  this.showPopup(props);
     $.get(url, function(txt) { d.innerHTML = txt; } );
@@ -228,9 +227,8 @@ polaric.Popup.prototype.remotePopup = function(url, props)
  * @param {Object.<string,*>} props - Options, see showPopup()
  * 
  */
-// FIXME: Needs testing.
 
-polaric.Popup.prototype.remotePopupCSS = function(url, css, props)
+pol.core.Popup.prototype.remotePopupCSS = function(url, css, props)
 {
    var d = this.remotePopup(url, props)
         if (css != null) 
@@ -247,7 +245,7 @@ polaric.Popup.prototype.remotePopupCSS = function(url, css, props)
  * @param {ol.Coordinate} geoPos - LatLong position of where to put upper left corner of popup.
  */
 
-polaric.Popup.prototype.showImageGeo = function(geoPos) {
+pol.core.Popup.prototype.showImageGeo = function(geoPos) {
    var t = this;
    setTimeout( function() {
       t.geoPos = geoPos;
@@ -264,7 +262,7 @@ polaric.Popup.prototype.showImageGeo = function(geoPos) {
  * @param {ol.Coordinate} geoPos - LatLong position of upper left corner of popup.
  */
 
-polaric.Popup.prototype.setPositionGeo = function(geoPos) {
+pol.core.Popup.prototype.setPositionGeo = function(geoPos) {
     if (this.activepopup && this.activepopup != null) {
         var pixPos = this.mb.map.getPixelFromCoordinate
              (ol.proj.fromLonLat(geoPos, this.mb.view.getProjection()));
@@ -279,7 +277,7 @@ polaric.Popup.prototype.setPositionGeo = function(geoPos) {
  * @param {ol.Coordinate} pixPos - Pixel position of upper left corner of popup.
  */
 
-polaric.Popup.prototype.setPositionPix = function(pixPos) {
+pol.core.Popup.prototype.setPositionPix = function(pixPos) {
     if (this.activepopup && this.activepopup != null)
         this.setPosition_(pixPos[0], pixPos[1]);
 }
@@ -291,7 +289,7 @@ polaric.Popup.prototype.setPositionPix = function(pixPos) {
  * @private
  */
 
-polaric.Popup.prototype.setPosition_ = function(x, y)
+pol.core.Popup.prototype.setPosition_ = function(x, y)
   {   
       var xoff=0;
       var yoff=0;
@@ -339,7 +337,7 @@ polaric.Popup.prototype.setPosition_ = function(x, y)
  * @private
  */
      
-polaric.Popup.prototype.popup_ = function(elem, x, y, img)
+pol.core.Popup.prototype.popup_ = function(elem, x, y, img)
 {
      var t = this;
      if (this.allowedPopups <= 0)

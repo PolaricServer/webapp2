@@ -27,10 +27,10 @@
  * @constructor
  */
 
-polaric.trackerSearch = function()
+pol.tracking.Search = function()
 {
-   polaric.Widget.call(this);
-   this.classname = "polaric.trackerSearch"; 
+   pol.core.Widget.call(this);
+   this.classname = "pol.tracking.Search"; 
    this.url = CONFIG.get('server');
    this.tags = "";
    var t = this;
@@ -121,14 +121,14 @@ polaric.trackerSearch = function()
     
     
 }
-ol.inherits(polaric.trackerSearch, polaric.Widget);
+ol.inherits(pol.tracking.Search, pol.core.Widget);
 
 
 
 
  
 
-widget.setRestoreFunc("polaric.trackerSearch", function(id, pos) {
+pol.widget.setRestoreFunc("polaric.trackerSearch", function(id, pos) {
     var x = new polaric.trackerSearch(); 
     x.activatePopup(id, pos, true); 
 }); 

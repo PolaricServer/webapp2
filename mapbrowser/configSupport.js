@@ -20,8 +20,8 @@
 */
 
 
-var CONFIG = new polaric.Config(uid); 
-var uid = "ol4test"; // What is this? Still needed?
+var CONFIG = new pol.core.Config(pol.uid); 
+pol.uid = "ol4test"; // What is this? Still needed?
 
 
 
@@ -58,17 +58,17 @@ function ADD_PROJECTION(name, info, extent)
 
 
 function PROJECTION(proj) 
-   { CONFIG.set('projection', proj); }
+   { CONFIG.set('core.projection', proj); }
 
    
    
 function CENTER(lng, lat) 
-   { CONFIG.set('center', [lng, lat]); }
+   { CONFIG.set('core.center', [lng, lat]); }
 
    
    
 function SCALE(res)
-   { CONFIG.set('resolution', res); }
+   { CONFIG.set('core.resolution', res); }
 
    
    

@@ -24,12 +24,12 @@
   * @classdesc 
   * Layer manager/layer switcher.
   * @constructor
-  * @param {polaric.MapBrowser} mb - Map browser instance. 
+  * @param {pol.core.MapBrowser} mb - Map browser instance. 
   */
  
- polaric.LayerSwitcher = function() {
-   polaric.Widget.call(this);
-   this.classname = "polaric.LayerSwitcher";
+ pol.core.LayerSwitcher = function() {
+   pol.core.Widget.call(this);
+   this.classname = "pol.core.LayerSwitcher";
    
    var t = this;
    this.mb = CONFIG.mb;
@@ -94,7 +94,7 @@
           { t.toggleOverlay(arg);} }
        
  };
- ol.inherits(polaric.LayerSwitcher, polaric.Widget);
+ ol.inherits(pol.core.LayerSwitcher, pol.core.Widget);
 
  
  
@@ -104,7 +104,7 @@
   * @param {number} i - index of layer.  
   */
  
- polaric.LayerSwitcher.prototype.toggleOverlay = function(i)
+ pol.core.LayerSwitcher.prototype.toggleOverlay = function(i)
  {
      i -= this.mb.config.baseLayers.length;
      console.assert(i >= 0 && i <= this.mb.config.oLayers.length, "Assertion failed");
@@ -120,7 +120,7 @@
   * Re-evaluate what layers to be shown in layer switcher list. 
   */
  
- polaric.LayerSwitcher.prototype.evaluateLayers = function() {
+ pol.core.LayerSwitcher.prototype.evaluateLayers = function() {
 
    /* First, check if base layer is still valid. If not, 
     * replace it with first layer in list that is. 
@@ -151,8 +151,8 @@
 
  
  
- widget.setRestoreFunc("polaric.LayerSwitcher", function(id, pos) {
-    var x = new polaric.LayerSwitcher(); 
+ pol.widget.setRestoreFunc("pol.core.LayerSwitcher", function(id, pos) {
+    var x = new pol.core.LayerSwitcher(); 
     x.activatePopup(id, pos, true); 
  }); 
  

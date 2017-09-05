@@ -22,7 +22,7 @@
 /**
  * @constructor
  */
-polaric.MousePos = function(opt_options) {
+pol.core.MousePos = function(opt_options) {
 
    var options = opt_options || {};
 
@@ -55,7 +55,7 @@ polaric.MousePos = function(opt_options) {
   this.lastMouseMovePixel_ = null;
 
 };
-ol.inherits(polaric.MousePos, ol.control.Control);
+ol.inherits(pol.core.MousePos, ol.control.Control);
 
       
 
@@ -63,7 +63,7 @@ ol.inherits(polaric.MousePos, ol.control.Control);
 /**
  * Set map object. Called from superclass. 
  */
-polaric.MousePos.prototype.setMap = function(map) {
+pol.core.MousePos.prototype.setMap = function(map) {
    ol.control.Control.prototype.setMap.call(this, map);
    var t = this;
    if (map) {
@@ -128,7 +128,7 @@ polaric.MousePos.prototype.setMap = function(map) {
  * Show position in UTM format, latlong format and as maidenhead locator.
  */
 
-polaric.MousePos.prototype.updatePos = function(x) {
+pol.core.MousePos.prototype.updatePos = function(x) {
     if (x==null) {
        this.utm.innerHTML = "<span>(utm pos)</span>";
        this.latlong.innerHTML = "<span>(latlong pos)</span>";
@@ -139,9 +139,9 @@ polaric.MousePos.prototype.updatePos = function(x) {
        var c = map.getCoordinateFromPixel(x);
        if (c == null) c = [0,0];
        var coord = ol.proj.toLonLat(c, map.getView().getProjection());    
-       this.latlong.innerHTML = '<span>'+polaric.formatDM(coord)+'</span>';
-       this.utm.innerHTML = '<span>'+polaric.formatUTM(coord)+'</span>'; 
-       this.maidenhead.innerHTML = '<span>'+polaric.formatMaidenhead(coord);
+       this.latlong.innerHTML = '<span>'+pol.mapref.formatDM(coord)+'</span>';
+       this.utm.innerHTML = '<span>'+pol.mapref.formatUTM(coord)+'</span>'; 
+       this.maidenhead.innerHTML = '<span>'+pol.mapref.formatMaidenhead(coord);
     }
     
 }

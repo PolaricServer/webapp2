@@ -24,21 +24,21 @@
   * 
   * @constructor
   * @param {Element|string} targ - target DOM element or id of element
-  * @param {polaric.Config} config - Configuration class instance
+  * @param {pol.core.Config} config - Configuration class instance
   */
  
- polaric.MapBrowser = function(targ, config) 
+ pol.core.MapBrowser = function(targ, config) 
  {
      console.assert(targ && targ != null && config && config != null, "Assertion failed");
      
      var t = this;
      config.mb = this;
      t.config = config; 
-     t.toolbar = new polaric.Toolbar({}, t);
+     t.toolbar = new pol.core.Toolbar({}, t);
      
      t.view = new ol.View({   
-          projection: t.config.get('projection'),                         
-          center: ol.proj.fromLonLat(t.config.get('center'), t.config.get('projection')), 
+          projection: t.config.get('core.projection'),                         
+          center: ol.proj.fromLonLat(t.config.get('core.center'), t.config.get('core.projection')), 
           zoom: 2
         });
   
@@ -48,24 +48,24 @@
         loadTilesWhileAnimating: true,
         controls: [
             new ol.control.ScaleLine({}),
-            new polaric.MousePos({}),
+            new pol.core.MousePos({}),
             t.toolbar
         ],
         view: t.view
      });
 
      t.prevGda = 1;
-     t.config.set('baselayer', 0);
-     t.baseLayerIdx = t.config.get('baselayer');
+     t.config.set('core.baselayer', 0);
+     t.baseLayerIdx = t.config.get('core.baselayer');
      
      // Set up layers, initial scale, etc..
      t.initializeLayers(config);
-     t.setResolution(t.config.get('resolution'));
+     t.setResolution(t.config.get('core.resolution'));
      t.xLayers = [];
      
      // Popup windows and context menus */
-     t.gui = new polaric.Popup(t);
-     t.ctxMenu = new polaric.ContextMenu(t.gui);
+     t.gui = new pol.core.Popup(t);
+     t.ctxMenu = new pol.core.ContextMenu(t.gui);
      t.toolbar.setDefaultItems();
    
      
@@ -76,9 +76,9 @@
      t.dpm = dotsPerInch()*39.37;
      
      function onMove() {
-         t.config.store('center', 
+         t.config.store('core.center', 
             ol.proj.toLonLat(t.view.getCenter(), t.view.getProjection()), true); 
-    	 t.config.store('resolution', t.view.getResolution(), true);
+    	 t.config.store('core.resolution', t.view.getResolution(), true);
      }
     
      
@@ -96,7 +96,7 @@
 
  
  
-polaric.MapBrowser.prototype.addContextMenu = function(name, func) {
+pol.core.MapBrowser.prototype.addContextMenu = function(name, func) {
    this.ctxMenu.addMenuId("map", "MAP", false, func);
 }
  
@@ -107,7 +107,7 @@ polaric.MapBrowser.prototype.addContextMenu = function(name, func) {
  * Get base layer
  * @returns The current base layer. 
  */
-polaric.MapBrowser.prototype.getBaseLayer = function() {
+pol.core.MapBrowser.prototype.getBaseLayer = function() {
     return this.config.baseLayers[this.baseLayerIdx]; 
 }
 
@@ -117,7 +117,7 @@ polaric.MapBrowser.prototype.getBaseLayer = function() {
  * Get Long Lat coordinate from pixel.
  * @param {ol.Pixel} x - pixel position
  */
-polaric.MapBrowser.prototype.pix2LonLat = function(x)
+pol.core.MapBrowser.prototype.pix2LonLat = function(x)
    { return ol.proj.toLonLat(this.map.getCoordinateFromPixel(x), 
            this.map.getView().getProjection()); }
    
@@ -128,7 +128,7 @@ polaric.MapBrowser.prototype.pix2LonLat = function(x)
  * @param {number} idx - index of base layer to select. 
  * 
  */
- polaric.MapBrowser.prototype.changeBaseLayer = function(idx) {
+ pol.core.MapBrowser.prototype.changeBaseLayer = function(idx) {
     console.assert(idx >= 0 && idx <= this.config.baseLayers.length, "Assertion failed");
     
     var ls = this.config.baseLayers[idx];
@@ -143,13 +143,13 @@ polaric.MapBrowser.prototype.pix2LonLat = function(x)
     /* Change projection if requested */
     var proj = ls.projection; 
     if (!proj)
-        proj = this.config.get('projection');
+        proj = this.config.get('core.projection');
     if (!proj)
         proj = this.view.getProjection();
     if (proj != this.view.getProjection())
         this.changeView(proj)
         
-    this.config.store('baselayer', this.baseLayerIdx = idx, true);
+    this.config.store('core.baselayer', this.baseLayerIdx = idx, true);
  }
  
  
@@ -157,11 +157,11 @@ polaric.MapBrowser.prototype.pix2LonLat = function(x)
  
 /**
  * Add the layers from the config to the OpenLayers map. 
- * @param {polaric.Config} config - instance of Config class.
+ * @param {pol.core.Config} config - instance of Config class.
  * 
  */
 
-polaric.MapBrowser.prototype.initializeLayers = function(config) {
+pol.core.MapBrowser.prototype.initializeLayers = function(config) {
   
   this.map.getLayers().clear();
   
@@ -177,13 +177,13 @@ polaric.MapBrowser.prototype.initializeLayers = function(config) {
 
 
 
-polaric.MapBrowser.prototype.addLayer = function(layer) {
+pol.core.MapBrowser.prototype.addLayer = function(layer) {
    this.map.addLayer(layer);
    this.xLayers.push(layer);
 }
 
 
-polaric.MapBrowser.prototype.removeLayer = function(layer) {
+pol.core.MapBrowser.prototype.removeLayer = function(layer) {
    this.map.removeLayer(layer);
    for(var i in this.xLayers) {
       if(this.xLayers[i] === layer) 
@@ -193,7 +193,7 @@ polaric.MapBrowser.prototype.removeLayer = function(layer) {
 
 
 
-polaric.MapBrowser.prototype.addVectorLayer = function(style) {
+pol.core.MapBrowser.prototype.addVectorLayer = function(style) {
    var source = new ol.source.Vector({wrapX: false});
    var vector = new ol.layer.Vector({
        source: source,
@@ -205,12 +205,12 @@ polaric.MapBrowser.prototype.addVectorLayer = function(style) {
 
 
 
-polaric.MapBrowser.prototype.addConfiguredLayer = function(layer, name) {
+pol.core.MapBrowser.prototype.addConfiguredLayer = function(layer, name) {
    console.assert(layer != null && name != null, "Assertion failed");
    var i = this.config.addLayer(layer, name);
-   var visible = this.config.get('olayer.'+i);
+   var visible = this.config.get('core.olayer.'+i);
    if (visible == null)
-      this.config.store('olayer.' + i, true); 
+      this.config.store('core.olayer.' + i, true); 
    else
       this.config.oLayers[i].setVisible(visible);
    
@@ -228,7 +228,7 @@ polaric.MapBrowser.prototype.addConfiguredLayer = function(layer, name) {
 
 
 
-polaric.MapBrowser.prototype.removeConfiguredLayer = function(layer) {
+pol.core.MapBrowser.prototype.removeConfiguredLayer = function(layer) {
    console.assert(layer != null, "Assertion failed");
    this.map.removeLayer(layer);   
    this.config.removeLayer(layer);
@@ -241,7 +241,7 @@ polaric.MapBrowser.prototype.removeConfiguredLayer = function(layer) {
  * @param {ol.Coordinate} center - Coordinate where map is to be centered (in latlong projection).
  * 
  */
-polaric.MapBrowser.prototype.setCenter = function(center) {
+pol.core.MapBrowser.prototype.setCenter = function(center) {
    this.view.setCenter(
       ol.proj.fromLonLat(center, this.view.getProjection())
    ); 
@@ -252,7 +252,7 @@ polaric.MapBrowser.prototype.setCenter = function(center) {
  * Get coordinates [longitude, latitude] of center of current map view. 
  * @returns position
  */
-polaric.MapBrowser.prototype.getCenter = function() {
+pol.core.MapBrowser.prototype.getCenter = function() {
    return ol.proj.toLonLat(this.view.getCenter(), this.view.getProjection());
 };
 
@@ -261,7 +261,7 @@ polaric.MapBrowser.prototype.getCenter = function() {
  * Get UTM reference of center of current map view. 
  * @returns position
  */
-polaric.MapBrowser.prototype.getCenterUTM = function() {    
+pol.core.MapBrowser.prototype.getCenterUTM = function() {    
     var center = browser.getCenter();
     var cref = new LatLng(center[1], center[0]);
     return cref.toUTMRef(); 
@@ -272,7 +272,7 @@ polaric.MapBrowser.prototype.getCenterUTM = function() {
  * Return the geographical extent of the map shown on screen. 
  * In some cases it is better to use the limits at the center when transforming between projections. 
  */
-polaric.MapBrowser.prototype.getExtent = function() {
+pol.core.MapBrowser.prototype.getExtent = function() {
     var proj = this.view.getProjection();
     var center = this.view.getCenter();
     var ext = this.view.calculateExtent();
@@ -295,7 +295,7 @@ polaric.MapBrowser.prototype.getExtent = function() {
  * Zoom and center map to fit the given extent.  
  * @param {ol.Extent} extent - Extent (in latlong projection)
  */
-polaric.MapBrowser.prototype.fitExtent = function(extent) {
+pol.core.MapBrowser.prototype.fitExtent = function(extent) {
     this.view.fit(
         ol.proj.transformExtent(extent, "EPSG:4326", this.view.getProjection()),
         {size: this.map.getSize(), nearest: true}
@@ -308,13 +308,13 @@ polaric.MapBrowser.prototype.fitExtent = function(extent) {
  * Set/get the resolution of the map. 
  * 
  */
-polaric.MapBrowser.prototype.getResolution = function() {
-   return this.config.get('resolution');
+pol.core.MapBrowser.prototype.getResolution = function() {
+   return this.config.get('core.resolution');
 };
 
 
 
-polaric.MapBrowser.prototype.setResolution = function(res) {
+pol.core.MapBrowser.prototype.setResolution = function(res) {
    this.view.setResolution(res); 
 };
 
@@ -322,7 +322,7 @@ polaric.MapBrowser.prototype.setResolution = function(res) {
 /**
  * Get scale of the map (center of map) as it is displayed on the screen.  
  */
-polaric.MapBrowser.prototype.getScale = function() {
+pol.core.MapBrowser.prototype.getScale = function() {
    var res = this.view.getResolution();
    var center = this.view.getCenter();
    var mpu = this.view.getProjection().getMetersPerUnit();
@@ -337,7 +337,7 @@ polaric.MapBrowser.prototype.getScale = function() {
  * Return a geodetic adjustment for the current view 
  * 
  */
-polaric.MapBrowser.prototype.geodeticAdjustment = function() {
+pol.core.MapBrowser.prototype.geodeticAdjustment = function() {
     if (/EPSG:(900913|3857|4326)/.test(this.view.getProjection().getCode()) && this.view.getCenter() != null) { 
        var center = ol.proj.toLonLat(this.view.getCenter(), this.view.getProjection()); 
        return Math.cos(center[1]/180*Math.PI ); 
@@ -354,7 +354,7 @@ polaric.MapBrowser.prototype.geodeticAdjustment = function() {
  * @param {ol.ProjectionLike} proj - New projection
  * 
  */
-polaric.MapBrowser.prototype.changeView = function(proj) {
+pol.core.MapBrowser.prototype.changeView = function(proj) {
     
     /* Do nothing if no change of projection? */
     if (proj == this.view.getProjection())
@@ -391,11 +391,11 @@ polaric.MapBrowser.prototype.changeView = function(proj) {
  * Show map reference on map. 
  * @param {ol.Coordinate} coord - position to be shown (in latlong projection).
  */
-polaric.MapBrowser.prototype.show_Mapref = function(coord) 
+pol.core.MapBrowser.prototype.show_Mapref = function(coord) 
 {
-     var h = '<span class="sleftlab">UTM:</span>' + polaric.formatUTM(coord) +'<br>' +
-             '<nobr><span class="sleftlab">Latlong:</span>' + polaric.formatDM(coord) +'<br>'  + 
-             '</nobr><span class="sleftlab">Loc:</span>' + polaric.formatMaidenhead(coord);    
+     var h = '<span class="sleftlab">UTM:</span>' + pol.mapref.formatUTM(coord) +'<br>' +
+             '<nobr><span class="sleftlab">Latlong:</span>' + pol.mapref.formatDM(coord) +'<br>'  + 
+             '</nobr><span class="sleftlab">Loc:</span>' + pol.mapref.formatMaidenhead(coord);    
      this.gui.removePopup();       
      this.gui.showPopup( 
         {html: h, geoPos: coord, image: true} );
@@ -408,7 +408,7 @@ polaric.MapBrowser.prototype.show_Mapref = function(coord)
  * Show map reference on pixel position on map. 
  * @param {ol.Pixel} pix - pixel on current map view where position is. 
  */
-polaric.MapBrowser.prototype.show_MaprefPix = function(pix)
+pol.core.MapBrowser.prototype.show_MaprefPix = function(pix)
    { this.show_Mapref(browser.pix2LonLat(pix)); }
 
 
@@ -418,7 +418,7 @@ polaric.MapBrowser.prototype.show_MaprefPix = function(pix)
  * @param {ol.Coordinate} ref - position to be shown (in latlong projection).
  * @param {boolean|undefined} showinfo - true if we should show map reference info in a popup as well.
  */
-polaric.MapBrowser.prototype.goto_Pos = function(ref, showinfo) 
+pol.core.MapBrowser.prototype.goto_Pos = function(ref, showinfo) 
 {
    this.setCenter(ref);
    if (showinfo)

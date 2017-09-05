@@ -23,9 +23,9 @@
  * Toolbar class.
  * @constructor
  * @param {Object.<string,*>} opt - Options
- * @param {polaric.MapBrowser} br - Map browser instance
+ * @param {pol.core.MapBrowser} br - Map browser instance
  */
-polaric.Toolbar = function(opt, br) {
+pol.core.Toolbar = function(opt, br) {
 
    var options = opt || {};
 
@@ -36,7 +36,7 @@ polaric.Toolbar = function(opt, br) {
    this.element = document.createElement('div');
    this.element.className = 'toolbar ol-unselectable ol-control';
    this.lastElem = null; 
-   this.arealist = new polaric.AreaList();
+   this.arealist = new pol.core.AreaList();
    this.sections = [];
    this.nextSect = 0;
    
@@ -45,11 +45,11 @@ polaric.Toolbar = function(opt, br) {
       target: options.target
    });
 };
-ol.inherits(polaric.Toolbar, ol.control.Control);
+ol.inherits(pol.core.Toolbar, ol.control.Control);
 
 
 
-polaric.Toolbar.prototype.addSection = function() 
+pol.core.Toolbar.prototype.addSection = function() 
 {
     var sx = document.createElement('div');
     this.element.appendChild(sx);
@@ -61,7 +61,7 @@ polaric.Toolbar.prototype.addSection = function()
 /**
  * Activate default icons and menus on toolbar.
  */
-polaric.Toolbar.prototype.setDefaultItems = function() 
+pol.core.Toolbar.prototype.setDefaultItems = function() 
 {
    /* Default icons */
    this.addSection();
@@ -76,19 +76,19 @@ polaric.Toolbar.prototype.setDefaultItems = function()
    
    var t = this; 
    
-   polaric.addHandlerId("tb_layers", true,  
+   pol.core.addHandlerId("tb_layers", true,  
         function(e) {
-	       var ls = new polaric.LayerSwitcher();
+	       var ls = new pol.core.LayerSwitcher();
            ls.activatePopup("layerswitcher", [e.iconX, e.iconY]);
 	 } );
    
    
    var measure_on = false; 
-   polaric.addHandlerId("tb_measure", true, 
+   pol.core.addHandlerId("tb_measure", true, 
 	function(e) {
 	   measure_on = (measure_on ? false : true);
 	   if (measure_on){
-            measure = new polaric.Measure();
+            measure = new pol.core.Measure();
 	        $("#tb_measure").attr("class", "selected");
        }
 	   else {
@@ -141,7 +141,7 @@ polaric.Toolbar.prototype.setDefaultItems = function()
 /**
  * Set map object. Called from superclass. 
  */
-polaric.Toolbar.prototype.setMap = function(map) {
+pol.core.Toolbar.prototype.setMap = function(map) {
    ol.control.Control.prototype.setMap.call(this, map);
 }
 
@@ -155,7 +155,7 @@ polaric.Toolbar.prototype.setMap = function(map) {
  * @param {string|undefined} title
  * @return DOM element for the icon. 
  */
-polaric.Toolbar.prototype.addIcon = function(i, f, id, action, title) {
+pol.core.Toolbar.prototype.addIcon = function(i, f, id, action, title) {
     var x = document.createElement('img');
     if (id != null)
        x.setAttribute("id", id);
@@ -172,7 +172,7 @@ polaric.Toolbar.prototype.addIcon = function(i, f, id, action, title) {
 
 
 
-polaric.Toolbar.prototype.addDiv = function(i, id, title) {
+pol.core.Toolbar.prototype.addDiv = function(i, id, title) {
     var x = document.createElement('div');
     if (id != null)
        x.setAttribute("id", id);
@@ -187,7 +187,7 @@ polaric.Toolbar.prototype.addDiv = function(i, id, title) {
 /**
  * Add spacing betwen icons on toolbar. 
  */
-polaric.Toolbar.prototype.addSpacing = function() {
+pol.core.Toolbar.prototype.addSpacing = function() {
     if (this.lastElem != null) 
         this.lastElem.className += " x-space"; 
 }

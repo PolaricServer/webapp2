@@ -19,6 +19,8 @@
 */
  
 
+pol.tracking = pol.tracking || {}; 
+
 
 /**
  * @classdesc
@@ -26,10 +28,10 @@
  * @constructor
  */
  
-polaric.Tracking = function() 
+pol.tracking.Tracking = function() 
 {
    var t = this; 
-   t.producer = new polaric.MapUpdate();
+   t.producer = new pol.tracking.MapUpdate();
    t.filter = null;
    t.ready = false;
    t.url = CONFIG.get('server');
@@ -156,7 +158,7 @@ polaric.Tracking = function()
 /**
  * Remove all features from map. 
  */
-polaric.Tracking.prototype.clear = function() {
+pol.tracking.Tracking.prototype.clear = function() {
     var ft = this.source.getFeatures()
     for (i in ft) 
        /* For some strange reason, removing feature directly doesn't work */
@@ -168,7 +170,7 @@ polaric.Tracking.prototype.clear = function() {
 /**
  * Set filter and re-subscribe. 
  */
-polaric.Tracking.prototype.setFilter = function(flt) {
+pol.tracking.Tracking.prototype.setFilter = function(flt) {
    console.assert(flt!=null && flt!="", "Assertion failed");
    var t = this;
    t.filter = flt;
@@ -185,10 +187,14 @@ polaric.Tracking.prototype.setFilter = function(flt) {
  * Add a feature (tracking point) or update it if it is already there. 
  */
 
-polaric.Tracking.prototype.addPoint = function(p) {
+pol.tracking.Tracking.prototype.addPoint = function(p) {
     console.assert(p!=null, "Assertion failed");
     var t = this;
     var c = ll2proj(p.pos);
+    
+    /* Draw the trail first. */
+    this.addTrail(p);
+    
     var feature = this.source.getFeatureById(p.ident);
     if (feature == null) {
        feature = new ol.Feature(new ol.geom.Point(c));
@@ -224,9 +230,6 @@ polaric.Tracking.prototype.addPoint = function(p) {
     }
     else if (feature.label)
        CONFIG.mb.map.removeOverlay(feature.label);
-
-    /* Trail */
-    this.addTrail(p);
 } /* AddPoint */
 
 
@@ -234,7 +237,7 @@ polaric.Tracking.prototype.addPoint = function(p) {
 /**
  * Create a label. Use overlay.
  */
-polaric.Tracking.prototype.createLabel = function(pos, label) {
+pol.tracking.Tracking.prototype.createLabel = function(pos, label) {
    console.assert(pos!=null && label != null, "Assertion failed");
    var element = document.createElement('div');
    element.className = label.style;
@@ -254,7 +257,7 @@ polaric.Tracking.prototype.createLabel = function(pos, label) {
 /**
  * Return true if label is hidden. 
  */
-polaric.Tracking.prototype._labelHidden = function(id, dfl) {
+pol.tracking.Tracking.prototype._labelHidden = function(id, dfl) {
     if (this.showLabel[id] != null) 
         return this.showLabel[id]==false; 
     return dfl;
@@ -264,7 +267,7 @@ polaric.Tracking.prototype._labelHidden = function(id, dfl) {
 /**
  * Return true if label is hidden.
  */
-polaric.Tracking.prototype.labelHidden = function(id) {
+pol.tracking.Tracking.prototype.labelHidden = function(id) {
     var feature = this.source.getFeatureById(id);
     if (feature == null)
         return false;
@@ -275,7 +278,7 @@ polaric.Tracking.prototype.labelHidden = function(id) {
 /**
  * Hide label.
  */
-polaric.Tracking.prototype.hideLabel = function(id, hide) {
+pol.tracking.Tracking.prototype.hideLabel = function(id, hide) {
     this.showLabel[id] = !hide;  
     var feature = this.source.getFeatureById(id);
     if (feature == null)
@@ -297,7 +300,7 @@ polaric.Tracking.prototype.hideLabel = function(id, hide) {
  * TODO: Add some method to disable/enable this for a point?
  */
 
-polaric.Tracking.prototype.addTrail = function(p) {
+pol.tracking.Tracking.prototype.addTrail = function(p) {
     console.assert(p!=null, "Assertion failed");
     var t = this;
     var feature = this.source.getFeatureById(p.ident+'.trail');    
@@ -343,8 +346,12 @@ polaric.Tracking.prototype.addTrail = function(p) {
  * TODO: Should points be clickable, to pop up some info? 
  */
 
-polaric.Tracking.prototype.addTrailPoints = function(p) {
+pol.tracking.Tracking.prototype.addTrailPoints = function(p) {
     console.assert(p!=null, "Assertion failed");
+    var feature = this.source.getFeatureById(p.ident+'.trailpoints');  
+    if (feature !=null) 
+        this.source.removeFeature(feature);
+    
     feature = new ol.Feature(new ol.geom.MultiPoint([]));
     feature.setId(p.ident+'.trailpoints');
     
@@ -370,7 +377,7 @@ polaric.Tracking.prototype.addTrailPoints = function(p) {
 /**
  * Remove a feature from map.
  */   
-polaric.Tracking.prototype.removePoint = function(x) {
+pol.tracking.Tracking.prototype.removePoint = function(x) {
     console.assert(x!=null && x!="", "Assertion failed");
     var feature = this.source.getFeatureById(x);
     var trail = this.source.getFeatureById(x + ".trail");
@@ -390,7 +397,7 @@ polaric.Tracking.prototype.removePoint = function(x) {
  * Get points at a specific pixel position on map.
  * @returns Array of point identifiers
  */
-polaric.Tracking.prototype.getPointsAt = function(pix) {
+pol.tracking.Tracking.prototype.getPointsAt = function(pix) {
    console.assert(pix!=null && pix[0]>=0 && pix[1]>=null, "Assertion failed");
    var t=this;
    var pp = CONFIG.mb.map.getFeaturesAtPixel(pix, 
@@ -408,7 +415,7 @@ polaric.Tracking.prototype.getPointsAt = function(pix) {
  * Move the map to a given point. Since the point may not be a feature on client yet, 
  * we need to fetch it from the server. 
  */
-polaric.Tracking.prototype.goto_Point = function(ident) {
+pol.tracking.Tracking.prototype.goto_Point = function(ident) {
    console.assert(ident!=null && ident!="", "Assertion failed");
    
    $.get(this.url + "/srv/finditem?ajax=true&id="+ident, function(info) {
@@ -436,7 +443,7 @@ polaric.Tracking.prototype.goto_Point = function(ident) {
 /** 
  * Update using JSON data from Polaric Server backend 
  */
-polaric.Tracking.prototype.update = function(ov) {
+pol.tracking.Tracking.prototype.update = function(ov) {
    console.log("Tracking.update: view="+ov.view+", sesId="+ov.sesId);
    for (i in ov.points) 
       this.addPoint(ov.points[i]);

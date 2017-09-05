@@ -26,8 +26,8 @@
  * WFS layer editor.
  */
 
-polaric.WmsLayer = function(list) {
-   polaric.LayerEdit.call(this, list);
+pol.layers.Wms = function(list) {
+   pol.layers.Edit.call(this, list);
       
        
    this.fields = {
@@ -42,7 +42,7 @@ polaric.WmsLayer = function(list) {
    }  
    
 }
-ol.inherits(polaric.WmsLayer, polaric.LayerEdit);
+ol.inherits(pol.layers.Wms, pol.layers.Edit);
 
 
 
@@ -50,7 +50,7 @@ ol.inherits(polaric.WmsLayer, polaric.LayerEdit);
  * Return true if add button can be enabled 
  */
 
-polaric.WmsLayer.prototype.enabled = function() {
+pol.layers.Wms.prototype.enabled = function() {
     return  $("#editLayer").attr("ok") && 
             $("#wmsUrl").attr("ok") && 
             $("#wmsLayers").attr("ok") ; 
@@ -62,7 +62,7 @@ polaric.WmsLayer.prototype.enabled = function() {
  * Create a layer. 
  */
 
-polaric.WmsLayer.prototype.createLayer = function(name) {
+pol.layers.Wms.prototype.createLayer = function(name) {
        var url = $("#wmsUrl").val();
        var layers = $("#wmsLayers").val();
        console.log("Create WMS layer: URL="+url+", layers="+layers);
@@ -84,8 +84,8 @@ polaric.WmsLayer.prototype.createLayer = function(name) {
  * Move settings to web-form. 
  */  
 
-polaric.WmsLayer.prototype.edit = function(layer) {
-   polaric.LayerEdit.prototype.edit.call(this, layer);
+pol.layers.Wms.prototype.edit = function(layer) {
+   pol.layers.Edit.prototype.edit.call(this, layer);
    
    $("#wmsUrl").val(layer.getSource().getUrl()).trigger("change").attr("ok", true);
    $("#wmsLayers").val(layer.getSource().getParams().LAYERS).trigger("change").attr("ok", true);
@@ -97,7 +97,7 @@ polaric.WmsLayer.prototype.edit = function(layer) {
  * Stringify settings for a layer to JSON format. 
  */
 
-polaric.WmsLayer.prototype.layer2json = function(layer) { 
+pol.layers.Wms.prototype.layer2json = function(layer) { 
     var lx = {
       name:   layer.get("name"),
       filter: layer.filt,
@@ -113,9 +113,12 @@ polaric.WmsLayer.prototype.layer2json = function(layer) {
  * Restore a layer from JSON format (see layer2json). 
  */
 
-polaric.WmsLayer.prototype.json2layer = function(js) {
+pol.layers.Wms.prototype.json2layer = function(js) {
     var lx = JSON.parse(js);
-
+    if (lx == null) {
+        console.warn("WmsLayer.json2layer: Resulting Layer is null");
+        return null;
+    }  
     var x = new ol.layer.Image({
             name: lx.name, 
             source: new ol.source.ImageWMS ({

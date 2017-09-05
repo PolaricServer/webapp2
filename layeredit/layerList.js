@@ -24,18 +24,18 @@
  * User defined layers (in a popup window). 
  * @constructor
  */
-polaric.LayerList = function() {
-   polaric.Widget.call(this);
-   this.classname = "polaric.LayerList"; 
+pol.layers.List = function() {
+   pol.core.Widget.call(this);
+   this.classname = "pol.layers.List"; 
    this.myLayers = [];     // Just the layer. Not to be saved directly. 
    this.myLayerNames = []; // Just the name
    this.typeList = {};
    var t = this;
    
    /* Register types */
-   t.addType("dummy", "Select layer type..", new polaric.DummyLayer(this));
-   t.addType("wms", "Standard WMS layer", new polaric.WmsLayer(this));   
-   t.addType("wfs", "Standard WFS layer", new polaric.WfsLayer(this));
+   t.addType("dummy", "Select layer type..", new pol.layers.Dummy(this));
+   t.addType("wms", "Standard WMS layer", new pol.layers.Wms(this));   
+   t.addType("wfs", "Standard WFS layer", new pol.layers.Wfs(this));
    
    var layer = t.typeList["dummy"].obj; 
 
@@ -84,7 +84,7 @@ polaric.LayerList = function() {
        var layer = t.myLayers[id];      
        t.myLayers.splice(id,1);
        t.myLayerNames.splice(id,1);
-       CONFIG.store("polaric.LayerList", t.myLayerNames, true);
+       CONFIG.store("layers.list", t.myLayerNames, true);
        CONFIG.mb.removeConfiguredLayer(layer);
    }
    
@@ -101,7 +101,7 @@ polaric.LayerList = function() {
    
    
 }
-ol.inherits(polaric.LayerList, polaric.Widget);
+ol.inherits(pol.layers.List, pol.core.Widget);
 
 
 
@@ -109,7 +109,7 @@ ol.inherits(polaric.LayerList, polaric.Widget);
 /**
  * Add a type with a Layer editor.
  */
-polaric.LayerList.prototype.addType = function(id, name, obj) {
+pol.layers.List.prototype.addType = function(id, name, obj) {
    obj.typeid = id;
    this.typeList[id] = {label: name, obj: obj} ;
 }
@@ -119,7 +119,7 @@ polaric.LayerList.prototype.addType = function(id, name, obj) {
 /**
  * Restore layers from local storage.
  */
-polaric.LayerList.prototype.getMyLayers = function() {
+pol.layers.List.prototype.getMyLayers = function() {
    var lrs = CONFIG.get("polaric.LayerList");
    if (lrs == null)
        return lrs = [];
@@ -127,7 +127,7 @@ polaric.LayerList.prototype.getMyLayers = function() {
    for (i in lrs) {
      console.log("Restore Layer: i="+i+", name='"+lrs[i].name+"', type="+lrs[i].type);
      var x = this.myLayers[i] = this.typeList[lrs[i].type].obj.json2layer 
-        ( CONFIG.get("polaric.Layer."+lrs[i].name.replace(/\s/g, "_" )));
+        ( CONFIG.get("layers.layer."+lrs[i].name.replace(/\s/g, "_" )));
      if (x!= null) 
         CONFIG.mb.addConfiguredLayer(x, lrs[i].name);
    }
@@ -136,8 +136,8 @@ polaric.LayerList.prototype.getMyLayers = function() {
 
 
 
-widget.setRestoreFunc("polaric.LayerList", function(id, pos) {
-    var x = new polaric.LayerList(); 
+pol.widget.setRestoreFunc("pol.layers.List", function(id, pos) {
+    var x = new pol.layers.List(); 
     x.activatePopup(id, pos, true); 
 }); 
 
