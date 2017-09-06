@@ -1,27 +1,28 @@
 # webapp2
-Re-write/port of client webapp. Based on OpenLayers 4+ and it is a hope that this will be more modular and more user- and developer friendly. There are some options in designing this: Make a complete application, an extensible application with core map browsing functionality or an application framework. Ideas and contributions are welcome. 
+Re-write of client webapp. It is based on OpenLayers 4+ and it is my hope that this will be more modular and more user- and developer friendly. It is mainly dsesigned as a libarary/application framework that can be instantiated as specific applications. It comes with an example setup as a tracking-application using a Polaric Server backend. Currently, the following modules are being implemented. 
+
+* Core. A basic map-browser that can be set up with map layers and with a framework for popup widgets. 
+* Layer Editor. Widgets for letting the user edit his/her own map-layers (currently supporting WFS and WMS). 
+* Tracking. Display trackers/objects as features in a map-layer. It uses the Polaric Server backend to get updates wia websocket and JSON. 
 
 Demo on http://test.aprs.no
 
 Old webapp code is in https://github.com/PolaricServer/webapp
 
-mapbrowser:
-  Map browser javascript code. Can be instantiated and configured to an application. 
   
 ## Example setup: 
-  test.js and index.html is a test webapp that instantiate a map browser.
-  Map layer config is in mapconfig.js
+  test.js and index.html is an example application setup with menus, etc.. Feel free to experiment.
+  An application can be configured mapconfig.js. Feel free to experiment.
   
-  stylesheets polaric.css and popup.css
+  stylesheets in style/ subdirectory. 
   
   
-  To run this you will also need OpenLayers (ol.js and ol.css), Jquery (jquery.js), Jquery-ui (jquery-ui/*) and Proj4 (proj4.js) placed in a subdirectory called lib.
+  To run this you will also need external code like OpenLayers (ol.js and ol.css), Jquery (jquery.js), Jquery-ui (jquery-ui/*) and Proj4 (proj4.js), etc. These are placed in a subdirectory called lib.
   
   Use compile-js.sh to minify the javascript code. 
   
-  For development use index-debug.html instead of index.html. 
+  For development use index-dev.html instead of index.html. 
   
 ## Licence
 This is free software. License is GNU Affero General Public License. See <http://www.gnu.org/licenses/>.
-
 
