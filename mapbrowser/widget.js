@@ -54,13 +54,13 @@ pol.widget.setRestoreFunc = function(id, f) {
  * Restore. 
  */
 pol.widget.restore = function() {
-    pol.widget._stored = CONFIG.get("widget._stored");
+    pol.widget._stored = CONFIG.get("core.widget._stored");
     if (pol.widget._stored == null)
         pol.widget._stored = {};
     
     for (var x in pol.widget._stored) {
         var f = pol.widget._restore[pol.widget._stored[x]];
-        var arg = CONFIG.get("widget."+x);
+        var arg = CONFIG.get("core.widget."+x);
         if (f != null)
            f(x, arg);
     }
@@ -145,21 +145,21 @@ pol.core.Widget = function() {
      
      
      function save() {
-        CONFIG.store("widget."+id, t.pos, true);
+        CONFIG.store("core.widget."+id, t.pos, true);
         
-        if (!widget._stored[id] || widget._stored[id] == null) {
-            widget._stored[id] = t.classname;
-            CONFIG.store("widget._stored", widget._stored, true); 
+        if (!pol.widget._stored[id] || pol.widget._stored[id] == null) {
+            pol.widget._stored[id] = t.classname;
+            CONFIG.store("core.widget._stored", pol.widget._stored, true); 
         }
      }
      
      
      function unSave() {
-        CONFIG.remove("widget."+id, t.pos);
+        CONFIG.remove("core.widget."+id, t.pos);
         
-        if (widget._stored[id] && widget._stored[id] != null) {
-            widget._stored[id] = null;
-            CONFIG.store("widget._stored", widget._stored, true); 
+        if (pol.widget._stored[id] && pol.widget._stored[id] != null) {
+            pol.widget._stored[id] = null;
+            CONFIG.store("core.widget._stored", pol.widget._stored, true); 
         }
      }
  }

@@ -26,7 +26,7 @@
  */
 pol.layers.List = function() {
    pol.core.Widget.call(this);
-   this.classname = "pol.layers.List"; 
+   this.classname = "layers.List"; 
    this.myLayers = [];     // Just the layer. Not to be saved directly. 
    this.myLayerNames = []; // Just the name
    this.typeList = {};
@@ -120,7 +120,7 @@ pol.layers.List.prototype.addType = function(id, name, obj) {
  * Restore layers from local storage.
  */
 pol.layers.List.prototype.getMyLayers = function() {
-   var lrs = CONFIG.get("polaric.LayerList");
+   var lrs = CONFIG.get("layers.List");
    if (lrs == null)
        return lrs = [];
   
@@ -136,7 +136,7 @@ pol.layers.List.prototype.getMyLayers = function() {
 
 
 
-pol.widget.setRestoreFunc("pol.layers.List", function(id, pos) {
+pol.widget.setRestoreFunc("layers.List", function(id, pos) {
     var x = new pol.layers.List(); 
     x.activatePopup(id, pos, true); 
 }); 

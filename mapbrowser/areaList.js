@@ -109,7 +109,7 @@ pol.core.AreaList.prototype.getMyAreas = function() {
 
 
 
-pol.widget.setRestoreFunc("pol.core.AreaList", function(id, pos) {
+pol.widget.setRestoreFunc("core.AreaList", function(id, pos) {
     var x = new pol.core.AreaList(); 
     x.activatePopup(id, pos, true); 
 }); 

@@ -30,7 +30,7 @@
 pol.core.refSearch = function()
 {
    pol.core.Widget.call(this);
-   this.classname = "pol.core.refSearch"; 
+   this.classname = "core.refSearch"; 
    
    this.widget = {
      view: function() {
@@ -84,7 +84,7 @@ ol.inherits(pol.core.refSearch, pol.core.Widget);
 
 
 
-pol.widget.setRestoreFunc("polaric.refSearch", function(id, pos) {
+pol.widget.setRestoreFunc("core.refSearch", function(id, pos) {
     var x = new pol.core.refSearch(); 
     x.activatePopup(id, pos, true); 
 }); 

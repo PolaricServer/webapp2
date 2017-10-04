@@ -30,7 +30,7 @@
 pol.tracking.Search = function()
 {
    pol.core.Widget.call(this);
-   this.classname = "pol.tracking.Search"; 
+   this.classname = "tracking.Search"; 
    this.url = CONFIG.get('server');
    this.tags = "";
    var t = this;
@@ -128,7 +128,7 @@ ol.inherits(pol.tracking.Search, pol.core.Widget);
 
  
 
-pol.widget.setRestoreFunc("polaric.trackerSearch", function(id, pos) {
-    var x = new polaric.trackerSearch(); 
+pol.widget.setRestoreFunc("tracking.Search", function(id, pos) {
+    var x = new pol.tracking.Search(); 
     x.activatePopup(id, pos, true); 
 }); 
