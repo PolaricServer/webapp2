@@ -26,7 +26,7 @@
  * @constructor
  */
 
-pol.tracking.MapUpdate = function() {
+pol.tracking.MapUpdate = function(server) {
    this.suspend = false;
    this.retry = 0;
    var t = this;
@@ -34,11 +34,10 @@ pol.tracking.MapUpdate = function() {
    t.subscriber = null;
      /* Should be a (callback function). 
       * We may have an array of subscribers instead? */
-   var url = CONFIG.get("server");
-   var uparts = url.split(/:\/\//);
-   url = (uparts[0] === 'https' ? 'wss' : 'ws'); 
-   url = url + "://"+ uparts[1] + '/ws/jmapdata';
-   console.log("URL: "+url);
+   var url = server.wsurl; 
+   url += '/jmapdata';
+   
+   console.log("Opening Websocket. URL: "+url);
    t.websocket = new WebSocket(url);
 
    

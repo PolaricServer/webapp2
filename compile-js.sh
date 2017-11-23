@@ -9,8 +9,8 @@ closure-compiler --js jscoord.js --js config.js --js mapref.js --js mapbrowser.j
 
 cd ..
 cd layeredit
-closure-compiler --js layerEdit.js --js layerList.js --js wmsLayer.js --js wfsLayer.js > ../layeredit-min.js
+closure-compiler --js layerList.js --js layerEdit.js --js wmsLayer.js --js wfsLayer.js > ../layeredit-min.js
 
 cd ..
 cd tracking
-closure-compiler --js tracking.js --js mapupdate.js --js search.js --js filters.js > ../tracking-min.js
+closure-compiler --js mapupdate.js --js tracking.js --js search.js --js filters.js > ../tracking-min.js

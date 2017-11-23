@@ -8,11 +8,13 @@
    
    /*
     * Add a tracking-layer using a polaric server backend.
-    */
-   var mu = new pol.tracking.Tracking();
-   var flt = new pol.tracking.Filters(mu);
-
-   
+    */  
+   var srv = new pol.tracking.PolaricServer();
+   var mu, flt; 
+   setTimeout(function() {
+      mu = new pol.tracking.Tracking(srv);
+      flt = new pol.tracking.Filters(mu);
+   }, 1000); 
    
 
    /* Set up application-specific context menus. We may define named contexts. The toolbar 
@@ -29,29 +31,56 @@
      m.add('Zoom out',  function()      { browser.view.setZoom(browser.view.getZoom()-1); } );
    });
 
+   
    browser.ctxMenu.addCallback("TOOLBAR", function(m) {
+   
+     m.add('Log in', function () {
+        srv.login();
+     });
+     m.add('Log out', function() {
+        srv.logout(); 
+     });
+     
+     
+     m.add('Auth info', function () {
+         srv.loginStatus(); 
+     });
+     
      m.add('Search items', function () 
        { var x = new pol.tracking.Search(); 
          x.activatePopup("trackerSearch", [50,70]) }); 
      
      m.add('Find position', function () { var x = new pol.core.refSearch(); x.activatePopup("refSearch", [50,70]) });
      m.add('Area List', function () { browser.toolbar.arealist.activatePopup("AreaList", [50,70]) });
-     m.add('Layer List', function () { var x = new pol.core.LayerList(); x.activatePopup("LayerList", [50,70]) });
+     m.add('Layer List', function () { var x = new pol.layers.List(); x.activatePopup("LayerList", [50,70]) });
    });
    
    browser.ctxMenu.addCallback("POINT", function(m) {
+       
+       m.add('Remove it', function() {mu.removePoint(m.ctxt.ident);}); 
       if (mu.labelHidden(m.ctxt.ident))
           m.add('Show label', function() { mu.hideLabel(m.ctxt.ident, false); });
       else
           m.add('Hide label', function() { mu.hideLabel(m.ctxt.ident, true); });
           
-      m.add('Do something', function () { alert("Something?"); });
+      m.add('Last movements', function () { historyPopup(m.ctxt.ident, [m.x, m.y]); });
       m.add('Do nothing', function () { alert("What?"); });
    });
    
-   
 
-
-   
+     
+   function historyPopup(id, pix) {
+       console.assert(id!=null && id != "" && pix != null, "Assertion failed"); 
+       browser.gui.removePopup();
+       browser.gui.remotePopup(
+          srv, "/history", 
+          {ajax: true, simple:true, id: id}, 
+          {id: "historypopup", geoPos: browser.pix2LonLat(pix)});
+   }
+   function histList_hout() {}
+   function histList_hover() {}
+       
+       
+       
    function findItem(x) 
       { mu.goto_Point(x); }
