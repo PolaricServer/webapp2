@@ -157,7 +157,7 @@ pol.core.PopupMenu.prototype.activate = function(x, y)
     wrapper.appendChild(this.menudiv);
     wrapper.style.display = 'none';
     wrapper.className = 'POPUPMENU';
-    wrapper.onmousemove = function(e) { e.cancelBubble = true; }
+    wrapper.onmousemove = function(e) { e.stopPropagation(); return null; }
     this.popupmgr.popup_(wrapper, x, y, false);  
     return wrapper; 
 }
@@ -382,7 +382,7 @@ pol.core.PopupMenu.prototype.createItem_ = function(text, actn, arg)
    if (icon) { 
       this.show(ctxt, e.iconX, e.iconY);
    }
-   this.show(ctxt, e.clientX, e.clientY); 
+   this.show(ctxt, e.clientX+3, e.clientY); 
  }
  
  

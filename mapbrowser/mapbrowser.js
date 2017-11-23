@@ -333,6 +333,13 @@ pol.core.MapBrowser.prototype.getScale = function() {
 
 
 
+pol.core.MapBrowser.prototype.getProjection = function() {
+    return this.view.getProjection().getCode(); 
+}
+
+
+
+
 /**
  * Return a geodetic adjustment for the current view 
  * 

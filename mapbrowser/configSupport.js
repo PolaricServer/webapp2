@@ -33,8 +33,16 @@ pol.uid = "ol4test"; // What is this? Still needed?
 function SERVER(url) 
  { CONFIG.set('server', url); }
 
+function WSPREFIX(p)
+ { CONFIG.set('wsprefix', p); }
+ 
+function AJAXPREFIX(p)
+ { CONFIG.set('ajaxprefix', p); }
 
-
+function ICONPATH(p)
+ { CONFIG.set('iconpath', p); }
+ 
+ 
 function ll2proj(p)
  { return ol.proj.transform(p, 'EPSG:4326', CONFIG.mb.view.getProjection()); }
  
@@ -156,12 +164,20 @@ function IN_EXTENT(polygon) {
     
 
 function scale() 
-  { return (!CONFIG.mb ? -1 : CONFIG.get('resolution')); }
+   { return (!CONFIG.mb ? -1 : CONFIG.get('resolution')); }
 
   
 function selectedBase(x)
-  { return  CONFIG.mb != null && CONFIG.mb.getBaseLayer().get('name') == x; }
+   { return  CONFIG.mb != null && CONFIG.mb.getBaseLayer().get('name') == x; }
   
+
+function is_proj(x)
+   { return (CONFIG.mb.getProjection() === x); }
+  
+  
+function IS_PROJ(x)
+   { return function() {return is_proj(x);}}
+     
      
 function RESOLUTION_LT (res)
    { return function() {return CONFIG.mb.getResolution() < res; }}

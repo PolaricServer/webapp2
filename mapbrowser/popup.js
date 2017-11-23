@@ -186,6 +186,8 @@ pol.core.Popup.prototype.showPopup = function (props)
              }
          };
     }  }, 200);
+    pdiv.onmousemove = function(e)
+      { e = (e)?e:((event)?event:null); e.stopPropagation(); return null; };
     
     pdiv.onmousedown = function(e) 
        { e = (e)?e:((event)?event:null); e.stopPropagation(); return null; };
@@ -210,10 +212,11 @@ pol.core.Popup.prototype.showPopup = function (props)
  * @param {Object.<string,*>} props - Options, see showPopup()
  */
 
-pol.core.Popup.prototype.remotePopup = function(url, props)
+pol.core.Popup.prototype.remotePopup = function(srv, service, data, props)
 {
     var d =  this.showPopup(props);
-    $.get(url, function(txt) { d.innerHTML = txt; } );
+    srv.GET(service, data, 
+        function(txt) {d.innerHTML = txt; });
     return d;
 }
 

@@ -31,7 +31,7 @@ pol.tracking.Search = function()
 {
    pol.core.Widget.call(this);
    this.classname = "tracking.Search"; 
-   this.url = CONFIG.get('server');
+   this.server = new pol.core.Server(CONFIG.get('server'));
    this.tags = "";
    var t = this;
    
@@ -58,17 +58,16 @@ pol.tracking.Search = function()
    
    /* Get tags from server. Server API (see old code) */
    function getTags(item, tags, cb) {
-      $.get(t.url + "/srv/tags?ajax=true" + 
-         (tags!=null?'&tags='+tags : ''), cb );
+      t.server.GET("/tags", {ajax:true, tags: tags }, cb );
    }
    
    
    /* Server API (see old code) */ 
    function searchItems(filt, tags, cb)
    {
-      $.get(t.url + "/srv/search?ajax=true&lang="+
+      t.server.GET("/search", "ajax=true&lang="+
         (filt!=null && filt != '' ? '&srch='+filt : '') + 
-        (tags!=null && filt != '' ? '&tags='+tags : ''), null, cb, false );
+        (tags!=null && filt != '' ? '&tags='+tags : ''), cb );
    }
    
    

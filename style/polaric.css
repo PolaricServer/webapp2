@@ -16,6 +16,7 @@
     top: 2px; left: 8px; 
     border: 1px solid #aaa; 
     box-shadow: 1px 1px 12px #797;
+    z-index: 1;
 }
 
 .toolbar img {margin: 5px; margin-top: 3px}
@@ -35,6 +36,7 @@ img.selected {background: #f60 !important}
         text-align: center;
         background:rgba(220,220,220,.7); 
         box-shadow: 1px 1px 12px #797;
+    z-index: 1;
 }
 
 .scale {
@@ -69,7 +71,8 @@ img.selected {background: #f60 !important}
 	border-radius:4px;
 	bottom:6.8em;
 	left: unset;
-    right:0.7em
+    right:0.7em;
+    z-index: 1
 }
 
 

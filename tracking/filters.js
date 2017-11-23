@@ -54,9 +54,11 @@ pol.tracking.Filters = function(tr)
 
    /* Add callback to generate filter-menu */
    CONFIG.mb.ctxMenu.addCallback('FILTERSELECT', function (m) {
-       for (i in filterViews) 
-          m.add(filterViews[i].title, handleSelect(i));
-    
+       for (i in filterViews) {
+          if (!filterViews[i].restricted || tr.server.loggedIn)   
+              m.add(filterViews[i].title, handleSelect(i));
+       }
+       
        /* Generate handler function for menu items */
        function handleSelect(i) {
           return function() {
