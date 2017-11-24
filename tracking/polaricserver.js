@@ -46,9 +46,7 @@ pol.tracking.PolaricServer.prototype.loginStatus = function() {
              function(x) { 
                  t.loggedIn = true;
                  t.auth = JSON.parse(x);
-                 console.log("Logged in to server ok ");
-                 console.log("    userid = "+t.auth.userid);
-                 
+                 console.log("Logged in to server (userid="+t.auth.userid+").");
              }, 
              function(xhr, st, err) {
                  t.loggedIn = false; 

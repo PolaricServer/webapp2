@@ -38,7 +38,8 @@ pol.tracking.Tracking = function(srv)
    t.server = srv;
    t.iconpath = CONFIG.get('iconpath');
    if (t.iconpath == null)
-     t.iconpath = srv;
+     t.iconpath = '';
+
    var init = true;
    t.producer = new pol.tracking.MapUpdate(t.server);
 
@@ -72,8 +73,13 @@ pol.tracking.Tracking = function(srv)
     * is the case, we create a context with name 'POINT'.
     */
    browser.addContextMenu("MAP", function(e) {
-       if ((pts = t.getPointsAt([e.clientX, e.clientY])) != null)
+       if ((pts = t.getPointsAt([e.clientX, e.clientY])) != null) {
+           if (pts.length > 1) {
+               t.showList(pts, [e.clientX, e.clientY], true);
+               return {name: "_STOP_"};
+           }
            return {name: "POINT", ident: pts[0].getId()};
+       }
        else return null;
    });
 
@@ -133,25 +139,33 @@ pol.tracking.Tracking = function(srv)
 
 
 
-
-/** 
+/**
  * Show list of points. Clickable to show info about each.
- */      
-pol.tracking.Tracking.prototype.showList = function(points, pixel) {
+ */
+pol.tracking.Tracking.prototype.showList = function(points, pixel, cmenu) {
    var t = this;
    var widget =  {
      view: function() {
        return m("div", [
           m("table.items", points.map(function(x)
              { return m("tr", [ m("td",
-                 { onclick: function() {redrawFeature(x.getId()); t.infoPopup(x.getId(), pixel)},
-                   title: x.getId()}, x.alias), m("td", x.point.title) ] ); }))
+                 { onclick: function(e) {redrawFeature(x.getId()); showContext(e, x.getId()); },
+                   title: x.getId()}, x.alias), m("td", m.trust(x.point.title)) ] ); }))
         ])
      }
    }
    browser.gui.showPopup( {vnode: widget, geoPos: browser.pix2LonLat(pixel)} );
+
+   function showContext(e, id) {
+       if (cmenu) {
+          CONFIG.mb.gui.removePopup();
+          CONFIG.mb.ctxMenu.showOnPos({name: "POINT", ident: id}, pixel);
+       }
+       else
+           t.infoPopup(id, pixel)
+   }
    
-   
+   /* Redraw feature to put it on top of the stack */
    function redrawFeature(id) {
        var feature = t.source.getFeatureById(id);
        var pt = feature.point;
@@ -312,10 +326,10 @@ pol.tracking.Tracking.prototype.hideLabel = function(id, hide) {
     this.showLabel[id] = !hide;
     var feature = this.source.getFeatureById(id);
     if (feature == null)
-        return;
+      return;
     if (hide) {
-        CONFIG.mb.map.removeOverlay(feature.label);
-        feature.label = null;
+      CONFIG.mb.map.removeOverlay(feature.label);
+       feature.label = null;
     }
     else
         feature.label = this.createLabel(

@@ -24,11 +24,15 @@
     * activate the menu. Use it to add menu items. Adding null means adding a separator. 
     */ 
    browser.ctxMenu.addCallback("MAP", function(m) {
-     m.add('Show map reference', function () { browser.show_MaprefPix( [m.x, m.y] ); });
+     m.add('Show map reference', function () 
+        { browser.show_MaprefPix( [m.x, m.y] ); });
      m.add(null);
-     m.add('Center point', function()   { browser.view.setCenter( browser.map.getCoordinateFromPixel([m.x, m.y])); } );
-     m.add('Zoom in', function()        { browser.view.setZoom(browser.view.getZoom()+1); } );
-     m.add('Zoom out',  function()      { browser.view.setZoom(browser.view.getZoom()-1); } );
+     m.add('Center point', function()   
+        { browser.view.setCenter( browser.map.getCoordinateFromPixel([m.x, m.y])); } );
+     m.add('Zoom in', function()        
+        { browser.view.setZoom(browser.view.getZoom()+1); } );
+     m.add('Zoom out',  function()      
+        { browser.view.setZoom(browser.view.getZoom()-1); } );
    });
 
    
@@ -41,7 +45,7 @@
         srv.logout(); 
      });
      
-     
+
      m.add('Auth info', function () {
          srv.loginStatus(); 
      });
@@ -50,14 +54,17 @@
        { var x = new pol.tracking.Search(); 
          x.activatePopup("trackerSearch", [50,70]) }); 
      
-     m.add('Find position', function () { var x = new pol.core.refSearch(); x.activatePopup("refSearch", [50,70]) });
-     m.add('Area List', function () { browser.toolbar.arealist.activatePopup("AreaList", [50,70]) });
-     m.add('Layer List', function () { var x = new pol.layers.List(); x.activatePopup("LayerList", [50,70]) });
+     m.add('Find position', function () 
+        { var x = new pol.core.refSearch(); x.activatePopup("refSearch", [50,70]) });
+     m.add('Area List', function () 
+        { browser.toolbar.arealist.activatePopup("AreaList", [50,70]) });
+     m.add('Layer List', function () 
+        { var x = new pol.layers.List(); x.activatePopup("LayerList", [50,70]) });
    });
    
    browser.ctxMenu.addCallback("POINT", function(m) {
        
-       m.add('Remove it', function() {mu.removePoint(m.ctxt.ident);}); 
+      m.add('Remove it', function() {mu.removePoint(m.ctxt.ident);}); 
       if (mu.labelHidden(m.ctxt.ident))
           m.add('Show label', function() { mu.hideLabel(m.ctxt.ident, false); });
       else

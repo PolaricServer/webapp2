@@ -120,7 +120,6 @@ pol.tracking.MapUpdate.prototype.subscribe = function(flt, c)
   
   var msg = 'SUBSCRIBE,' + flt+',' + 
      roundDeg(ext[0])+ ',' + roundDeg(bottom)+ ',' + roundDeg(ext[2])+ ',' + roundDeg(top)+ ',' + Math.round(scale);
-  console.log(msg);
   this.websocket.send(msg);
   
   

@@ -262,9 +262,10 @@ pol.core.PopupMenu.prototype.createItem_ = function(text, actn, arg)
     * element we clicked on. 
     */
    var cname = ident = ctxt.name;
-   if (ident == null) {   
+   if (ident == null)    
      cname = 'MAP';
-   }
+   else if (ident === "_STOP_")
+     return;
    
    _doCallback(cname);         
    
@@ -372,6 +373,11 @@ pol.core.PopupMenu.prototype.createItem_ = function(text, actn, arg)
     this.addMenu(element, name, icon, func);
  }
  
+ 
+ pol.core.ContextMenu.prototype.showOnPos = function(ctxt, pix) 
+ {
+     this.show(ctxt, pix[0]+3, pix[1]);
+ }
  
  
  pol.core.ContextMenu.prototype.showHandler = function(element, e, ctxt, icon)
