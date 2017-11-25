@@ -94,7 +94,6 @@ pol.tracking.Tracking = function(srv)
           else
               t.showList(points, e.pixel);
        }
-
     });
 
 
@@ -187,9 +186,9 @@ pol.tracking.Tracking.prototype.infoPopup = function(id, pixel) {
          * In the future we may define a REST service that returns a JSON object that is
          * rendered by the client
          */
-       this.server, "/station",
-       {ajax: true, simple:true, id: id},
-       {id: "infopopup", geoPos: browser.pix2LonLat(pixel)});
+        this.server, "/station",
+            {ajax: true, simple:true, id: id},
+            {id: "infopopup", geoPos: browser.pix2LonLat(pixel)});
 }      
        
        
@@ -417,6 +416,26 @@ pol.tracking.Tracking.prototype.addTrailPoints = function(p) {
 
 
 
+/**
+ * Add a line (representing a path between nodes)
+ */
+pol.tracking.Tracking.prototype.addLine = function(line) {
+    feature = new ol.Feature(new ol.geom.LineString([ll2proj(line.from), ll2proj(line.to)]) );
+    
+    /* Update style 
+     * FIXME: Use style repository or styles from config */
+    var style = new ol.style.Style({
+      stroke:
+        new ol.style.Stroke( (
+            (line.type === "prim" ? 
+                { color: "#a00", width: 1.6} :
+                { color: "#00c", width: 1.5, lineDash: [3,3]} )))
+    });
+    feature.setStyle(style);
+    feature.setId("line."+line.ident);
+    this.source.addFeature(feature);
+}
+
 
 /**
  * Remove a feature from map.
@@ -425,16 +444,10 @@ pol.tracking.Tracking.prototype.removePoint = function(x) {
     if (x==null || x == "")
          return;
     var feature = this.source.getFeatureById(x);
-    var trail = this.source.getFeatureById(x + ".trail");
-    var tpoints = this.source.getFeatureById(x + ".trailpoints");
-        
     if (feature != null) {
-        CONFIG.mb.map.removeOverlay(feature.label);
+        if (feature.label)
+           CONFIG.mb.map.removeOverlay(feature.label);
         this.source.removeFeature(feature);
-        if (trail != null)
-            this.source.removeFeature(trail);
-        if (tpoints != null)
-            this.source.removeFeature(tpoints);
     }
 }
 
@@ -494,6 +507,9 @@ pol.tracking.Tracking.prototype.goto_Point = function(ident) {
 pol.tracking.Tracking.prototype.update = function(ov) {
    for (i in ov.points)
       this.addPoint(ov.points[i]);
+   
+   for (i in ov.lines)
+      this.addLine(ov.lines[i]);
 
    for (i in ov["delete"])
       this.removePoint(ov["delete"][i]);
