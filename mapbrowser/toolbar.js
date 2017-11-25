@@ -74,6 +74,7 @@ pol.core.Toolbar.prototype.setDefaultItems = function()
    this.addSection();
    this.addIcon(2, "images/ruler1.png", "tb_measure", null, "Measure distance");
    
+   
    var t = this; 
    
    pol.core.addHandlerId("tb_layers", true,  
@@ -165,9 +166,22 @@ pol.core.Toolbar.prototype.addIcon = function(i, f, id, action, title) {
     
     this.sections[i].appendChild(x); // FIXME: Legal index? 
     this.lastElem = x; 
-    if (action != null) 
+    if (action && action != null) 
         x.onclick = action;
     return x;
+}
+
+
+pol.core.Toolbar.prototype.changeIcon = function(id, f, action, title) {
+    var x = document.getElementById(id);
+    console.log("changeIcon: x="+x);
+    if (x==null) 
+        return 
+    x.setAttribute('src', f);
+    if (action && action != null)
+        x.onclick = action;
+    if (title)
+        x.setAttribute('title', title);
 }
 
 

@@ -21,6 +21,7 @@
 pol.tracking.PolaricServer = function() {
     pol.core.Server.call(this);
     this.auth = { username: "", admin: false, sar: false }; 
+    CONFIG.mb.toolbar.addIcon(2, "images/locked.png", "toolbar_login", null, "Log in");
     this.loginStatus();
 }
 
@@ -43,15 +44,27 @@ pol.tracking.PolaricServer.prototype.logout = function()
 pol.tracking.PolaricServer.prototype.loginStatus = function() {
     var t = this;
     this.GET("/authStatus", "", 
-             function(x) { 
-                 t.loggedIn = true;
-                 t.auth = JSON.parse(x);
-                 console.log("Logged in to server (userid="+t.auth.userid+").");
-             }, 
-             function(xhr, st, err) {
-                 t.loggedIn = false; 
-                    console.log("Not logged in: "+st); 
-             });
+            function(x) { 
+                t.loggedIn = true;
+                t.auth = JSON.parse(x);
+                console.log("Logged in to server (userid="+t.auth.userid+").");
+                CONFIG.mb.toolbar.changeIcon
+                    ("toolbar_login", "images/unlocked.png", 
+                     function() {t.logout()}, 
+                     "Logged in as: '"+t.auth.userid+"'. Click to log out");
+            }, 
+            function(xhr, st, err) {
+                t.loggedIn = false; 
+                console.log("Not logged in: "+st); 
+                CONFIG.mb.toolbar.changeIcon
+                    ("toolbar_login", "images/locked.png", function() {t.login()}, "Click to log in");
+            });
 }
 
+   
 
+    
+       
+       
+       
+       
