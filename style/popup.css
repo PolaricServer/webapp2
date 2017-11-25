@@ -87,10 +87,10 @@ th {
 }
 
 
-table.items, #searchresult table 
-{border-collapse: collapse}
+table, #searchresult table 
+{border-collapse: collapse;}
 
-table.items td, #searchresult td {
+table td, #searchresult td {
   padding-left: 0.5em; 
   padding-right: 0.5em;
   padding-bottom: 0.2em;
