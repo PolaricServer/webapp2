@@ -98,17 +98,19 @@
          }),
 
       new ol.layer.Tile({
-            name: "SK Topo Raster 3",
-            opacity: 0.8,
-
+            name: "Norgeskart bakgrunn (cache)", 
+            preload: 2,
+            opacity: 0.66,
+            
             source: new ol.source.TileWMS({
-               url: "http://opencache.statkart.no/gatekeeper/gk/gk.open?",
-               projection: utmproj,
-               params: {'LAYERS': 'toporaster3', VERSION: "1.1.1"},
-               tilegrid: KV_grid
+                url: "http://aprs.no/mapcache/wms?",
+                projection: utmproj,
+                params: {'LAYERS': 'bw_grunnkart', VERSION: "1.1.1"},
+                tilegrid: KV_grid_UTM,
+                cacheSize: 4096
             })
-          }),
-
+         }),
+                
       new ol.layer.Tile({
             name: "SK Topo 2",
             preload: 2,
@@ -125,6 +127,9 @@
           })
 
   ]);
+
+
+
 
 
 /* Overlays for all projections */
