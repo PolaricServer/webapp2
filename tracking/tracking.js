@@ -73,16 +73,21 @@ pol.tracking.Tracking = function(srv)
     * is the case, we create a context with name 'POINT'.
     */
    browser.addContextMenu("MAP", function(e) {
-       if ((pts = t.getPointsAt([e.clientX, e.clientY])) != null) {
+       var pts = t.getPointsAt([e.clientX, e.clientY]);
+       if (pts && pts != null) {
            if (pts.length > 1) {
                t.showList(pts, [e.clientX, e.clientY], true);
                return {name: "_STOP_"};
            }
-           return {name: "POINT", ident: pts[0].getId()};
+           return { name: (pol.tracking.isSign(pts[0]) ? "SIGN" : "POINT"), 
+                    ident: pts[0].getId(),
+                    point: pts[0]
+                  };
        }
        else return null;
    });
 
+   
 
    /* Add click handler for tracking-features. Click on icons and pop up some info... */
    browser.map.on("click", function(e) {
@@ -90,7 +95,7 @@ pol.tracking.Tracking = function(srv)
        var txt = "";
        if (points != null && points.length > 0) {
           if (points.length == 1)
-              t.infoPopup(points[0].getId(), e.pixel);
+              t.server.infoPopup(points[0], e.pixel);
           else
               t.showList(points, e.pixel);
        }
@@ -148,20 +153,22 @@ pol.tracking.Tracking.prototype.showList = function(points, pixel, cmenu) {
        return m("div", [
           m("table.items", points.map(function(x)
              { return m("tr", [ m("td",
-                 { onclick: function(e) {redrawFeature(x.getId()); showContext(e, x.getId()); },
+                 { onclick: function(e) {redrawFeature(x.getId()); showContext(e, x); },
                    title: x.getId()}, x.alias), m("td", m.trust(x.point.title)) ] ); }))
         ])
      }
    }
    browser.gui.showPopup( {vnode: widget, geoPos: browser.pix2LonLat(pixel)} );
 
-   function showContext(e, id) {
+   function showContext(e, x) {
        if (cmenu) {
           CONFIG.mb.gui.removePopup();
-          CONFIG.mb.ctxMenu.showOnPos({name: "POINT", ident: id}, pixel);
-       }
+          CONFIG.mb.ctxMenu.showOnPos(
+              { name: (pol.tracking.isSign(x) ? "SIGN" : "POINT"), 
+                point: x,
+                ident: x.getId()}, pixel); }
        else
-           t.infoPopup(id, pixel)
+           t.server.infoPopup(x, pixel)
    }
    
    /* Redraw feature to put it on top of the stack */
@@ -175,22 +182,11 @@ pol.tracking.Tracking.prototype.showList = function(points, pixel, cmenu) {
  
  
 
-/** 
- * Get info about point from server and show in popup.  
- */
-pol.tracking.Tracking.prototype.infoPopup = function(id, pixel) {
-    console.assert(id!=null && id != "", "Assertion failed");
-    browser.gui.removePopup();
-    browser.gui.remotePopup(
-        /* FIXME: This is a call to the old polaric-aprsd webservice that return a HTML fragment.
-         * In the future we may define a REST service that returns a JSON object that is
-         * rendered by the client
-         */
-        this.server, "/station",
-            {ajax: true, simple:true, id: id},
-            {id: "infopopup", geoPos: browser.pix2LonLat(pixel)});
-}      
-       
+ 
+ 
+pol.tracking.isSign = function(p) {
+    return (p.getId().indexOf("__") === 0);
+}
        
        
 /**
@@ -249,7 +245,8 @@ pol.tracking.Tracking.prototype.addPoint = function(p) {
 
     /* update position, etc. */
     feature.getGeometry().setCoordinates(c);
-    feature.alias = p.label.id;
+    if (p.label != null) 
+        feature.alias = p.label.id;
     feature.point = p;
 
     /* Update style (icon) */
@@ -264,7 +261,7 @@ pol.tracking.Tracking.prototype.addPoint = function(p) {
 
 
     /* Update label. Just replace it. */
-    if (!this._labelHidden(p.ident, p.label.hidden)) {
+    if (p.label != null && !this._labelHidden(p.ident, p.label.hidden)) {
        if (feature.label)
            CONFIG.mb.map.removeOverlay(feature.label);
        feature.label = this.createLabel(c, p.label);
@@ -466,7 +463,7 @@ pol.tracking.Tracking.prototype.getPointsAt = function(pix) {
 
    if (pp == null)
       return null;
-   else return pp.filter(function(x) {return x.alias});
+   else return pp.filter(function(x) {return x.point});
 }
 
 

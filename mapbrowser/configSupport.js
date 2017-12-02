@@ -259,7 +259,6 @@ function STYLES( st ) {
 	      x.image = x.image;
     
        CONFIG.styles[ident] = new ol.style.Style(x);   
-       console.log("Config: Add style: "+ident) 
    }
    var keys = Object.keys(CONFIG.styles);
 }

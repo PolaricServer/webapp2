@@ -41,6 +41,18 @@ pol.core.Server = function() {
 
 
 
+
+pol.core.Server.prototype.popup = function(name, url, width, height) {
+  var u = this.url+"/"+url;
+  var ctrl = "left=50,top=100,width="+width+",height="+height+"resizable=1,scrollbars=1";
+  eval( "this."+name+"=window.open('"+u+"','"+name+"','"+ctrl+"');" );
+ // if (window.focus)
+ //   setTimeout(function() {eval("if(this."+name+") this."+name+".focus();" );}, 2000);
+}
+
+
+
+
 /**
 * @param type: String
 * @param service: String

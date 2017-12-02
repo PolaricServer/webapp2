@@ -167,6 +167,8 @@ h1, #layerSwitcher h2 {
 #layerSwitcher form {margin-left: 0.4em}
 
 
+img.popupimg {max-width: 600px}
+
 
 #infopopup {
   min-width: 26em;

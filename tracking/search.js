@@ -108,7 +108,6 @@ pol.tracking.Search = function()
             var ht = $('#map').height() - 
               ( $('#trackerSearch').height() - $('#searchresult').height()) - t.pos[1] - 8 ;     
             
-            console.log("trackersearch: ht="+ht);
             x.innerHTML = info;    
             setTimeout( function() {
                 if ($('#searchresult').height() < ht) 

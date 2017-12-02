@@ -174,7 +174,6 @@ pol.core.Toolbar.prototype.addIcon = function(i, f, id, action, title) {
 
 pol.core.Toolbar.prototype.changeIcon = function(id, f, action, title) {
     var x = document.getElementById(id);
-    console.log("changeIcon: x="+x);
     if (x==null) 
         return 
     x.setAttribute('src', f);

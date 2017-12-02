@@ -63,8 +63,33 @@ pol.tracking.PolaricServer.prototype.loginStatus = function() {
 
    
 
-    
-       
-       
-       
-       
+  
+
+/** 
+ * Get info about point from server and show in popup.  
+ */
+pol.tracking.PolaricServer.prototype.infoPopup = function(p, pixel) {
+    console.assert(p!=null, "Assertion failed");
+    browser.gui.removePopup();
+    if (pol.tracking.isSign(p)) {
+        if (p.point.href.indexOf("P:") === 0)
+            browser.gui.imagePopup(p.point.title, p.point.href, 
+            {id: "imagepopup", geoPos: browser.pix2LonLat(pixel)});
+        else
+            browser.gui.showPopup({
+                pixPos: pixel, 
+                html: (p.point.href ? '<a href="'+p.point.href+'">'+p.point.title+'</a>' 
+                                    : p.point.title)
+            });
+    }
+    else 
+        browser.gui.remotePopup(
+        /* FIXME: This is a call to the old polaric-aprsd webservice that return a HTML fragment.
+         * In the future we may define a REST service that returns a JSON object that is
+         * rendered by the client
+         */
+        this, "/station",
+        {ajax: true, simple:true, id: p.getId()},
+        {id: "infopopup", geoPos: browser.pix2LonLat(pixel)});
+}      
+     

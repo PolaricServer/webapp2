@@ -186,8 +186,8 @@ pol.core.Popup.prototype.showPopup = function (props)
              }
          };
     }  }, 200);
-    pdiv.onmousemove = function(e)
-      { e = (e)?e:((event)?event:null); e.stopPropagation(); return null; };
+//    pdiv.onmousemove = function(e)
+//      { e = (e)?e:((event)?event:null); e.stopPropagation(); return null; };
     
     pdiv.onmousedown = function(e) 
        { e = (e)?e:((event)?event:null); e.stopPropagation(); return null; };
@@ -202,6 +202,21 @@ pol.core.Popup.prototype.showPopup = function (props)
        $(pdiv).draggable({ handle: "h1,h2,.handle", delay: 100, opacity: 0.7, start: props.dragStart, stop: props.dragStop }  );
    return pdiv;
 
+}
+
+
+/**
+ * Activate popup with image content
+ * @param {string} title - heading text. 
+ * @param {string} href - URL of image
+ */
+
+pol.core.Popup.prototype.imagePopup = function(title, href, props) 
+{
+    var d =  this.showPopup(props);
+    d.innerHTML = '<h1 class="popupimg">'+title+'</h1>' +
+                  '<img class="popupimg" src="'+href.substring(2)+'"/>';
+    return d;
 }
 
 
