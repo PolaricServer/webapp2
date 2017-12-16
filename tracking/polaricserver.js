@@ -20,7 +20,7 @@
  
 pol.tracking.PolaricServer = function() {
     pol.core.Server.call(this);
-    this.auth = { username: "", admin: false, sar: false }; 
+    this.auth = { userid: "", admin: false, sar: false }; 
     CONFIG.mb.toolbar.addIcon(2, "images/locked.png", "toolbar_login", null, "Log in");
     this.loginStatus();
 }
@@ -37,6 +37,34 @@ pol.tracking.PolaricServer.prototype.logout = function()
   { window.location.href = this.url+"/logout?url="+this.origin; } 
   // FIXME: Get origin url
 
+
+  
+  
+  
+/**
+ * add area to logged in user. FIXME: Should this be here???
+ */  
+pol.tracking.PolaricServer.prototype.putArea = function(a, f) { 
+    var t = this;
+    this.PUT("/users/"+this.auth.userid+"/areas", 
+        JSON.stringify(a), 
+        function(x) {var i=parseInt(x); console.log("Added area "+i+" for user: "+t.auth.userid); f(i); },
+        function(x) {console.log("ERROR: " + x); } );
+}
+
+
+
+pol.tracking.PolaricServer.prototype.removeArea = function(id) {
+    var t = this;
+    this.DELETE("/users/"+this.auth.userid+"/areas/"+id, 
+        function() {console.log("Removed area "+id+" for user: "+t.auth.userid); });
+}
+
+
+
+pol.tracking.PolaricServer.prototype.getAreas = function(f) {
+    this.GET("/users/"+this.auth.userid+"/areas", "", function(x) { f(JSON.parse(x));} );
+}
 
 
 

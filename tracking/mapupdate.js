@@ -54,10 +54,14 @@ pol.tracking.MapUpdate = function(server) {
   
    /** Incoming message on socket */
    t.websocket.onmessage = function(evt) { 
-      if ((!t.suspend) && t.subscriber != null)
-         t.subscriber(JSON.parse(evt.data));
+        if (evt.data == 'RESTART!') {
+            console.log("Got RESTART message");
+            setTimeout(function() {location.reload();}, 25000);
+        }
+        else if ((!t.suspend) && t.subscriber != null)
+            t.subscriber(JSON.parse(evt.data));
    };
-  
+
    
    /** Socket close handler. Retry connection. */
    t.websocket.onclose = function(evt) {

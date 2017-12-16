@@ -105,7 +105,7 @@ pol.core.Toolbar.prototype.setDefaultItems = function()
    
    /* Generate menu of predefined areas (defined in mapconfig.js */
    this.browser.ctxMenu.addCallback('AREASELECT', function (m) {
-      var areas = t.arealist.getMyAreas(); 
+      var areas = t.arealist.myAreas; 
       for (var i in areas) {
          var area = areas[i];   
          if (area && area != null)

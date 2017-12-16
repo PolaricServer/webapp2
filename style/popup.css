@@ -90,7 +90,7 @@ th {
 table, #searchresult table 
 {border-collapse: collapse;}
 
-table td, #searchresult td {
+.items td, #historypopup td, #searchresult td {
   padding-left: 0.5em; 
   padding-right: 0.5em;
   padding-bottom: 0.2em;
@@ -103,6 +103,7 @@ tr {height: 12px;}
 
 tr:hover {background: #ff8}
 
+td.onserver {color: #00c}
 
 .leftlab, .sleftlab, label.lleftlab {
   float: left;

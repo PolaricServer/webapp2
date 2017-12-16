@@ -26,13 +26,13 @@
  */
 
 pol.core.AreaList = function() {
-   pol.core.Widget.call(this);
-   this.classname = "core.AreaList"; 
-   this.myAreas = [];
-   var t = this;
-
-   this.widget = {
-     view: function() {
+    pol.core.Widget.call(this);
+    this.classname = "core.AreaList"; 
+    this.myAreas = [];
+    var t = this;
+ 
+    this.widget = {
+      view: function() {
         var i=0;
         return m("div", [       
             m("h1", "My map areas"),  
@@ -40,28 +40,61 @@ pol.core.AreaList = function() {
                 return m("tr", [
                    m("td", m("img", {src:"images/edit-delete.png", onclick: apply(removeArea, i) })), 
                    m("td", m("img", {src:"images/edit.png", onclick: apply(editArea, i) })),
-                   m("td", {onclick: apply(gotoExtent, i++) }, x.name) ]);
+                   m("td", {onclick: apply(gotoExtent, i++), 'class': (x.server ? "onserver" : null) }, x.name)
+                ]);
              }))),
              m(textInput, {id:"editArea", value: t.currName, size: 16, maxLength:25, regex: /^[^\<\>\'\"]+$/i }),
              m("button", {onclick: add}, "Add")
         ])
       }
-   };
+    };
    
    
-   /* Get stored areas */
-   this.getMyAreas();
+    /* Get stored areas */
+    t.myAreas = CONFIG.get("core.AreaList");
+    if (t.myAreas == null)
+        t.myAreas = [];
+    
+    /* Get areas stored on server (if logged on) */
+    setTimeout(function() {
+        var srv = CONFIG.server; 
+        if (srv != null && srv.loggedIn) {
+            srv.getAreas( function(a) {
+                for (x in a) 
+                    if (a[x] != null) {
+                        removeDup(a[x].name);
+                        a[x].server = true;
+                        t.myAreas.push(a[x]);  
+                    }
+                m.redraw();
+            });
+        }    
+    }, 1500);
+
    
    
-   /* Apply a function to an argument. Returns a new function */
-   function apply(f, id) {return function() {f(id); }};  
+    /* Apply a function to an argument. Returns a new function */
+    function apply(f, id) {return function() { f(id); }};  
    
    
-   /* Remove area from list */
-   function removeArea(id) {
-       t.myAreas.splice(id,1);
-       CONFIG.store("core.AreaList", t.myAreas, true);
-   }
+    function removeDup(name) {
+        for (i in t.myAreas)
+            if (t.myAreas[i].name == name) {
+                /* Remove duplicate entries. Is this right? */
+                t.myAreas.splice(i,1);
+                return;
+            }
+    }
+   
+   
+    /* Remove area from list */
+    function removeArea(id) {
+        // If server available and logged in, delete on server as well
+        if (srv != null && srv.loggedIn) 
+            srv.removeArea(t.myAreas[id].index);
+        t.myAreas.splice(id,1);
+        CONFIG.store("core.AreaList", t.myAreas, true);
+    }
    
    
    /* Move map area name to editable textInput */
@@ -78,12 +111,19 @@ pol.core.AreaList = function() {
    function add() {
        var ext = CONFIG.mb.getExtent();
        var name = $("#editArea").val(); 
-       
-       console.log("Add area: "+name + " = ["+
-          ext.map(function(x) {return Math.round(x*1000)/1000;}) +"]");
-       t.myAreas.push(
-          {name: name, extent: ext});
+
+       var area = {name: name, extent: ext};
+       t.myAreas.push(area);
        CONFIG.store("core.AreaList", t.myAreas, true);
+
+       /* IF server available and logged in, store on server as well */
+       var srv = CONFIG.server; 
+       if (srv != null && srv.loggedIn)
+            srv.putArea(area, function(i) { 
+                area.index = i; 
+                area.server = true;
+            });
+       m.redraw();
    }
    
    
@@ -98,14 +138,6 @@ pol.core.AreaList = function() {
 ol.inherits(pol.core.AreaList, pol.core.Widget);
 
 
-
-
-pol.core.AreaList.prototype.getMyAreas = function() {
-  this.myAreas = CONFIG.get("core.AreaList");
-  if (this.myAreas == null)
-       this.myAreas = [];
-  return this.myAreas;   
-}
 
 
 

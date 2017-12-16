@@ -14,6 +14,7 @@
     setTimeout(function() {
         mu = new pol.tracking.Tracking(srv);
         flt = new pol.tracking.Filters(mu);
+	CONFIG.server = srv;
     }, 1000); 
    
 

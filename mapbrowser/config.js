@@ -41,6 +41,7 @@ console.assert = console.assert || function() {};
 pol.core.Config = function(uid) {
    this.uid = (uid ? uid : "0");
    this.mb = null;
+   this.server = null;
    this.storage = window.localStorage;
    this.sstorage = window.sessionStorage;
    this.baseLayers = [];
