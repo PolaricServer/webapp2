@@ -103,7 +103,8 @@ tr {height: 12px;}
 
 tr:hover {background: #ff8}
 
-td.onserver {color: #00c}
+#AreaList td {color: #111; font-style: italic}
+#AreaList td.onserver {color: #050;font-style: normal}
 
 .leftlab, .sleftlab, label.lleftlab {
   float: left;

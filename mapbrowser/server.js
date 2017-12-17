@@ -49,7 +49,9 @@ pol.core.Server.prototype.popup = function(name, url, width, height) {
 }
 
 
-pol.core.Server.prototype.putArea = function(a) { /* Dummy */ }
+pol.core.Server.prototype.getAreas = function(a, f)   { /* Dummy */ }
+pol.core.Server.prototype.putArea = function(a, f)    { /* Dummy */ }
+pol.core.Server.prototype.removeArea = function(i)    { /* Dummy */ }
 
 
 

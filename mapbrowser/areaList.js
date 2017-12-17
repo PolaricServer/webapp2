@@ -97,41 +97,64 @@ pol.core.AreaList = function() {
     }
    
    
-   /* Move map area name to editable textInput */
-   function editArea(id) {
-       gotoExtent(id);
-       $("#editArea").val(t.myAreas[id].name);
-       $("#editArea").change();
-       t.myAreas.splice(id,1);
-       m.redraw();
-   }
+    /* Move map area name to editable textInput */
+    function editArea(id) {
+        gotoExtent(id);
+        $("#editArea").val(t.myAreas[id].name);
+        $("#editArea").change();
+        t.myAreas.splice(id,1);
+        m.redraw();
+    }
    
    
-   /* Add map extent to list */
-   function add() {
-       var ext = CONFIG.mb.getExtent();
-       var name = $("#editArea").val(); 
+    /* Add map extent to list */
+    function add() {
+        var ext = CONFIG.mb.getExtent();
+        var name = $("#editArea").val(); 
 
-       var area = {name: name, extent: ext};
-       t.myAreas.push(area);
-       CONFIG.store("core.AreaList", t.myAreas, true);
+        var area = {name: name, extent: ext};
+        area.baseLayer = CONFIG.mb.baseLayerIdx;
+        area.oLayers = getOLayers();
+        t.myAreas.push(area);
+        CONFIG.store("core.AreaList", t.myAreas, true);
 
-       /* IF server available and logged in, store on server as well */
-       var srv = CONFIG.server; 
-       if (srv != null && srv.loggedIn)
+        /* IF server available and logged in, store on server as well */
+        var srv = CONFIG.server; 
+        if (srv != null && srv.loggedIn)
             srv.putArea(area, function(i) { 
                 area.index = i; 
                 area.server = true;
             });
-       m.redraw();
-   }
+        m.redraw();
+    }
+   
+   
+    /* Return selected overlay layers (array of indices) */
+    function getOLayers() {
+        var ol = new Array();
+        for (i in CONFIG.oLayers)
+            ol.push(CONFIG.oLayers[i].getVisible())
+        return ol;
+    }
+   
+   
+   
+    function setOLayers(ol) {
+        if (ol && ol != null)
+            for (i in ol)
+                CONFIG.oLayers[i].setVisible(ol[i]);
+    }
+    
    
    
    /* Zoom and move map to extent */
    function gotoExtent(id) {
-       var ext = t.myAreas[id].extent; 
-       if (ext && ext != null) 
-          CONFIG.mb.fitExtent(ext); 
+       var a = t.myAreas[id];
+       if (a.baseLayer)
+           CONFIG.mb.changeBaseLayer(a.baseLayer);
+       setOLayers(a.oLayers);
+       if (a.extent && a.extent != null) 
+          CONFIG.mb.fitExtent(a.extent); 
    }
    
 }
