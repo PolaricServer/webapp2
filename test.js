@@ -19,6 +19,21 @@
    
 
    
+    /* Test pubsub notification service */
+    var psub = new pol.tracking.PubSub(srv);
+    psub.onopen = function() {
+
+        psub.subscribe("TEST", function(x) {
+            console.log("GOT NOTIFICATION: TEST: "+x);
+        }, true);
+        psub.subscribe("TEST", function(x) {
+            console.log("GOT OTHER NOTIFICATION: TEST: "+x);
+        }, true); 
+    };
+    setTimeout(function() {
+        console.log("sending notification");
+        psub.putText("TEST", "Hello world");
+    }, 10000);
    
    
 
