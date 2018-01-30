@@ -185,16 +185,29 @@ pol.core.Toolbar.prototype.changeIcon = function(id, f, action, title) {
 
 
 
-pol.core.Toolbar.prototype.addDiv = function(i, id, title) {
+pol.core.Toolbar.prototype.addDiv = function(i, id, title, cls) {
     var x = document.createElement('div');
     if (id != null)
-       x.setAttribute("id", id);
+        x.setAttribute("id", id);
     if (title)
-       x.setAttribute("title", title);
+        x.setAttribute("title", title);
+    if (cls) 
+        x.className = cls;
+    
     this.sections[i].appendChild(x);
     this.lastElem = x;
     return x;
 }
+
+
+pol.core.Toolbar.prototype.changeDiv = function(id, title, cls) {
+    var x = document.getElementById(id);
+    if (title)
+        x.setAttribute("title", title);
+    if (cls) 
+        x.className = cls;
+}
+
 
 
 /**

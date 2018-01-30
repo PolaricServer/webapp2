@@ -3,7 +3,7 @@
     * Instantiate the map browser and restore widgets from a previous session. 
     */  
    var browser = new pol.core.MapBrowser('map', CONFIG);
-   setTimeout(pol.widget.restore, 500);
+   setTimeout(pol.widget.restore, 1500);
    
    
     /*
@@ -14,28 +14,16 @@
     setTimeout(function() {
         mu = new pol.tracking.Tracking(srv);
         flt = new pol.tracking.Filters(mu);
-	CONFIG.server = srv;
+        CONFIG.server = srv;
+        
+        if (srv.auth.userid != "") {
+            var not = new pol.tracking.Notifier();
+            CONFIG.notifier = not; 
+        }
+        
     }, 1000); 
    
-
-   
-    /* Test pubsub notification service */
-    var psub = new pol.tracking.PubSub(srv);
-    psub.onopen = function() {
-
-        psub.subscribe("TEST", function(x) {
-            console.log("GOT NOTIFICATION: TEST: "+x);
-        }, true);
-        psub.subscribe("TEST", function(x) {
-            console.log("GOT OTHER NOTIFICATION: TEST: "+x);
-        }, true); 
-    };
-    setTimeout(function() {
-        console.log("sending notification");
-        psub.putText("TEST", "Hello world");
-    }, 10000);
-   
-   
+    
 
    /* Set up application-specific context menus. We may define named contexts. The toolbar 
     * define its own context, 'TOOLBAR'. See below how we define 'MAP' and 'POINT'. 
@@ -70,6 +58,10 @@
      *********************************************************/
    
     browser.ctxMenu.addCallback("TOOLBAR", function(m) {
+        
+        m.add("Notification", function()
+            { var x = new pol.tracking.NotifyList();
+                x.activatePopup("notifications", [50, 70]) });
      
         m.add('Search items', function () 
             { var x = new pol.tracking.Search(); 

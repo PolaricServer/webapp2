@@ -23,6 +23,7 @@ pol.tracking.PolaricServer = function() {
     this.auth = { userid: "", admin: false, sar: false }; 
     CONFIG.mb.toolbar.addIcon(2, "images/locked.png", "toolbar_login", null, "Log in");
     this.loginStatus();
+    this.pubsub = new pol.tracking.PubSub(this);
 }
 
 ol.inherits(pol.tracking.PolaricServer, pol.core.Server);

@@ -48,3 +48,24 @@ div.own   { background: #ccffcc; color: #0000cc }
    color: #060; padding-top: 9px; height: 23px; 
    display: inline; float: right
 }
+
+
+#toolbar_not {float: right}
+
+#not_number {
+    position: relative; top:-18px; font-size: 13px; padding-left: 2px; 
+    padding-right: 2px; left: -14px; color: #ffa; border-radius: 5px; 
+    background: #d00; font-weight: bold; font-family: arial; padding-top: -2px; 
+}
+
+
+
+#notifications td img {height: 1.5em}
+#notifications tr {border-bottom: 1px dotted #555;}
+#notifications td div {margin-bottom: 1px margin-top: }
+#notifications img.icon {height: 27px; width: 27px; margin-right: 6px}
+#notifications div span.header {font-size: 0.9em; color: #262;}
+#notifications td {padding-bottom: 3px}
+#notifications td div img { height: 13px; margin-bottom: -1px; margin-left: 10px; }
+
+

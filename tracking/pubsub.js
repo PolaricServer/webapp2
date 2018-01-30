@@ -54,14 +54,15 @@ pol.tracking.PubSub = function(server) {
   
     /** Incoming message on socket */
     t.websocket.onmessage = function(evt) { 
-        var txt = evt.data.split(",", 2);
-        var room = t.rooms[txt[0]];
-        console.log("NOTIFY: room="+txt[0]+", msg="+txt[1]);
+        var slc = evt.data.indexOf(",");
+        var txt1 = evt.data.slice(0,slc);
+        var txt2 = evt.data.slice(slc+1);
+        var room = t.rooms[txt1];
         
         if ((!t.suspend) && room != null)
             for (i in room)
-                if (room[i].json) room[i].cb( JSON.parse(txt[1]));
-                else room[i].cb(txt[1]);
+                if (room[i].json) room[i].cb( JSON.parse(txt2));
+                else room[i].cb(txt2);
     };
 
    
@@ -100,6 +101,7 @@ pol.tracking.PubSub.prototype.suspend = function(time) {
 }
 
 
+
 /** 
  * Close it 
  */
@@ -109,11 +111,18 @@ pol.tracking.PubSub.prototype.close = function() {
 
 
 
+/**
+ * Send a raw text to a room (through the websocket connection)
+ */
 pol.tracking.PubSub.prototype.putText = function(room, txt) {
     this.websocket.send('PUT,' + room + ","+ txt);
 }
 
 
+
+/**
+ * Send a object to a room (through the websocket connection
+ */
 pol.tracking.PubSub.prototype.put = function(room, obj) {
     this.putText(room, JSON.stringify(obj));
 }
