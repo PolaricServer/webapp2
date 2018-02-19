@@ -38,9 +38,10 @@
    */
 
   /* Backend server base URL */
-  SERVER("https://aprs.no/");
-  WSPREFIX("ws");
-  AJAXPREFIX("srv");
+  //SERVER("https://aprs.no/");
+  SERVER('http://osys.no:8081')
+  //WSPREFIX("ws");
+  //AJAXPREFIX("srv");
   ICONPATH("aprsd");
 
   /* Default projection */
@@ -229,8 +230,7 @@ VIEWS ([
    { name: 'finnm',     title: 'Finnmark',        extent: [19.006, 68.064, 33.848, 71.662] },
    { name: 'troms',     title: 'Troms',           extent: [15.549, 68.641, 22.454, 70.196]  },
    { name: 'nordl',     title: 'Nordland',        extent: [8.242, 65.462, 20.91, 68.301] },
-   { name: 'ntrond',    title: 'Nord-Trøndelag',  extent: [ 9.0436, 63.2859, 15.3995, 64.8541] },
-   { name: 'strond',    title: 'Sør-Trøndelag',   extent: [ 7.3903, 62.0338, 13.5351, 63.6724] },
+   { name: 'ntrond',    title: 'Trøndelag',       extent: [ 9.0436, 62.1, 15.3995, 64.8541] },
    { name: 'moreroms',  title: 'Møre og Romsdal', extent: [ 3.5993, 61.5234,  9.7916, 63.3084] },
    { name: 'sognf',     title: 'Sogn og fjordane',extent: [ 2.8448, 60.4411,  8.8474, 62.2549] },
    { name: 'hordal',    title: 'Hordaland',       extent: [ 3.1295, 59.3777,  8.9257, 61.1814] },

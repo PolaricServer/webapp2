@@ -46,9 +46,10 @@ pol.tracking.PubSub = function(server) {
         console.log("Connected to server (for notify service).");
         if (t.onopen != null) 
             t.onopen();
-        else
-            console.log("t.onopen is null");
         t.retry = 0;
+        setInterval(function() {
+            t.websocket.send("****"); // Keepalive 
+        }, 360000);
     };
   
   

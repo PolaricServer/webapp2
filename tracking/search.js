@@ -31,7 +31,7 @@ pol.tracking.Search = function()
 {
    pol.core.Widget.call(this);
    this.classname = "tracking.Search"; 
-   this.server = new pol.core.Server(CONFIG.get('server'));
+   this.server = CONFIG.server; // new pol.core.Server(CONFIG.get('server'));
    this.tags = "";
    var t = this;
    
