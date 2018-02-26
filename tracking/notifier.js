@@ -67,7 +67,7 @@ pol.tracking.Notifier = function()
     
     if (t.server.auth.admin) 
         t.server.pubsub.subscribe("notify:ADMIN", function(x) {t.add(x);});
-  
+    
     
     /* Remove notifications older than ttl. Skip if ttl is 0 */
     setInterval(function() {
@@ -81,7 +81,7 @@ pol.tracking.Notifier = function()
         }
     }, 10000);
     
-    
+    setTimeout(function() { t.updateScreen(); }, 1000);
 }
 
 
@@ -101,6 +101,7 @@ pol.tracking.Notifier.prototype.add = function(not) {
     this.list.unshift(not);
     this.updateNumber();
     CONFIG.store("tracking.Notifications", this.list, true);
+    pol.tracking.NotifyList.updateScroller();
 }
 
 
@@ -109,8 +110,8 @@ pol.tracking.Notifier.prototype.remove = function(idx) {
     this.list.splice(idx,1);
     this.updateNumber(); 
     CONFIG.store("tracking.Notifications", this.list, true);
+    pol.tracking.NotifyList.updateScroller();
 }
-
 
 
 function formatDTG(date) {
@@ -159,8 +160,9 @@ pol.tracking.NotifyList = function()
             ]);  
         }
     };
-      
     
+    setTimeout(
+        pol.tracking.NotifyList.updateScroller, 300);
     
     /* 
      * Select the icon from the type of notification. 
@@ -183,7 +185,7 @@ pol.tracking.NotifyList = function()
     function apply(f, id) {return function() { f(id); }};  
 
     
-    /* Remove area from list */
+    /* Remove notification from list */
     function removeNot(id) {
         t.notifier.remove(id);
     }
@@ -194,6 +196,25 @@ ol.inherits(pol.tracking.NotifyList, pol.core.Widget);
 
 
 
+pol.tracking.NotifyList.updateScroller = function() {
+    var x =  document.getElementById('notifications');
+    if (x==null)
+        return;
+    var pos = x.getBoundingClientRect();
+    var ht = $('#map').height() - pos.top - 70;
+
+    setTimeout( function() {
+        if ($('#notifications table').parent().is( "#notifications .scroll" ) ) 
+            $('#notifications table').unwrap();
+        
+        if ($('#notifications table').height() < ht)
+            ht = $('#notifications table').height();
+        else {
+            $('#notifications table').wrap('<div class="scroll"></div>');
+            $('#notifications .scroll').height(Math.round(ht)-10).width($('#notifications table').width()+40);
+        }
+    }, 60);
+}
 
  
 

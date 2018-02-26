@@ -65,7 +65,17 @@ div.own   { background: #ccffcc; color: #0000cc }
 #notifications td div {margin-bottom: 1px margin-top: }
 #notifications img.icon {height: 27px; width: 27px; margin-right: 6px}
 #notifications div span.header {font-size: 0.9em; color: #262;}
-#notifications td {padding-bottom: 3px}
+#notifications td+td {padding-bottom: 3px; padding-right: 10px}
 #notifications td div img { height: 13px; margin-bottom: -1px; margin-left: 10px; }
+#notifications .scroll {overflow-y: auto; margin-right: -6px}
 
+#bullboard h4 {margin-bottom: 0.3em; margin-top: 0.6em}
+#bullboard .content>table>tr  {background: #eed; border: 2px solid #778; vertical-align: top; font-size: 1.1em}
+#bullboard .content>table>tr>td {padding: 0.2em 0.2em 0.1em 0.3em}
+#bullboard .content>table>tr>td {border-right: 2px solid #778; }
+#bullboard table table td {padding: 0; min-width: 42em; }
+#bullboard td.time {min-width: 3.7em;text-align: right; font-size: 0.8em; color: #065; border-left: 1px dotted #666}
+#bullboard .selected {font-weight: bold; color: #700; text-decoration: underline}
+#bullboard {width: 48.5em}
+#bullboard .scroll {overflow-y: auto; overflow-x: hidden; margin-right: -5px}
 

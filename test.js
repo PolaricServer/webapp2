@@ -1,6 +1,11 @@
+   /* 
+    * This is an example of how an application can be constructed using polaric components.  
+    * Se also mapconfig.js for configuration of the application. 
+    */
+
 
    /* 
-    * Instantiate the map browser and restore widgets from a previous session. 
+    * Instantiate the map browser and try to restore widgets from a previous session. 
     */  
    var browser = new pol.core.MapBrowser('map', CONFIG);
    setTimeout(pol.widget.restore, 1500);
@@ -20,12 +25,12 @@
             var not = new pol.tracking.Notifier();
             CONFIG.notifier = not; 
         }
-        
     }, 1000); 
    
     
 
-   /* Set up application-specific context menus. We may define named contexts. The toolbar 
+   /* 
+    * Set up application-specific context menus. We may define named contexts. The toolbar 
     * define its own context, 'TOOLBAR'. See below how we define 'MAP' and 'POINT'. 
     * 
     * A callback function is associated with a named context and is called when we need to 
@@ -62,7 +67,9 @@
         m.add("Notification", function()
             { var x = new pol.tracking.NotifyList();
                 x.activatePopup("notifications", [50, 70]) });
-     
+        m.add("Bulletin board", function()
+            { var x = new pol.tracking.BullBoard();
+                x.activatePopup("bullboard", [50,70]) });
         m.add('Search items', function () 
             { var x = new pol.tracking.Search(); 
                 x.activatePopup("trackerSearch", [50,70]) }); 
@@ -119,7 +126,10 @@
     });
    
    
-
+      
+    /*********************************************************
+     * Sign menu
+     *********************************************************/
     
     browser.ctxMenu.addCallback("SIGN", function(m) {
         m.add('Show info', function() {srv.infoPopup(m.ctxt.point, [m.x, m.y]); });
@@ -128,6 +138,11 @@
      
     
     
+
+
+    /* 
+     * Helper functions used by menus. 
+     */
     
     function historyPopup(id, pix) {
         console.assert(id!=null && id != "" && pix != null, "Assertion failed"); 
