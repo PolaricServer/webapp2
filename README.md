@@ -15,7 +15,7 @@ Old webapp code is in https://github.com/PolaricServer/webapp
 In the subdirectory 'examples' you find example setups. 'application.js' is used to compose a running application. 'config.js' is used to configure it with map layers, etc.. 'index.html' is a starting-point for a minified version. Use 'index-dev.html' for development. 
 
 * The 'basic' directory is a minimal setup with just map browsing. 
-* The 'polaricserver-nordic' uses the polaric server backend aprs.no and is close to what is running on aprs.no. 
+* The 'polaricserver-nordic' uses a polaric server backend.
   
   
 ## Running 
