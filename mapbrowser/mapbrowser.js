@@ -303,6 +303,27 @@ pol.core.MapBrowser.prototype.fitExtent = function(extent) {
 }
 
 
+/** 
+ * Zoom and move map to extent 
+ * @param {Object} a object with extent, baseLayer and oLayers (overlays) attributes 
+ */
+pol.core.MapBrowser.prototype.gotoExtent = function(a) {
+    if (!isNaN(a.baseLayer))
+        this.changeBaseLayer(a.baseLayer);
+    setOLayers(a.oLayers);
+    console.log("extent="+a.extent);
+    if (a.extent && a.extent != null) 
+        this.fitExtent(a.extent); 
+    
+       
+    function setOLayers(ol) {
+        if (ol && ol != null)
+            for (i in ol)
+                CONFIG.oLayers[i].setVisible(ol[i]);
+    }
+}
+
+
 
 /**
  * Set/get the resolution of the map. 

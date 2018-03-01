@@ -80,8 +80,6 @@ pol.tracking.Notifier = function()
                 t.remove(i);
         }
     }, 10000);
-    
-    setTimeout(function() { t.updateScreen(); }, 1000);
 }
 
 

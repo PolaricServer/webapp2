@@ -128,7 +128,8 @@ pol.core.AreaList = function() {
         m.redraw();
     }
    
-   
+    
+      
     /* Return selected overlay layers (array of indices) */
     function getOLayers() {
         var ol = new Array();
@@ -136,26 +137,17 @@ pol.core.AreaList = function() {
             ol.push(CONFIG.oLayers[i].getVisible())
         return ol;
     }
-   
-   
-   
-    function setOLayers(ol) {
-        if (ol && ol != null)
-            for (i in ol)
-                CONFIG.oLayers[i].setVisible(ol[i]);
-    }
+    
     
    
-   
-   /* Zoom and move map to extent */
-   function gotoExtent(id) {
+    /* Zoom and move map to extent */
+    function gotoExtent(id) {
        var a = t.myAreas[id];
-       if (a.baseLayer)
-           CONFIG.mb.changeBaseLayer(a.baseLayer);
-       setOLayers(a.oLayers);
-       if (a.extent && a.extent != null) 
-          CONFIG.mb.fitExtent(a.extent); 
-   }
+       CONFIG.mb.gotoExtent(a);
+    }
+   
+   
+   
    
 }
 ol.inherits(pol.core.AreaList, pol.core.Widget);

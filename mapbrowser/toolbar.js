@@ -129,7 +129,7 @@ pol.core.Toolbar.prototype.setDefaultItems = function()
       
       function handleSelect(a, i) {
          return function() {
-           browser.fitExtent(a[i].extent);
+           browser.gotoExtent(a[i]);
          } 
       }
     });
