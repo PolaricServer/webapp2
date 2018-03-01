@@ -2,7 +2,8 @@
     * This is an example of how an application can be constructed using polaric components.  
     * Se also mapconfig.js for configuration of the application. 
     * 
-    * This is as simple version without a polaric-server backend. It is just map-browsing. 
+    * This is as simple version without a polaric-server backend. It is just map-browsing and 
+    * basic layer editing.. 
     */
 
 
@@ -27,7 +28,8 @@
     /*********************************************************
      * Map menu
      *********************************************************/
-   
+    
+    browser.addContextMenu("MAP");  
     browser.ctxMenu.addCallback("MAP", function(m) {
         m.add('Show map reference', function () 
             { browser.show_MaprefPix( [m.x, m.y] ); });  
@@ -45,7 +47,7 @@
     /*********************************************************
      * Toolbar menu
      *********************************************************/
-    browser.addContextMenu("MAP");      
+    
     browser.ctxMenu.addCallback("TOOLBAR", function(m) {
 
         m.add('Find position', function () 

@@ -113,7 +113,7 @@
          }),
                 
       new ol.layer.Tile({
-            name: "SK Topo 2",
+            name: "Karverket Topo 2",
             preload: 2,
             opacity: 0.66,
 
