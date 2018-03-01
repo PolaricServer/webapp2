@@ -90,7 +90,8 @@ pol.core.AreaList = function() {
     /* Remove area from list */
     function removeArea(id) {
         // If server available and logged in, delete on server as well
-        if (srv != null && srv.loggedIn) 
+        var srv = CONFIG.server; 
+        if (srv && srv != null && srv.loggedIn) 
             srv.removeArea(t.myAreas[id].index);
         t.myAreas.splice(id,1);
         CONFIG.store("core.AreaList", t.myAreas, true);
@@ -120,7 +121,7 @@ pol.core.AreaList = function() {
 
         /* IF server available and logged in, store on server as well */
         var srv = CONFIG.server; 
-        if (srv != null && srv.loggedIn)
+        if (srv && srv != null && srv.loggedIn)
             srv.putArea(area, function(i) { 
                 area.index = i; 
                 area.server = true;
