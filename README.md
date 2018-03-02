@@ -12,10 +12,13 @@ Old webapp code is in https://github.com/PolaricServer/webapp
 
 ## Example applications/setups
 
-In the subdirectory 'examples' you find example setups. 'application.js' is used to compose a running application. 'config.js' is used to configure it with map layers, etc.. 'index.html' is a starting-point for a minified version. Use 'index-dev.html' for development. 
+In the subdirectory 'examples' you find example setups. 'application.js' is used to compose a running application. 'config.js' is used to configure it with map layers, etc.. 'index.html' is a starting-point for a minified version. Use 'index-dev.html' for development-mode (and include the source code). 
 
-* The 'basic' directory is a minimal setup with just map browsing. 
-* The 'polaricserver-nordic' uses a polaric server backend.
+* The 'minimal' directory is a minimal setup with OSM only. 
+* The 'basic' directory is a basic setup with just map browsing. OSM + norwegian map. 
+* The 'polaricserver-nordic' uses a polaric server backend, OSM and norwegian maps. 
+
+Feel free to experiment with setups.. 
   
   
 ## Running 
@@ -25,19 +28,6 @@ Use compile-js.sh to minify the javascript code.
 To run it, copy the content of this directory to a directory that can be accessed through a web-server. Copy the files in one of the example directories to the root web-directory and edit 'config.js' and possibly 'application.js' to suit your needs.  
 
 
-
-## Example setup: 
-  test.js and index.html is an example application setup with menus, etc.. Feel free to experiment.
-  An application can be configured mapconfig.js. Feel free to experiment.
-  
-  stylesheets in style/ subdirectory. 
-  
-  
-  To run this you will also need external code like OpenLayers (ol.js and ol.css), Jquery (jquery.js), Jquery-ui (jquery-ui/*) and Proj4 (proj4.js), etc. These are placed in a subdirectory called lib.
-  
-  Use compile-js.sh to minify the javascript code. 
-  
-  For development use index-dev.html instead of index.html. 
   
 ## Licence
 This is free software. License is GNU Affero General Public License. See <http://www.gnu.org/licenses/>.
