@@ -79,3 +79,24 @@ div.own   { background: #ccffcc; color: #0000cc }
 #bullboard {width: 48.5em}
 #bullboard .scroll {overflow-y: auto; overflow-x: hidden; margin-right: -5px}
 
+
+.datepick input {width: 7em; }
+
+table.hist {margin-top: -0.2em; margin-bottom: -0.2em}
+table.hist td {padding-bottom: 0; padding-top: 0; padding-right: .7em; height: 0.5em;}
+table.hist tr {border-bottom: 1px dotted #999; height: 0.5em !important}
+table.hist tr:last-child {border-bottom: none}
+table.hist img {height: 13px}
+
+
+div.histt {
+   margin-top: 0.6em; margin-bottom: 0.6em; 
+   border-top: 2px solid #999; border-bottom: 2px solid #999; 
+   padding-top: 0.2em; padding-bottom: 0.2em
+}
+
+.histt table td {padding-bottom: 0; padding-top: 0; padding-right: .7em; height: 0.5em;}
+.histt table tr {border-bottom: 1px dotted #999; height: 0.5em !important}
+.histt table tr:last-child {border-bottom: none}
+.histt table img {height: 13px}
+

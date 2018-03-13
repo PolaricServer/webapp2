@@ -147,6 +147,15 @@ div#tags {
   width: 32em; 
   padding: 3px
 }
+
+
+input[type=text] {background: white; height: 1.6em}
+input[readonly]  {background: #cef; height: 1.6em}
+input[disabled]  {background: #ccc}
+input.valid      {background: #dfd}
+input.invalid    {background: #fdd}
+
+
 input#search {margin-top: 0.7em; width: 18em}
 
 
@@ -200,10 +209,6 @@ form.mapref hr { border: dotted 1px #888 }
 #ll_Em {width: 7ch}
 
 #editArea {margin: 0.25em}
-
-.valid {background: #dfd}
-.invalid {background: #fdd}
-
 
 #layerEdit {min-width: 32em}
 #layerEdit table {margin-left: 5.7em; margin-bottom: 0.4em}

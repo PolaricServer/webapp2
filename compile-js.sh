@@ -13,4 +13,4 @@ closure-compiler --js layerEdit.js --js layerList.js --js wmsLayer.js --js wfsLa
 
 cd ..
 cd tracking
-closure-compiler --js tracking.js --js polaricserver.js --js pubsub.js --js mapupdate.js --js search.js --js filters.js notifier.js bullboard.js > ../tracking-min.js
+closure-compiler --js tracking.js --js polaricserver.js --js pubsub.js --js mapupdate.js --js search.js --js filters.js notifier.js bullboard.js history.js > ../tracking-min.js

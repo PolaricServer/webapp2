@@ -22,6 +22,7 @@
 
 
 
+
 /**
  * Autojump between two fields.
  * @param {string} fieldId - Id of DOM field elelent to jump from.
@@ -82,7 +83,7 @@ var textInput = {
  
     view: function(vn) {
        return m("input#"+vn.attrs.id, 
-        { type: "text", size: vn.attrs.size, maxLength: vn.attrs.maxLength, 
+        { type: "text", config: vn.attrs.config, size: vn.attrs.size, maxLength: vn.attrs.maxLength, 
           contentEditable: (vn.attrs.contentEditable ? vn.attrs.contentEditable : true),
             oninput: function() {
                 vn.state.data=vn.dom.value;
@@ -119,6 +120,11 @@ var textInput = {
 }
 
 
+
+/**
+ *  Checkbox: 
+ *  Parameters: id, onclick, name, checked
+ */
 var checkBox = {
     view: function(vn) {
         return m("span", m("input#" + vn.attrs.id, 
@@ -139,8 +145,46 @@ var select = {
     }
 }
 
+
+
+var Datepick = {
+    oncreate: function(vn) {
+        var input = document.createElement( 'input' );
+        input.readOnly = true; 
+        input.id=vn.attrs.id;
+        input.value = vn.attrs.value; 
+        vn.dom.appendChild( input );
+        new Pikaday( {
+            field: input,
+            format: "YYYY-MM-DD"
+        });
+	},
+    
+    onchange: function(vn) {
+        vn.attrs.value = input.value; 
+    },
+    
+    view: function(vn) {
+        return m("span.datepick")
+  }
+}
+
+
+
+
+var dateTimeInput = {
+    view: function(vn) {
+        return m("span", 
+            m(Datepick, {value: vn.attrs.dvalue, id:vn.attrs.id+"_date"}),
+            m(textInput, {id:vn.attrs.id+"_time", size: "5", maxLength: "5", 
+                value: vn.attrs.tvalue, regex: /^(([0-1][0-9])|(2[0-3]))\:[0-5][0-9]$/ }));
+    }
+}
+
+
 /** 
  * MGRS input fields. 
+ * FIXME: Only one at a time because of use if id attribute. OK? 
  */
 var mgrsInput = {
     view: function() {
@@ -157,6 +201,7 @@ var mgrsInput = {
  
 /**
  * UTM input fields.
+ * FIXME: Only one at a time because of use if id attribute. OK? 
  */ 
 var utmInput = {
     view: function() {
@@ -178,6 +223,7 @@ var utmInput = {
 
  /**
   * Lat long input fields.
+  * FIXME: Only one at a time because of use if id attribute. OK? 
   */
 var reg_MIN =  /^(([0-5]?[0-9])|60)(\.([0-9]{1,4}))?$/;
  

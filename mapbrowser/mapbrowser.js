@@ -319,7 +319,8 @@ pol.core.MapBrowser.prototype.gotoExtent = function(a) {
     function setOLayers(ol) {
         if (ol && ol != null)
             for (i in ol)
-                CONFIG.oLayers[i].setVisible(ol[i]);
+                if (CONFIG.oLayers[i])
+                    CONFIG.oLayers[i].setVisible(ol[i]);
     }
 }
 
