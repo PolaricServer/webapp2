@@ -153,7 +153,7 @@ pol.tracking.Tracking.prototype.showList = function(points, pixel, cmenu) {
        return m("div", [
           m("table.items", points.map(function(x)
              { return m("tr", [ m("td",
-                 { onclick: function(e) {redrawFeature(x.getId()); showContext(e, x); },
+                 { onclick: function(e) {t.redrawFeature(x.getId()); showContext(e, x); },
                    title: x.getId()}, x.alias), m("td", m.trust(x.point.title)) ] ); }))
         ])
      }
@@ -170,18 +170,20 @@ pol.tracking.Tracking.prototype.showList = function(points, pixel, cmenu) {
        else
            t.server.infoPopup(x, pixel)
    }
-   
-   /* Redraw feature to put it on top of the stack */
-   function redrawFeature(id) {
-       var feature = t.source.getFeatureById(id);
-       var pt = feature.point;
-       pt.redraw = true;
-       t.addPoint(pt);
-   }
 }
  
  
-
+   /* Redraw feature to put it on top of the stack */
+pol.tracking.Tracking.prototype.redrawFeature = function(id) {
+    var t=this;
+    var feature = t.source.getFeatureById(id);
+    console.assert(feature != null, "Assertion failed. feature=null");
+    if (feature==null)
+       return; 
+    var pt = feature.point;
+    pt.redraw = true;
+    t.addPoint(pt);
+}
  
  
 pol.tracking.isSign = function(p) {
@@ -242,7 +244,7 @@ pol.tracking.Tracking.prototype.addPoint = function(p) {
     /* If feature exists and redraw flag is false. Just return */
     else if (!p.redraw)
         return;
-
+    
     /* update position, etc. */
     feature.getGeometry().setCoordinates(c);
     if (p.label != null) 
@@ -264,7 +266,7 @@ pol.tracking.Tracking.prototype.addPoint = function(p) {
     if (p.label != null && !this._labelHidden(p.ident, p.label.hidden)) {
        if (feature.label)
            CONFIG.mb.map.removeOverlay(feature.label);
-       feature.label = this.createLabel(c, p.label);
+       feature.label = this.createLabel(c, p.ident, p.label);
     }
     else if (feature.label)
        CONFIG.mb.map.removeOverlay(feature.label);
@@ -276,21 +278,43 @@ pol.tracking.Tracking.prototype.addPoint = function(p) {
 /**
  * Create a label. Use overlay.
  */
-pol.tracking.Tracking.prototype.createLabel = function(pos, label) {
-   console.assert(pos!=null && label != null, "Assertion failed");
-   var element = document.createElement('div');
-   element.className = label.style;
-   element.innerHTML = label.id;
-
-   var lbl = new ol.Overlay({
-       element: element,
-       offset: [14, 0],
-       insertFirst: false,
-       positioning: 'center-left'
-   });
-   lbl.setPosition(pos);
-   CONFIG.mb.map.addOverlay(lbl);
-   return lbl;
+pol.tracking.Tracking.prototype.createLabel = function(pos, ident, label) {
+    var t = this;
+    console.assert(pos!=null && label != null, "Assertion failed");
+    var element = document.createElement('div');
+    element.className = label.style;
+    element.innerHTML = label.id;
+   
+    var lbl = new ol.Overlay({
+        element: element,
+        offset: [14, 0],
+        insertFirst: false,
+        positioning: 'center-left'
+    });
+    lbl.setPosition(pos);
+    CONFIG.mb.map.addOverlay(lbl);
+    
+    /* Mouse event handlers */
+    element.onclick = function(e) {
+       t.server.infoPopup(t.source.getFeatureById(ident), [e.clientX, e.clientY]);
+       e.stopPropagation();
+    }
+    element.onmouseenter = function(e) { 
+       element._cancel=false;
+       setTimeout(function() {if (!element._cancel) t.redrawFeature(ident);}, 800);
+    }
+    element.onmouseleave = function(e) {
+       element._cancel=true; 
+    }         
+    element.oncontextmenu = function(e) { 
+        var f = t.source.getFeatureById(ident);
+        CONFIG.mb.ctxMenu.showOnPos(
+              { name: "POINT", 
+                point: f,
+                ident: ident}, [e.clientX, e.clientY]); }
+    
+    
+    return lbl;
 }
 
 
@@ -329,7 +353,7 @@ pol.tracking.Tracking.prototype.hideLabel = function(id, hide) {
     }
     else
         feature.label = this.createLabel(
-            feature.getGeometry().getCoordinates(), feature.point.label);
+            feature.getGeometry().getCoordinates(), id, feature.point.label);
     CONFIG.mb.map.render();
     CONFIG.store("tracking.showlabel", this.showLabel);
 }

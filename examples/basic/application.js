@@ -30,7 +30,7 @@
      *********************************************************/
     
     browser.addContextMenu("MAP");  
-    browser.ctxMenu.addCallback("MAP", function(m) {
+    browser.ctxMenu.addCallback("MAP", function(m, ctxt) {
         m.add('Show map reference', function () 
             { browser.show_MaprefPix( [m.x, m.y] ); });  
      
@@ -48,7 +48,7 @@
      * Toolbar menu
      *********************************************************/
     
-    browser.ctxMenu.addCallback("TOOLBAR", function(m) {
+    browser.ctxMenu.addCallback("TOOLBAR", function(m, ctxt) {
 
         m.add('Find position', function () 
             { var x = new pol.core.refSearch(); x.activatePopup("refSearch", [50,70]) });

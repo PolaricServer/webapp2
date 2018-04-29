@@ -20,6 +20,7 @@
         mu = new pol.tracking.Tracking(srv);
         flt = new pol.tracking.Filters(mu);
         CONFIG.server = srv;
+        CONFIG.tracks = mu;
         
         if (srv.auth.userid != "") {
             var not = new pol.tracking.Notifier();
@@ -42,7 +43,7 @@
      * Map menu
      *********************************************************/
    
-    browser.ctxMenu.addCallback("MAP", function(m) {
+    browser.ctxMenu.addCallback("MAP", function(m, ctxt) {
         m.add('Show map reference', function () 
             { browser.show_MaprefPix( [m.x, m.y] ); });  
         if (srv.auth.sar) 
@@ -62,8 +63,14 @@
      * Toolbar menu
      *********************************************************/
    
-    browser.ctxMenu.addCallback("TOOLBAR", function(m) {
+    browser.ctxMenu.addCallback("TOOLBAR", function(m, ctxt) {
         
+        m.add("History...", function()
+            { var x = new pol.tracking.db.History();
+                x.activatePopup("history", [50, 70]) });
+        m.add("My trackers", function()
+            { var x = new pol.tracking.db.MyTrackers();
+                x.activatePopup("mytrackers", [50, 70]) }); 
         m.add("Notification", function()
             { var x = new pol.tracking.NotifyList();
                 x.activatePopup("notifications", [50, 70]) });
@@ -109,20 +116,20 @@
      * Point menu
      *********************************************************/
    
-    browser.ctxMenu.addCallback("POINT", function(m) {
-       
-        m.add('Show info', function() {srv.infoPopup(m.ctxt.point, [m.x, m.y]); });
+    browser.ctxMenu.addCallback("POINT", function(m, ctxt) {
+        m.add('Show info', function() 
+          { srv.infoPopup(ctxt.point, [m.x, m.y]); });
         if (srv.auth.sar) { 
-            m.add('Global settings', function() { globalSettings(m.ctxt.ident);});
-            m.add('Manage tags..', function() { setTags(m.ctxt.ident);});
+            m.add('Global settings', function() { globalSettings(ctxt.ident);});
+            m.add('Manage tags..', function() { setTags(ctxt.ident);});
         }
       
-        if (mu.labelHidden(m.ctxt.ident))
-            m.add('Show label', function() { mu.hideLabel(m.ctxt.ident, false); });
+        if (mu.labelHidden(ctxt.ident))
+            m.add('Show label', function() { mu.hideLabel(ctxt.ident, false); });
         else
-            m.add('Hide label', function() { mu.hideLabel(m.ctxt.ident, true); });
+            m.add('Hide label', function() { mu.hideLabel(ctxt.ident, true); });
           
-        m.add('Last movements', function () { historyPopup(m.ctxt.ident, [m.x, m.y]); });
+        m.add('Last movements', function () { historyPopup(ctxt.ident, [m.x, m.y]); });
     });
    
    
@@ -131,8 +138,8 @@
      * Sign menu
      *********************************************************/
     
-    browser.ctxMenu.addCallback("SIGN", function(m) {
-        m.add('Show info', function() {srv.infoPopup(m.ctxt.point, [m.x, m.y]); });
+    browser.ctxMenu.addCallback("SIGN", function(m, ctxt) {
+        m.add('Show info', function() {srv.infoPopup(ctxt.point, [m.x, m.y]); });
         m.add('Do funny things', function () { alert("What?"); });
     });
      

@@ -256,7 +256,6 @@ pol.core.PopupMenu.prototype.createItem_ = function(text, actn, arg)
    t.txt.clear();
    t.txt.x = x; 
    t.txt.y = y;
-   t.txt.ctxt = ctxt;
    
    /* Try to find the context. By default it is the id of the 
     * element we clicked on. 
@@ -283,7 +282,7 @@ pol.core.PopupMenu.prototype.createItem_ = function(text, actn, arg)
        for (i=0; i<lst.length; i++) {
          f = lst[i]; 
          if (f != null) 
-           f(t.txt); 
+           f(t.txt, ctxt); 
        }    
    }
  } 

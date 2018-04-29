@@ -25,7 +25,7 @@
      * Toolbar menu
      *********************************************************/
     
-    browser.ctxMenu.addCallback("TOOLBAR", function(m) {
+    browser.ctxMenu.addCallback("TOOLBAR", function(m, ctxt) {
         m.add('Find position', function () 
             { var x = new pol.core.refSearch(); x.activatePopup("refSearch", [50,70]) });
         m.add('Area List', function () 
