@@ -47,7 +47,7 @@ pol.tracking.PolaricServer.prototype.logout = function()
  */  
 pol.tracking.PolaricServer.prototype.putArea = function(a, f) { 
     var t = this;
-    this.PUT("/users/"+this.auth.userid+"/areas", 
+    this.POST("/users/"+this.auth.userid+"/areas", 
         JSON.stringify(a), 
         function(x) {var i=parseInt(x); console.log("Added area "+i+" for user: "+t.auth.userid); f(i); },
         function(x) {console.log("ERROR: " + x); } );
