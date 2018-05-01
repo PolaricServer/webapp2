@@ -20,7 +20,7 @@ In the subdirectory 'examples' you find example setups. 'application.js' is used
 
 Feel free to experiment with setups.. You may use the script setup.sh to copy files to/from the example directories. 
 
-./setup.sh save minimal 
+    ./setup.sh save minimal 
 will save the current application setup in root directory to examples/minimal
   
   
