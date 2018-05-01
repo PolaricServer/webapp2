@@ -18,14 +18,18 @@ In the subdirectory 'examples' you find example setups. 'application.js' is used
 * The 'basic' directory is a basic setup with just map browsing. OSM + norwegian map. 
 * The 'polaricserver-nordic' uses a polaric server backend, OSM and norwegian maps. 
 
-Feel free to experiment with setups.. 
+Feel free to experiment with setups.. You may use the script setup.sh to copy files to/from the example directories. 
+
+./setup.sh save minimal 
+will save the current application setup in root directory to examples/minimal
   
   
 ## Running 
 
 Use compile-js.sh to minify the javascript code. 
 
-To run it, copy the content of this directory to a directory that can be accessed through a web-server. Copy the files in one of the example directories to the root web-directory and edit 'config.js' and possibly 'application.js' to suit your needs.  
+To run it, copy the content of this directory to a directory that can be accessed through a web-server. Copy the files in one of the example directories to the root web-directory (or use the script setup.sh) and edit 'config.js' and possibly 'application.js' to suit your needs.
+
 
 
   
