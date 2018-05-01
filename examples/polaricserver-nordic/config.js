@@ -120,7 +120,7 @@
             source: new ol.source.TileWMS({
                url: "http://opencache.statkart.no/gatekeeper/gk/gk.open?",
                projection: utmproj,
-               params: {'LAYERS': 'topo2', VERSION: "1.1.1"},
+               params: {'LAYERS': 'topo4', VERSION: "1.1.1"},
                tilegrid: KV_grid_UTM,
                cacheSize: 4096
 
