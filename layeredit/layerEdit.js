@@ -43,7 +43,7 @@ pol.layers.Edit = function(list) {
              m(checkBox, {id:"vis.zoom", onclick: filterZoom, checked: (t.filt.zoom != null) },
                 "Zoom level+", nbsp, nbsp),
              m(checkBox, {id:"vis.proj", onclick: filterProj, checked: (t.filt.proj != null) },
-                "Projection", br),
+                "Base projection", br),
              m(t.fields),
              
              m("div.buttons", [

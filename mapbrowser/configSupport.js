@@ -68,7 +68,8 @@ function ADD_PROJECTION(name, info, extent)
 function PROJECTION(proj) 
    { CONFIG.set('core.projection', proj); }
 
-   
+function SUPPORTED_PROJ( proj )
+   { CONFIG.set('core.supported_proj', proj); }
    
 function CENTER(lng, lat) 
    { CONFIG.set('core.center', [lng, lat]); }

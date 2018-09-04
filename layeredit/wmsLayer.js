@@ -27,22 +27,110 @@
  */
 
 pol.layers.Wms = function(list) {
-   pol.layers.Edit.call(this, list);
+    pol.layers.Edit.call(this, list);
       
-       
-   this.fields = {
-       view: function() { 
-          return m("div.spec", [ 
-             m("span.sleftlab", "WMS URL: "),   
-             m(textInput, {id:"wmsUrl", size: 40, maxLength:160, regex: /^.+$/i }),br,
-             m("span.sleftlab", "Layers: "),
-             m(textInput, {id:"wmsLayers", size: 20, maxLength:80, regex: /^.+$/i }),br
-           ]);
-       }
-   }  
-   
+    this.cap = null;   
+    this.layers = [];
+    this.srs = CONFIG.get('core.supported_proj');
+    this.selected = this.srs[0];
+    var t=this;
+    
+    this.fields = {
+        view: function() { 
+            return m("div.spec", [ 
+                m("span.sleftlab", "Server: "),   
+                m(textInput, {id:"wmsUrl", size: 40, maxLength:160, regex: /^.+$/i }),
+                m("input", { type: "button", onclick: getCap, value: "Get" } ),
+                br,
+                m("span.sleftlab", "Projection:"),
+                m(select, {id: "sel_srs", onchange: selectSRS, list: t.srs.map( function(x) {
+                    return {label: x, val: x, obj: null};
+                })}),  
+                br,
+                (t.cap==null ? null : m(t.wfields))
+            ]);
+        }
+    }  
+    
+    this.wfields = {
+        view: function() { 
+            return m("div.wserver", [ 
+                m("span.sleftlab", "Title: "),
+                m("span", t.cap.Service.Title), br,    
+                m("span.sleftlab", "Layers:"),
+                m("table", m("tbody", t.cap.Capability.Layer.Layer.map( function(x) {
+                    return m("tr", [ 
+                        m("td", m(checkBox, { }, x.Title))
+                    ])
+                })))
+            ]);
+        }
+        
+    }
+    
+    
+    
+    function selectSRS() {
+        t.selected = $("#sel_srs").val();
+        if (t.cap != null)
+            filterLayers(t.selected);
+    }
+    
+    
+    
+    function filterLayers(srs) {
+        console.log("Filter layers");
+        t.layers = [];
+        for (i in t.cap.Capability.Layer.Layer) {
+            var layer = t.cap.Capability.Layer.Layer[i]; 
+            var found = false;
+            if (!layer.CRS && !layer.SRS)
+                found = true; 
+            else {
+                if (layer.CRS) {
+                    console.log("Found CRS in layer");
+                    for (j in layer.CRS) 
+                       if (srs == layer.CRS[j])
+                           {found=true; break;}
+                }
+                else if (layer.SRS) {
+                    console.log("Found SRS in layer");
+                    for (j in layer.SRS) 
+                       if (srs == layer.SRS[j])
+                           {found=true; break;}
+                }
+            }
+            if (found)
+                t.layers.push(layer)
+        }
+        m.redraw();
+    }
+    
+    
+    
+    function getCap() {
+        var parser = new ol.format.WMSCapabilities();
+        var u = $("#wmsUrl").val(); 
+        fetch(u+'?service=wms&request=GetCapabilities').then(
+            function(response) {
+               return response.text(); 
+            }).then( 
+                function(txt) {
+                    t.cap = parser.read(txt);
+                    for (i in t.cap.Capability.Layer.Layer) {
+                        layer = t.cap.Capability.Layer.Layer[i];
+                    }
+                    filterLayers(t.srs[0]);
+                    m.redraw();
+                });
+    }
+    
 }
 ol.inherits(pol.layers.Wms, pol.layers.Edit);
+
+
+
+
 
 
 
