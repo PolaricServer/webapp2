@@ -101,9 +101,10 @@ pol.core.AreaList = function() {
     /* Move map area name to editable textInput */
     function editArea(id) {
         gotoExtent(id);
-        $("#editArea").val(t.myAreas[id].name);
-        $("#editArea").change();
-        t.myAreas.splice(id,1);
+  //      t.currName = t.myAreas[id].name;
+        $("#editArea").val("");
+        $("#editArea").val(t.myAreas[id].name).trigger("change").attr("ok", true);;
+        removeArea(id);
         m.redraw();
     }
    

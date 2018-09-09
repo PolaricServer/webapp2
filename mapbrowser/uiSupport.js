@@ -102,6 +102,7 @@ var textInput = {
             },
             onchange: function() {
                 vn.state.data=vn.dom.value;
+                vn.state.cssclass = "";
                 if (!vn.attrs.regex.test(vn.dom.value) && vn.attrs.value) 
                     setTimeout(function() {
                         vn.state.cssclass = "";
