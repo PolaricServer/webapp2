@@ -66,8 +66,12 @@ pol.layers.List = function() {
    /* Get stored layers */
    this.getMyLayers();
 
+   
+   
    /* Apply a function to an argument. Returns a new function */
    function apply(f, id) {return function() {f(id); }};  
+   
+   
    
    /* Handler for select element. Select a type. */
    function selectHandler(e) {
@@ -120,7 +124,8 @@ pol.layers.List.prototype.addType = function(id, name, obj) {
  * Restore layers from local storage.
  */
 pol.layers.List.prototype.getMyLayers = function() {
-   var lrs = CONFIG.get("layers.List");
+   var lrs = CONFIG.get("layers.list");
+   console.log(lrs);
    if (lrs == null)
        return lrs = [];
   

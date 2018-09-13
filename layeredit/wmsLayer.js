@@ -2,7 +2,7 @@
  Map browser based on OpenLayers 4. Layer editor. 
  WMS layer. 
  
- Copyright (C) 2017 Øyvind Hanssen, LA7ECA, ohanssen@acm.org
+ Copyright (C) 2018 Øyvind Hanssen, LA7ECA, ohanssen@acm.org
  
  This program is free software: you can redistribute it and/or modify
  it under the terms of the GNU Affero General Public License as published 
@@ -19,11 +19,18 @@
 */
 
 
-
+/* 
+ * TODO: 
+ *  Re-edit layer: Restore editable fields. DONE.
+ *  Allow selection of projection or just use base-projection? 
+ *  Editing other fields resets layer-selection checkboxes. Fix. DONE.
+ *  Sublayer support. NOT NOW! 
+ *  Restore layer-lists from localstorage (they are restored in layer selector widget). 
+ */
 
 /**
  * @classdesc
- * WFS layer editor.
+ * WMS layer editor.
  */
 
 pol.layers.Wms = function(list) {
@@ -31,8 +38,10 @@ pol.layers.Wms = function(list) {
       
     this.cap = null;   
     this.layers = [];
+    this.sLayers = [];
     this.srs = CONFIG.get('core.supported_proj');
     this.selected = this.srs[0];
+    this.url = "";
     var t=this;
     
     this.fields = {
@@ -52,77 +61,41 @@ pol.layers.Wms = function(list) {
         }
     }  
     
+    /* Fields representing capabilities of wms service (from GetCapabilities) */
     this.wfields = {
         view: function() { 
             return m("div.wserver", [ 
                 m("span.sleftlab", "Title: "),
-                m("span", t.cap.Service.Title), br,    
+                m("span", {title: t.cap.Service.Abstract}, t.cap.Service.Title), br,    
                 m("span.sleftlab", "Layers:"),
-                m("table", m("tbody", t.cap.Capability.Layer.Layer.map( function(x) {
+                m("table", {id: "layerSelect"}, m("tbody", t.sLayers.map( function(x) {
                     return m("tr", [ 
-                        m("td", m(checkBox, { }, x.Title))
+                        m("td", {class: (x.level2 ? "level2" : null)}, 
+                          m(checkBox, {onclick: apply(selLayer, x), checked: x.checked}, x.Title))
                     ])
                 })))
             ]);
         }
-        
     }
+       
+   
+    /* Apply a function to an argument. Returns a new function */
+    function apply(f, id) {return function() {f(id); }};  
+   
     
+    function getCap() {
+        t.getCapabilities();
+    }
     
     
     function selectSRS() {
         t.selected = $("#sel_srs").val();
         if (t.cap != null)
-            filterLayers(t.selected);
+            t.filterLayers(t.selected);
     }
     
-    
-    
-    function filterLayers(srs) {
-        console.log("Filter layers");
-        t.layers = [];
-        for (i in t.cap.Capability.Layer.Layer) {
-            var layer = t.cap.Capability.Layer.Layer[i]; 
-            var found = false;
-            if (!layer.CRS && !layer.SRS)
-                found = true; 
-            else {
-                if (layer.CRS) {
-                    console.log("Found CRS in layer");
-                    for (j in layer.CRS) 
-                       if (srs == layer.CRS[j])
-                           {found=true; break;}
-                }
-                else if (layer.SRS) {
-                    console.log("Found SRS in layer");
-                    for (j in layer.SRS) 
-                       if (srs == layer.SRS[j])
-                           {found=true; break;}
-                }
-            }
-            if (found)
-                t.layers.push(layer)
-        }
-        m.redraw();
-    }
-    
-    
-    
-    function getCap() {
-        var parser = new ol.format.WMSCapabilities();
-        var u = $("#wmsUrl").val(); 
-        fetch(u+'?service=wms&request=GetCapabilities').then(
-            function(response) {
-               return response.text(); 
-            }).then( 
-                function(txt) {
-                    t.cap = parser.read(txt);
-                    for (i in t.cap.Capability.Layer.Layer) {
-                        layer = t.cap.Capability.Layer.Layer[i];
-                    }
-                    filterLayers(t.srs[0]);
-                    m.redraw();
-                });
+    function selLayer(x) {
+       x.checked = !x.checked; 
     }
     
 }
@@ -130,7 +103,51 @@ ol.inherits(pol.layers.Wms, pol.layers.Edit);
 
 
 
+/*
+ * Get capabilities from WMS server
+ */
+pol.layers.Wms.prototype.getCapabilities = function() {
+    var t = this;
+    t.layers=[];
+    t.sLayers=[];
+    
+    var parser = new ol.format.WMSCapabilities();
+    var u = $("#wmsUrl").val(); 
+    fetch(u+'?service=wms&request=GetCapabilities').then(
+        function(response) {
+            return response.text(); 
+        }).then( 
+            function(txt) {
+                var idx = 0;
+                t.cap = parser.read(txt);
+                if (t.cap.Capability.Layer.Layer) {
+                    for (i in t.cap.Capability.Layer.Layer) {
+                        var x = t.cap.Capability.Layer.Layer[i];
+                        t.layers.push(x);
+                    }
+                }
+                else if (t.cap.Capability.Layer)
+                    t.layers[0] = t.cap.Capability.Layer;
 
+                t.filterLayers(t.selected);
+                m.redraw();
+            });
+}
+
+
+
+
+pol.layers.Wms.prototype.filterLayers = function(crs) {
+    console.log("filterLayers");
+    var t = this;
+    t.sLayers = [];
+    for (i in t.layers)
+        for (j in t.layers[i].CRS)
+            if (t.layers[i].CRS[j] == crs) {
+                t.sLayers.push(t.layers[i]);
+                break; 
+            }
+}
 
 
 
@@ -140,9 +157,23 @@ ol.inherits(pol.layers.Wms, pol.layers.Edit);
 
 pol.layers.Wms.prototype.enabled = function() {
     return  $("#editLayer").attr("ok") && 
-            $("#wmsUrl").attr("ok") && 
-            $("#wmsLayers").attr("ok") ; 
+            $("#wmsUrl").attr("ok"); 
 }
+
+
+
+pol.layers.Wms.prototype.getReqLayers = function() {
+    var layers = "";
+    var first=true;
+    for (i in this.sLayers) {
+        if (this.sLayers[i].checked) {
+            layers += ((first ? "" : ",") + this.sLayers[i].Name);
+            first=false; 
+        }
+    }
+    return layers; 
+}
+
 
 
 
@@ -152,11 +183,10 @@ pol.layers.Wms.prototype.enabled = function() {
 
 pol.layers.Wms.prototype.createLayer = function(name) {
        var url = $("#wmsUrl").val();
-       var layers = $("#wmsLayers").val();
+       var layers = this.getReqLayers();
        console.log("Create WMS layer: URL="+url+", layers="+layers);
-       // FIXME: Sanitize input !!!!!
        
-       return new ol.layer.Image({
+       var x = new ol.layer.Image({
             name: name, 
             source: new ol.source.ImageWMS ({
                ratio:  1,
@@ -164,6 +194,9 @@ pol.layers.Wms.prototype.createLayer = function(name) {
                params: {'LAYERS':layers, VERSION: "1.1.1"}
             }) 
        });
+       x.selSrs = this.selected; 
+       x.selLayers = JSON.parse(JSON.stringify(this.sLayers))
+       return x;
    }
   
  
@@ -173,10 +206,17 @@ pol.layers.Wms.prototype.createLayer = function(name) {
  */  
 
 pol.layers.Wms.prototype.edit = function(layer) {
+   /* Call method in superclass */
    pol.layers.Edit.prototype.edit.call(this, layer);
    
-   $("#wmsUrl").val(layer.getSource().getUrl()).trigger("change").attr("ok", true);
-   $("#wmsLayers").val(layer.getSource().getParams().LAYERS).trigger("change").attr("ok", true);
+   /* Specific to WMS layer */
+   this.url = layer.getSource().getUrl();
+   $("#wmsUrl").val(this.url).trigger("change").attr("ok", true);
+   $("#sel_srs").val(layer.selSrs).trigger("change");
+   this.getCapabilities();
+   this.sLayers = layer.selLayers;
+   console.log(this.sLayers);
+   m.redraw();
 }
 
 
@@ -187,10 +227,12 @@ pol.layers.Wms.prototype.edit = function(layer) {
 
 pol.layers.Wms.prototype.layer2json = function(layer) { 
     var lx = {
-      name:   layer.get("name"),
-      filter: layer.filt,
-      url:    layer.getSource().getUrl(),
-      params: layer.getSource().getParams()
+      name:    layer.get("name"),
+      filter:  layer.filt,
+      url:     layer.getSource().getUrl(),
+      params:  layer.getSource().getParams(),
+      sLayers: layer.selLayers,
+      srs:     layer.selSrs
     };
     return JSON.stringify(lx);
 }
@@ -217,6 +259,8 @@ pol.layers.Wms.prototype.json2layer = function(js) {
        });   
     x.predicate = this.createFilter(lx.filter);
     x.filt = lx.filter;
+    x.selSrs = lx.srs;
+    x.selLayers = lx.sLayers;
     return x;
 }
 

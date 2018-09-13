@@ -99,7 +99,7 @@ pol.layers.Edit = function(list) {
        
        if (layer != null) {
           layer.predicate = t.createFilter(t.filt);
-          layer.filt = t.filt;
+          layer.filt = {ext:t.filt.ext, zoom:t.filt.zoom, proj:t.filt.proj}; 
           CONFIG.mb.addConfiguredLayer(layer, name);
        }
 
@@ -135,7 +135,7 @@ pol.layers.Edit.prototype.createFilter = function (f) {
     /* Returns a closure with the chosen parameter values */
     return function() {
        return ( 
-          (filt.ext == null  || ol.extent.intersects(ext, CONFIG.mb.getExtent())) &&
+          (filt.ext == null  || ol.extent.intersects(filt.ext, CONFIG.mb.getExtent())) &&
           (filt.zoom == null || filt.zoom >= CONFIG.mb.getResolution()) &&
           (filt.proj == null || filt.proj === CONFIG.mb.view.getProjection())  
         );
@@ -151,9 +151,9 @@ pol.layers.Edit.prototype.createFilter = function (f) {
 pol.layers.Edit.prototype.edit = function(layer) {
     $("#editLayer").val(layer.get("name")).trigger("change").attr("ok", true);
     this.filt = layer.filt;
-    $("#vis.extent").prop("checked", (this.filt.ext != null));
-    $("#vis.zoom").prop("checked", (this.filt.zoom != null));
-    $("#vis.proj").prop("checked", (this.filt.proj != null));
+    $("#vis.extent").prop("checked", (this.filt.ext != null)).trigger("change");
+    $("#vis.zoom").prop("checked", (this.filt.zoom != null)).trigger("change");
+    $("#vis.proj").prop("checked", (this.filt.proj != null)).trigger("change");
 }
 
 
@@ -178,7 +178,7 @@ pol.layers.Edit.prototype.layer2json = function(layer) {
 
 /**
  * Restore a layer from JSON format (see layer2json). 
- * To be defined in subclass. 
+ * To be redefined in subclass. 
  */
 pol.layers.Edit.prototype.json2layer = function(js) {
     return null; 
@@ -190,6 +190,9 @@ pol.layers.Edit.prototype.json2layer = function(js) {
 pol.layers.Dummy = function(list) {
    pol.layers.Edit.call(this, list);
 }
+
+
+
 ol.inherits(pol.layers.Dummy, pol.layers.Edit);
 
 
