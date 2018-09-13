@@ -37,8 +37,14 @@
 
 pol.core.Measure = function() 
 {
+    var t = this;
+    var tooltipElement;
+    var tooltip;
+    var listener;
+    t.tooltips = [];
     
-    this.vector = CONFIG.mb.addVectorLayer(
+    
+    t.vector = CONFIG.mb.addVectorLayer(
        new ol.style.Style({
           fill: new ol.style.Fill({
             color: 'rgba(255, 255, 255, 0.2)'
@@ -50,8 +56,8 @@ pol.core.Measure = function()
         }));
     
     
-    this.draw = new ol.interaction.Draw({
-       source: this.vector.getSource(),
+    t.draw = new ol.interaction.Draw({
+       source: t.vector.getSource(),
        type: "LineString",
        style: new ol.style.Style({
             fill: new ol.style.Fill({
@@ -73,16 +79,11 @@ pol.core.Measure = function()
             })
           })
     });
-          
-    var tooltipElement;
-    var tooltip;
-    var listener;
-    this.tooltips = [];
     
-    CONFIG.mb.map.addInteraction(this.draw);
+    CONFIG.mb.map.addInteraction(t.draw);
     
     
-    this.draw.on("drawstart",  function(evt) {
+    t.draw.on("drawstart",  function(evt) {
         sketch = evt.feature;
         var tooltipCoord = evt.coordinate;
 
@@ -93,23 +94,23 @@ pol.core.Measure = function()
            tooltipElement.innerHTML = output;
            tooltip.setPosition(tooltipCoord);
         });
-    }, this);
+    }, t);
 
     
-    this.draw.on("drawend", function() {
+    t.draw.on("drawend", function() {
        tooltipElement.className = 'tooltip tooltip-static';
        tooltip.setOffset([0, -7]);
        // unset sketch
        sketch = null;
        // unset tooltip so that a new one can be created
        tooltipElement = null;
-       this.tooltips.push(createTooltip());
+       t.tooltips.push(createTooltip());
        ol.Observable.unByKey(listener);
-    }, this);
+    }, t);
 
 
     
-    this.tooltips.push(createTooltip());
+    t.tooltips.push(createTooltip());
     
 
     function createTooltip() {
@@ -128,7 +129,7 @@ pol.core.Measure = function()
     }
     
     
-    var wgs84Sphere = new ol.Sphere(6378137);
+ //   var wgs84Sphere = new ol.Sphere(6378137);
     
     function formatLength(line) {
         var length;
@@ -139,7 +140,7 @@ pol.core.Measure = function()
           for (var i = 0, ii = coordinates.length - 1; i < ii; ++i) {
             var c1 = ol.proj.transform(coordinates[i], sourceProj, 'EPSG:4326');
             var c2 = ol.proj.transform(coordinates[i + 1], sourceProj, 'EPSG:4326');
-            length += wgs84Sphere.haversineDistance(c1, c2);
+            length += ol.sphere.getDistance(c1, c2);
           }
 
         var output;

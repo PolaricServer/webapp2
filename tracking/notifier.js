@@ -138,14 +138,13 @@ pol.tracking.NotifyList = function()
     this.classname = "tracking.NotifyList"; 
     this.notifier = CONFIG.notifier;  
     var t = this;
-
    
     this.widget = {
         view: function() {
             var i=0;
             return m("div#notifications", [
                 m("h1", "My Notifications"),
-                m("table", m("tbody", t.notifier.list.map(function(x) {
+                m("table", m("tbody", (t.notifier ? t.notifier.list : []).map(function(x) {
                     return m("tr", [
                         m("td", m("img", {"class":"icon", src:icon(x.type)})),
                         m("td", m("div", [

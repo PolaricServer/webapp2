@@ -58,7 +58,9 @@ var TRUE = function() { return true; }
 
 function ADD_PROJECTION(name, info, extent) 
 {
+   console.log("ADD_PROJECTION: "+name+", "+info);
    proj4.defs(name, info);
+   ol.proj.proj4.register(proj4);
    var x = ol.proj.get(name);
    x.setExtent(extent);
    return x;
