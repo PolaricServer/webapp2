@@ -70,7 +70,7 @@ pol.layers.Wms = function(list) {
                 m("span.sleftlab", "Layers:"),
                 m("table", {id: "layerSelect"}, m("tbody", t.sLayers.map( function(x) {
                     return m("tr", [ 
-                        m("td", {class: (x.level2 ? "level2" : null)}, 
+                        m("td", {cssclass: (x.level2 ? "level2" : null)}, 
                           m(checkBox, {onclick: apply(selLayer, x), checked: x.checked}, x.Title))
                     ])
                 })))
@@ -84,7 +84,7 @@ pol.layers.Wms = function(list) {
    
     
     function getCap() {
-        t.getCapabilities();
+        t.getCapabilities(m.redraw);
     }
     
     
@@ -106,7 +106,7 @@ ol.inherits(pol.layers.Wms, pol.layers.Edit);
 /*
  * Get capabilities from WMS server
  */
-pol.layers.Wms.prototype.getCapabilities = function() {
+pol.layers.Wms.prototype.getCapabilities = function(handler) {
     var t = this;
     t.layers=[];
     t.sLayers=[];
@@ -130,7 +130,8 @@ pol.layers.Wms.prototype.getCapabilities = function() {
                     t.layers[0] = t.cap.Capability.Layer;
 
                 t.filterLayers(t.selected);
-                m.redraw();
+                if (handler)
+                    handler();
             });
 }
 
@@ -195,7 +196,9 @@ pol.layers.Wms.prototype.createLayer = function(name) {
             }) 
        });
        x.selSrs = this.selected; 
-       x.selLayers = JSON.parse(JSON.stringify(this.sLayers))
+       x.checkList = [];
+       for (i in this.sLayers) 
+          x.checkList[i] = {name: this.sLayers[i].Name, checked: this.sLayers[i].checked}; 
        return x;
    }
   
@@ -206,17 +209,21 @@ pol.layers.Wms.prototype.createLayer = function(name) {
  */  
 
 pol.layers.Wms.prototype.edit = function(layer) {
-   /* Call method in superclass */
-   pol.layers.Edit.prototype.edit.call(this, layer);
+    var t = this;
+    /* Call method in superclass */
+    pol.layers.Edit.prototype.edit.call(this, layer);
    
-   /* Specific to WMS layer */
-   this.url = layer.getSource().getUrl();
-   $("#wmsUrl").val(this.url).trigger("change").attr("ok", true);
-   $("#sel_srs").val(layer.selSrs).trigger("change");
-   this.getCapabilities();
-   this.sLayers = layer.selLayers;
-   console.log(this.sLayers);
-   m.redraw();
+    /* Specific to WMS layer */
+    this.url = layer.getSource().getUrl();
+    $("#wmsUrl").val(this.url).trigger("change").attr("ok", true);
+    $("#sel_srs").val(layer.selSrs).trigger("change");
+   
+    this.getCapabilities( function() {
+        for (i in t.sLayers) 
+            if (t.sLayers[i].Name == layer.checkList[i].name) 
+                t.sLayers[i].checked = layer.checkList[i].checked; 
+        m.redraw();
+    });
 }
 
 
@@ -231,7 +238,7 @@ pol.layers.Wms.prototype.layer2json = function(layer) {
       filter:  layer.filt,
       url:     layer.getSource().getUrl(),
       params:  layer.getSource().getParams(),
-      sLayers: layer.selLayers,
+      checked: layer.checkList,
       srs:     layer.selSrs
     };
     return JSON.stringify(lx);
@@ -260,7 +267,7 @@ pol.layers.Wms.prototype.json2layer = function(js) {
     x.predicate = this.createFilter(lx.filter);
     x.filt = lx.filter;
     x.selSrs = lx.srs;
-    x.selLayers = lx.sLayers;
+    x.checkList = lx.checked;
     return x;
 }
 
