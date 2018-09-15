@@ -1,8 +1,8 @@
 /*
- Map browser based on OpenLayers 4. Tracking. 
+ Map browser based on OpenLayers 5. Tracking. 
  Configure filters and filter-menu. 
  
- Copyright (C) 2017 Øyvind Hanssen, LA7ECA, ohanssen@acm.org
+ Copyright (C) 2017-2018 Øyvind Hanssen, LA7ECA, ohanssen@acm.org
  
  This program is free software: you can redistribute it and/or modify
  it under the terms of the GNU Affero General Public License as published 
@@ -21,53 +21,53 @@
  
 
 /**
- * @classdesc
  * Filters and filter menu setup.
- * @constructor
  */
    
-pol.tracking.Filters = function(tr) 
-{
-   var tbar = CONFIG.mb.toolbar;
-   var t = this;
-   var filterViews = CONFIG.get("tracking.filters");
-   t.tracker = tr; 
+pol.tracking.Filters = class {
+    
+    constructor(tr) { 
+        var tbar = CONFIG.mb.toolbar;
+        var t = this;
+        var filterViews = CONFIG.get("tracking.filters");
+        t.tracker = tr; 
          
-   tbar.addIcon(1, "images/filter.png", "tb_filter", null, "Filter selector");
-   tbar.addDiv(1, "filterChoice", null);
-   CONFIG.mb.ctxMenu.addMenuId('tb_filter', 'FILTERSELECT', true);
+        tbar.addIcon(1, "images/filter.png", "tb_filter", null, "Filter selector");
+        tbar.addDiv(1, "filterChoice", null);
+        CONFIG.mb.ctxMenu.addMenuId('tb_filter', 'FILTERSELECT', true);
    
-   /* Set default or saved filter selection */   
-   var filt = CONFIG.mb.config.get('tracking.selectedfilt');
-   if (filt == null) 
-      filt = defaultFilter;
+        /* Set default or saved filter selection */   
+        var filt = CONFIG.mb.config.get('tracking.selectedfilt');
+        if (filt == null) 
+            filt = defaultFilter;
 
-   /* Find index of default selection */
-   for (i in filterViews)
-       if (filterViews[i].name === filt)
-           break;
+        /* Find index of default selection */
+        for (i in filterViews)
+            if (filterViews[i].name === filt)
+                break;
 
-   $("#filterChoice").html(filterViews[i].title);
-   t.tracker.setFilter(filterViews[i].name);
+        $("#filterChoice").html(filterViews[i].title);
+        t.tracker.setFilter(filterViews[i].name);
 
 
 
-   /* Add callback to generate filter-menu */
-   CONFIG.mb.ctxMenu.addCallback('FILTERSELECT', function (m) {
-       for (i in filterViews) {
-          if (!filterViews[i].restricted || tr.server.loggedIn)   
-              m.add(filterViews[i].title, handleSelect(i));
-       }
+        /* Add callback to generate filter-menu */
+        CONFIG.mb.ctxMenu.addCallback('FILTERSELECT', m => {
+            for (i in filterViews) {
+                if (!filterViews[i].restricted || tr.server.loggedIn)   
+                    m.add(filterViews[i].title, handleSelect(i));
+            }
        
-       /* Generate handler function for menu items */
-       function handleSelect(i) {
-          return function() {
-             $("#filterChoice").html(filterViews[i].title);
-             t.tracker.setFilter(filterViews[i].name);
-             CONFIG.store('tracking.selectedfilt', filterViews[i].name, true);
-          } 
-       }
-   });
+            /* Generate handler function for menu items */
+            function handleSelect(i) {
+                return function() {
+                    $("#filterChoice").html(filterViews[i].title);
+                    t.tracker.setFilter(filterViews[i].name);
+                    CONFIG.store('tracking.selectedfilt', filterViews[i].name, true);
+                } 
+            }
+        });
+    }
 }   
 
 

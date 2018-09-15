@@ -304,7 +304,7 @@ pol.core.ContextMenu = class {
         /* Try to find the context. By default it is the id of the 
          * element we clicked on. 
          */
-        var cname = ident = ctxt.name;
+        var cname = ctxt.name, ident = ctxt.name;
         if (ident == null)    
             cname = 'MAP';
         else if (ident === "_STOP_")
@@ -320,10 +320,10 @@ pol.core.ContextMenu = class {
          */
         function _doCallback(cname)
         {
-            var lst = t.callbacks[cname]; 
+            const lst = t.callbacks[cname]; 
             if (lst)
             for (i=0; i<lst.length; i++) {
-                f = lst[i]; 
+                const f = lst[i]; 
                 if (f != null) 
                 f(t.txt, ctxt); 
             }    
