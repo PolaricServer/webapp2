@@ -116,8 +116,7 @@ pol.layers.Wms.prototype.getCapabilities = function(handler) {
     fetch(u+'?service=wms&request=GetCapabilities').then(
         function(response) {
             return response.text(); 
-        }).then( 
-            function(txt) {
+        }).then( txt => {
                 var idx = 0;
                 t.cap = parser.read(txt);
                 if (t.cap.Capability.Layer.Layer) {
@@ -218,7 +217,7 @@ pol.layers.Wms.prototype.edit = function(layer) {
     $("#wmsUrl").val(this.url).trigger("change").attr("ok", true);
     $("#sel_srs").val(layer.selSrs).trigger("change");
    
-    this.getCapabilities( function() {
+    this.getCapabilities( () => {
         for (i in t.sLayers) 
             if (t.sLayers[i].Name == layer.checkList[i].name) 
                 t.sLayers[i].checked = layer.checkList[i].checked; 

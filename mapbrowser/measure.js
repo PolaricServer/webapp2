@@ -35,39 +35,40 @@
  */
 
 
-pol.core.Measure = function() 
-{
-    var t = this;
-    var tooltipElement;
-    var tooltip;
-    var listener;
-    t.tooltips = [];
+pol.core.Measure = class {
     
-    
-    t.vector = CONFIG.mb.addVectorLayer(
-       new ol.style.Style({
-          fill: new ol.style.Fill({
-            color: 'rgba(255, 255, 255, 0.2)'
-          }),
-          stroke: new ol.style.Stroke({
-            color: '#d11',
-            width: 2
-          })
-        }));
-    
-    
-    t.draw = new ol.interaction.Draw({
-       source: t.vector.getSource(),
-       type: "LineString",
-       style: new ol.style.Style({
-            fill: new ol.style.Fill({
-              color: 'rgba(255, 255, 255, 0.2)'
-            }),
-            stroke: new ol.style.Stroke({
-              color: 'rgba(0, 0, 250, 0.6)',
-              lineDash: [7, 8],
-              width: 2
-            }),
+    constructor() {
+        var t = this;
+        var tooltipElement;
+        var tooltip;
+        var listener;
+        t.tooltips = [];
+        
+        
+        t.vector = CONFIG.mb.addVectorLayer(
+           new ol.style.Style({
+              fill: new ol.style.Fill({
+                color: 'rgba(255, 255, 255, 0.2)'
+              }),
+              stroke: new ol.style.Stroke({
+                color: '#d11',
+                width: 2
+              })
+            }));
+        
+        
+        t.draw = new ol.interaction.Draw({
+           source: t.vector.getSource(),
+           type: "LineString",
+           style: new ol.style.Style({
+                fill: new ol.style.Fill({
+                  color: 'rgba(255, 255, 255, 0.2)'
+                }),
+                stroke: new ol.style.Stroke({
+                  color: 'rgba(0, 0, 250, 0.6)',
+                  lineDash: [7, 8],
+                  width: 2
+                }),
             image: new ol.style.Circle({
               radius: 5,
               stroke: new ol.style.Stroke({
@@ -78,92 +79,117 @@ pol.core.Measure = function()
               })
             })
           })
-    });
-    
-    CONFIG.mb.map.addInteraction(t.draw);
-    
-    
-    t.draw.on("drawstart",  function(evt) {
-        sketch = evt.feature;
-        var tooltipCoord = evt.coordinate;
-
-        listener = sketch.getGeometry().on('change', function(evt) {
-           var geom = evt.target;
-           var output = formatLength(geom);
-           tooltipCoord = geom.getLastCoordinate();
-           tooltipElement.innerHTML = output;
-           tooltip.setPosition(tooltipCoord);
         });
-    }, t);
+        
+        CONFIG.mb.map.addInteraction(t.draw);
+        
+        
+        t.draw.on("drawstart",  evt => {
+            sketch = evt.feature;
+            var tooltipCoord = evt.coordinate;
+     
+            listener = sketch.getGeometry().on('change', evt => {
+               var geom = evt.target;
+               var output = formatLength(geom);
+               tooltipCoord = geom.getLastCoordinate();
+               tooltipElement.innerHTML = output;
+               tooltip.setPosition(tooltipCoord);
+            });
+        }, t);
+     
+        
+        t.draw.on("drawend", () => {
+           tooltipElement.className = 'tooltip tooltip-static';
+           tooltip.setOffset([0, -7]);
+           // unset sketch
+           sketch = null;
+           // unset tooltip so that a new one can be created
+           tooltipElement = null;
+           t.tooltips.push(createTooltip());
+           ol.Observable.unByKey(listener);
+        }, t);
+     
+     
+        
+        t.tooltips.push(createTooltip());
+    
+
+        function createTooltip() {
+           if (tooltipElement) {
+              tooltipElement.parentNode.removeChild(measureTooltipElement);
+           }
+           tooltipElement = document.createElement('div');
+           tooltipElement.className = 'tooltip tooltip-measure';
+           tooltip = new ol.Overlay({
+              element: tooltipElement,
+              offset: [0, -15],
+              positioning: 'bottom-center'
+           });
+           CONFIG.mb.map.addOverlay(tooltip);
+           return tooltip;
+        }
+        
+        
+        
+        function formatLength(line) {
+            var length;
+     
+              var coordinates = line.getCoordinates();
+              length = 0;
+              var sourceProj = CONFIG.mb.view.getProjection();
+              for (var i = 0, ii = coordinates.length - 1; i < ii; ++i) {
+                var c1 = ol.proj.transform(coordinates[i], sourceProj, 'EPSG:4326');
+                var c2 = ol.proj.transform(coordinates[i + 1], sourceProj, 'EPSG:4326');
+                length += ol.sphere.getDistance(c1, c2);
+              }
+     
+            var output;
+            if (length > 100) {
+              output = (Math.round(length / 1000 * 100) / 100) +
+              ' ' + 'km';
+            } else {
+                output = (Math.round(length * 100) / 100) +
+                    ' ' + 'm';
+            }
+            return output;
+        };
+    } /* constructor */
+
+
+
 
     
-    t.draw.on("drawend", function() {
-       tooltipElement.className = 'tooltip tooltip-static';
-       tooltip.setOffset([0, -7]);
-       // unset sketch
-       sketch = null;
-       // unset tooltip so that a new one can be created
-       tooltipElement = null;
-       t.tooltips.push(createTooltip());
-       ol.Observable.unByKey(listener);
-    }, t);
-
-
-    
-    t.tooltips.push(createTooltip());
-    
-
-    function createTooltip() {
-       if (tooltipElement) {
-          tooltipElement.parentNode.removeChild(measureTooltipElement);
-       }
-       tooltipElement = document.createElement('div');
-       tooltipElement.className = 'tooltip tooltip-measure';
-       tooltip = new ol.Overlay({
-          element: tooltipElement,
-          offset: [0, -15],
-          positioning: 'bottom-center'
-       });
-       CONFIG.mb.map.addOverlay(tooltip);
-       return tooltip;
+    deactivate(a) {
+       this.draw.setActive(false);
+       CONFIG.mb.map.removeInteraction(this.draw);
+       CONFIG.mb.removeLayer(this.vector);
+       for (i in this.tooltips)
+          CONFIG.mb.map.removeOverlay(this.tooltips[i]);
     }
     
     
- //   var wgs84Sphere = new ol.Sphere(6378137);
+} /* class */
     
-    function formatLength(line) {
-        var length;
-
-          var coordinates = line.getCoordinates();
-          length = 0;
-          var sourceProj = CONFIG.mb.view.getProjection();
-          for (var i = 0, ii = coordinates.length - 1; i < ii; ++i) {
-            var c1 = ol.proj.transform(coordinates[i], sourceProj, 'EPSG:4326');
-            var c2 = ol.proj.transform(coordinates[i + 1], sourceProj, 'EPSG:4326');
-            length += ol.sphere.getDistance(c1, c2);
-          }
-
-        var output;
-        if (length > 100) {
-          output = (Math.round(length / 1000 * 100) / 100) +
-              ' ' + 'km';
-        } else {
-          output = (Math.round(length * 100) / 100) +
-              ' ' + 'm';
-        }
-        return output;
-      };
- 
-}
-
-
-
-
-
-pol.core.Measure.prototype.deactivate = function(a) {
-   this.draw.setActive(false);
-   CONFIG.mb.map.removeInteraction(this.draw);
-   CONFIG.mb.removeLayer(this.vector);
-   for (i in this.tooltips)
-      CONFIG.mb.map.removeOverlay(this.tooltips[i]);
-}
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    

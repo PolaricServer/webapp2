@@ -78,7 +78,7 @@ pol.core.Toolbar.prototype.setDefaultItems = function()
    var t = this; 
    
    pol.core.addHandlerId("tb_layers", true,  
-        function(e) {
+        (e)=> {
 	       var ls = new pol.core.LayerSwitcher();
            ls.activatePopup("layerswitcher", [e.iconX, e.iconY]);
 	 } );
@@ -86,7 +86,7 @@ pol.core.Toolbar.prototype.setDefaultItems = function()
    
    var measure_on = false; 
    pol.core.addHandlerId("tb_measure", true, 
-	function(e) {
+	(e)=> {
 	   measure_on = (measure_on ? false : true);
 	   if (measure_on){
             measure = new pol.core.Measure();
@@ -104,7 +104,7 @@ pol.core.Toolbar.prototype.setDefaultItems = function()
    
    
    /* Generate menu of predefined areas (defined in mapconfig.js */
-   this.browser.ctxMenu.addCallback('AREASELECT', function (m) {
+   this.browser.ctxMenu.addCallback('AREASELECT', (m)=> {
       var areas = t.arealist.myAreas; 
       for (var i in areas) {
          var area = areas[i];   
@@ -115,7 +115,7 @@ pol.core.Toolbar.prototype.setDefaultItems = function()
       if (areas.length > 0)
          m.add(null);
       m.add("Edit YOUR areas..", 
-         function() {t.arealist.activatePopup("AreaList", [90,70])});
+         ()=> {t.arealist.activatePopup("AreaList", [90,70])});
       m.add(null);
       
       for (var i in browser.config.aMaps) {

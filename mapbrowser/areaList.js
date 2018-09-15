@@ -1,5 +1,5 @@
 /*
- Map browser based on OpenLayers 4. 
+ Map browser based on OpenLayers 5. 
  
  Copyright (C) 2017 Øyvind Hanssen, LA7ECA, ohanssen@acm.org
  
@@ -25,140 +25,144 @@
  * @constructor
  */
 
-pol.core.AreaList = function() {
-    pol.core.Widget.call(this);
-    this.classname = "core.AreaList"; 
-    this.myAreas = [];
-    var t = this;
+pol.core.AreaList = class AreaList extends pol.core.Widget {
+
+    constructor() {
+        super();
+        this.classname = "core.AreaList"; 
+        this.myAreas = [];
+        var t = this;
  
-    this.widget = {
-      view: function() {
-        var i=0;
-        return m("div", [       
-            m("h1", "My map areas"),  
-            m("table.mapAreas", m("tbody", t.myAreas.map(function(x) {
-                return m("tr", [
-                   m("td", m("img", {src:"images/edit-delete.png", onclick: apply(removeArea, i) })), 
-                   m("td", m("img", {src:"images/edit.png", onclick: apply(editArea, i) })),
-                   m("td", {onclick: apply(gotoExtent, i++), 'class': (x.server ? "onserver" : null) }, x.name)
-                ]);
-             }))),
-             m(textInput, {id:"editArea", value: t.currName, size: 16, maxLength:25, regex: /^[^\<\>\'\"]+$/i }),
-             m("button", {onclick: add}, "Add")
-        ])
-      }
-    };
-   
-   
-    /* Get stored areas */
-    t.myAreas = CONFIG.get("core.AreaList");
-    if (t.myAreas == null)
-        t.myAreas = [];
-    
-    /* Get areas stored on server (if logged on) */
-    setTimeout(function() {
-        var srv = CONFIG.server; 
-        if (srv != null && srv.loggedIn) {
-            srv.getAreas( function(a) {
-                for (x in a) 
-                    if (a[x] != null) {
-                        removeDup(a[x].name);
-                        a[x].server = true;
-                        t.myAreas.push(a[x]);  
-                    }
-                m.redraw();
-            });
-        }    
-    }, 1500);
-
-   
-   
-    /* Apply a function to an argument. Returns a new function */
-    function apply(f, id) {return function() { f(id); }};  
-   
-   
-    function removeDup(name) {
-        for (i in t.myAreas)
-            if (t.myAreas[i].name == name) {
-                /* Remove duplicate entries. Is this right? */
-                t.myAreas.splice(i,1);
-                return;
+        this.widget = {
+            view: function() {
+                var i=0;
+                return m("div", [       
+                    m("h1", "My map areas"),  
+                    m("table.mapAreas", m("tbody", t.myAreas.map( x => {
+                        return m("tr", [
+                            m("td", m("img", 
+                                {src:"images/edit-delete.png", onclick: apply(removeArea, i) })), 
+                            m("td", m("img", 
+                                {src:"images/edit.png", onclick: apply(editArea, i) })),
+                            m("td", 
+                                {onclick: apply(gotoExtent, i++), 'class': (x.server ? "onserver" : null) }, 
+                                 x.name)
+                        ]);
+                    }))),
+                    m(textInput, {id:"editArea", value: t.currName, size: 16, maxLength:25, 
+                        regex: /^[^\<\>\'\"]+$/i }),
+                    m("button", {onclick: add}, "Add")
+                ])
             }
-    }
+        }
    
    
-    /* Remove area from list */
-    function removeArea(id) {
-        // If server available and logged in, delete on server as well
-        var srv = CONFIG.server; 
-        if (srv && srv != null && srv.loggedIn) 
-            srv.removeArea(t.myAreas[id].index);
-        t.myAreas.splice(id,1);
-        CONFIG.store("core.AreaList", t.myAreas, true);
-    }
-   
-   
-    /* Move map area name to editable textInput */
-    function editArea(id) {
-        gotoExtent(id);
-  //      t.currName = t.myAreas[id].name;
-        $("#editArea").val("");
-        $("#editArea").val(t.myAreas[id].name).trigger("change").attr("ok", true);;
-        removeArea(id);
-        m.redraw();
-    }
-   
-   
-    /* Add map extent to list */
-    function add() {
-        var ext = CONFIG.mb.getExtent();
-        var name = $("#editArea").val(); 
+        /* Get stored areas */
+        t.myAreas = CONFIG.get("core.AreaList");
+        if (t.myAreas == null)
+            t.myAreas = [];
+    
+        /* Get areas stored on server (if logged on) */
+        setTimeout( () => {
+            var srv = CONFIG.server; 
+            if (srv != null && srv.loggedIn) {
+                srv.getAreas( a => {
+                    for (x in a) 
+                        if (a[x] != null) {
+                            removeDup(a[x].name);
+                            a[x].server = true;
+                            t.myAreas.push(a[x]);  
+                        }
+                    m.redraw();
+                });
+            }    
+        }, 1500);
 
-        var area = {name: name, extent: ext};
-        area.baseLayer = CONFIG.mb.baseLayerIdx;
-        area.oLayers = getOLayers();
-        t.myAreas.push(area);
-        CONFIG.store("core.AreaList", t.myAreas, true);
+   
+   
+        /* Apply a function to an argument. Returns a new function */
+        function apply(f, id) {return function() { f(id); }};  
+   
+   
+        function removeDup(name) {
+            for (i in t.myAreas)
+                if (t.myAreas[i].name == name) {
+                    /* Remove duplicate entries. Is this right? */
+                    t.myAreas.splice(i,1);
+                    return;
+                }
+        }
+   
+   
+        /* Remove area from list */
+        function removeArea(id) {
+            // If server available and logged in, delete on server as well
+            var srv = CONFIG.server; 
+            if (srv && srv != null && srv.loggedIn) 
+                srv.removeArea(t.myAreas[id].index);
+            t.myAreas.splice(id,1);
+            CONFIG.store("core.AreaList", t.myAreas, true);
+        }
+   
+   
+        /* Move map area name to editable textInput */
+        function editArea(id) {
+            gotoExtent(id);
+    //      t.currName = t.myAreas[id].name;
+            $("#editArea").val("");
+            $("#editArea").val(t.myAreas[id].name).trigger("change").attr("ok", true);;
+            removeArea(id);
+            m.redraw();
+        }
+   
+   
+        /* Add map extent to list */
+        function add() {
+            var ext = CONFIG.mb.getExtent();
+            var name = $("#editArea").val(); 
 
-        /* IF server available and logged in, store on server as well */
-        var srv = CONFIG.server; 
-        if (srv && srv != null && srv.loggedIn)
-            srv.putArea(area, function(i) { 
-                area.index = i; 
-                area.server = true;
-            });
-        m.redraw();
-    }
+            var area = {name: name, extent: ext};
+            area.baseLayer = CONFIG.mb.baseLayerIdx;
+            area.oLayers = getOLayers();
+            t.myAreas.push(area);
+            CONFIG.store("core.AreaList", t.myAreas, true);
+
+            /* IF server available and logged in, store on server as well */
+            var srv = CONFIG.server; 
+            if (srv && srv != null && srv.loggedIn)
+                srv.putArea(area, function(i) { 
+                    area.index = i; 
+                    area.server = true;
+                });
+            m.redraw();
+        }
    
     
       
-    /* Return selected overlay layers (array of indices) */
-    function getOLayers() {
-        var ol = new Array();
-        for (i in CONFIG.oLayers)
-            ol.push(CONFIG.oLayers[i].getVisible())
-        return ol;
-    }
+        /* Return selected overlay layers (array of indices) */
+        function getOLayers() {
+            var ol = new Array();
+            for (i in CONFIG.oLayers)
+                ol.push(CONFIG.oLayers[i].getVisible())
+            return ol;
+        }
     
     
    
-    /* Zoom and move map to extent */
-    function gotoExtent(id) {
-       var a = t.myAreas[id];
-       CONFIG.mb.gotoExtent(a);
-    }
+        /* Zoom and move map to extent */
+        function gotoExtent(id) {
+            var a = t.myAreas[id];
+            CONFIG.mb.gotoExtent(a);
+        }
    
-   
-   
-   
-}
-ol.inherits(pol.core.AreaList, pol.core.Widget);
+    } /* constructor */
+} /* class */
 
 
 
 
 
-pol.widget.setRestoreFunc("core.AreaList", function(id, pos) {
+pol.widget.setRestoreFunc("core.AreaList", (id, pos) => {
     var x = new pol.core.AreaList(); 
     x.activatePopup(id, pos, true); 
 }); 

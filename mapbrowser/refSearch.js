@@ -27,64 +27,66 @@
  * @constructor
  */
 
-pol.core.refSearch = function()
-{
-   pol.core.Widget.call(this);
-   this.classname = "core.refSearch"; 
+pol.core.refSearch = class refSearch extends pol.core.Widget {
+
+    constructor() {
+        super();
+        this.classname = "core.refSearch"; 
    
-   this.widget = {
-     view: function() {
-        return m("div", [       
-            m("h1", "Show reference on map"),
-            m("form.mapref", [  
-               m("span.sleftlab", {title: "MGRS 100x100m square"}, "MGRS ref: "), 
-               m(mgrsInput),
-               m("input#butt_mgrs", {type: "button", value: "Find"}), hr,
+        this.widget = {
+            view: function() {
+                return m("div", [       
+                    m("h1", "Show reference on map"),
+                    m("form.mapref", [  
+                        m("span.sleftlab", {title: "MGRS 100x100m square"}, "MGRS ref: "), 
+                        m(mgrsInput),
+                        m("input#butt_mgrs", {type: "button", value: "Find"}), hr,
               
-               m("span.sleftlab", "UTM ref: "),
-               m(utmInput), 
-               m("input#butt_utm", {type: "button", value: "Find", style: "margin-right:3.5em"}), hr,     
-	           m("span.sleftlab", 
-                 {title: "Degrees, decimal-minutes (click to change hemisphere)"}, 
-                   "Lat Long: "),
-	           m(latLngInput),
-	           m("input#butt_ll", {type: "button", value: "Find"})
-            ])
-        ])
-      }
-   };
+                        m("span.sleftlab", "UTM ref: "),
+                        m(utmInput), 
+                        m("input#butt_utm", {type: "button", value: "Find", style: "margin-right:3.5em"}), hr,     
+                        m("span.sleftlab", 
+                            {title: "Degrees, decimal-minutes (click to change hemisphere)"}, 
+                            "Lat Long: "),
+                            m(latLngInput),
+                            m("input#butt_ll", {type: "button", value: "Find"})
+                    ])
+                ])
+            }
+        };
 
-   /* Add actions to buttons */
-   setTimeout(function() 
-   {
-      $('#butt_mgrs').click( function() {
-              var pos = pol.mapref.parseMGRS(browser, $('#mgrsprefix').val(), $('#locx').val(), $('#locy').val());
-              browser.goto_Pos(pos, true);
-           });
+        /* Add actions to buttons */
+        setTimeout(function() {
+            $('#butt_mgrs').click( ()=> {
+                var pos = pol.mapref.parseMGRS(browser, $('#mgrsprefix').val(), $('#locx').val(), 
+                    $('#locy').val());
+                browser.goto_Pos(pos, true);
+            });
       
-      $('#butt_utm').click( function() {
-              var pos = pol.mapref.parseUTM( $('#utmx').val(), $('#utmy').val(), $('#utmnz').val(), $('#utmz').val());
-              browser.goto_Pos(pos, true);
-           });
+            $('#butt_utm').click( ()=> {
+                var pos = pol.mapref.parseUTM( $('#utmx').val(), $('#utmy').val(), $('#utmnz').val(), 
+                    $('#utmz').val());
+                browser.goto_Pos(pos, true);
+            });
       
-      $('#butt_ll').click( function() {
-              var lat_sign = ( $("#ll_NS").html()=="N" ? "" : "-");
-              var lng_sign = ( $("#ll_EW").html()=="E" ? "" : "-");
-              var pos = pol.mapref.parseDM(
-                  lat_sign+$('#ll_Nd').val(), $('#ll_Nm').val(), 
-                  lng_sign+$('#ll_Ed').val(), $('#ll_Em').val());
-              browser.goto_Pos(pos, true );
-           });
-   }, 1000);
+            $('#butt_ll').click( () => {
+                var lat_sign = ( $("#ll_NS").html()=="N" ? "" : "-");
+                var lng_sign = ( $("#ll_EW").html()=="E" ? "" : "-");
+                var pos = pol.mapref.parseDM(
+                    lat_sign+$('#ll_Nd').val(), $('#ll_Nm').val(), 
+                    lng_sign+$('#ll_Ed').val(), $('#ll_Em').val());
+                browser.goto_Pos(pos, true );
+            });
+        }, 1000);
 
-   browser.map.on('moveend', function() { m.redraw();});
-   
-}
-ol.inherits(pol.core.refSearch, pol.core.Widget);
+        browser.map.on('moveend', ()=> { m.redraw();});
+    }
+    
+} /* class */
 
 
 
-pol.widget.setRestoreFunc("core.refSearch", function(id, pos) {
+pol.widget.setRestoreFunc("core.refSearch", (id, pos)=> {
     var x = new pol.core.refSearch(); 
     x.activatePopup(id, pos, true); 
 }); 

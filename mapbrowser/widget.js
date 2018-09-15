@@ -76,90 +76,93 @@ pol.widget.restore = function() {
  * @constructor
  */
 
-pol.core.Widget = function() {
-   this.pos = null;
-   this.pinned = false;
-   this.classname = null;
-}
+pol.core.Widget = class {
+    
+    constructor() {
+        this.pos = null;
+        this.pinned = false;
+        this.classname = null;
+    }
 
 
  
- /** 
-  * Display widget in the given DOM element. 
-  * @param {Element} w - DOM element to display the layer switcher.  
-  */
+    /** 
+     * Display widget in the given DOM element. 
+     * @param {Element} w - DOM element to display the layer switcher.  
+     */
  
- pol.core.Widget.prototype.activate = function(w) 
- { 
-     console.assert(w && w != null, "Assertion failed");
-     this.delement = w; 
-     m.mount(this.delement, this.widget);
- };
- 
- 
+    activate(w) 
+    { 
+        console.assert(w && w != null, "Assertion failed");
+        this.delement = w; 
+        m.mount(this.delement, this.widget);
+    }
  
  
- /** 
-  * Display widget in a draggable popup window. 
-  * @param {string} id - Identifier to be used for the DOM element
-  * @param pixPos - Where on screen to put it.
-  */
+ 
+ 
+    /** 
+     * Display widget in a draggable popup window. 
+     * @param {string} id - Identifier to be used for the DOM element
+     * @param pixPos - Where on screen to put it.
+     */
   
- pol.core.Widget.prototype.activatePopup = function(id, pixPos, pinned) 
- {
-     console.assert(this.widget && id != null 
+    activatePopup(id, pixPos, pinned) 
+    {
+        console.assert(this.widget && id != null 
             && pixPos[0] >= 0 && pixPos[1] >= 0, "Assertion failed");
 
-     this.pos = pixPos;
-     var t = this; 
-     if (!pinned)
-         pinned = false;
-     t.pinned = pinned;
+        this.pos = pixPos;
+        var t = this; 
+        if (!pinned)
+            pinned = false;
+        t.pinned = pinned;
      
-     return this.popup = browser.gui.showPopup( {
-        vnode: this.widget,
-        pixPos: pixPos,
-        draggable: true,
-        dragStop: dragStop,
-	    pin: pinCb,
-        pinned: pinned,
-        id: id,
-        cclass: "widget"
-     });
-     
-     
-     function pinCb(p) {
-        t.pinned = p;
-        if (p) 
-            save();
-        else
-            unSave();
-     }
+        return this.popup = browser.gui.showPopup( {
+            vnode: this.widget,
+            pixPos: pixPos,
+            draggable: true,
+            dragStop: dragStop,
+            pin: pinCb,
+            pinned: pinned,
+            id: id,
+            cclass: "widget"
+        });
      
      
-     function dragStop( event, ui ) {
-       	t.pos = [ui.position.left, ui.position.top];
-        if (t.pinned)
-            save();
-     }
-     
-     
-     function save() {
-        CONFIG.store("core.widget."+id, t.pos, true);
-        
-        if (!pol.widget._stored[id] || pol.widget._stored[id] == null) {
-            pol.widget._stored[id] = t.classname;
-            CONFIG.store("core.widget._stored", pol.widget._stored, true); 
+        function pinCb(p) {
+            t.pinned = p;
+            if (p) 
+                save();
+            else
+                unSave();
         }
-     }
      
      
-     function unSave() {
-        CONFIG.remove("core.widget."+id, t.pos);
-        
-        if (pol.widget._stored[id] && pol.widget._stored[id] != null) {
-            pol.widget._stored[id] = null;
-            CONFIG.store("core.widget._stored", pol.widget._stored, true); 
+        function dragStop( event, ui ) {
+            t.pos = [ui.position.left, ui.position.top];
+            if (t.pinned)
+                save();
         }
-     }
- }
+     
+     
+        function save() {
+            CONFIG.store("core.widget."+id, t.pos, true);
+        
+            if (!pol.widget._stored[id] || pol.widget._stored[id] == null) {
+                pol.widget._stored[id] = t.classname;
+                CONFIG.store("core.widget._stored", pol.widget._stored, true); 
+            }
+        }
+     
+     
+        function unSave() {
+            CONFIG.remove("core.widget."+id, t.pos);
+        
+            if (pol.widget._stored[id] && pol.widget._stored[id] != null) {
+                pol.widget._stored[id] = null;
+                CONFIG.store("core.widget._stored", pol.widget._stored, true); 
+            }
+        }
+    }
+} /* class */

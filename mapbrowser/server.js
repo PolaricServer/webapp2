@@ -17,80 +17,91 @@
  along with this program. If not, see <http://www.gnu.org/licenses/>.
 */
  
- 
-pol.core.Server = function() {
-    var host = CONFIG.get('server');
-    
-    /* Compute URL base (for ordinary Ajax) */
-    var prefix = CONFIG.get('ajaxprefix');
-    if (prefix == null)
-       prefix = '';
-    this.url = host + prefix;
-    
-    /* Compute Websocket URL base */
-    prefix = CONFIG.get('wsprefix');
-    if (prefix == null)
-       prefix = '';
-    var uparts = host.split(/:\/\//);
-    this.wsurl = (uparts[0] === 'https' ? 'wss' : 'ws'); 
-    this.wsurl = this.wsurl + "://"+ uparts[1] + prefix
-   
-    this.origin = window.location.href; 
-    this.loggedIn = false;
-}
-
-
-
-/** Full popup window */
-pol.core.Server.prototype.popup = function(name, url, width, height) {
-  var u = this.url+"/"+url;
-  var ctrl = "left=50,top=100,width="+width+",height="+height+"resizable=1,scrollbars=1";
-  eval( "this."+name+"=window.open('"+u+"','"+name+"','"+ctrl+"');" );
-}
-
-
-pol.core.Server.prototype.getAreas = function(a, f)   { /* Dummy */ }
-pol.core.Server.prototype.putArea = function(a, f)    { /* Dummy */ }
-pol.core.Server.prototype.removeArea = function(i)    { /* Dummy */ }
-
-
 
 /**
-* @param type: String
-* @param service: String
-* @param data: PlainObject|String|Array
-* @param error:  Function( jqXHR jqXHR, String textStatus, String errorThrown )
-* @param success: Function( Anything data, String textStatus, jqXHR jqXHR )
-*/
-
-pol.core.Server.prototype.ajax = function(type, service, data, success, error) {
-    return $.ajax(this.url+service, {
-        type: type,
-        data: data, 
-        success: success,
-        error: error,
-        crossDomain: true,
-        xhrFields: { withCredentials: true }
-    });
-}
-
-
-
-pol.core.Server.prototype.GET = function (service, data, success, error) {
-    return this.ajax('GET', service, data, success, error); 
-}
-
-
-pol.core.Server.prototype.POST = function (service, data, success, error) {
-    return this.ajax('POST', service, data, success, error); 
-}
-
-
-pol.core.Server.prototype.PUT = function (service, data, success, error) {
-    return this.ajax('PUT', service, data, success, error); 
-}
+ * Abstract class for server backends. Supports REST style webservices. 
+ */
+pol.core.Server = class {
+    
+    /**
+     * Constructor.
+     */
+    constructor() {
+        var host = CONFIG.get('server');
+    
+        /* Compute URL base (for ordinary Ajax/REST) */
+        var prefix = CONFIG.get('ajaxprefix');
+        if (prefix == null)
+            prefix = '';
+        this.url = host + prefix;
+    
+        /* Compute Websocket URL base */
+        prefix = CONFIG.get('wsprefix');
+        if (prefix == null)
+            prefix = '';
+        var uparts = host.split(/:\/\//);
+        this.wsurl = (uparts[0] === 'https' ? 'wss' : 'ws'); 
+        this.wsurl = this.wsurl + "://"+ uparts[1] + prefix
+   
+        this.origin = window.location.href; 
+        this.loggedIn = false;
+    }
 
 
-pol.core.Server.prototype.DELETE = function (service, success, error) {
-    return this.ajax('DELETE', service, null, success, error); 
-}
+
+    /** Full (browser) popup window */
+    popup(name, url, width, height) {
+        var u = this.url+"/"+url;
+        var ctrl = "left=50,top=100,width="+width+",height="+height+"resizable=1,scrollbars=1";
+        eval( "this."+name+"=window.open('"+u+"','"+name+"','"+ctrl+"');" );
+    }
+
+    
+    /* Area management. To be defined in subclass */
+    getAreas(a, f)   { /* Dummy */ }
+    putArea(a, f)    { /* Dummy */ }
+    removeArea(i)    { /* Dummy */ }
+
+
+
+    /**
+     * Call webservice on server. 
+     * @param type: String - HTTP method
+     * @param service: String - Service url. 
+     * @param data: PlainObject|String|Array
+     * @param error:  Function( jqXHR jqXHR, String textStatus, String errorThrown )
+     * @param success: Function( Anything data, String textStatus, jqXHR jqXHR )
+     */
+    ajax(type, service, data, success, error) {
+        return $.ajax(this.url+service, {
+            type: type,
+            data: data, 
+            success: success,
+            error: error,
+            crossDomain: true,
+            xhrFields: { withCredentials: true }
+        });
+    }
+
+
+
+    GET(service, data, success, error) {
+        return this.ajax('GET', service, data, success, error); 
+    }
+
+
+    POST(service, data, success, error) {
+        return this.ajax('POST', service, data, success, error); 
+    }
+
+
+    PUT(service, data, success, error) {
+        return this.ajax('PUT', service, data, success, error); 
+    }
+
+
+    DELETE(service, success, error) {
+        return this.ajax('DELETE', service, null, success, error); 
+    }
+
+} /* class */

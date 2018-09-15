@@ -1,6 +1,5 @@
-
 /*
- Map browser based on OpenLayers 4. 
+ Map browser based on OpenLayers 5. 
  configuration support. 
  
  Copyright (C) 2017 Øyvind Hanssen, LA7ECA, ohanssen@acm.org
@@ -298,7 +297,7 @@ function setLabel(id, label) {
 
 function SETLABEL(id, label) {
    return function(f,r) {
-       var lbl = label.replace( /\$\([^\)]+\)/g, function(x) 
+       var lbl = label.replace( /\$\([^\)]+\)/g, x =>
          { return f.get( x.substring(2, x.length-1)); });
        return setLabel(id, lbl); 
    }
