@@ -1,5 +1,5 @@
 /*
- Map browser based on OpenLayers 4. Layer editor. 
+ Map browser based on OpenLayers 5. Layer editor. 
  WMS layer. 
  
  Copyright (C) 2018 Øyvind Hanssen, LA7ECA, ohanssen@acm.org
@@ -19,104 +19,94 @@
 */
 
 
-/* 
- * TODO: 
- *  Re-edit layer: Restore editable fields. DONE.
- *  Allow selection of projection or just use base-projection? 
- *  Editing other fields resets layer-selection checkboxes. Fix. DONE.
- *  Sublayer support. NOT NOW! 
- *  Restore layer-lists from localstorage (they are restored in layer selector widget). 
- */
 
 /**
- * @classdesc
  * WMS layer editor.
  */
 
-pol.layers.Wms = function(list) {
-    pol.layers.Edit.call(this, list);
-      
-    this.cap = null;   
-    this.layers = [];
-    this.sLayers = [];
-    this.srs = CONFIG.get('core.supported_proj');
-    this.selected = this.srs[0];
-    this.url = "";
-    var t=this;
+pol.layers.Wms = class extends pol.layers.Edit {
+
+    constructor(list) {
+        super(list);  
+        this.cap = null;   
+        this.layers = [];
+        this.sLayers = [];
+        this.srs = CONFIG.get('core.supported_proj');
+        this.selected = this.srs[0];
+        this.url = "";
+        var t=this;
     
-    this.fields = {
-        view: function() { 
-            return m("div.spec", [ 
-                m("span.sleftlab", "Server: "),   
-                m(textInput, {id:"wmsUrl", size: 40, maxLength:160, regex: /^.+$/i }),
-                m("input", { type: "button", onclick: getCap, value: "Get" } ),
-                br,
-                m("span.sleftlab", "Projection:"),
-                m(select, {id: "sel_srs", onchange: selectSRS, list: t.srs.map( function(x) {
-                    return {label: x, val: x, obj: null};
-                })}),  
-                br,
-                (t.cap==null ? null : m(t.wfields))
-            ]);
-        }
-    }  
+        this.fields = {
+            view: function() { 
+                return m("div.spec", [ 
+                    m("span.sleftlab", "Server: "),   
+                    m(textInput, {id:"wmsUrl", size: 40, maxLength:160, regex: /^.+$/i }),
+                    m("input", { type: "button", onclick: getCap, value: "Get" } ),
+                    br,
+                    m("span.sleftlab", "Projection:"),
+                    m(select, {id: "sel_srs", onchange: selectSRS, list: t.srs.map( x=> {
+                        return {label: x, val: x, obj: null};
+                    })}),  
+                    br,
+                    (t.cap==null ? null : m(t.wfields))
+                ]);
+            }
+        }   
     
-    /* Fields representing capabilities of wms service (from GetCapabilities) */
-    this.wfields = {
-        view: function() { 
-            return m("div.wserver", [ 
-                m("span.sleftlab", "Title: "),
-                m("span", {title: t.cap.Service.Abstract}, t.cap.Service.Title), br,    
-                m("span.sleftlab", "Layers:"),
-                m("table", {id: "layerSelect"}, m("tbody", t.sLayers.map( function(x) {
-                    return m("tr", [ 
-                        m("td", {cssclass: (x.level2 ? "level2" : null)}, 
-                          m(checkBox, {onclick: apply(selLayer, x), checked: x.checked}, x.Title))
-                    ])
-                })))
-            ]);
+        /* Fields representing capabilities of wms service (from GetCapabilities) */
+        this.wfields = {
+            view: function() { 
+                return m("div.wserver", [ 
+                    m("span.sleftlab", "Title: "),
+                    m("span", {title: t.cap.Service.Abstract}, t.cap.Service.Title), br,    
+                    m("span.sleftlab", "Layers:"),
+                    m("table", {id: "layerSelect"}, m("tbody", t.sLayers.map( function(x) {
+                        return m("tr", [ 
+                            m("td", {cssclass: (x.level2 ? "level2" : null)}, 
+                            m(checkBox, {onclick: apply(selLayer, x), checked: x.checked}, x.Title))
+                        ])
+                    })))
+                ]);
+            }
         }
-    }
        
    
-    /* Apply a function to an argument. Returns a new function */
-    function apply(f, id) {return function() {f(id); }};  
+        /* Apply a function to an argument. Returns a new function */
+        function apply(f, id) {return function() {f(id); }};  
    
     
-    function getCap() {
-        t.getCapabilities(m.redraw);
-    }
+        function getCap() {
+            t.getCapabilities(m.redraw);
+        }
     
     
-    function selectSRS() {
-        t.selected = $("#sel_srs").val();
-        if (t.cap != null)
-            t.filterLayers(t.selected);
-    }
+        function selectSRS() {
+            t.selected = $("#sel_srs").val();
+            if (t.cap != null)
+                t.filterLayers(t.selected);
+        }
     
-    function selLayer(x) {
-       x.checked = !x.checked; 
-    }
+        function selLayer(x) {
+            x.checked = !x.checked; 
+        }
     
-}
-ol.inherits(pol.layers.Wms, pol.layers.Edit);
+    } /* constructor */
 
 
 
-/*
- * Get capabilities from WMS server
- */
-pol.layers.Wms.prototype.getCapabilities = function(handler) {
-    var t = this;
-    t.layers=[];
-    t.sLayers=[];
+    /*
+     * Get capabilities from WMS server
+     */
+    getCapabilities(handler) {
+        var t = this;
+        t.layers=[];
+        t.sLayers=[];
     
-    var parser = new ol.format.WMSCapabilities();
-    var u = $("#wmsUrl").val(); 
-    fetch(u+'?service=wms&request=GetCapabilities').then(
-        function(response) {
-            return response.text(); 
-        }).then( txt => {
+        var parser = new ol.format.WMSCapabilities();
+        var u = $("#wmsUrl").val(); 
+        fetch(u+'?service=wms&request=GetCapabilities')
+            .then( response => response.text() )
+            .then( txt => {
                 var idx = 0;
                 t.cap = parser.read(txt);
                 if (t.cap.Capability.Layer.Layer) {
@@ -132,145 +122,138 @@ pol.layers.Wms.prototype.getCapabilities = function(handler) {
                 if (handler)
                     handler();
             });
-}
-
-
-
-
-pol.layers.Wms.prototype.filterLayers = function(crs) {
-    console.log("filterLayers");
-    var t = this;
-    t.sLayers = [];
-    for (i in t.layers)
-        for (j in t.layers[i].CRS)
-            if (t.layers[i].CRS[j] == crs) {
-                t.sLayers.push(t.layers[i]);
-                break; 
-            }
-}
-
-
-
-/**
- * Return true if add button can be enabled 
- */
-
-pol.layers.Wms.prototype.enabled = function() {
-    return  $("#editLayer").attr("ok") && 
-            $("#wmsUrl").attr("ok"); 
-}
-
-
-
-pol.layers.Wms.prototype.getReqLayers = function() {
-    var layers = "";
-    var first=true;
-    for (i in this.sLayers) {
-        if (this.sLayers[i].checked) {
-            layers += ((first ? "" : ",") + this.sLayers[i].Name);
-            first=false; 
-        }
     }
-    return layers; 
-}
 
 
 
+    filterLayers(crs) {
+        console.log("filterLayers");
+        var t = this;
+        t.sLayers = [];
+        for (i in t.layers)
+            for (j in t.layers[i].CRS)
+                if (t.layers[i].CRS[j] == crs) {
+                    t.sLayers.push(t.layers[i]);
+                    break; 
+                }
+    }
 
-/**
- * Create a layer. 
- */
 
-pol.layers.Wms.prototype.createLayer = function(name) {
-       var url = $("#wmsUrl").val();
-       var layers = this.getReqLayers();
-       console.log("Create WMS layer: URL="+url+", layers="+layers);
+
+    /**
+     * Return true if add button can be enabled 
+     */
+    enabled() {
+        return  $("#editLayer").attr("ok") && 
+                $("#wmsUrl").attr("ok"); 
+    }
+
+
+    /**
+     * Get layers for WMS request as comma separated list 
+     */
+    getReqLayers() {
+        var layers = "";
+        var first=true;
+        for (i in this.sLayers) {
+            if (this.sLayers[i].checked) {
+                layers += ((first ? "" : ",") + this.sLayers[i].Name);
+                first=false; 
+            }
+        }
+        return layers; 
+    }
+
+
+
+    /**
+     * Create a OL layer. 
+     */
+    createLayer(name) {
+        var url = $("#wmsUrl").val();
+        var layers = this.getReqLayers();
+        console.log("Create WMS layer: URL="+url+", layers="+layers);
        
-       var x = new ol.layer.Image({
+        var x = new ol.layer.Image({
             name: name, 
             source: new ol.source.ImageWMS ({
                ratio:  1,
                url:    url,
                params: {'LAYERS':layers, VERSION: "1.1.1"}
             }) 
-       });
-       x.selSrs = this.selected; 
-       x.checkList = [];
-       for (i in this.sLayers) 
-          x.checkList[i] = {name: this.sLayers[i].Name, checked: this.sLayers[i].checked}; 
-       return x;
-   }
+        });
+        x.selSrs = this.selected; 
+        x.checkList = [];
+        for (i in this.sLayers) 
+            x.checkList[i] = {name: this.sLayers[i].Name, checked: this.sLayers[i].checked}; 
+        return x;
+    }
   
  
  
-/**
- * Move settings to web-form. 
- */  
-
-pol.layers.Wms.prototype.edit = function(layer) {
-    var t = this;
-    /* Call method in superclass */
-    pol.layers.Edit.prototype.edit.call(this, layer);
+    /**
+     * Move settings to web-form. 
+     */  
+    edit(layer) {
+        super.edit(layer);
    
-    /* Specific to WMS layer */
-    this.url = layer.getSource().getUrl();
-    $("#wmsUrl").val(this.url).trigger("change").attr("ok", true);
-    $("#sel_srs").val(layer.selSrs).trigger("change");
+        /* Specific to WMS layer */
+        this.url = layer.getSource().getUrl();
+        $("#wmsUrl").val(this.url).trigger("change").attr("ok", true);
+        $("#sel_srs").val(layer.selSrs).trigger("change");
    
-    this.getCapabilities( () => {
-        for (i in t.sLayers) 
-            if (t.sLayers[i].Name == layer.checkList[i].name) 
-                t.sLayers[i].checked = layer.checkList[i].checked; 
-        m.redraw();
-    });
-}
+        this.getCapabilities( () => {
+            for (i in t.sLayers) 
+                if (t.sLayers[i].Name == layer.checkList[i].name) 
+                    t.sLayers[i].checked = layer.checkList[i].checked; 
+            m.redraw();
+        });
+    }
 
 
 
-/**
- * Stringify settings for a layer to JSON format. 
- */
-
-pol.layers.Wms.prototype.layer2json = function(layer) { 
-    var lx = {
-      name:    layer.get("name"),
-      filter:  layer.filt,
-      url:     layer.getSource().getUrl(),
-      params:  layer.getSource().getParams(),
-      checked: layer.checkList,
-      srs:     layer.selSrs
-    };
-    return JSON.stringify(lx);
-}
-
+    /**
+     * Stringify settings for a layer to JSON format. 
+     */
+    layer2json(layer) { 
+        var lx = {
+            name:    layer.get("name"),
+            filter:  layer.filt,
+            url:     layer.getSource().getUrl(),
+            params:  layer.getSource().getParams(),
+            checked: layer.checkList,
+            srs:     layer.selSrs
+        };
+        return JSON.stringify(lx);
+    }
 
 
-/**
- * Restore a layer from JSON format (see layer2json). 
- */
 
-pol.layers.Wms.prototype.json2layer = function(js) {
-    var lx = JSON.parse(js);
-    if (lx == null) {
-        console.warn("WmsLayer.json2layer: Resulting Layer is null");
-        return null;
-    }  
-    var x = new ol.layer.Image({
+    /**
+    * Restore a layer from JSON format (see layer2json). 
+    */
+    json2layer(js) {
+        var lx = JSON.parse(js);
+        if (lx == null) {
+            console.warn("WmsLayer.json2layer: Resulting Layer is null");
+            return null;
+        }  
+        var x = new ol.layer.Image({
             name: lx.name, 
             source: new ol.source.ImageWMS ({
                ratio:  1,
                url:    lx.url,
                params: lx.params
             }) 
-       });   
-    x.predicate = this.createFilter(lx.filter);
-    x.filt = lx.filter;
-    x.selSrs = lx.srs;
-    x.checkList = lx.checked;
-    return x;
-}
+        });   
+        x.predicate = this.createFilter(lx.filter);
+        x.filt = lx.filter;
+        x.selSrs = lx.srs;
+        x.checkList = lx.checked;
+        return x;
+    }
 
-
+} /* class */
 
    
    

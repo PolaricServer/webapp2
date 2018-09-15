@@ -1,5 +1,5 @@
 /*
- Map browser based on OpenLayers 4. Layer editor. 
+ Map browser based on OpenLayers 5. Layer editor. 
  WFS layer. 
  
  Copyright (C) 2017 Øyvind Hanssen, LA7ECA, ohanssen@acm.org
@@ -21,136 +21,127 @@
 
 
 /**
- * @classdesc
  * WFS layer editor.
  */
 
-pol.layers.Wfs = function(list) {
-   pol.layers.Edit.call(this, list);
+pol.layers.Wfs = class extends pol.layers.Edit {
+    
+    constructor(list) {
+        super(list); 
       
-       
-   this.fields = {
-       view: function() { 
-          return m("div.spec", [ 
-             m("span.sleftlab", "WFS URL: "),   
-             m(textInput, {id:"wfsUrl", size: 40, maxLength:160, regex: /^.+$/i }),br,
-             m("span.sleftlab", "Feat. type: "),
-             m(textInput, {id:"wfsFtype", size: 40, maxLength:80, regex: /^.+$/i }),br,
-             m("span.sleftlab", "Style: "),
-             m(select, {id: "wfsStyle", list: Object.keys(CONFIG.styles).map( 
-	           function(x) {
-		          return {label: x, val: x, obj: CONFIG.styles[x]}; 
-	           }) }), br,
+        this.fields = {
+            view: function() { 
+                return m("div.spec", [ 
+                    m("span.sleftlab", "WFS URL: "),   
+                    m(textInput, {id:"wfsUrl", size: 40, maxLength:160, regex: /^.+$/i }),br,
+                    m("span.sleftlab", "Feat. type: "),
+                    m(textInput, {id:"wfsFtype", size: 40, maxLength:80, regex: /^.+$/i }),br,
+                    m("span.sleftlab", "Style: "),
+                    m(select, {id: "wfsStyle", list: Object.keys(CONFIG.styles).map( x => {
+                            return {label: x, val: x, obj: CONFIG.styles[x]}; 
+                        }) }), br,
 	       
-	           m("span.sleftlab", "Label attr: "),
-	           m(textInput, {id:"wfsLabel", size: 20, maxLength: 60, regex: /^.+$/i }),br
-           ]);
-       }
-   }  
+                    m("span.sleftlab", "Label attr: "),
+                    m(textInput, {id:"wfsLabel", size: 20, maxLength: 60, regex: /^.+$/i }),br
+                ]);
+            }
+        }  
       
-}
-ol.inherits(pol.layers.Wfs, pol.layers.Edit);
+    } /* constructor */
 
 
-
-/**
- * Return true if add button can be enabled 
- */
-
-pol.layers.Wfs.prototype.enabled = function() {
-    return  $("#editLayer").attr("ok") && 
-            $("#wfsUrl").attr("ok") && 
-            $("#wfsFtype").attr("ok"); 
-}
+    /**
+    * Return true if add button can be enabled 
+    */
+    enabled() {
+        return  $("#editLayer").attr("ok") && 
+                $("#wfsUrl").attr("ok") && 
+                $("#wfsFtype").attr("ok"); 
+    }
       
       
       
- /**
-  * Create a layer. 
-  */
- 
-pol.layers.Wfs.prototype.createLayer = function(name) 
-{
-    var url = $("#wfsUrl").val();
-    var ftype = $("#wfsFtype").val();
-    var styleId = $("#wfsStyle").val();
-    var label = $("#wfsLabel").val();
-    console.log("Create WFS layer: URL="+url+", ftype="+ftype+", style="+styleId+", label="+label);
-    // FIXME: Sanitize input !!!!!
+    /**
+     * Create a layer. 
+     */
+    createLayer(name) 
+    {
+        var url = $("#wfsUrl").val();
+        var ftype = $("#wfsFtype").val();
+        var styleId = $("#wfsStyle").val();
+        var label = $("#wfsLabel").val();
+        console.log("Create WFS layer: URL="+url+", ftype="+ftype+", style="+styleId+", label="+label);
+        // FIXME: Sanitize input !!!!!
     
-    var x = createLayer_WFS( {
-       name: name,
-       url: url,
-       ftype: ftype,
-         // FIXME: Duplicate code
-       style: (label && label!=null ? SETLABEL(styleId, label) : GETSTYLE(styleId)),
-       outputFormat: "text/xml; subtype\=gml/3.1.1"
-    });
+        var x = createLayer_WFS( {
+            name: name,
+            url: url,
+            ftype: ftype,
+            style: (label && label!=null ? SETLABEL(styleId, label) : GETSTYLE(styleId)),
+            outputFormat: "text/xml; subtype\=gml/3.1.1"
+        });
     
-    x.styleId = styleId;
-    x.label = label;
-    return x;
-}
+        x.styleId = styleId;
+        x.label = label;
+        return x;
+    }
 
 
 
-/**
- * Move settings to web-form. 
- */
-
-pol.layers.Wfs.prototype.edit = function(layer) {
-   pol.layers.Edit.prototype.edit.call(this, layer);
+    /**
+     * Move settings to web-form. 
+     */
+    edit(layer) {
+        super.edit(layer);
    
-   $("#wfsUrl").val(layer.getSource().url).trigger("change").attr("ok", true);;
-   $("#wfsFtype").val(layer.getSource().ftype).trigger("change").attr("ok", true);;
-   $("#wfsStyle").val(layer.styleId).trigger("change");
-   $("#wfsLabel").val(layer.label).trigger("change");
-}
+        $("#wfsUrl").val(layer.getSource().url).trigger("change").attr("ok", true);;
+        $("#wfsFtype").val(layer.getSource().ftype).trigger("change").attr("ok", true);;
+        $("#wfsStyle").val(layer.styleId).trigger("change");
+        $("#wfsLabel").val(layer.label).trigger("change");
+    }
 
     
     
-/**
- * Stringify settings for a layer to JSON format. 
- */   
+    /**
+     * Stringify settings for a layer to JSON format. 
+     */   
+    layer2json(layer) { 
+        var lx = {
+            name:    layer.get("name"),
+            filter:  layer.filt,
+            url:     layer.getSource().url,
+            ftype:   layer.getSource().ftype,
+            oformat: layer.getSource().oformat,
+            styleId: layer.styleId,
+            label:   layer.label 
+        };
+        return JSON.stringify(lx);
+    }
 
-pol.layers.Wfs.prototype.layer2json = function(layer) { 
-    var lx = {
-      name:    layer.get("name"),
-      filter:  layer.filt,
-      url:     layer.getSource().url,
-      ftype:   layer.getSource().ftype,
-      oformat: layer.getSource().oformat,
-      styleId: layer.styleId,
-      label:   layer.label 
-    };
-    return JSON.stringify(lx);
-}
-
       
       
-/**
- * Restore a layer from JSON format (see layer2json). 
- */
-
-pol.layers.Wfs.prototype.json2layer = function(js) {
-    var lx = JSON.parse(js);
-    if (lx == null) {
-        console.warn("WfsLayer.json2layer: Resulting Layer is null");
-        return null;
-    }   
-    var x = createLayer_WFS( {
-          name:  lx.name, 
-          url:   lx.url,
-          ftype: lx.ftype,
-          style: (lx.label && lx.label!=null ? SETLABEL(lx.styleId, lx.label) : GETSTYLE(lx.styleId)),
-          outputFormat: lx.oformat
-       });
-    x.predicate = this.createFilter(lx.filter);
-    x.filt = lx.filter;
-    x.styleId = lx.styleId;
-    x.label = lx.label;
-    return x;
-}
+    /**
+     * Restore a layer from JSON format (see layer2json). 
+     */
+    json2layer(js) {
+        var lx = JSON.parse(js);
+        if (lx == null) {
+            console.warn("WfsLayer.json2layer: Resulting Layer is null");
+            return null;
+        }   
+        var x = createLayer_WFS( {
+            name:  lx.name, 
+            url:   lx.url,
+            ftype: lx.ftype,
+            style: (lx.label && lx.label!=null ? SETLABEL(lx.styleId, lx.label) : GETSTYLE(lx.styleId)),
+            outputFormat: lx.oformat
+        });
+        x.predicate = this.createFilter(lx.filter);
+        x.filt = lx.filter;
+        x.styleId = lx.styleId;
+        x.label = lx.label;
+        return x;
+    }
       
-      
+} /* class */
 

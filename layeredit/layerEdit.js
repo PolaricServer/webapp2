@@ -1,5 +1,5 @@
 /*
- Map browser based on OpenLayers 4. Layer editor.
+ Map browser based on OpenLayers 5. Layer editor.
  
  Copyright (C) 2017 Øyvind Hanssen, LA7ECA, ohanssen@acm.org
  
@@ -19,182 +19,179 @@
 
 pol.layers = pol.layers || {};
 
+
 /**
- * @classdesc
  * Base class for layer editors
- * @constructor
  */
 
-pol.layers.Edit = function(list) {
-   var t = this;
-   t.list = list;
-   t.filt = {ext: null, zoom: null, proj: null};
-   
-   
-   this.widget = {
-     view: function() {
-        var i=0;
-        return m("form", [    
-             m("span.sleftlab", "Name: "),   
-             m(textInput, {id:"editLayer", size: 16, maxLength:25, regex: /^[^\<\>\'\"]+$/i }), br,  
-             m("span.sleftlab", "Visibility: "),
-             m(checkBox, {id:"vis.extent", onclick: filterExtent, checked: (t.filt.ext != null) }, 
-                "Map extent", nbsp, nbsp),
-             m(checkBox, {id:"vis.zoom", onclick: filterZoom, checked: (t.filt.zoom != null) },
-                "Zoom level+", nbsp, nbsp),
-             m(checkBox, {id:"vis.proj", onclick: filterProj, checked: (t.filt.proj != null) },
-                "Base projection", br),
-             m(t.fields),
-             
-             m("div.buttons", [
-                m("input#addButton", { disabled: !t.enabled(), type: "button", onclick: add, value: "Add" } ),
-                m("input", { type: "reset", onclick: reset, value: "Reset" } )
-             ])
-        ]);
-      }
-   };
-   
-   
-   
-   /* To be redefined in subclass */
-   this.fields = {
-       view: function() { return null; }
-   }
-   
-
-   /* Handler for checkbox. Extent filter on/off */
-   function filterExtent() {
-      t.filt.ext = (t.filt.ext == null ? 
-        CONFIG.mb.getExtent().map(function(x) {return Math.round(x*1000)/1000;}) : null);
-      console.log("Set extent filter: "+t.filt.ext);
-   }
-   
-   
-   /* Handler for checkbox. Zoom level filter on/off */
-   function filterZoom() {
-       t.filt.zoom = (t.filt.zoom == null ? CONFIG.mb.getResolution() : null);
-       console.log("Set zoom filter: "+t.filt.zoom);
-   }
-   
-   
-   /* Handler for checkbox. Projection filter on/off */
-   function filterProj() {
-       t.filt.proj = (t.filt.proj == null ? CONFIG.mb.view.getProjection() : null);
-       console.log("Set projection filter: " + (t.filt.proj==null ? "null" : t.filt.proj.getCode()));
-   }
-   
-   
-   function reset() {
-   }
-   
-   
-   
-   /** 
-    * Add a map layer to list 
-    */
-   function add() 
-   {  
-       var name = $("#editLayer").val(); 
-       var layer = t.createLayer(name);
-       
-       if (layer != null) {
-          layer.predicate = t.createFilter(t.filt);
-          layer.filt = {ext:t.filt.ext, zoom:t.filt.zoom, proj:t.filt.proj}; 
-          CONFIG.mb.addConfiguredLayer(layer, name);
-       }
-
-       list.myLayerNames.push( {name: name, type: t.typeid} );
-       list.myLayers.push( layer );
-
-        // Save the layer name list. 
-       CONFIG.store("layers.list", list.myLayerNames, true);
-        // Save the layer using the concrete subclass
-       CONFIG.store("layers.layer."+name.replace(/\s/g, "_"), t.layer2json(layer), true);       
-       
-       return false;
-   }
-   
-}
-
-
-
-pol.layers.Edit.prototype.enabled = function()
-   { return false; }
-
-
-/**
- * Create a filter function (a predicate) with the parameters 
- * (extent, zoom-level, projection) set by user
- */
-pol.layers.Edit.prototype.createFilter = function (f) {
-    var filt = f;
+pol.layers.Edit = class {
     
-    if (!filt)
-        return null;
+    constructor(list) {
+        var t = this;
+        t.list = list;
+        t.filt = {ext: null, zoom: null, proj: null};
+   
+   
+        this.widget = {
+            view: function() {
+                var i=0;
+                return m("form", [    
+                    m("span.sleftlab", "Name: "),   
+                    m(textInput, {id:"editLayer", size: 16, maxLength:25, regex: /^[^\<\>\'\"]+$/i }), br,  
+                    m("span.sleftlab", "Visibility: "),
+                    m(checkBox, {id:"vis.extent", onclick: filterExtent, checked: (t.filt.ext != null) }, 
+                        "Map extent", nbsp, nbsp),
+                    m(checkBox, {id:"vis.zoom", onclick: filterZoom, checked: (t.filt.zoom != null) },
+                        "Zoom level+", nbsp, nbsp),
+                    m(checkBox, {id:"vis.proj", onclick: filterProj, checked: (t.filt.proj != null) },
+                        "Base projection", br),
+                    m(t.fields),
+             
+                    m("div.buttons", [
+                        m("input#addButton", 
+                          { disabled: !t.enabled(), type: "button", onclick: add, value: "Add" } ),
+                        m("input", { type: "reset", onclick: reset, value: "Reset" } )
+                    ])
+                ]);
+            }
+        };
+   
+   
+        /* To be redefined in subclass */
+        this.fields = {
+            view: function() { return null; }
+        }
+   
 
-    /* Returns a closure with the chosen parameter values */
-    return function() {
-       return ( 
-          (filt.ext == null  || ol.extent.intersects(filt.ext, CONFIG.mb.getExtent())) &&
-          (filt.zoom == null || filt.zoom >= CONFIG.mb.getResolution()) &&
-          (filt.proj == null || filt.proj === CONFIG.mb.view.getProjection())  
-        );
+        /* Handler for checkbox. Extent filter on/off */
+        function filterExtent() {
+            t.filt.ext = (t.filt.ext == null ? 
+                CONFIG.mb.getExtent().map(function(x) {return Math.round(x*1000)/1000;}) : null);
+            console.log("Set extent filter: "+t.filt.ext);
+        }
+   
+   
+        /* Handler for checkbox. Zoom level filter on/off */
+        function filterZoom() {
+            t.filt.zoom = (t.filt.zoom == null ? CONFIG.mb.getResolution() : null);
+            console.log("Set zoom filter: "+t.filt.zoom);
+        }
+   
+   
+        /* Handler for checkbox. Projection filter on/off */
+        function filterProj() {
+            t.filt.proj = (t.filt.proj == null ? CONFIG.mb.view.getProjection() : null);
+            console.log("Set projection filter: " + (t.filt.proj==null ? "null" : t.filt.proj.getCode()));
+        }
+   
+   
+        function reset() { }
+   
+   
+        /** 
+         * Add a map layer to list 
+         */
+        function add() 
+        {  
+            var name = $("#editLayer").val(); 
+            var layer = t.createLayer(name);
+       
+            if (layer != null) {
+                layer.predicate = t.createFilter(t.filt);
+                layer.filt = {ext:t.filt.ext, zoom:t.filt.zoom, proj:t.filt.proj}; 
+                CONFIG.mb.addConfiguredLayer(layer, name);
+            }
+
+            list.myLayerNames.push( {name: name, type: t.typeid} );
+            list.myLayers.push( layer );
+
+            // Save the layer name list. 
+            CONFIG.store("layers.list", list.myLayerNames, true);
+            // Save the layer using the concrete subclass
+            CONFIG.store("layers.layer."+name.replace(/\s/g, "_"), t.layer2json(layer), true);       
+       
+            return false;
+        }
+   
+    } /* constructor */
+
+
+    /* To be defined in subclass */
+    enabled()
+        { return false; }
+
+
+    /**
+     * Create a filter function (a predicate) with the parameters 
+     * (extent, zoom-level, projection) set by user
+     */
+    createFilter(f) {
+        var filt = f;
+    
+        if (!filt)
+            return null;
+
+        /* Returns a closure with the chosen parameter values */
+        return function() {
+            return ( 
+                (filt.ext == null  || ol.extent.intersects(filt.ext, CONFIG.mb.getExtent())) &&
+                (filt.zoom == null || filt.zoom >= CONFIG.mb.getResolution()) &&
+                (filt.proj == null || filt.proj === CONFIG.mb.view.getProjection())  
+            );
+        }
+    }
+
+
+
+    /**
+     * Move settings to web-form. 
+     * To be extended in subclass. 
+     */
+    edit(layer) {
+        $("#editLayer").val(layer.get("name")).trigger("change").attr("ok", true);
+        this.filt = layer.filt;
+        $("#vis.extent").prop("checked", (this.filt.ext != null)).trigger("change");
+        $("#vis.zoom").prop("checked", (this.filt.zoom != null)).trigger("change");
+        $("#vis.proj").prop("checked", (this.filt.proj != null)).trigger("change");
+    }
+
+
+
+    /**
+     * Create a layer. 
+     * To be defined in subclass 
+     */
+    createLayer(n) {
+        return null; 
+    }
+
+
+    /**
+    * Stringify settings for a layer to JSON format. 
+    * To be defined in subclass. 
+    */
+    layer2json(layer) { 
+        return "dummy";
+    }
+
+
+    /**
+    * Restore a layer from JSON format (see layer2json). 
+    * To be defined in subclass. 
+    */
+    json2layer(js) {
+        return null; 
+    }
+    
+} /* class */
+
+
+
+pol.layers.Dummy = class extends pol.layers.Edit {
+    constructor(list) {
+        super(list);
     }
 }
-
-
-
-/**
- * Move settings to web-form. 
- * To be extended in subclass. 
- */
-pol.layers.Edit.prototype.edit = function(layer) {
-    $("#editLayer").val(layer.get("name")).trigger("change").attr("ok", true);
-    this.filt = layer.filt;
-    $("#vis.extent").prop("checked", (this.filt.ext != null)).trigger("change");
-    $("#vis.zoom").prop("checked", (this.filt.zoom != null)).trigger("change");
-    $("#vis.proj").prop("checked", (this.filt.proj != null)).trigger("change");
-}
-
-
-
- /**
-  * Create a layer. 
-  * To be defined in subclass 
-  */
-pol.layers.Edit.prototype.createLayer = function(n) {
-    return null; 
-}
-
-
-/**
- * Stringify settings for a layer to JSON format. 
- * To be defined in subclass. 
- */
-pol.layers.Edit.prototype.layer2json = function(layer) { 
-    return "dummy";
-}
-
-
-/**
- * Restore a layer from JSON format (see layer2json). 
- * To be redefined in subclass. 
- */
-pol.layers.Edit.prototype.json2layer = function(js) {
-    return null; 
-}
-
-
-
-
-pol.layers.Dummy = function(list) {
-   pol.layers.Edit.call(this, list);
-}
-
-
-
-ol.inherits(pol.layers.Dummy, pol.layers.Edit);
-
 
 
 

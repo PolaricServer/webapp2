@@ -1,5 +1,5 @@
 /*
- Map browser based on OpenLayers 4. Layer editor.
+ Map browser based on OpenLayers 5. Layer editor.
  
  Copyright (C) 2017 Øyvind Hanssen, LA7ECA, ohanssen@acm.org
  
@@ -20,124 +20,117 @@
 
 
 /**
- * @classdesc
  * User defined layers (in a popup window). 
- * @constructor
  */
-pol.layers.List = function() {
-   pol.core.Widget.call(this);
-   this.classname = "layers.List"; 
-   this.myLayers = [];     // Just the layer. Not to be saved directly. 
-   this.myLayerNames = []; // Just the name
-   this.typeList = {};
-   var t = this;
+pol.layers.List = class List extends pol.core.Widget {
+    
+    constructor() {
+        super();
+        this.classname = "layers.List"; 
+        this.myLayers = [];     // Just the layer. Not to be saved directly. 
+        this.myLayerNames = []; // Just the name
+        this.typeList = {};
+        var t = this;
    
-   /* Register types */
-   t.addType("dummy", "Select layer type..", new pol.layers.Dummy(this));
-   t.addType("wms", "Standard WMS layer", new pol.layers.Wms(this));   
-   t.addType("wfs", "Standard WFS layer", new pol.layers.Wfs(this));
+        /* Register types */
+        t.addType("dummy", "Select layer type..", new pol.layers.Dummy(this));
+        t.addType("wms", "Standard WMS layer", new pol.layers.Wms(this));   
+        t.addType("wfs", "Standard WFS layer", new pol.layers.Wfs(this));
    
-   var layer = t.typeList["dummy"].obj; 
+        var layer = t.typeList["dummy"].obj; 
 
    
+        this.widget = {
+            view: function() {
+                var i=0;
+                return m("div#layerEdit", [       
+                    m("h1", "My map layers"),  
+                    m("table.mapLayers", m("tbody", t.myLayerNames.map(function(x) {
+                        return m("tr", [
+                            m("td", m("img", {src:"images/edit-delete.png", onclick: apply(removeLayer, i) })), 
+                            m("td", m("img", {src:"images/edit.png", onclick: apply(editLayer, i++) })),
+                            m("td", {}, x.name) ] );
+                    }))), m("div", [ 
+                        m("span.sleftlab", "Type: "), 
+                        m(select, { id: "lType", onchange: selectHandler, 
+                            list: Object.keys(t.typeList).map( x=> 
+                                { return  {label: t.typeList[x].label, val: x, obj: t.typeList[x].obj}; } ) 
+                        }), 
+                        m(layer.widget) 
+                    ] ) ] );
+            }
+        };
    
-   this.widget = {
-     view: function() {
-        var i=0;
-        return m("div#layerEdit", [       
-            m("h1", "My map layers"),  
-            m("table.mapLayers", m("tbody", t.myLayerNames.map(function(x) {
-                return m("tr", [
-                   m("td", m("img", {src:"images/edit-delete.png", onclick: apply(removeLayer, i) })), 
-                   m("td", m("img", {src:"images/edit.png", onclick: apply(editLayer, i++) })),
-                   m("td", {}, x.name) ] );
-             }))), m("div", [ 
-               m("span.sleftlab", "Type: "), 
-               m(select, { id: "lType", onchange: selectHandler, 
-		           list: Object.keys(t.typeList).map(function(x) 
-		              { return  {label: t.typeList[x].label, val: x, obj: t.typeList[x].obj}; } ) 
-      	                 }), 
-               m(layer.widget) 
-            ] ) ] );
-      }
-   };
    
-   
-   /* Get stored layers */
-   this.getMyLayers();
+        /* Get stored layers */
+        this.getMyLayers();
 
    
+        /* Apply a function to an argument. Returns a new function */
+        function apply(f, id) {return function() {f(id); }};  
+      
    
-   /* Apply a function to an argument. Returns a new function */
-   function apply(f, id) {return function() {f(id); }};  
-   
-   
-   
-   /* Handler for select element. Select a type. */
-   function selectHandler(e) {
-       var tid = $("#lType").val();
-       layer = t.typeList[tid].obj;
-       m.redraw();
-   }
+        /* Handler for select element. Select a type. */
+        function selectHandler(e) {
+            var tid = $("#lType").val();
+            layer = t.typeList[tid].obj;
+            m.redraw();
+        }
    
    
-   
-   /* Remove layer from list */
-   function removeLayer(id) {
-       console.assert(id >= 0 && id <t.myLayers.length, "Assertion failed");;
-       var layer = t.myLayers[id];      
-       t.myLayers.splice(id,1);
-       t.myLayerNames.splice(id,1);
-       CONFIG.store("layers.list", t.myLayerNames, true);
-       CONFIG.mb.removeConfiguredLayer(layer);
-   }
-   
+        /* Remove layer from list */
+        function removeLayer(id) {
+            console.assert(id >= 0 && id <t.myLayers.length, "Assertion failed");;
+            var layer = t.myLayers[id];      
+            t.myLayers.splice(id,1);
+            t.myLayerNames.splice(id,1);
+            CONFIG.store("layers.list", t.myLayerNames, true);
+            CONFIG.mb.removeConfiguredLayer(layer);
+        }
    
    
-   /* Move map layer name to editable textInput */
-   function editLayer(idx) {
-       var type = t.myLayerNames[idx].type;
-       $("#lType").val(type).trigger("change");
-       t.typeList[type].obj.edit(t.myLayers[idx]);   
-       removeLayer(idx);
-       m.redraw();
-   }
+        /* Move map layer name to editable textInput */
+        function editLayer(idx) {
+            var type = t.myLayerNames[idx].type;
+            $("#lType").val(type).trigger("change");
+            t.typeList[type].obj.edit(t.myLayers[idx]);   
+            removeLayer(idx);
+            m.redraw();
+        }
    
-   
-}
-ol.inherits(pol.layers.List, pol.core.Widget);
+    } /* constructor */
 
 
 
+    /**
+     * Add a type with a Layer editor.
+     */
+    addType(id, name, obj) {
+        obj.typeid = id;
+        this.typeList[id] = {label: name, obj: obj} ;
+    }
 
-/**
- * Add a type with a Layer editor.
- */
-pol.layers.List.prototype.addType = function(id, name, obj) {
-   obj.typeid = id;
-   this.typeList[id] = {label: name, obj: obj} ;
-}
+    
 
-
-
-/**
- * Restore layers from local storage.
- */
-pol.layers.List.prototype.getMyLayers = function() {
-   var lrs = CONFIG.get("layers.list");
-   console.log(lrs);
-   if (lrs == null)
-       return lrs = [];
+    /**
+     * Restore layers from local storage.
+     */
+    getMyLayers() {
+        var lrs = CONFIG.get("layers.list");
+        if (lrs == null)
+            return lrs = [];
   
-   for (i in lrs) {
-     console.log("Restore Layer: i="+i+", name='"+lrs[i].name+"', type="+lrs[i].type);
-     var x = this.myLayers[i] = this.typeList[lrs[i].type].obj.json2layer 
-        ( CONFIG.get("layers.layer."+lrs[i].name.replace(/\s/g, "_" )));
-     if (x!= null) 
-        CONFIG.mb.addConfiguredLayer(x, lrs[i].name);
-   }
-   return this.myLayerNames = lrs;   
-}
+        for (i in lrs) {
+            console.log("Restore Layer: i="+i+", name='"+lrs[i].name+"', type="+lrs[i].type);
+            var x = this.myLayers[i] = this.typeList[lrs[i].type].obj.json2layer 
+                ( CONFIG.get("layers.layer."+lrs[i].name.replace(/\s/g, "_" )));
+            if (x!= null) 
+                CONFIG.mb.addConfiguredLayer(x, lrs[i].name);
+        }
+        return this.myLayerNames = lrs;   
+    }
+    
+} /* class */
 
 
 
