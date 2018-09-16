@@ -105,9 +105,9 @@ pol.core.Toolbar.prototype.setDefaultItems = function()
    
    /* Generate menu of predefined areas (defined in mapconfig.js */
    this.browser.ctxMenu.addCallback('AREASELECT', (m)=> {
-      var areas = t.arealist.myAreas; 
-      for (var i in areas) {
-         var area = areas[i];   
+      const areas = t.arealist.myAreas; 
+      for (const i in areas) {
+         const area = areas[i];   
          if (area && area != null)
              m.add(area.name, handleSelect(areas, i)); 
       }
@@ -115,11 +115,11 @@ pol.core.Toolbar.prototype.setDefaultItems = function()
       if (areas.length > 0)
          m.add(null);
       m.add("Edit YOUR areas..", 
-         ()=> {t.arealist.activatePopup("AreaList", [90,70])});
+         ()=>  t.arealist.activatePopup("AreaList", [90,70]) );
       m.add(null);
       
       for (var i in browser.config.aMaps) {
-         var aMap = browser.config.aMaps[i]; 
+         const aMap = browser.config.aMaps[i]; 
          if (aMap && aMap.name && 
               aMap.name.length > 1 && 
               !aMap.hidden)

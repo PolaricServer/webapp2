@@ -1,7 +1,7 @@
 /*
  Map browser based on OpenLayers 5. Layer editor.
  
- Copyright (C) 2017 Øyvind Hanssen, LA7ECA, ohanssen@acm.org
+ Copyright (C) 2017-2018 Øyvind Hanssen, LA7ECA, ohanssen@acm.org
  
  This program is free software: you can redistribute it and/or modify
  it under the terms of the GNU Affero General Public License as published 
@@ -120,7 +120,7 @@ pol.layers.List = class List extends pol.core.Widget {
         if (lrs == null)
             return lrs = [];
   
-        for (i in lrs) {
+        for (const i in lrs) {
             console.log("Restore Layer: i="+i+", name='"+lrs[i].name+"', type="+lrs[i].type);
             var x = this.myLayers[i] = this.typeList[lrs[i].type].obj.json2layer 
                 ( CONFIG.get("layers.layer."+lrs[i].name.replace(/\s/g, "_" )));
