@@ -106,7 +106,7 @@ pol.core.LayerSwitcher = class extends pol.core.Widget {
         console.assert(i >= 0 && i <= this.mb.config.oLayers.length, "Assertion failed");
         const prev = this.mb.config.oLayers[i].getVisible(); 
         this.mb.config.oLayers[i].setVisible(!prev);
-        this.mb.config.store('olayer.' + i, !prev); 
+        this.mb.config.store('core.olayer.' + i, !prev); 
     }
  
 
