@@ -1,6 +1,6 @@
 
 /*
- Map browser based on OpenLayers 4. Tracking. 
+ Map browser based on OpenLayers 5. Tracking. 
  Notifications.  
  
  Copyright (C) 2017 Øyvind Hanssen, LA7ECA, ohanssen@acm.org
@@ -35,185 +35,186 @@
 
 
 
-pol.tracking.Notifier = function() 
-{
-    this.list = [];
-    this.server = CONFIG.server;
-    var t = this;
-    this.audio = new Audio('sound/sound2.wav');
+pol.tracking.Notifier = class {
+    
+    constructor() {
+        this.list = [];
+        this.server = CONFIG.server;
+        var t = this;
+        this.audio = new Audio('sound/sound2.wav');
             
-    
-    /* Get stored notifications */
-    t.list = CONFIG.get("tracking.Notifications");
-    if (t.list == null)
-        t.list = [];
+        /* Get stored notifications */
+        t.list = CONFIG.get("tracking.Notifications");
+        if (t.list == null)
+            t.list = [];
 
-    /* Add nofifications icon to toolbar */
-    CONFIG.mb.toolbar.addDiv(2 ,"toolbar_not", "Nofifications");
-    $('#toolbar_not').append('<img src="images/bell.png"></img>');
-    $('#toolbar_not').click(
-        function()
-            { var x = new pol.tracking.NotifyList();
+        /* Add nofifications icon to toolbar */
+        CONFIG.mb.toolbar.addDiv(2 ,"toolbar_not", "Nofifications");
+        $('#toolbar_not').append('<img src="images/bell.png"></img>');
+        $('#toolbar_not').click(
+            () => { 
+                var x = new pol.tracking.NotifyList();
                 x.activatePopup("notifications", [180, 70]) }
-    );
-    t.updateNumber(); 
+        );
+        t.updateNumber(); 
          
-    /* Subscribe to notifications from server */
-    t.server.pubsub.subscribe("notify:" + t.server.auth.userid, function(x) {
-        t.add(x);
-    });   
+        /* Subscribe to notifications from server */
+        t.server.pubsub.subscribe("notify:" + t.server.auth.userid, 
+            x => t.add(x) );   
+        t.server.pubsub.subscribe("notify:SYSTEM", 
+            x => t.add(x) );
+        if (t.server.auth.admin) 
+            t.server.pubsub.subscribe("notify:ADMIN", 
+                x => t.add(x) );
     
-    t.server.pubsub.subscribe("notify:SYSTEM", function(x) {t.add(x);});
-    
-    if (t.server.auth.admin) 
-        t.server.pubsub.subscribe("notify:ADMIN", function(x) {t.add(x);});
-    
-    
-    /* Remove notifications older than ttl. Skip if ttl is 0 */
-    setInterval(function() {
-        for (i in t.list) {
-            var x = t.list[i];
-            if (x.ttl <= 0)
-                continue;
-            var dt = new Date(x.time);
-            if (dt.getTime() / 60000 + x.ttl < Date.now()/60000)
-                t.remove(i);
+        /* Remove notifications older than ttl. Skip if ttl is 0 */
+        setInterval(function() {
+            for (i in t.list) {
+                const x = t.list[i];
+                if (x.ttl <= 0)
+                    continue;
+                const dt = new Date(x.time);
+                if (dt.getTime() / 60000 + x.ttl < Date.now()/60000)
+                    t.remove(i);
+            }
+        }, 10000);
+        
+        
+        function formatDTG(date) {
+            const mths = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul',
+                          'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+
+            const ltime = new Date(date);
+            const mth = mths[ltime.getMonth()]; 
+            const day = ltime.getDate();
+            const hour = ltime.getHours();
+            const min = ltime.getMinutes();
+            return day + ' ' +mth + ' ' + hour+":"+(min<=9 ? '0': '') + min; 
         }
-    }, 10000);
-}
+        
+    } /* constructor */
 
 
-/* Update number on toolbar */
-pol.tracking.Notifier.prototype.updateNumber = function() {
-    $('#not_number').remove();
-    if (this.list.length > 0)
-        $('#toolbar_not').append('<span id="not_number">'+this.list.length+'</span>');
-    m.redraw();
-
-}
-
-
-/* Add notification */
-pol.tracking.Notifier.prototype.add = function(not) {
-    this.audio.play();
-    this.list.unshift(not);
-    this.updateNumber();
-    CONFIG.store("tracking.Notifications", this.list, true);
-    pol.tracking.NotifyList.updateScroller();
-}
+    /* Update number on toolbar */
+    updateNumber() {
+        $('#not_number').remove();
+        if (this.list.length > 0)
+            $('#toolbar_not').append('<span id="not_number">'+this.list.length+'</span>');
+        m.redraw();
+    }
 
 
-/* Remove notification */
-pol.tracking.Notifier.prototype.remove = function(idx) {
-    this.list.splice(idx,1);
-    this.updateNumber(); 
-    CONFIG.store("tracking.Notifications", this.list, true);
-    pol.tracking.NotifyList.updateScroller();
-}
+    /* Add notification */
+    add(not) {
+        this.audio.play();
+        this.list.unshift(not);
+        this.updateNumber();
+        CONFIG.store("tracking.Notifications", this.list, true);
+        pol.tracking.NotifyList.updateScroller();
+    }
 
 
-function formatDTG(date) {
-    var mths = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul',
-               'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+    /* Remove notification */
+    remove(idx) {
+        this.list.splice(idx,1);
+        this.updateNumber(); 
+        CONFIG.store("tracking.Notifications", this.list, true);
+        pol.tracking.NotifyList.updateScroller();
+    }
 
-    var ltime = new Date(date);
-    var mth = mths[ltime.getMonth()]; 
-    var day = ltime.getDate();
-    var hour = ltime.getHours();
-    var min = ltime.getMinutes();
-    return day + ' ' +mth + ' ' + hour+":"+(min<=9 ? '0': '') + min; 
-}
+} /* class */
 
-
+ 
+ 
  
 /**
- * @classdesc
  * Notification list widget (in a popup window). 
- * @constructor
  */
 
-pol.tracking.NotifyList = function()
-{
-    pol.core.Widget.call(this);
-    this.classname = "tracking.NotifyList"; 
-    this.notifier = CONFIG.notifier;  
-    var t = this;
+pol.tracking.NotifyList = class extends pol.core.Widget {
+
+    constructor ()
+    {
+        super();
+        this.classname = "tracking.NotifyList"; 
+        this.notifier = CONFIG.notifier;  
+        var t = this;
    
-    this.widget = {
-        view: function() {
-            var i=0;
-            return m("div#notifications", [
-                m("h1", "My Notifications"),
-                m("table", m("tbody", (t.notifier ? t.notifier.list : []).map(function(x) {
-                    return m("tr", [
-                        m("td", m("img", {"class":"icon", src:icon(x.type)})),
-                        m("td", m("div", [
-                            m("span", {"class":"header"}, [x.from+", "+formatDTG(x.time)]),
-                            m("img", {src:"images/16px/close.png", onclick: apply(removeNot, i++) }),
-                            br, x.text 
-                        ] ))
-                    ]);
-                })))
-            ]);  
+        this.widget = {
+            view: function() {
+                var i=0;
+                return m("div#notifications", [
+                    m("h1", "My Notifications"),
+                    m("table", m("tbody", (t.notifier ? t.notifier.list : []).map( x => {
+                        return m("tr", [
+                            m("td", m("img", {"class":"icon", src:icon(x.type)})),
+                            m("td", m("div", [
+                                m("span", {"class":"header"}, [x.from+", "+formatDTG(x.time)]),
+                                m("img", {src:"images/16px/close.png", onclick: apply(removeNot, i++) }),
+                                br, x.text 
+                            ] ))
+                        ]);
+                    })))
+                ]);  
+            }
+        };
+    
+        setTimeout(
+            pol.tracking.NotifyList.updateScroller, 300);
+    
+        /* 
+         * Select the icon from the type of notification. 
+         * Type can be 'loc', 'check', 'chat', 'mail, 'system', 'error', 'alert' or 'info' (default) 
+         */
+        function icon(type) {
+            if (type==='loc') return 'images/32px/loc.png';
+            else if (type==='check') return 'images/32px/check2.png';
+            else if (type==='chat') return 'images/32px/chat2.png';
+            else if (type==='mail') return 'images/32px/mail.png';        
+            else if (type==='system') return 'images/32px/system2.png';
+            else if (type==='error') return 'images/32px/error.png';
+            else if (type==='alert') return 'images/emergency.png';
+            else return 'images/32px/info.png';
         }
-    };
-    
-    setTimeout(
-        pol.tracking.NotifyList.updateScroller, 300);
-    
-    /* 
-     * Select the icon from the type of notification. 
-     * Type can be 'loc', 'check', 'chat', 'mail, 'system', 'error', 'alert' or 'info' (default) 
-     */
-    function icon(type) {
-        if (type==='loc') return 'images/32px/loc.png';
-        else if (type==='check') return 'images/32px/check2.png';
-        else if (type==='chat') return 'images/32px/chat2.png';
-        else if (type==='mail') return 'images/32px/mail.png';        
-        else if (type==='system') return 'images/32px/system2.png';
-        else if (type==='error') return 'images/32px/error.png';
-        else if (type==='alert') return 'images/emergency.png';
-        else return 'images/32px/info.png';
-    }
     
     
     
-    /* Apply a function to an argument. Returns a new function */
-    function apply(f, id) {return function() { f(id); }};  
+        /* Apply a function to an argument. Returns a new function */
+        function apply(f, id) {return function() { f(id); }};  
 
     
-    /* Remove notification from list */
-    function removeNot(id) {
-        t.notifier.remove(id);
-    }
-    
-}
-
-ol.inherits(pol.tracking.NotifyList, pol.core.Widget);
-
-
-
-pol.tracking.NotifyList.updateScroller = function() {
-    var x =  document.getElementById('notifications');
-    if (x==null)
-        return;
-    var pos = x.getBoundingClientRect();
-    var ht = $('#map').height() - pos.top - 70;
-
-    setTimeout( function() {
-        if ($('#notifications table').parent().is( "#notifications .scroll" ) ) 
-            $('#notifications table').unwrap();
+        /* Remove notification from list */
+        function removeNot(id) {
+            t.notifier.remove(id);
+        }    
         
-        if ($('#notifications table').height() < ht)
-            ht = $('#notifications table').height();
-        else {
-            $('#notifications table').wrap('<div class="scroll"></div>');
-            $('#notifications .scroll').height(Math.round(ht)-10).width($('#notifications table').width()+40);
-        }
-    }, 60);
-}
+    } /* constructor */
 
- 
+
+
+    updateScroller() {
+        const x =  document.getElementById('notifications');
+        if (x==null)
+            return;
+        const pos = x.getBoundingClientRect();
+        let ht = $('#map').height() - pos.top - 70;
+
+        setTimeout( () => {
+            if ($('#notifications table').parent().is( "#notifications .scroll" ) ) 
+                $('#notifications table').unwrap();
+        
+            if ($('#notifications table').height() < ht)
+                ht = $('#notifications table').height();
+            else {
+                $('#notifications table').wrap('<div class="scroll"></div>');
+                $('#notifications .scroll').height(Math.round(ht)-10).width($('#notifications table').width()+40);
+            }
+        }, 60);
+    }
+
+} /* class */
+
+
 
 pol.widget.setRestoreFunc("tracking.NotifyList", function(id, pos) {
     var x = new pol.tracking.NotifyList(); 

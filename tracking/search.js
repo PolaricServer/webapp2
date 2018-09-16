@@ -22,104 +22,105 @@
 
 
 /**
- * @classdesc
  * Reference search (in a popup window). 
- * @constructor
  */
 
-pol.tracking.Search = function()
-{
-   pol.core.Widget.call(this);
-   this.classname = "tracking.Search"; 
-   this.server = CONFIG.server; // new pol.core.Server(CONFIG.get('server'));
-   this.tags = "";
-   var t = this;
+pol.tracking.Search = class extends pol.core.Widget {
+    
+    constructor() 
+    {
+        super();
+        this.classname = "tracking.Search"; 
+        this.server = CONFIG.server; 
+        this.tags = "";
+        const t = this;
    
-   this.widget = {
-     view: function() {
-        return m("div", [       
-            m("h1", "Search stations/objects"),
-            m("div#searchform", [
-               m("form", [ 
-                  "Keywords (tags): ", br, m("div#tags", m.trust(t.tags)),
-                  "Free text search: ", m(textInput, {id: "search", size: 10, maxLength: 40, value:"*",regex: /^.*$/i}),
-                  m("input#searchbutton", {onclick: searchHandler, type: "button", value: "Search"})])], 
-               br, m("div#searchresult"))]);
-      }
-   };
+        this.widget = {
+            view: function() {
+                return m("div", [       
+                    m("h1", "Search stations/objects"),
+                    m("div#searchform", [
+                        m("form", [ 
+                            "Keywords (tags): ", br, m("div#tags", m.trust(t.tags)),
+                            "Free text search: ", m(textInput, 
+                                {id: "search", size: 10, maxLength: 40, value:"*",regex: /^.*$/i}),
+                            m("input#searchbutton", 
+                                {onclick: searchHandler, type: "button", value: "Search"})
+                        ])], 
+                    br, m("div#searchresult"))]);
+            }
+        };
    
-   getTags(null, null, tagListCallback);
+        getTags(null, null, tagListCallback);
    
    
-   function searchHandler(e) {
-      searchItems( $('#search').val(), getTagArgs(), searchItemsCallback)                  
-    };
+        function searchHandler(e) {
+            searchItems( $('#search').val(), getTagArgs(), searchItemsCallback)                  
+        };
 
    
-   /* Get tags from server. Server API (see old code) */
-   function getTags(item, tags, cb) {
-      t.server.GET("/tags", {ajax:true, tags: tags }, cb );
-   }
+        /* Get tags from server. Server API (see old code) */
+        function getTags(item, tags, cb) {
+            t.server.GET("/tags", {ajax:true, tags: tags }, cb );
+        }
    
    
-   /* Server API (see old code) */ 
-   function searchItems(filt, tags, cb)
-   {
-      t.server.GET("/search", "ajax=true&lang="+
-        (filt!=null && filt != '' ? '&srch='+filt : '') + 
-        (tags!=null && filt != '' ? '&tags='+tags : ''), cb );
-   }
+        /* Server API (see old code) */ 
+        function searchItems(filt, tags, cb) {
+            t.server.GET("/search", "ajax=true&lang="+
+                (filt!=null && filt != '' ? '&srch='+filt : '') + 
+                (tags!=null && filt != '' ? '&tags='+tags : ''), cb );
+        }
    
    
-   /* Return tags that user has checked, as a comma-separated list */
-   function getTagArgs()
-   {
-      var tags = "";
-      $('div.taglist>input').each( function(i) {
-        if ($(this).prop("checked")==true)
-          tags = tags + (tags=="" ? "" : ",") + $(this).prop('id').substring(4);
-      });
-      return tags;
-   }
+        /* Return tags that user has checked, as a comma-separated list */
+        function getTagArgs() {
+            var tags = "";
+            $('div.taglist>input').each( i => {
+                if ($(this).prop("checked")==true)
+                    tags = tags + (tags=="" ? "" : ",") + $(this).prop('id').substring(4);
+            });
+            return tags;
+        }
     
-   /* Process tags from server */
-   function tagListCallback(info) {
-        if (info == null)
-          return;
+        /* Process tags from server */
+        function tagListCallback(info) {
+            if (info == null)
+                return;
         
-        t.tags = info;
-        m.redraw();
+            t.tags = info;
+            m.redraw();
         
-        setTimeout(function() {
-           $('div.taglist>input').change( function(e) {
-              setTimeout(function() { getTags(null, getTagArgs(), tagListCallback);}, 200 );
-           });}, 300);
-    }
+            setTimeout(() => {
+                $('div.taglist>input').change( e => {
+                    setTimeout(() => { getTags(null, getTagArgs(), tagListCallback);}, 200 );
+                });}, 300);
+        }
     
     
-    /* Process item-list (html table format) from server */
-    /* FIXME: Consider using REST service with result in JSON format, rendered on client instead */
+        /* Process item-list (html table format) from server */
+        /* FIXME: Consider using REST service with result in JSON format, rendered on client instead */
     
-    function searchItemsCallback(info) {  
-        if (info == null) 
-           return; 
-        var x = document.getElementById('searchresult');
-        if (x != null) {
-            var ht = $('#map').height() - 
-              ( $('#trackerSearch').height() - $('#searchresult').height()) - t.pos[1] - 8 ;     
+        function searchItemsCallback(info) {  
+            if (info == null) 
+                return; 
+            let x = document.getElementById('searchresult');
+            if (x != null) {
+                let ht = $('#map').height() - 
+                    ( $('#trackerSearch').height() - $('#searchresult').height()) - t.pos[1] - 8 ;     
             
-            x.innerHTML = info;    
-            setTimeout( function() {
-                if ($('#searchresult').height() < ht) 
-                    ht = $('#searchresult').height();
-                $('#searchresult table').table({height: Math.round(ht)}); 
-            }, 200);
-        }    
-    }
+                x.innerHTML = info;    
+                setTimeout( () => {
+                    if ($('#searchresult').height() < ht) 
+                        ht = $('#searchresult').height();
+                    $('#searchresult table').table({height: Math.round(ht)}); 
+                }, 200);
+            }    
+        }
     
-    
-}
-ol.inherits(pol.tracking.Search, pol.core.Widget);
+    } /* constructor */
+} /* class */
+
 
 
 

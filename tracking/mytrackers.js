@@ -1,6 +1,6 @@
  
 /*
- Map browser based on OpenLayers 4. Tracking. 
+ Map browser based on OpenLayers 5. Tracking. 
  Search historic data on tracker points on server.  
  
  Copyright (C) 2018 Øyvind Hanssen, LA7ECA, ohanssen@acm.org
@@ -22,76 +22,77 @@
 pol.tracking.db = pol.tracking.db || {};
 
 
+
 /**
- * @classdesc
  * Reference search (in a popup window). 
- * @constructor
  */
 
-pol.tracking.db.MyTrackers = function()
-{
-    pol.core.Widget.call(this);
-    var t = this;
-    
-    t.classname = "tracking.db.MyTrackers"; 
-    t.server = CONFIG.server;
-    t.myTrackers = [];
+pol.tracking.db.MyTrackers = class extends pol.core.Widget {
 
-    this.widget = {
-      view: function() {
-        var i=0;
-        return m("div", [       
-            m("h1", "My trackers"),  
-            m("table.mytrackers", m("tbody", t.myTrackers.map(function(x) {
-                return m("tr", [
-                    m("td", m("img", {src:"images/edit-delete.png", onclick: apply(remove, i) }), 
-                            m("img", {src:"images/edit.png", onclick: apply(edit, i) })),
-                    m("td", {onclick: apply(goto, x.id)}, x.id),
-                    m("td", x.alias),
-                    m("td", (x.icon == null ? "" :  m("img", {src:x.icon}))),
-                    m("td", (x.active ? m("img", {src:"images/16px/ok.png"}) : "")),
-                    m("td", (x.lastHrd==null ? "" : formatTime(x.lastHrd)))
-                ]);
-             }))),
-             m(textInput, {id:"addTracker", value: t.currName, size: 16, maxLength:25, regex: /^[^\<\>\'\"]+$/i }),
-             m("button", {onclick: add}, "Add")
-        ])
-      }
-    };
+    constructor() {
+        super();
+        var t = this;
     
-    getTrackers();
+        t.classname = "tracking.db.MyTrackers"; 
+        t.server = CONFIG.server;
+        t.myTrackers = [];
+
+        this.widget = {
+            view: function() {
+                var i=0;
+                return m("div", [       
+                    m("h1", "My trackers"),  
+                    m("table.mytrackers", m("tbody", t.myTrackers.map(x => {
+                        return m("tr", [
+                            m("td", m("img", {src:"images/edit-delete.png", onclick: apply(remove, i) }), 
+                                m("img", {src:"images/edit.png", onclick: apply(edit, i) })),
+                            m("td", {onclick: apply(goto, x.id)}, x.id),
+                            m("td", x.alias),
+                            m("td", (x.icon == null ? "" :  m("img", {src:x.icon}))),
+                            m("td", (x.active ? m("img", {src:"images/16px/ok.png"}) : "")),
+                            m("td", (x.lastHrd==null ? "" : formatTime(x.lastHrd)))
+                        ]);
+                    }))),
+                    m(textInput, 
+                        { id:"addTracker", value: t.currName, size: 16, 
+                          maxLength:25, regex: /^[^\<\>\'\"]+$/i }),
+                    m("button", {onclick: add}, "Add")
+                ])
+            }
+        };
     
-    /* Apply a function to an argument. Returns a new function */
-    function apply(f, id) {return function() { f(id); }};  
+        getTrackers();
+    
+        /* Apply a function to an argument. Returns a new function */
+        function apply(f, id) {return function() { f(id); }};  
     
     
-    function getTrackers() {
-        t.server.GET("/users/"+t.server.auth.userid+ "/trackers", "", function(x) { 
-            t.myTrackers = JSON.parse(x);
-            m.redraw();
-        } );
-    }
+        function getTrackers() {
+            t.server.GET("/users/"+t.server.auth.userid+ "/trackers", "", function(x) { 
+                t.myTrackers = JSON.parse(x);
+                m.redraw();
+            } );
+        }
     
-    function add() {}
-    function remove(i) {}
-    function edit(i) {}
+        function add() { /* tbd */ }
+        function remove(i) { /* tbd */ }
+        function edit(i) { /* tbd */ }
     
-    function goto(id) {
-        if (CONFIG.tracks)
-            CONFIG.tracks.goto_Point(id);
-    }
+        function goto(id) {
+            if (CONFIG.tracks)
+                CONFIG.tracks.goto_Point(id);
+        }
     
-    function formatTime(time) {
-        var ltime = new Date(time);
-        var hour = ltime.getHours();
-        var min = ltime.getMinutes();
-        return hour+":"+(min<=9 ? '0': '') + min; 
-    }
+        function formatTime(time) {
+            var ltime = new Date(time);
+            var hour = ltime.getHours();
+            var min = ltime.getMinutes();
+            return hour+":"+(min<=9 ? '0': '') + min; 
+        }
  
-}
-ol.inherits(pol.tracking.db.MyTrackers, pol.core.Widget);
+    } /* constructor */
 
-
+} /* class */
 
 
  

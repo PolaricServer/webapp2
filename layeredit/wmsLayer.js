@@ -127,8 +127,8 @@ pol.layers.Wms = class extends pol.layers.Edit {
 
 
     filterLayers(crs) {
-        console.log("filterLayers");
-        var t = this;
+        const t = this;
+        var j = 0;
         t.sLayers = [];
         for (i in t.layers)
             for (j in t.layers[i].CRS)
@@ -203,9 +203,9 @@ pol.layers.Wms = class extends pol.layers.Edit {
         $("#sel_srs").val(layer.selSrs).trigger("change");
    
         this.getCapabilities( () => {
-            for (i in t.sLayers) 
-                if (t.sLayers[i].Name == layer.checkList[i].name) 
-                    t.sLayers[i].checked = layer.checkList[i].checked; 
+            for (i in this.sLayers) 
+                if (this.sLayers[i].Name == layer.checkList[i].name) 
+                    this.sLayers[i].checked = layer.checkList[i].checked; 
             m.redraw();
         });
     }
