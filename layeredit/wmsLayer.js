@@ -32,6 +32,9 @@ pol.layers.Wms = class extends pol.layers.Edit {
         this.layers = [];
         this.sLayers = [];
         this.srs = CONFIG.get('core.supported_proj');
+        if (this.srs == null)
+            this.srs = CONFIG.get('core.projection');
+        
         this.selected = this.srs[0];
         this.url = "";
         var t=this;

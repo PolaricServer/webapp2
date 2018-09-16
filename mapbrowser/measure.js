@@ -1,6 +1,6 @@
 /*
-   Map browser based on OpenLayers 4. 
-   Copyright (C) 2017 Øyvind Hanssen, LA7ECA, ohanssen@acm.org
+   Map browser based on OpenLayers 5. 
+   Copyright (C) 2017-2018 Øyvind Hanssen, LA7ECA, ohanssen@acm.org
    AGPL licenced. 
    ----
    
@@ -38,10 +38,11 @@
 pol.core.Measure = class {
     
     constructor() {
-        var t = this;
-        var tooltipElement;
-        var tooltip;
-        var listener;
+        const t = this;
+        let tooltipElement;
+        let tooltip;
+        let listener;
+        let sketch;
         t.tooltips = [];
         
         
@@ -86,13 +87,10 @@ pol.core.Measure = class {
         
         t.draw.on("drawstart",  evt => {
             sketch = evt.feature;
-            var tooltipCoord = evt.coordinate;
      
             listener = sketch.getGeometry().on('change', evt => {
-               var geom = evt.target;
-               var output = formatLength(geom);
-               tooltipCoord = geom.getLastCoordinate();
-               tooltipElement.innerHTML = output;
+               const tooltipCoord = evt.target.getLastCoordinate();
+               tooltipElement.innerHTML = formatLength(evt.target);
                tooltip.setPosition(tooltipCoord);
             });
         }, t);
@@ -132,21 +130,19 @@ pol.core.Measure = class {
         
         
         function formatLength(line) {
-            var length;
-     
-              var coordinates = line.getCoordinates();
-              length = 0;
-              var sourceProj = CONFIG.mb.view.getProjection();
-              for (var i = 0, ii = coordinates.length - 1; i < ii; ++i) {
-                var c1 = ol.proj.transform(coordinates[i], sourceProj, 'EPSG:4326');
-                var c2 = ol.proj.transform(coordinates[i + 1], sourceProj, 'EPSG:4326');
+            const coordinates = line.getCoordinates();
+            const sourceProj = CONFIG.mb.view.getProjection();
+            let length = 0;
+            for (let i = 0, ii = coordinates.length - 1; i < ii; ++i) {
+                const c1 = ol.proj.transform(coordinates[i], sourceProj, 'EPSG:4326');
+                const c2 = ol.proj.transform(coordinates[i + 1], sourceProj, 'EPSG:4326');
                 length += ol.sphere.getDistance(c1, c2);
-              }
+            }
      
-            var output;
+            let output = "";
             if (length > 100) {
-              output = (Math.round(length / 1000 * 100) / 100) +
-              ' ' + 'km';
+                output = (Math.round(length / 1000 * 100) / 100) +
+                    ' ' + 'km';
             } else {
                 output = (Math.round(length * 100) / 100) +
                     ' ' + 'm';
@@ -163,8 +159,8 @@ pol.core.Measure = class {
        this.draw.setActive(false);
        CONFIG.mb.map.removeInteraction(this.draw);
        CONFIG.mb.removeLayer(this.vector);
-       for (i in this.tooltips)
-          CONFIG.mb.map.removeOverlay(this.tooltips[i]);
+       for (const x of this.tooltips)
+          CONFIG.mb.map.removeOverlay(x);
     }
     
     

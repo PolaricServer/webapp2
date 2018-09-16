@@ -1,8 +1,8 @@
  /*
-    Map browser based on OpenLayers 4. 
+    Map browser based on OpenLayers 5. 
     Map reference conversion utilities. 
     
-    Copyright (C) 2017 Øyvind Hanssen, LA7ECA, ohanssen@acm.org
+    Copyright (C) 2017-2018 Øyvind Hanssen, LA7ECA, ohanssen@acm.org
     
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU Affero General Public License as published 
@@ -25,8 +25,8 @@
  * @returns {string}
  */
 pol.mapref.formatDM = function(ref) {
-       latD = Math.floor(Math.abs(ref[1])); 
-       lonD = Math.floor(Math.abs(ref[0]));
+       const latD = Math.floor(Math.abs(ref[1])); 
+       const lonD = Math.floor(Math.abs(ref[0]));
        return latD+"\u00B0 " + Math.round((Math.abs(ref[1])-latD)*6000)/100+"\' " + 
                 (ref[1]<0 ? "S " : "N ") + "&nbsp;" + 
               lonD+"\u00B0 " + Math.round((Math.abs(ref[0])-lonD)*6000)/100+"\' " + 
@@ -42,25 +42,25 @@ pol.mapref.formatDM = function(ref) {
  */
 pol.mapref.formatMaidenhead = function(ref) 
 {
-   var z1 = ref[0] + 180;
-   var longZone1 = Math.floor( z1 / 20);
-   var char1 = chr(65 + longZone1);
+   const z1 = ref[0] + 180;
+   const longZone1 = Math.floor( z1 / 20);
+   const char1 = chr(65 + longZone1);
 
-   var z2 = ref[1] + 90;
-   var latZone1 = Math.floor(z2 / 10);
-   var char2 = chr(65 + latZone1);
+   const z2 = ref[1] + 90;
+   const latZone1 = Math.floor(z2 / 10);
+   const char2 = chr(65 + latZone1);
 
-   var longZone2 = Math.floor((z1 % 20) / 2);
-   var char3 = chr(48 + longZone2);
+   const longZone2 = Math.floor((z1 % 20) / 2);
+   const char3 = chr(48 + longZone2);
 
-   var latZone4 = Math.floor(z2 % 10);
-   var char4 = chr(48 + latZone4);
+   const latZone4 = Math.floor(z2 % 10);
+   const char4 = chr(48 + latZone4);
 
-   var longZone5 = Math.floor(((ref[0] + 180) % 2) * 12);
-   var char5 = chr(97 + longZone5);
+   const longZone5 = Math.floor(((ref[0] + 180) % 2) * 12);
+   const char5 = chr(97 + longZone5);
 
-   var latZone6 = Math.floor(((ref[1] + 90) % 1) * 24);
-   var char6 = chr(97 + latZone6);
+   const latZone6 = Math.floor(((ref[1] + 90) % 1) * 24);
+   const char6 = chr(97 + latZone6);
    
    return char1+char2+char3+char4+char5+char6;
 }
@@ -74,9 +74,9 @@ pol.mapref.formatMaidenhead = function(ref)
  */
 pol.mapref.formatUTM = function(ref)
 {
-   var ref = new LatLng(ref[1], ref[0]);
-   var uref = ref.toUTMRef();
-   var sref = ""+uref; 
+   const llref = new LatLng(ref[1], ref[0]);
+   const uref = llref.toUTMRef();
+   const sref = ""+uref; 
    return sref.substring(0,5)+'<span class="kartref">' + sref.substring(5,8) + '</span>'+
           sref.substring(8,13)+'<span class="kartref">' + sref.substring(13,16) + '</span>'+
           sref.substring(16);
@@ -98,22 +98,22 @@ pol.mapref.mgrs.n100kLetters = [ 'ABCDEFGHJKLMNPQRSTUV', 'FGHJKLMNPQRSTUVABCDE' 
 
 pol.mapref.MGRSprefix = function(x)
 {
-    var ref = new LatLng(x[1], x[0]);
-    var uref = ref.toUTMRef();
+    const ref = new LatLng(x[1], x[0]);
+    const uref = ref.toUTMRef();
     
     // MGRS zone is same as UTM zone
-    var zone = uref.lngZone;
+    const zone = uref.lngZone;
 
     // grid zones are 8° tall, 0°N is 10th band
-    var band = pol.mapref.mgrs.latBands.charAt(Math.floor(ref.lat/8+10)); // latitude band
+    const band = pol.mapref.mgrs.latBands.charAt(Math.floor(ref.lat/8+10)); // latitude band
 
     // columns in zone 1 are A-H, zone 2 J-R, zone 3 S-Z, then repeating every 3rd zone
-    var col = Math.floor(uref.easting / 100e3);
-    var e100k = pol.mapref.mgrs.e100kLetters[(zone-1)%3].charAt(col-1); // col-1 since 1*100e3 -> A (index 0), 2*100e3 -> B (index 1), etc.
+    const col = Math.floor(uref.easting / 100e3);
+    const e100k = pol.mapref.mgrs.e100kLetters[(zone-1)%3].charAt(col-1); // col-1 since 1*100e3 -> A (index 0), 2*100e3 -> B (index 1), etc.
 
     // rows in even zones are A-V, in odd zones are F-E
-    var row = Math.floor(uref.northing / 100e3) % 20;
-    var n100k = pol.mapref.mgrs.n100kLetters[(zone-1)%2].charAt(row);
+    const row = Math.floor(uref.northing / 100e3) % 20;
+    const n100k = pol.mapref.mgrs.n100kLetters[(zone-1)%2].charAt(row);
     return zone+band+e100k+n100k;
 }
 
@@ -130,10 +130,10 @@ pol.mapref.MGRSprefix = function(x)
  */
 pol.mapref.parseDM = function(nd, nm, ed, em)
 {  
-   var yd = parseInt(nd, 10);
-   var ym = parseFloat(nm);
-   var xd = parseInt(ed, 10);
-   var xm = parseFloat(em);
+   const yd = parseInt(nd, 10);
+   const ym = parseFloat(nm);
+   const xd = parseInt(ed, 10);
+   const xm = parseFloat(em);
    if (isNaN(yd) || yd<-90 || yd>90 || isNaN(ym) || ym<0 || ym>60 || isNaN(xd) ||
        isNaN(xm) || xm<0 || xm>60) {
         console.log("ERROR: degrees/minutes out of bounds or input not numeric");
@@ -155,17 +155,17 @@ pol.mapref.parseDM = function(nd, nm, ed, em)
 
 pol.mapref.parseUTM = function(ax, ay, nz, zz)
  {
-   var x = parseInt(ax, 10);
-   var y = parseInt(ay, 10);
-   var z = parseInt(zz, 10);
+   const x = parseInt(ax, 10);
+   const y = parseInt(ay, 10);
+   const z = parseInt(zz, 10);
    if (isNaN(x) || isNaN(y) || isNaN(z) ||
        x<0 || x>999999 || y<0 || y>9999999 || z<0 || z>60) {
       console.log("ERROR: UTM zone/northing/easting out of bounds or input not numeric");
       return [0,0];
    }
     
-   var uref = new UTMRef(x, y, nz, z);
-   var ref = uref.toLatLng();
+   const uref = new UTMRef(x, y, nz, z);
+   const ref = uref.toLatLng();
    return ( [ref.lng, ref.lat] );
  }
 
@@ -181,8 +181,8 @@ pol.mapref.parseUTM = function(ax, ay, nz, zz)
 
 pol.mapref.parseMGRS = function(browser, prefix, ax, ay)
  {   
-    var x = parseInt(ax, 10);
-    var y = parseInt(ay, 10);
+    let x = parseInt(ax, 10);
+    let y = parseInt(ay, 10);
     if (isNaN(x) || x<0 || x>999) {
       console.log("ERROR: 3-digit X number out of bounds or input not numeric");
       x = 555;
@@ -191,7 +191,7 @@ pol.mapref.parseMGRS = function(browser, prefix, ax, ay)
       console.log("ERROR: 3-digit Y number out of bounds or input not numeric");
       y = 555;
     }
-    var llref; 
+    let llref = null; 
     
     if (prefix && prefix != null && prefix.length == 5) 
     {
@@ -199,42 +199,43 @@ pol.mapref.parseMGRS = function(browser, prefix, ax, ay)
        // Adapted from https://github.com/chrisveness/geodesy/blob/master/mgrs.js (MIT Licence).
        if (prefix.length > 5) 
            prefix = "0"+prefix; 
-       var zone = parseInt(prefix.substring(0,2)); 
+       const zone = parseInt(prefix.substring(0,2)); 
        
-       var col = pol.mapref.mgrs.e100kLetters[(zone-1)%3].indexOf(prefix[3]) + 1; 
-       var row = pol.mapref.mgrs.n100kLetters[(zone-1)%2].indexOf(prefix[4]);
+       const col = pol.mapref.mgrs.e100kLetters[(zone-1)%3].indexOf(prefix[3]) + 1; 
+       const row = pol.mapref.mgrs.n100kLetters[(zone-1)%2].indexOf(prefix[4]);
        if (col == 0 || row == -1)
            console.log("ERROR: Invalid row or column letter in MGRS prefix");
        
-       var e100kNum = col * 100e3; // e100k in metres
+       const e100kNum = col * 100e3; // e100k in metres
         /* get northing specified by n100k */
-       var n100kNum = row * 100e3; // n100k in metres
+       const n100kNum = row * 100e3; // n100k in metres
 
         /* get latitude of (bottom of) band */
-       var latBand = (pol.mapref.mgrs.latBands.indexOf(prefix[2])-10)*8;
+       const latBand = (pol.mapref.mgrs.latBands.indexOf(prefix[2])-10)*8;
        if (latBand < -80)
            console.log("ERROR: Invalid latitude band letter in MGRS prefix");
 
         /* northing of bottom of band, extended to include entirety of bottommost 100km square
          * (100km square boundaries are aligned with 100km UTM northing intervals) */
-       var nBand = Math.floor(new LatLng(latBand, 0).toUTMRef().northing/100e3)*100e3;
+       const nBand = Math.floor(new LatLng(latBand, 0).toUTMRef().northing/100e3)*100e3;
        
         /* 100km grid square row letters repeat every 2,000km north; add enough 2,000km blocks to get
          * into required band */
-       var n2M = 0; // northing of 2,000km block
-       while (n2M + n100kNum + y < nBand) n2M += 2000e3; 
+       let n2M = 0; // northing of 2,000km block
+       while (n2M + n100kNum + y < nBand) 
+           n2M += 2000e3; 
        llref = new UTMRef(e100kNum + x * 100,  n2M + n100kNum + y * 100, 'X', zone).toLatLng(); 
     }
     else {
        console.log("WARNING: invalid MGRS prefix. Using center of map as reference");
        /* find center of map */
-       var center = browser.getCenter();
-       var ref = new LatLng(center[1], center[0]);
-       var cref = ref.toUTMRef();
+       const center = browser.getCenter();
+       const ref = new LatLng(center[1], center[0]);
+       const cref = ref.toUTMRef();
         
        /* Replace part of the UTM reference with arguments */
-       var bx = Math.floor(cref.easting  / 100000) * 100000;
-       var by = Math.floor(cref.northing / 100000) * 100000; 
+       const bx = Math.floor(cref.easting  / 100000) * 100000;
+       const by = Math.floor(cref.northing / 100000) * 100000; 
        llref = new UTMRef(bx + x * 100,  by + y * 100, cref.latZone, cref.lngZone).toLatLng(); 
     }
     return [llref.lng, llref.lat];

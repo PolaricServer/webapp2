@@ -18,7 +18,7 @@
     along with this program. If not, see <http://www.gnu.org/licenses/>.
   */
  
-/* FIXME: rewrite this to class form */ 
+/* FIXME: rewrite this to ES6 class form */ 
  
 /**
  * @constructor

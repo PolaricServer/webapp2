@@ -60,7 +60,7 @@ function ADD_PROJECTION(name, info, extent)
    console.log("ADD_PROJECTION: "+name+", "+info);
    proj4.defs(name, info);
    ol.proj.proj4.register(proj4);
-   var x = ol.proj.get(name);
+   const x = ol.proj.get(name);
    x.setExtent(extent);
    return x;
 }
@@ -121,11 +121,11 @@ function LAYERS (attrs, layers)
  */
 function VIEWS(views)
 {
-  if (views != null)
-    for (var i = 0; i < views.length; i++) {
-      var x = views[i];
-      CONFIG.aMaps[x.name] = x;
-    }
+    if (views != null)
+        for (let i = 0; i < views.length; i++) {
+            const x = views[i];
+            CONFIG.aMaps[x.name] = x;
+        }
 }
 
 
@@ -135,10 +135,10 @@ function VIEWS(views)
  * Note that POLYGON is defined in standard lat long projection (EPSG:4326)
  */ 
 function POLYGON( points ) {
-    var plist = []; 
-    for (var i in points)
+    let plist = []; 
+    for (let i in points)
       plist.push( new ol.geom.Point(points[i].lng, points[i].lat));
-    var ring = new ol.geom.LinearRing(plist);
+    const ring = new ol.geom.LinearRing(plist);
     return new ol.geom.Polygon([ring]);
 }
 
@@ -150,7 +150,7 @@ function POLYGON( points ) {
  */
 function is_visible(polygon)
 {
-   var extent = CONFIG.mb.getExtent();
+   const extent = CONFIG.mb.getExtent();
    if (extent != null) {
      if (polygon.intersectsExtent(extent)) 
         return true;
@@ -209,9 +209,9 @@ function OR(a, b)
 function createLayer_WFS(opts) 
 {
    if (!opts.outputFormat)
-   opts.outputFormat = "text/xml; subtype\=gml/3.1.1";
+        opts.outputFormat = "text/xml; subtype\=gml/3.1.1";
 
-   var vSource = new ol.source.Vector({
+   let vSource = new ol.source.Vector({
      format: new ol.format.WFS(),  // Oops! GML version 3.1.1 only! 
 
      url: function(extent) {
@@ -242,8 +242,8 @@ function createLayer_WFS(opts)
 
 function STYLES( st ) {
     for (i in st) {
-       var x = st[i];
-       var ident = (x.id ? x.id : 'style_'+i);
+       let x = st[i];
+       const ident = (x.id ? x.id : 'style_'+i);
        delete x.id;
        
        if (x.stroke)
@@ -262,7 +262,6 @@ function STYLES( st ) {
     
        CONFIG.styles[ident] = new ol.style.Style(x);   
    }
-   var keys = Object.keys(CONFIG.styles);
 }
 
 
@@ -272,14 +271,14 @@ function getStyle(id)
    
    
 function GETSTYLE(id) { 
-  var gotit = false;
+  let gotit = false;
   return function(f,r) {
      if (gotit==false) {
-         var ll = "";
-         for (x in f.getProperties())
-	    ll += (x + " ");
-	 console.log("FEATURE PROPERTIES: "+ll);
-	 gotit = true;
+        let ll = "";
+        for (x in f.getProperties())
+            ll += (x + " ");
+        console.log("FEATURE PROPERTIES: "+ll);
+        gotit = true;
      }
      return getStyle(id);
   }
@@ -288,7 +287,7 @@ function GETSTYLE(id) {
    
    
 function setLabel(id, label) {
-   var x = CONFIG.styles[id].clone(); 
+   const x = CONFIG.styles[id].clone(); 
    if (label && label != null)
          x.getText().setText(label);
    return x;
@@ -296,11 +295,12 @@ function setLabel(id, label) {
 
 
 function SETLABEL(id, label) {
-   return function(f,r) {
-       var lbl = label.replace( /\$\([^\)]+\)/g, x =>
-         { return f.get( x.substring(2, x.length-1)); });
-       return setLabel(id, lbl); 
-   }
+    return function(f,r) {
+        var lbl = label.replace( /\$\([^\)]+\)/g, 
+            x => f.get( x.substring(2, x.length-1)) 
+        );
+        return setLabel(id, lbl); 
+    }
 }
 
 
@@ -326,6 +326,7 @@ function ICON(url, opts) {
   opts.src = url;
   return new ol.style.Icon(opts);
 }
+
 
 
 /**

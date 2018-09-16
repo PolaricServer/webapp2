@@ -32,14 +32,15 @@ console.assert = console.assert || function() {};
 
 
 /** 
- *  @classdesc 
  *  Configuration of map browser application.
- *  @constructor 
- *  @param {string} uid - Identifier of configuration (see also setUid).
  */
 
 pol.core.Config = class extends ol.Object {
     
+   /*
+    *  Constructor 
+    *  @param {string} uid - Identifier of configuration (see also setUid).
+    */
     constructor (uid) {
         super();
         this.uid = (uid ? uid : "0");
@@ -99,7 +100,7 @@ pol.core.Config = class extends ol.Object {
    
     removeLayer(layer) {
         console.assert(layer != null, "Assertion failed");
-        for (i in this.oLayers)
+        for (const i in this.oLayers)
             if (this.oLayers[i] === layer) {
                 this.oLayers.splice(i, 1);
                 return;
@@ -133,11 +134,11 @@ pol.core.Config = class extends ol.Object {
         /* Look in session-storage first, if not found there, 
         * look in local-storage. 
         */
-        var data = this.sstorage["polaric."+id]; 
+        let data = this.sstorage["polaric."+id]; 
         if (data == null)
-        data = this.storage["polaric."+id + ":" + this.uid];
+            data = this.storage["polaric."+id + ":" + this.uid];
     
-        var x = (data ? JSON.parse(data) : null );
+        const x = (data ? JSON.parse(data) : null );
         if (x==null && this.props[id] != null) 
             return this.props[id]; 
         return x;
@@ -156,7 +157,7 @@ pol.core.Config = class extends ol.Object {
      */
     store(id, value, save) { 
         console.assert(id != null && value != null, "Assertion failed"); 
-        var val = JSON.stringify(value);
+        const val = JSON.stringify(value);
         this.sstorage["polaric." + id] = val; 
         if (save)
             this.storage["polaric." + id + ":" + this.uid] = val;

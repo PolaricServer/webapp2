@@ -1,8 +1,8 @@
  /*
-    Map browser based on OpenLayers 4. 
+    Map browser based on OpenLayers 5. 
     Layer manager/layer switcher.
     
-    Copyright (C) 2017 Øyvind Hanssen, LA7ECA, ohanssen@acm.org
+    Copyright (C) 2017-2018 Øyvind Hanssen, LA7ECA, ohanssen@acm.org
     
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU Affero General Public License as published 
@@ -21,14 +21,14 @@
  
  
  /**
-  * @classdesc 
   * Layer manager/layer switcher.
-  * @constructor
-  * @param {pol.core.MapBrowser} mb - Map browser instance. 
   */
- 
+
 pol.core.LayerSwitcher = class extends pol.core.Widget {
- 
+  
+   /* Constructor
+    * @param {pol.core.MapBrowser} mb - Map browser instance. 
+    */
     constructor () {
         super(); 
         this.classname = "pol.core.LayerSwitcher";
@@ -104,7 +104,7 @@ pol.core.LayerSwitcher = class extends pol.core.Widget {
     toggleOverlay(i) {
         i -= this.mb.config.baseLayers.length;
         console.assert(i >= 0 && i <= this.mb.config.oLayers.length, "Assertion failed");
-        var prev = this.mb.config.oLayers[i].getVisible(); 
+        const prev = this.mb.config.oLayers[i].getVisible(); 
         this.mb.config.oLayers[i].setVisible(!prev);
         this.mb.config.store('olayer.' + i, !prev); 
     }
@@ -121,7 +121,7 @@ pol.core.LayerSwitcher = class extends pol.core.Widget {
          * replace it with first layer in list that is. 
          */
         if (!this.mb.getBaseLayer().predicate()) {
-            var layers = this.mb.config.baseLayers; 
+            const layers = this.mb.config.baseLayers; 
             for (var i in layers) {
                 if (layers[i].predicate()) {
                     this.mb.setBaseLayer(i);
@@ -129,7 +129,7 @@ pol.core.LayerSwitcher = class extends pol.core.Widget {
                 }
             }
         }
-        layers = this.mb.config.oLayers;
+        const layers = this.mb.config.oLayers;
         for (var i in layers)
             if (!layers[i].predicate()) {
                 if (layers[i].getVisible() == true)

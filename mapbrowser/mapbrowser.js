@@ -1,6 +1,6 @@
  /*
-    Map browser based on OpenLayers 4. 
-    Copyright (C) 2017 Øyvind Hanssen, LA7ECA, ohanssen@acm.org
+    Map browser based on OpenLayers 5. 
+    Copyright (C) 2017-2018 Øyvind Hanssen, LA7ECA, ohanssen@acm.org
     
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU Affero General Public License as published 
@@ -19,20 +19,24 @@
 
 
  /**
-  * @classdesc 
   * Map browser class. Creates a map browser in the given div element. 
-  * 
-  * @constructor
+  */
+ 
+ /* Constructor
   * @param {Element|string} targ - target DOM element or id of element
   * @param {pol.core.Config} config - Configuration class instance
   */
  
 pol.core.MapBrowser = class {
-    
+     
+   /* Constructor
+    * @param {Element|string} targ - target DOM element or id of element
+    * @param {pol.core.Config} config - Configuration class instance
+    */
     constructor(targ, config) {
         console.assert(targ && targ != null && config && config != null, "Assertion failed");
      
-        var t = this;
+        const t = this;
         config.mb = this;
         t.config = config; 
         t.toolbar = new pol.core.Toolbar({}, t);
@@ -133,7 +137,7 @@ pol.core.MapBrowser = class {
     changeBaseLayer(idx) {
         console.assert(idx >= 0 && idx <= this.config.baseLayers.length, "Assertion failed");
     
-        var ls = this.config.baseLayers[idx];
+        const ls = this.config.baseLayers[idx];
         if ( !ls || ls==null)
             return;
 
@@ -143,7 +147,7 @@ pol.core.MapBrowser = class {
             this.map.getLayers().setAt(0, ls);
     
         /* Change projection if requested */
-        var proj = ls.projection; 
+        let proj = ls.projection; 
         if (!proj)
             proj = this.config.get('core.projection');
         if (!proj)
@@ -162,7 +166,6 @@ pol.core.MapBrowser = class {
     * @param {pol.core.Config} config - instance of Config class.
     * 
     */
-
     initializeLayers(config) {
         this.map.getLayers().clear();
   
@@ -183,6 +186,7 @@ pol.core.MapBrowser = class {
     }
 
 
+    
     removeLayer(layer) {
         this.map.removeLayer(layer);
         for(var i in this.xLayers) {
@@ -192,10 +196,9 @@ pol.core.MapBrowser = class {
     }
 
 
-
     addVectorLayer(style) {
-        var source = new ol.source.Vector({wrapX: false});
-        var vector = new ol.layer.Vector({
+        const source = new ol.source.Vector({wrapX: false});
+        const vector = new ol.layer.Vector({
             source: source,
             style: style
         });
@@ -207,23 +210,23 @@ pol.core.MapBrowser = class {
 
     addConfiguredLayer(layer, name) {
         console.assert(layer != null && name != null, "Assertion failed");
-        var i = this.config.addLayer(layer, name);
-        var visible = this.config.get('core.olayer.'+i);
+        const i = this.config.addLayer(layer, name);
+        const visible = this.config.get('core.olayer.'+i);
         if (visible == null)
             this.config.store('core.olayer.' + i, true); 
         else
             this.config.oLayers[i].setVisible(visible);
    
         /* Remove extra layers to keep the order */
-        for (var i in this.xLayers)
-            this.map.removeLayer(this.xLayers[i]);
+        for (var j in this.xLayers)
+            this.map.removeLayer(this.xLayers[j]);
   
         /* Add configured layer */
         this.map.addLayer(layer);
    
         /* And put the extra layers back on top of the stack */
-        for (var i in this.xLayers)
-            this.map.addLayer(this.xLayers[i]);
+        for (const j in this.xLayers)
+            this.map.addLayer(this.xLayers[j]);
     }
 
 
@@ -262,8 +265,8 @@ pol.core.MapBrowser = class {
      * @returns position
      */
     getCenterUTM() {    
-        var center = browser.getCenter();
-        var cref = new LatLng(center[1], center[0]);
+        const center = browser.getCenter();
+        const cref = new LatLng(center[1], center[0]);
         return cref.toUTMRef(); 
     }
 
@@ -273,18 +276,18 @@ pol.core.MapBrowser = class {
      * In some cases it is better to use the limits at the center when transforming between projections. 
      */
     getExtent() {
-        var proj = this.view.getProjection();
-        var center = this.view.getCenter();
-        var ext = this.view.calculateExtent();
-        var midTop  =  [center[0], ext[3]];
-        var midBot  =  [center[0], ext[1]];
-        var midLeft =  [ext[0], center[1]];
-        var midRight = [ext[2], center[1]];
+        const proj = this.view.getProjection();
+        const center = this.view.getCenter();
+        const ext = this.view.calculateExtent();
+        const midTop  =  [center[0], ext[3]];
+        const midBot  =  [center[0], ext[1]];
+        const midLeft =  [ext[0], center[1]];
+        const midRight = [ext[2], center[1]];
     
-        var xmTop  = ol.proj.transform(midTop, proj, "EPSG:4326");
-        var xmBot  = ol.proj.transform(midBot, proj, "EPSG:4326");
-        var xmLeft = ol.proj.transform(midLeft, proj, "EPSG:4326");
-        var xmRight = ol.proj.transform(midRight, proj, "EPSG:4326");
+        const xmTop  = ol.proj.transform(midTop, proj, "EPSG:4326");
+        const xmBot  = ol.proj.transform(midBot, proj, "EPSG:4326");
+        const xmLeft = ol.proj.transform(midLeft, proj, "EPSG:4326");
+        const xmRight = ol.proj.transform(midRight, proj, "EPSG:4326");
     
         return [xmLeft[0], xmBot[1], xmRight[0], xmTop[1]];
     }
@@ -345,9 +348,9 @@ pol.core.MapBrowser = class {
      * Get scale of the map (center of map) as it is displayed on the screen.  
      */
     getScale() {
-       var res = this.view.getResolution();
-       var center = this.view.getCenter();
-       var mpu = this.view.getProjection().getMetersPerUnit();
+       const res = this.view.getResolution();
+       const center = this.view.getCenter();
+       const mpu = this.view.getProjection().getMetersPerUnit();
        
        return ol.proj.getPointResolution(
              this.view.getProjection(), res, center) * mpu * this.dpm;
@@ -369,7 +372,7 @@ pol.core.MapBrowser = class {
     geodeticAdjustment() {
         if (/EPSG:(900913|3857|4326)/.test(this.view.getProjection().getCode()) 
               && this.view.getCenter() != null) { 
-           var center = ol.proj.toLonLat(this.view.getCenter(), this.view.getProjection()); 
+           const center = ol.proj.toLonLat(this.view.getCenter(), this.view.getProjection()); 
            return Math.cos(center[1]/180*Math.PI ); 
         }
         else
@@ -390,7 +393,7 @@ pol.core.MapBrowser = class {
         if (proj == this.view.getProjection())
            return; 
         
-        var prev = this.view; 
+        const prev = this.view; 
         this.view = new ol.View({
            projection: proj,
            center: ol.proj.transform(this.view.getCenter(), this.view.getProjection(), proj),
@@ -401,7 +404,7 @@ pol.core.MapBrowser = class {
          * of the scale. It may be necessary to zoom the map accordingly, if 
          * switching to/from a spherical mercator projection.
          */
-        var gda = this.geodeticAdjustment(); 
+        const gda = this.geodeticAdjustment(); 
         
         if (gda < 1 && this.prevGda == 1) 
            this.view.setResolution(this.view.getResolution()/gda);
@@ -422,7 +425,7 @@ pol.core.MapBrowser = class {
      * @param {ol.Coordinate} coord - position to be shown (in latlong projection).
      */
     show_Mapref(coord) {
-         var h = '<span class="sleftlab">UTM:</span>' + pol.mapref.formatUTM(coord) +'<br>' +
+         const h = '<span class="sleftlab">UTM:</span>' + pol.mapref.formatUTM(coord) +'<br>' +
                  '<nobr><span class="sleftlab">Latlong:</span>' + pol.mapref.formatDM(coord) +'<br>'  + 
                  '</nobr><span class="sleftlab">Loc:</span>' + pol.mapref.formatMaidenhead(coord);    
          this.gui.removePopup();       

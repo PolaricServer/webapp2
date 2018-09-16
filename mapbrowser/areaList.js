@@ -1,7 +1,7 @@
 /*
  Map browser based on OpenLayers 5. 
  
- Copyright (C) 2017 Øyvind Hanssen, LA7ECA, ohanssen@acm.org
+ Copyright (C) 2017-2018 Øyvind Hanssen, LA7ECA, ohanssen@acm.org
  
  This program is free software: you can redistribute it and/or modify
  it under the terms of the GNU Affero General Public License as published 
@@ -20,22 +20,20 @@
 
 
 /**
- * @classdesc
  * User defined areas (in a popup window). 
- * @constructor
  */
 
-pol.core.AreaList = class AreaList extends pol.core.Widget {
+pol.core.AreaList = class extends pol.core.Widget {
 
     constructor() {
         super();
         this.classname = "core.AreaList"; 
         this.myAreas = [];
-        var t = this;
+        const t = this;
  
         this.widget = {
             view: function() {
-                var i=0;
+                let i=0;
                 return m("div", [       
                     m("h1", "My map areas"),  
                     m("table.mapAreas", m("tbody", t.myAreas.map( x => {
@@ -64,7 +62,7 @@ pol.core.AreaList = class AreaList extends pol.core.Widget {
     
         /* Get areas stored on server (if logged on) */
         setTimeout( () => {
-            var srv = CONFIG.server; 
+            const srv = CONFIG.server; 
             if (srv != null && srv.loggedIn) {
                 srv.getAreas( a => {
                     for (x in a) 
@@ -85,10 +83,10 @@ pol.core.AreaList = class AreaList extends pol.core.Widget {
    
    
         function removeDup(name) {
-            for (i in t.myAreas)
+            for (const i in t.myAreas)
                 if (t.myAreas[i].name == name) {
                     /* Remove duplicate entries. Is this right? */
-                    t.myAreas.splice(i,1);
+                    t.myAreas.splice(i, 1);
                     return;
                 }
         }
@@ -97,10 +95,10 @@ pol.core.AreaList = class AreaList extends pol.core.Widget {
         /* Remove area from list */
         function removeArea(id) {
             // If server available and logged in, delete on server as well
-            var srv = CONFIG.server; 
+            const srv = CONFIG.server; 
             if (srv && srv != null && srv.loggedIn) 
                 srv.removeArea(t.myAreas[id].index);
-            t.myAreas.splice(id,1);
+            t.myAreas.splice(id, 1);
             CONFIG.store("core.AreaList", t.myAreas, true);
         }
    
@@ -108,7 +106,6 @@ pol.core.AreaList = class AreaList extends pol.core.Widget {
         /* Move map area name to editable textInput */
         function editArea(id) {
             gotoExtent(id);
-    //      t.currName = t.myAreas[id].name;
             $("#editArea").val("");
             $("#editArea").val(t.myAreas[id].name).trigger("change").attr("ok", true);;
             removeArea(id);
@@ -118,17 +115,17 @@ pol.core.AreaList = class AreaList extends pol.core.Widget {
    
         /* Add map extent to list */
         function add() {
-            var ext = CONFIG.mb.getExtent();
-            var name = $("#editArea").val(); 
+            const ext = CONFIG.mb.getExtent();
+            const name = $("#editArea").val(); 
 
-            var area = {name: name, extent: ext};
+            const area = {name: name, extent: ext};
             area.baseLayer = CONFIG.mb.baseLayerIdx;
             area.oLayers = getOLayers();
             t.myAreas.push(area);
             CONFIG.store("core.AreaList", t.myAreas, true);
 
             /* IF server available and logged in, store on server as well */
-            var srv = CONFIG.server; 
+            const srv = CONFIG.server; 
             if (srv && srv != null && srv.loggedIn)
                 srv.putArea(area, function(i) { 
                     area.index = i; 
@@ -139,11 +136,11 @@ pol.core.AreaList = class AreaList extends pol.core.Widget {
    
     
       
-        /* Return selected overlay layers (array of indices) */
+        /* Return selected overlay layers */
         function getOLayers() {
-            var ol = new Array();
-            for (i in CONFIG.oLayers)
-                ol.push(CONFIG.oLayers[i].getVisible())
+            const ol = new Array();
+            for (const x of CONFIG.oLayers)
+                ol.push(x.getVisible())
             return ol;
         }
     
@@ -151,7 +148,7 @@ pol.core.AreaList = class AreaList extends pol.core.Widget {
    
         /* Zoom and move map to extent */
         function gotoExtent(id) {
-            var a = t.myAreas[id];
+            const a = t.myAreas[id];
             CONFIG.mb.gotoExtent(a);
         }
    
