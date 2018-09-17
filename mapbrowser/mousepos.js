@@ -1,8 +1,8 @@
  /*
-    Map browser based on OpenLayers 4. 
+    Map browser based on OpenLayers 5. 
     Control that shows mouse position (latlong, UTM, maidenhad) and scale. 
     
-    Copyright (C) 2017 Øyvind Hanssen, LA7ECA, ohanssen@acm.org
+    Copyright (C) 2017-2018 Øyvind Hanssen, LA7ECA, ohanssen@acm.org
     
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU Affero General Public License as published 
@@ -18,132 +18,129 @@
     along with this program. If not, see <http://www.gnu.org/licenses/>.
   */
  
-/* FIXME: rewrite this to ES6 class form */ 
- 
+
 /**
- * @constructor
+ * Keep track of mouse positions in terms of geographical coordinates. 
+ * Subclass of ol.control.Control
  */
-pol.core.MousePos = function(opt_options) {
 
-   var options = opt_options || {};
-
-   var t = this;
-   var map = this.getMap();
-   var element = document.createElement('div');
-   element.className = 'mousepos ol-unselectable ol-control';
-  
-   this.scale = document.createElement('div');
-   this.scale.className = 'scale';
-   element.appendChild(this.scale);
-  
-   this.utm = document.createElement('div');
-   this.utm.className = 'mouse_utm';
-   element.appendChild(this.utm);
+pol.core.MousePos = class extends ol.control.Control {
     
-   this.latlong = document.createElement('div');
-   this.latlong.className = 'mouse_latlong';
-   element.appendChild(this.latlong);
-  
-   this.maidenhead = document.createElement('div');
-   this.maidenhead.className = 'mouse_maidenhead';
-   element.appendChild(this.maidenhead);
-  
-   ol.control.Control.call(this, {
-      element: element,
-      target: options.target
-   });
+    constructor(opt_options) {
+        const options = opt_options || {};
+        const elem = document.createElement('div');
+        const scale = document.createElement('div');
+        const utm = document.createElement('div');
+        const latlng = document.createElement('div');
+        const maidenhd = document.createElement('div');
+       
+        elem.className = 'mousepos ol-unselectable ol-control';
+        utm.className = 'mouse_utm';
+        scale.className = 'scale';
+        latlng.className = 'mouse_latlong';
+        maidenhd.className = 'mouse_maidenhead';
+        
+        elem.appendChild(scale);
+        elem.appendChild(utm);
+        elem.appendChild(latlng)
+        elem.appendChild(maidenhd);
 
-  this.lastMouseMovePixel_ = null;
+        super({
+            element: elem,
+            target: options.target
+        });
+    
+        this.latlong = latlng;
+        this.scale = scale;
+        this.maidenhead = maidenhd;
+        this.utm = utm;
+        this.lastMouseMovePixel_ = null;
+    } /* constructor */
 
-};
-ol.inherits(pol.core.MousePos, ol.control.Control);
 
-      
-
-
-/**
- * Set map object. Called from superclass. 
- */
-pol.core.MousePos.prototype.setMap = function(map) {
-   ol.control.Control.prototype.setMap.call(this, map);
-   var t = this;
-   if (map) {
-      var viewport = map.getViewport();
-      viewport.addEventListener("mousemove", onMouseMove); 
-      viewport.addEventListener("mouseout", onMouseOut);
-      map.on('moveend', onMapMove);
-      t.updatePos(null);
-   }
+    
+    /**
+     * Set map object. Called from superclass. 
+     */
+    setMap(map) {
+        super.setMap(map);
+        const t = this;
+        if (map) {
+            const viewport = map.getViewport();
+            viewport.addEventListener("mousemove", onMouseMove); 
+            viewport.addEventListener("mouseout", onMouseOut);
+            map.on('moveend', onMapMove);
+            t.updatePos(null);
+        }
   
-   /* Handler for mouse move */
-   function onMouseMove(e) {
-      var pp = t.getMap().getEventPixel(e);
-      t.updatePos(pp);
-   }
+        /* Handler for mouse move */
+        function onMouseMove(e) {
+            const pp = t.getMap().getEventPixel(e);
+            t.updatePos(pp);
+        }
   
-   /* Handler for mouse outside of map view */
-   function onMouseOut(e) {
-      t.updatePos(null);
-   }
+        /* Handler for mouse outside of map view */
+        function onMouseOut(e) {
+            t.updatePos(null);
+        }
   
-   /* Hack to find the actual screen resolution in dots per inch */
-   function dotsPerInch() {
-      var div = document.createElement("div");
-      div.style.width="1in";
-      var body = document.getElementsByTagName("body")[0];
-      body.appendChild(div);
-      var ppi = document.defaultView.getComputedStyle(div, null).getPropertyValue('width');
-      body.removeChild(div); 
-      return parseFloat(ppi);
-   }
+        /* Hack to find the actual screen resolution in dots per inch */
+        function dotsPerInch() {
+            const div = document.createElement("div");
+            div.style.width="1in";
+            const body = document.getElementsByTagName("body")[0];
+            body.appendChild(div);
+            const ppi = document.defaultView.getComputedStyle(div, null).getPropertyValue('width');
+            body.removeChild(div); 
+            return parseFloat(ppi);
+        }
   
-   /* Handler for change of map zoom-level. Compute scale and show it */
-   function onMapMove(e) {
-      var scale = CONFIG.mb.getScale(); 
+        /* Handler for change of map zoom-level. Compute scale and show it */
+        function onMapMove(e) {
+            let scale = CONFIG.mb.getScale(); 
 
-      if (scale >= 1000)
-            scale = Math.round(scale / 100) * 100;
-      if (scale >= 10000)
-            scale = Math.round(scale / 1000) * 1000;
-      if (scale >= 100000)
-            scale = Math.round(scale / 10000) * 10000;
-      else
-	    scale = Math.round(scale);
+            if (scale >= 1000)
+                scale = Math.round(scale / 100) * 100;
+            if (scale >= 10000)
+                scale = Math.round(scale / 1000) * 1000;
+            if (scale >= 100000)
+                scale = Math.round(scale / 10000) * 10000;
+            else
+                scale = Math.round(scale);
    
-      if (scale >= 1000000) {
-            scale = Math.round(scale / 100000) * 100000; 
-            scale = scale / 1000000;
-            scale = scale + " Million";
-      }
-      else if (scale >= 10000)
-            scale = (Math.round(scale/1000) + " 000");
+            if (scale >= 1000000) {
+                scale = Math.round(scale / 100000) * 100000; 
+                scale = scale / 1000000;
+                scale = scale + " Million";
+            }
+            else if (scale >= 10000)
+                scale = (Math.round(scale/1000) + " 000");
       
-      t.scale.innerHTML = '<span>Scale 1 : ' + scale + '</span>';
-   }
-}
+            t.scale.innerHTML = '<span>Scale 1 : ' + scale + '</span>';
+        }
+    } /* setMap */
 
 
 
-
-/**
- * Show position in UTM format, latlong format and as maidenhead locator.
- */
-
-pol.core.MousePos.prototype.updatePos = function(x) {
-    if (x==null) {
-       this.utm.innerHTML = "<span>(utm pos)</span>";
-       this.latlong.innerHTML = "<span>(latlong pos)</span>";
-       this.maidenhead.innerHTML = "<span>(locator)</span>";
+    /**
+     * Show position in UTM format, latlong format and as maidenhead locator.
+     */
+    updatePos(x) {
+        if (x==null) {
+            this.utm.innerHTML = "<span>(utm pos)</span>";
+            this.latlong.innerHTML = "<span>(latlong pos)</span>";
+            this.maidenhead.innerHTML = "<span>(locator)</span>";
+        }
+        else {
+            const map = this.getMap();
+            let c = map.getCoordinateFromPixel(x);
+            if (c == null) 
+                c = [0,0];
+            const coord = ol.proj.toLonLat(c, map.getView().getProjection());    
+            this.latlong.innerHTML = '<span>'+pol.mapref.formatDM(coord)+'</span>';
+            this.utm.innerHTML = '<span>'+pol.mapref.formatUTM(coord)+'</span>'; 
+            this.maidenhead.innerHTML = '<span>'+pol.mapref.formatMaidenhead(coord);
+        }
     }
-    else {
-       var map = this.getMap();
-       var c = map.getCoordinateFromPixel(x);
-       if (c == null) c = [0,0];
-       var coord = ol.proj.toLonLat(c, map.getView().getProjection());    
-       this.latlong.innerHTML = '<span>'+pol.mapref.formatDM(coord)+'</span>';
-       this.utm.innerHTML = '<span>'+pol.mapref.formatUTM(coord)+'</span>'; 
-       this.maidenhead.innerHTML = '<span>'+pol.mapref.formatMaidenhead(coord);
-    }
-    
-}
 
+} /* class */

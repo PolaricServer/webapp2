@@ -58,9 +58,9 @@ pol.widget.restore = function() {
     if (pol.widget._stored == null)
         pol.widget._stored = {};
     
-    for (var x in pol.widget._stored) {
-        var f = pol.widget._restore[pol.widget._stored[x]];
-        var arg = CONFIG.get("core.widget."+x);
+    for (const x in pol.widget._stored) {
+        const f = pol.widget._restore[pol.widget._stored[x]];
+        const arg = CONFIG.get("core.widget."+x);
         if (f != null)
            f(x, arg);
     }
@@ -88,7 +88,6 @@ pol.core.Widget = class {
      * Display widget in the given DOM element. 
      * @param {Element} w - DOM element to display the layer switcher.  
      */
- 
     activate(w) 
     { 
         console.assert(w && w != null, "Assertion failed");
@@ -104,14 +103,13 @@ pol.core.Widget = class {
      * @param {string} id - Identifier to be used for the DOM element
      * @param pixPos - Where on screen to put it.
      */
-  
     activatePopup(id, pixPos, pinned) 
     {
         console.assert(this.widget && id != null 
             && pixPos[0] >= 0 && pixPos[1] >= 0, "Assertion failed");
 
-        this.pos = pixPos;
-        var t = this; 
+        const t = this; 
+        this.pos = pixPos;        
         if (!pinned)
             pinned = false;
         t.pinned = pinned;

@@ -56,21 +56,21 @@ pol.core.refSearch = class refSearch extends pol.core.Widget {
         /* Add actions to buttons */
         setTimeout(function() {
             $('#butt_mgrs').click( ()=> {
-                var pos = pol.mapref.parseMGRS(browser, $('#mgrsprefix').val(), $('#locx').val(), 
+                const pos = pol.mapref.parseMGRS(browser, $('#mgrsprefix').val(), $('#locx').val(), 
                     $('#locy').val());
                 browser.goto_Pos(pos, true);
             });
       
             $('#butt_utm').click( ()=> {
-                var pos = pol.mapref.parseUTM( $('#utmx').val(), $('#utmy').val(), $('#utmnz').val(), 
+                const pos = pol.mapref.parseUTM( $('#utmx').val(), $('#utmy').val(), $('#utmnz').val(), 
                     $('#utmz').val());
                 browser.goto_Pos(pos, true);
             });
       
             $('#butt_ll').click( () => {
-                var lat_sign = ( $("#ll_NS").html()=="N" ? "" : "-");
-                var lng_sign = ( $("#ll_EW").html()=="E" ? "" : "-");
-                var pos = pol.mapref.parseDM(
+                const lat_sign = ( $("#ll_NS").html()=="N" ? "" : "-");
+                const lng_sign = ( $("#ll_EW").html()=="E" ? "" : "-");
+                const pos = pol.mapref.parseDM(
                     lat_sign+$('#ll_Nd').val(), $('#ll_Nm').val(), 
                     lng_sign+$('#ll_Ed').val(), $('#ll_Em').val());
                 browser.goto_Pos(pos, true );
@@ -85,7 +85,7 @@ pol.core.refSearch = class refSearch extends pol.core.Widget {
 
 
 pol.widget.setRestoreFunc("core.refSearch", (id, pos)=> {
-    var x = new pol.core.refSearch(); 
+    const x = new pol.core.refSearch(); 
     x.activatePopup(id, pos, true); 
 }); 
 

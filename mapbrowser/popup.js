@@ -43,7 +43,7 @@ pol.core.Popup = class {
         this.offCallback   = null;
         this.geoPos        = false;
         this.image         = null;
-        var t = this;
+        const t = this;
     
         this.mb.view.on('change:center', onChangeCenter);
         this.mb.map.on('click', onClick);
@@ -116,17 +116,16 @@ pol.core.Popup = class {
      * @param {string|undefined} props.id - unique identifier (used as id of element).
      * 
      */
-    
     showPopup(props) 
     {
-        var t = this;
-        var x, y; 
+        const t = this;
+        let x, y; 
         if (props.id && props.id != null && document.getElementById(props.id) != null) {
             $('#'+props.id).effect('bounce');
             return null;
         }
         
-        var pdiv = ((props.elem && props.elem!=null)  
+        let pdiv = ((props.elem && props.elem!=null)  
             ? props.elem : document.createElement('div'));
         if (props.html)
             pdiv.innerHTML = props.html;
@@ -209,7 +208,7 @@ pol.core.Popup = class {
      */
     imagePopup(title, href, props) 
     {
-        var d =  this.showPopup(props);
+        const d =  this.showPopup(props);
         d.innerHTML = '<h1 class="popupimg">'+title+'</h1>' +
                       '<img class="popupimg" src="'+href.substring(2)+'"/>';
         return d;
@@ -224,7 +223,7 @@ pol.core.Popup = class {
      */
     remotePopup(srv, service, data, props)
     {
-        var d =  this.showPopup(props);
+        const d =  this.showPopup(props);
         srv.GET(service, data, 
             txt => {d.innerHTML = txt; });
         return d;
@@ -240,14 +239,13 @@ pol.core.Popup = class {
      * @param {Object.<string,*>} props - Options, see showPopup()
      * 
      */
-
     remotePopupCSS(url, css, props)
     {
-       var d = this.remotePopup(url, props)
-            if (css != null) 
-               setTimeout( () => {
-                  div.className = css;
-               }, 900); 
+        const d = this.remotePopup(url, props);
+        if (css != null) 
+            setTimeout( () => {
+                div.className = css;
+            }, 900); 
     }
 
 
@@ -256,13 +254,11 @@ pol.core.Popup = class {
      * Show a cross at a given map position. 
      * @param {ol.Coordinate} geoPos - LatLong position of where to put upper left corner of popup.
      */
-    
     showImageGeo(geoPos) {
-        var t = this;
         setTimeout( () => {
             t.geoPos = geoPos;
-            var pixPos = t.mb.map.getPixelFromCoordinate
-                (ol.proj.fromLonLat(geoPos, t.mb.view.getProjection()));
+            var pixPos = this.mb.map.getPixelFromCoordinate
+                (ol.proj.fromLonLat(geoPos, this.mb.view.getProjection()));
             t.popup_(null, pixPos[0], pixPos[1], true);
         }, 900);
     }
@@ -301,9 +297,9 @@ pol.core.Popup = class {
 
     setPosition_(x, y)
     {   
-        var xoff=0;
-        var yoff=0;
-        var xoffs = false, yoffs = false;
+        let xoff=0;
+        let yoff=0;
+        let xoffs = false, yoffs = false;
         
         if (this.image != null) {
             this.image.style.left= -9+'px';
@@ -348,7 +344,6 @@ pol.core.Popup = class {
      */
     popup_(elem, x, y, img)
     {
-        var t = this;
         if (this.allowedPopups <= 0)
             return;
      

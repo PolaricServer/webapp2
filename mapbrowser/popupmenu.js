@@ -77,8 +77,8 @@ pol.core.PopupMenu = class {
             this.sections[this.secNo++] = this.lastItem;
         }
         else {
-            var atxt  = (txt == null ? '' : txt);
-            var alink = (func == null ? '' : func);
+            const atxt  = (txt == null ? '' : txt);
+            const alink = (func == null ? '' : func);
             this.lastItem = this.createItem_(atxt, alink, arg);
             this.menudiv.appendChild(this.lastItem);
         }
@@ -115,9 +115,9 @@ pol.core.PopupMenu = class {
         this.sections[sect].className = '';
    
         /* Insert immediately after sectons[sect] */
-        var atxt  = (txt == null ? '' : txt);
-        var alink = (func == null ? '' : func);
-        var newNode = this.createItem_(atxt, alink, arg);
+        const atxt  = (txt == null ? '' : txt);
+        const alink = (func == null ? '' : func);
+        const newNode = this.createItem_(atxt, alink, arg);
         this.sections[sect].parentNode.insertBefore(newNode, this.sections[sect].nextSibling);
         newNode.className = 'ITEM_sep';
         this.sections[sect] = newNode;
@@ -138,8 +138,7 @@ pol.core.PopupMenu = class {
         if (this.lastItem != null)
             this.lastItem.className = 'ITEM_last';
        
-        var isMenu = true;
-        var wrapper = document.createElement('div');
+        const wrapper = document.createElement('div');
     
         if (this.heading != null) {
             var h = document.createElement("H1");
@@ -163,8 +162,8 @@ pol.core.PopupMenu = class {
      */
     createItem_(text, actn, arg)
     {
-        var t = this;
-        var elem = document.createElement('div');
+        const t = this;
+        const elem = document.createElement('div');
         elem.origCls = '';
         if (isMobile)
             // Tap listener on mobile devices.. (?)
@@ -216,10 +215,9 @@ pol.core.PopupMenu = class {
  
 pol.core.addHandler = function (element, icon, func)
 {
-    var t = this;
-    var rect = null; 
+    let rect = null; 
     if (icon) {      
-        var rect = element.getBoundingClientRect();
+        rect = element.getBoundingClientRect();
         element.onclick = _handler;
     }
     element.oncontextmenu = _handler;
@@ -243,19 +241,18 @@ pol.core.addHandler = function (element, icon, func)
   * @param {boolean} icon - True if element is a icon that can react on left mouse click.
   * @param {function} func - Handler function to be invoked on click. 
   */
-  
 pol.core.addHandlerId = function (domId, icon, func)
 {    
-    var element = document.getElementById(domId);
+    const element = document.getElementById(domId);
     pol.core.addHandler(element,icon,func);
 } 
+
 
 
  
  /**
   * CONTEXT MENU CLASS.
   */
-
 pol.core.ContextMenu = class {
     
    /**
@@ -296,7 +293,7 @@ pol.core.ContextMenu = class {
      */ 
     show(ctxt, x, y)  {
         console.assert(ctxt != null && ctxt.name && x>0 && y>0, "Assertion failed");
-        var t = this; 
+        const t = this; 
         t.txt.clear();
         t.txt.x = x; 
         t.txt.y = y;
@@ -304,7 +301,7 @@ pol.core.ContextMenu = class {
         /* Try to find the context. By default it is the id of the 
          * element we clicked on. 
          */
-        var cname = ctxt.name, ident = ctxt.name;
+        let cname = ctxt.name, ident = ctxt.name;
         if (ident == null)    
             cname = 'MAP';
         else if (ident === "_STOP_")
@@ -312,7 +309,7 @@ pol.core.ContextMenu = class {
         _doCallback(cname);         
    
         /* Activate menu and add the context-name as a CSS class */
-        this.txt.activate(x, y).className += ' ctxt_'+cname;
+        t.txt.activate(x, y).className += ' ctxt_'+cname;
    
    
         /*
@@ -322,11 +319,11 @@ pol.core.ContextMenu = class {
         {
             const lst = t.callbacks[cname]; 
             if (lst)
-            for (i=0; i<lst.length; i++) {
-                const f = lst[i]; 
-                if (f != null) 
-                f(t.txt, ctxt); 
-            }    
+                for (i=0; i<lst.length; i++) {
+                    const f = lst[i]; 
+                    if (f != null) 
+                    f(t.txt, ctxt); 
+                }    
         }
     } 
  
@@ -341,14 +338,13 @@ pol.core.ContextMenu = class {
      * name will be used.
      */
     addMenu(element, name, icon, func) {
-        var t = this;
         pol.core.addHandler(element, icon, e => 
-            {   var n = null;
+            {   let n = null;
                 if (func) n = func(e);
                 if (n == null)
-                    t.showHandler(element, e, {name:name}, icon); 
+                    this.showHandler(element, e, {name:name}, icon); 
                 else
-                    t.showHandler(element, e, n, icon); 
+                    this.showHandler(element, e, n, icon); 
             } );
     }
  
@@ -363,7 +359,7 @@ pol.core.ContextMenu = class {
      * name will  be used.
      */
     addMenuId(domId, name, icon, func) {
-        var element = document.getElementById(domId);
+        const element = document.getElementById(domId);
         this.addMenu(element, name, icon, func);
     }
  

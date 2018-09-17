@@ -27,10 +27,10 @@ pol.core.Server = class {
      * Constructor.
      */
     constructor() {
-        var host = CONFIG.get('server');
+        const host = CONFIG.get('server');
     
         /* Compute URL base (for ordinary Ajax/REST) */
-        var prefix = CONFIG.get('ajaxprefix');
+        let prefix = CONFIG.get('ajaxprefix');
         if (prefix == null)
             prefix = '';
         this.url = host + prefix;
@@ -39,7 +39,7 @@ pol.core.Server = class {
         prefix = CONFIG.get('wsprefix');
         if (prefix == null)
             prefix = '';
-        var uparts = host.split(/:\/\//);
+        const uparts = host.split(/:\/\//);
         this.wsurl = (uparts[0] === 'https' ? 'wss' : 'ws'); 
         this.wsurl = this.wsurl + "://"+ uparts[1] + prefix
    
@@ -51,8 +51,8 @@ pol.core.Server = class {
 
     /** Full (browser) popup window */
     popup(name, url, width, height) {
-        var u = this.url+"/"+url;
-        var ctrl = "left=50,top=100,width="+width+",height="+height+"resizable=1,scrollbars=1";
+        const u = this.url+"/"+url;
+        const ctrl = "left=50,top=100,width="+width+",height="+height+"resizable=1,scrollbars=1";
         eval( "this."+name+"=window.open('"+u+"','"+name+"','"+ctrl+"');" );
     }
 

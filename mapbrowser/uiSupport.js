@@ -28,37 +28,37 @@
  * @param {string} fieldId - Id of DOM field elelent to jump from.
  * @param {string} nextFieldId - Id of DOM field element to jump to.
  */
-
 pol.ui.autojump = function(fieldId, nextFieldId)
 {
-   if (fieldId==null || nextFieldId==null) {
-       console.error("Field id is null");
-       return;
-   }
-   var downStrokeField;
-   var myField=document.getElementById(fieldId);             
-   myField.nextField=document.getElementById(nextFieldId); 
-   myField.onkeydown=autojump_keyDown;
-   myField.onkeyup=autojump_keyUp;
-   var beforeLength = 0;
-
+    if (fieldId==null || nextFieldId==null) {
+        console.error("Field id is null");
+        return;
+    }
    
-   function autojump_keyDown()
-   {
-      beforeLength=myField.value.length;
-      downStrokeField=myField;
-   }
+    let beforeLength = 0;
+    let downStrokeField = null;
+    const myField = document.getElementById(fieldId);             
+    myField.nextField=document.getElementById(nextFieldId); 
+    myField.onkeydown=autojump_keyDown;
+    myField.onkeyup=autojump_keyUp;
 
 
-   function autojump_keyUp()
-   {     
-      if (
-       (myField == downStrokeField) && 
-       (myField.value.length > beforeLength) && 
-       (myField.value.length >= myField.maxLength)
-      ) 
-         myField.nextField.focus();
-      downStrokeField=null;
+    function autojump_keyDown()
+    {
+        beforeLength=myField.value.length;
+        downStrokeField=myField;
+    }
+
+
+    function autojump_keyUp()
+    {     
+        if (
+            (myField == downStrokeField) && 
+            (myField.value.length > beforeLength) && 
+            (myField.value.length >= myField.maxLength)
+        ) 
+            myField.nextField.focus();
+        downStrokeField=null;
    }
 }
 /* End of autojump stuff */
@@ -66,9 +66,10 @@ pol.ui.autojump = function(fieldId, nextFieldId)
 
 
 /* Some simple DOM elements */
-var br = m("br");
-var hr = m("hr");
-var nbsp = m.trust("&nbsp;");
+const br = m("br");
+const hr = m("hr");
+const nbsp = m.trust("&nbsp;");
+
 
 
 /**
@@ -79,7 +80,7 @@ var nbsp = m.trust("&nbsp;");
  * @param {boolean} contentEditable - true if field can be edited by user. 
  * @param {regex} regex - Regular expression that defines what input is valid. 
  */
-var textInput = {
+const textInput = {
  
     view: function(vn) {
        return m("input#"+vn.attrs.id, 
@@ -126,7 +127,7 @@ var textInput = {
  *  Checkbox: 
  *  Parameters: id, onclick, name, checked
  */
-var checkBox = {
+const checkBox = {
     view: function(vn) {
         return m("span", m("input#" + vn.attrs.id, 
          {
@@ -138,19 +139,18 @@ var checkBox = {
 }
 
 
-var select = {
+const select = {
     view: function(vn) {
-        return m("select#"+vn.attrs.id, {onchange: vn.attrs.onchange}, vn.attrs.list.map(function(x) {
-            return m("option", {value: x.val}, x.label);
-        }));
+        return m("select#"+vn.attrs.id, {onchange: vn.attrs.onchange}, vn.attrs.list.map(
+            x => m("option", {value: x.val}, x.label) ));
     }
 }
 
 
 
-var Datepick = {
+const Datepick = {
     oncreate: function(vn) {
-        var input = document.createElement( 'input' );
+        const input = document.createElement( 'input' );
         input.readOnly = true; 
         input.id=vn.attrs.id;
         input.value = vn.attrs.value; 
@@ -173,7 +173,7 @@ var Datepick = {
 
 
 
-var dateTimeInput = {
+const dateTimeInput = {
     view: function(vn) {
         return m("span", 
             m(Datepick, {value: vn.attrs.dvalue, id:vn.attrs.id+"_date"}),
@@ -187,9 +187,9 @@ var dateTimeInput = {
  * MGRS input fields. 
  * FIXME: Only one at a time because of use if id attribute. OK? 
  */
-var mgrsInput = {
+const mgrsInput = {
     view: function() {
-        var center = CONFIG.mb.getCenter();
+        const center = CONFIG.mb.getCenter();
         return m("span", 
                {onclick: function() { pol.ui.autojump("locx", "locy"); }},
             m(textInput, {id:"mgrsprefix", size: 5, maxlength: 5, 
@@ -204,9 +204,9 @@ var mgrsInput = {
  * UTM input fields.
  * FIXME: Only one at a time because of use if id attribute. OK? 
  */ 
-var utmInput = {
+const utmInput = {
     view: function() {
-        var uref = CONFIG.mb.getCenterUTM();
+        const uref = CONFIG.mb.getCenterUTM();
         return m("span", 
                  { onclick: function() {     
                      pol.ui.autojump('utmz', 'utmnz');
@@ -226,11 +226,11 @@ var utmInput = {
   * Lat long input fields.
   * FIXME: Only one at a time because of use if id attribute. OK? 
   */
-var reg_MIN =  /^(([0-5]?[0-9])|60)(\.([0-9]{1,4}))?$/;
+const reg_MIN =  /^(([0-5]?[0-9])|60)(\.([0-9]{1,4}))?$/;
  
-var latLngInput = {
+const latLngInput = {
     view: function() {
-        var center = CONFIG.mb.getCenter();
+        const center = CONFIG.mb.getCenter();
         return m("span",                 
                  { onclick: function() {     
                      pol.ui.autojump('ll_Nd', 'll_Nm');
@@ -247,13 +247,13 @@ var latLngInput = {
     
     /* Change betwen E and W by clicking on the letter */
     clickNS: function() {    
-       var val = $("#ll_NS").html();
+       const val = $("#ll_NS").html();
           $("#ll_NS").html( (val=="N" ? "S" : "N"));
     },
     
     /* Change between N and S by clicking on the letter */
     clickEW: function() {
-       var val = $("#ll_EW").html();
+       const val = $("#ll_EW").html();
           $("#ll_EW").html( (val=="E" ? "W" : "E"));
     }
  }

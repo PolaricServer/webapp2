@@ -25,202 +25,193 @@
  * @param {Object.<string,*>} opt - Options
  * @param {pol.core.MapBrowser} br - Map browser instance
  */
-pol.core.Toolbar = function(opt, br) {
+pol.core.Toolbar = class extends ol.control.Control  {
 
-   var options = opt || {};
-
-   var t = this;
-   var map = this.getMap();
-   
-   this.browser = br;
-   this.element = document.createElement('div');
-   this.element.className = 'toolbar ol-unselectable ol-control';
-   this.lastElem = null; 
-   this.arealist = new pol.core.AreaList();
-   this.sections = [];
-   this.nextSect = 0;
-   
-   ol.control.Control.call(this, {
-      element: this.element,
-      target: options.target
-   });
-};
-ol.inherits(pol.core.Toolbar, ol.control.Control);
+    constructor(opt, brs) {
+        const options = opt || {};
+        const elem = document.createElement('div');
+        elem.className = 'toolbar ol-unselectable ol-control';
+        
+        super({
+            element: elem,
+            target: options.target
+        });
+           
+        this.browser = brs;
+        this.lastElem = null; 
+        this.arealist = new pol.core.AreaList();
+        this.sections = [];
+        this.nextSect = 0;
+    } /* constructor */
 
 
 
-pol.core.Toolbar.prototype.addSection = function() 
-{
-    var sx = document.createElement('div');
-    this.element.appendChild(sx);
-    this.sections[this.nextSect++] = sx;
-}
+    addSection() {
+        const sx = document.createElement('div');
+        this.element.appendChild(sx);
+        this.sections[this.nextSect++] = sx;
+    }
 
 
-
-/**
- * Activate default icons and menus on toolbar.
- */
-pol.core.Toolbar.prototype.setDefaultItems = function() 
-{
-   /* Default icons */
-   this.addSection();
-   this.addIcon(0, "images/menu.png", "toolbar", null, "Main menu");
+    /**
+     * Activate default icons and menus on toolbar.
+     */
+    setDefaultItems() 
+    {
+        /* Default icons */
+        this.addSection();
+        this.addIcon(0, "images/menu.png", "toolbar", null, "Main menu");
+        this.addSection();
+        this.addIcon(1, "images/layers.png", "tb_layers", null, "Layer selector");
+        this.addIcon(1, "images/areaselect.png", "tb_area", null, "Area menu");
+        this.addSection();
+        this.addIcon(2, "images/ruler1.png", "tb_measure", null, "Measure distance");
+        const t = this; 
+ 
+        /* Layer selection menu */
+        pol.core.addHandlerId("tb_layers", true,  
+            (e)=> {
+                const ls = new pol.core.LayerSwitcher();
+                ls.activatePopup("layerswitcher", [e.iconX, e.iconY]);
+            } );
    
-   this.addSection();
-   this.addIcon(1, "images/layers.png", "tb_layers", null, "Layer selector");
-   this.addIcon(1, "images/areaselect.png", "tb_area", null, "Area menu");
-   
-   this.addSection();
-   this.addIcon(2, "images/ruler1.png", "tb_measure", null, "Measure distance");
-   
-   
-   var t = this; 
-   
-   pol.core.addHandlerId("tb_layers", true,  
-        (e)=> {
-	       var ls = new pol.core.LayerSwitcher();
-           ls.activatePopup("layerswitcher", [e.iconX, e.iconY]);
-	 } );
-   
-   
-   var measure_on = false; 
-   pol.core.addHandlerId("tb_measure", true, 
-	(e)=> {
-	   measure_on = (measure_on ? false : true);
-	   if (measure_on){
-            measure = new pol.core.Measure();
-	        $("#tb_measure").attr("class", "selected");
-       }
-	   else {
-	        $("#tb_measure").attr("class", "");
-	        measure.deactivate();
-       }
-	} );
+        /* Distance measurement */
+        let measure_on = false; 
+        pol.core.addHandlerId("tb_measure", true, 
+            (e)=> {
+                measure_on = (measure_on ? false : true);
+                if (measure_on){
+                    measure = new pol.core.Measure();
+                    $("#tb_measure").attr("class", "selected");
+                }
+                else {
+                    $("#tb_measure").attr("class", "");
+                    measure.deactivate();
+                }
+            } );
    
    
-   this.browser.ctxMenu.addMenuId("toolbar", "TOOLBAR", true);
-   this.browser.ctxMenu.addMenuId('tb_area', 'AREASELECT', true);
+        this.browser.ctxMenu.addMenuId("toolbar", "TOOLBAR", true);
+        this.browser.ctxMenu.addMenuId('tb_area', 'AREASELECT', true);
    
    
-   /* Generate menu of predefined areas (defined in mapconfig.js */
-   this.browser.ctxMenu.addCallback('AREASELECT', (m)=> {
-      const areas = t.arealist.myAreas; 
-      for (const i in areas) {
-         const area = areas[i];   
-         if (area && area != null)
-             m.add(area.name, handleSelect(areas, i)); 
-      }
+        /* Generate menu of predefined areas (defined in mapconfig.js */
+        this.browser.ctxMenu.addCallback('AREASELECT', 
+            (m)=> {
+                const areas = t.arealist.myAreas; 
+                for (const i in areas) {
+                    const area = areas[i];   
+                    if (area && area != null)
+                        m.add(area.name, handleSelect(areas, i)); 
+                }
       
-      if (areas.length > 0)
-         m.add(null);
-      m.add("Edit YOUR areas..", 
-         ()=>  t.arealist.activatePopup("AreaList", [90,70]) );
-      m.add(null);
+                if (areas.length > 0)
+                    m.add(null);
+                m.add("Edit YOUR areas..", 
+                    ()=>  t.arealist.activatePopup("AreaList", [90,70]) );
+                m.add(null);
       
-      for (var i in browser.config.aMaps) {
-         const aMap = browser.config.aMaps[i]; 
-         if (aMap && aMap.name && 
-              aMap.name.length > 1 && 
-              !aMap.hidden)
-            m.add(aMap.title, handleSelect(browser.config.aMaps, i));
-      }
+                for (const i in browser.config.aMaps) {
+                    const aMap = browser.config.aMaps[i]; 
+                    if (aMap && aMap.name && aMap.name.length > 1 && !aMap.hidden )
+                        m.add(aMap.title, handleSelect(browser.config.aMaps, i));
+                }
 
-      
-      function handleSelect(a, i) {
-         return function() {
-           browser.gotoExtent(a[i]);
-         } 
-      }
-    });
-   
-}
+                function handleSelect(a, i) {
+                    return function() {
+                        browser.gotoExtent(a[i]);
+                    } 
+                }
+            });
+    }
 
 
+    /**
+     * Set map object. Called from superclass. 
+     */
+    setMap(map) {
+        super.setMap(map);
+    }
 
 
-/**
- * Set map object. Called from superclass. 
- */
-pol.core.Toolbar.prototype.setMap = function(map) {
-   ol.control.Control.prototype.setMap.call(this, map);
-}
-
-
-
-/**
- * Add icon to toolbar. 
- * @param {string} f - Filename/url for icon.
- * @param {String} id - Id for DOM element.
- * @param {function|null} action - Handler function. 
- * @param {string|undefined} title
- * @return DOM element for the icon. 
- */
-pol.core.Toolbar.prototype.addIcon = function(i, f, id, action, title) {
-    var x = document.createElement('img');
-    if (id != null)
-       x.setAttribute("id", id);
-    x.setAttribute('src', f);
-    if (title)
-        x.setAttribute('title', title);
+    /**
+    * Add icon to toolbar. 
+    * @param {string} f - Filename/url for icon.
+    * @param {String} id - Id for DOM element.
+    * @param {function|null} action - Handler function. 
+    * @param {string|undefined} title
+    * @return DOM element for the icon. 
+    */
+    addIcon(i, f, id, action, title) {
+        const x = document.createElement('img');
+        if (id != null)
+            x.setAttribute("id", id);
+        x.setAttribute('src', f);
+        if (title)
+            x.setAttribute('title', title);
     
-    this.sections[i].appendChild(x); // FIXME: Legal index? 
-    this.lastElem = x; 
-    if (action && action != null) 
-        x.onclick = action;
-    return x;
-}
+        this.sections[i].appendChild(x); // FIXME: Legal index? 
+        this.lastElem = x; 
+        if (action && action != null) 
+            x.onclick = action;
+        return x;
+    }
 
-
-pol.core.Toolbar.prototype.changeIcon = function(id, f, action, title) {
-    var x = document.getElementById(id);
-    if (x==null) 
-        return 
-    x.setAttribute('src', f);
-    if (action && action != null)
-        x.onclick = action;
-    if (title)
-        x.setAttribute('title', title);
-}
-
-
-
-pol.core.Toolbar.prototype.addDiv = function(i, id, title, cls) {
-    var x = document.createElement('div');
-    if (id != null)
-        x.setAttribute("id", id);
-    if (title)
-        x.setAttribute("title", title);
-    if (cls) 
-        x.className = cls;
     
-    this.sections[i].appendChild(x);
-    this.lastElem = x;
-    return x;
-}
+    /**
+     * Change image, action and/or title of an icon
+     */
+    changeIcon(id, f, action, title) {
+        const x = document.getElementById(id);
+        if (x==null) 
+            return 
+        x.setAttribute('src', f);
+        if (action && action != null)
+            x.onclick = action;
+        if (title)
+            x.setAttribute('title', title);
+    }
 
 
-pol.core.Toolbar.prototype.changeDiv = function(id, title, cls) {
-    var x = document.getElementById(id);
-    if (title)
-        x.setAttribute("title", title);
-    if (cls) 
-        x.className = cls;
-}
+    /**
+     * Add a div to toolbar 
+     */
+    addDiv(i, id, title, cls) {
+        const x = document.createElement('div');
+        if (id != null)
+            x.setAttribute("id", id);
+        if (title)
+            x.setAttribute("title", title);
+        if (cls) 
+            x.className = cls;
+    
+        this.sections[i].appendChild(x);
+        this.lastElem = x;
+        return x;
+    }
+
+    
+    /** 
+     * Change title and/or css class on div 
+     */
+    changeDiv(id, title, cls) {
+        const x = document.getElementById(id);
+        if (title)
+            x.setAttribute("title", title);
+        if (cls) 
+            x.className = cls;
+    }
 
 
+    /**
+     * Add spacing betwen icons on toolbar. 
+     */
+    ddSpacing() {
+        if (this.lastElem != null) 
+            this.lastElem.className += " x-space"; 
+    }
 
-/**
- * Add spacing betwen icons on toolbar. 
- */
-pol.core.Toolbar.prototype.addSpacing = function() {
-    if (this.lastElem != null) 
-        this.lastElem.className += " x-space"; 
-}
-
-
-
-
+} /* class */
 
 
 
