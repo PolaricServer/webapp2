@@ -3,7 +3,7 @@
  Map browser based on OpenLayers 5. Tracking. 
  Notifications.  
  
- Copyright (C) 2017 Øyvind Hanssen, LA7ECA, ohanssen@acm.org
+ Copyright (C) 2017-2018 Øyvind Hanssen, LA7ECA, ohanssen@acm.org
  
  This program is free software: you can redistribute it and/or modify
  it under the terms of the GNU Affero General Public License as published 
@@ -191,32 +191,32 @@ pol.tracking.NotifyList = class extends pol.core.Widget {
         
     } /* constructor */
 
-
-
-    updateScroller() {
-        const x =  document.getElementById('notifications');
-        if (x==null)
-            return;
-        const pos = x.getBoundingClientRect();
-        let ht = $('#map').height() - pos.top - 70;
-
-        setTimeout( () => {
-            if ($('#notifications table').parent().is( "#notifications .scroll" ) ) 
-                $('#notifications table').unwrap();
-        
-            if ($('#notifications table').height() < ht)
-                ht = $('#notifications table').height();
-            else {
-                $('#notifications table').wrap('<div class="scroll"></div>');
-                $('#notifications .scroll').height(Math.round(ht)-10).width($('#notifications table').width()+40);
-            }
-        }, 60);
-    }
-
 } /* class */
 
 
 
+pol.tracking.NotifyList.updateScroller = function() 
+{     
+   const x =  document.getElementById('notifications');
+   if (x==null)
+      return;
+   const pos = x.getBoundingClientRect();
+   let ht = $('#map').height() - pos.top - 70;
+
+   setTimeout( () => {
+       if ($('#notifications table').parent().is( "#notifications .scroll" ) ) 
+           $('#notifications table').unwrap();
+  
+       if ($('#notifications table').height() < ht)
+           ht = $('#notifications table').height();
+       else {
+           $('#notifications table').wrap('<div class="scroll"></div>');
+           $('#notifications .scroll').height(Math.round(ht)-10).width($('#notifications table').width()+40);
+       }
+   }, 60);
+}
+
+    
 pol.widget.setRestoreFunc("tracking.NotifyList", function(id, pos) {
     var x = new pol.tracking.NotifyList(); 
     x.activatePopup(id, pos, true); 

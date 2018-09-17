@@ -60,16 +60,19 @@ pol.core.AreaList = class extends pol.core.Widget {
         if (t.myAreas == null)
             t.myAreas = [];
     
+	for (const x of t.myAreas)
+	    x.server = false; 
+	
         /* Get areas stored on server (if logged on) */
         setTimeout( () => {
             const srv = CONFIG.server; 
             if (srv != null && srv.loggedIn) {
                 srv.getAreas( a => {
-                    for (x in a) 
-                        if (a[x] != null) {
-                            removeDup(a[x].name);
-                            a[x].server = true;
-                            t.myAreas.push(a[x]);  
+                    for (const x of a) 
+                        if (x != null) {
+                            removeDup(x.name);
+                            x.server = true;
+                            t.myAreas.push(x);  
                         }
                     m.redraw();
                 });
@@ -96,8 +99,10 @@ pol.core.AreaList = class extends pol.core.Widget {
         function removeArea(id) {
             // If server available and logged in, delete on server as well
             const srv = CONFIG.server; 
-            if (srv && srv != null && srv.loggedIn) 
-                srv.removeArea(t.myAreas[id].index);
+            if (srv && srv != null && srv.loggedIn) {
+                console.log(t.myAreas[id]);
+		srv.removeArea(t.myAreas[id].index);
+	    }
             t.myAreas.splice(id, 1);
             CONFIG.store("core.AreaList", t.myAreas, true);
         }
