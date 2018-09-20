@@ -27,14 +27,14 @@ pol.layers = pol.layers || {};
 pol.layers.Edit = class {
     
     constructor(list) {
-        var t = this;
+        const t = this;
         t.list = list;
         t.filt = {ext: null, zoom: null, proj: null};
    
    
         this.widget = {
             view: function() {
-                var i=0;
+                let i=0;
                 return m("form", [    
                     m("span.sleftlab", "Name: "),   
                     m(textInput, {id:"editLayer", size: 16, maxLength:25, regex: /^[^\<\>\'\"]+$/i }), br,  
@@ -85,6 +85,7 @@ pol.layers.Edit = class {
         }
    
    
+        /* To be redefined in subclass */
         function reset() { }
    
    
@@ -93,8 +94,8 @@ pol.layers.Edit = class {
          */
         function add() 
         {  
-            var name = $("#editLayer").val(); 
-            var layer = t.createLayer(name);
+            const name = $("#editLayer").val(); 
+            const layer = t.createLayer(name);
        
             if (layer != null) {
                 layer.predicate = t.createFilter(t.filt);
@@ -109,24 +110,36 @@ pol.layers.Edit = class {
             CONFIG.store("layers.list", list.myLayerNames, true);
             // Save the layer using the concrete subclass
             CONFIG.store("layers.layer."+name.replace(/\s/g, "_"), t.layer2json(layer), true);       
-       
+            
+            /* IF server available and logged in, store on server as well */
+            const srv = CONFIG.server; 
+            if (srv && srv != null && srv.loggedIn) {
+                const obj = {type: t.typeid, name: name, data: t.layer2obj(layer)}; 
+                srv.putObj("layer", obj, i => { 
+                    layer.index = i;
+                    layer.server = true;
+                    m.redraw();
+                });
+            }
             return false;
         }
    
     } /* constructor */
 
+    
 
     /* To be defined in subclass */
     enabled()
         { return false; }
 
 
+        
     /**
      * Create a filter function (a predicate) with the parameters 
      * (extent, zoom-level, projection) set by user
      */
     createFilter(f) {
-        var filt = f;
+        const filt = f;
     
         if (!filt)
             return null;
@@ -167,21 +180,30 @@ pol.layers.Edit = class {
 
 
     /**
-    * Stringify settings for a layer to JSON format. 
-    * To be defined in subclass. 
-    */
-    layer2json(layer) { 
-        return "dummy";
+     * Stringify settings for a layer to JSON format. 
+     * layer2obj is to be defined in subclass. 
+     */
+    layer2obj(layer) { 
+        return null;
     }
+    layer2json(layer) {
+        return JSON.stringify(this.layer2obj(layer));
+    }
+    
 
 
     /**
-    * Restore a layer from JSON format (see layer2json). 
-    * To be defined in subclass. 
-    */
-    json2layer(js) {
+     * Restore a layer from JSON format (see layer2json). 
+     * obj2layer is to be defined in subclass. 
+     */
+    obj2layer(obj) {
         return null; 
     }
+    json2layer(js) {
+        return this.obj2layer(JSON.parse(js));
+    }
+    
+
     
 } /* class */
 

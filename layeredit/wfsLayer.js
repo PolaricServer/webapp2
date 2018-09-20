@@ -2,7 +2,7 @@
  Map browser based on OpenLayers 5. Layer editor. 
  WFS layer. 
  
- Copyright (C) 2017 Øyvind Hanssen, LA7ECA, ohanssen@acm.org
+ Copyright (C) 2017-2018 Øyvind Hanssen, LA7ECA, ohanssen@acm.org
  
  This program is free software: you can redistribute it and/or modify
  it under the terms of the GNU Affero General Public License as published 
@@ -66,10 +66,10 @@ pol.layers.Wfs = class extends pol.layers.Edit {
      */
     createLayer(name) 
     {
-        var url = $("#wfsUrl").val();
-        var ftype = $("#wfsFtype").val();
-        var styleId = $("#wfsStyle").val();
-        var label = $("#wfsLabel").val();
+        const url = $("#wfsUrl").val();
+        const ftype = $("#wfsFtype").val();
+        const styleId = $("#wfsStyle").val();
+        const label = $("#wfsLabel").val();
         console.log("Create WFS layer: URL="+url+", ftype="+ftype+", style="+styleId+", label="+label);
         // FIXME: Sanitize input !!!!!
     
@@ -103,10 +103,10 @@ pol.layers.Wfs = class extends pol.layers.Edit {
     
     
     /**
-     * Stringify settings for a layer to JSON format. 
+     * Prepare for saving a layer to JSON format. 
      */   
-    layer2json(layer) { 
-        var lx = {
+    layer2obj(layer) { 
+        const lx = {
             name:    layer.get("name"),
             filter:  layer.filt,
             url:     layer.getSource().url,
@@ -115,21 +115,20 @@ pol.layers.Wfs = class extends pol.layers.Edit {
             styleId: layer.styleId,
             label:   layer.label 
         };
-        return JSON.stringify(lx);
+        return lx;
     }
 
       
       
     /**
-     * Restore a layer from JSON format (see layer2json). 
+     * Restore a layer (see also layer2json). 
      */
-    json2layer(js) {
-        var lx = JSON.parse(js);
+    obj2layer(lx) {
         if (lx == null) {
             console.warn("WfsLayer.json2layer: Resulting Layer is null");
             return null;
         }   
-        var x = createLayer_WFS( {
+        const x = createLayer_WFS( {
             name:  lx.name, 
             url:   lx.url,
             ftype: lx.ftype,

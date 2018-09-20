@@ -60,16 +60,20 @@ pol.core.AreaList = class extends pol.core.Widget {
         if (t.myAreas == null)
             t.myAreas = [];
     
-	for (const x of t.myAreas)
-	    x.server = false; 
+        for (const x of t.myAreas) {
+            x.server = false; 
+            x.index = -1; 
+        }
 	
         /* Get areas stored on server (if logged on) */
         setTimeout( () => {
             const srv = CONFIG.server; 
             if (srv != null && srv.loggedIn) {
-                srv.getAreas( a => {
-                    for (const x of a) 
-                        if (x != null) {
+                srv.getObj("area", a => {
+                    for (const obj of a) 
+                        if (obj != null) {
+                            const x = obj.data;
+                            x.index = obj.id;
                             removeDup(x.name);
                             x.server = true;
                             t.myAreas.push(x);  
@@ -99,10 +103,8 @@ pol.core.AreaList = class extends pol.core.Widget {
         function removeArea(id) {
             // If server available and logged in, delete on server as well
             const srv = CONFIG.server; 
-            if (srv && srv != null && srv.loggedIn) {
-                console.log(t.myAreas[id]);
-		srv.removeArea(t.myAreas[id].index);
-	    }
+            if (srv && srv != null && srv.loggedIn && t.myAreas[id].index >= 0) 
+                srv.removeObj("area", t.myAreas[id].index);
             t.myAreas.splice(id, 1);
             CONFIG.store("core.AreaList", t.myAreas, true);
         }
@@ -132,11 +134,11 @@ pol.core.AreaList = class extends pol.core.Widget {
             /* IF server available and logged in, store on server as well */
             const srv = CONFIG.server; 
             if (srv && srv != null && srv.loggedIn)
-                srv.putArea(area, function(i) { 
-                    area.index = i; 
+                srv.putObj("area", area, i => { 
+                    area.index = i;
                     area.server = true;
+                    m.redraw();
                 });
-            m.redraw();
         }
    
     

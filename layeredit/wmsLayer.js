@@ -37,7 +37,7 @@ pol.layers.Wms = class extends pol.layers.Edit {
         
         this.selected = this.srs[0];
         this.url = "";
-        var t=this;
+        const t=this;
     
         this.fields = {
             view: function() { 
@@ -101,20 +101,19 @@ pol.layers.Wms = class extends pol.layers.Edit {
      * Get capabilities from WMS server
      */
     getCapabilities(handler) {
-        var t = this;
+        const t = this;
         t.layers=[];
         t.sLayers=[];
     
-        var parser = new ol.format.WMSCapabilities();
-        var u = $("#wmsUrl").val(); 
+        const parser = new ol.format.WMSCapabilities();
+        const u = $("#wmsUrl").val(); 
         fetch(u+'?service=wms&request=GetCapabilities')
             .then( response => response.text() )
             .then( txt => {
-                var idx = 0;
                 t.cap = parser.read(txt);
                 if (t.cap.Capability.Layer.Layer) {
                     for (i in t.cap.Capability.Layer.Layer) {
-                        var x = t.cap.Capability.Layer.Layer[i];
+                        const x = t.cap.Capability.Layer.Layer[i];
                         t.layers.push(x);
                     }
                 }
@@ -131,10 +130,9 @@ pol.layers.Wms = class extends pol.layers.Edit {
 
     filterLayers(crs) {
         const t = this;
-        var j = 0;
         t.sLayers = [];
-        for (i in t.layers)
-            for (j in t.layers[i].CRS)
+        for (const i in t.layers)
+            for (const j in t.layers[i].CRS)
                 if (t.layers[i].CRS[j] == crs) {
                     t.sLayers.push(t.layers[i]);
                     break; 
@@ -156,8 +154,8 @@ pol.layers.Wms = class extends pol.layers.Edit {
      * Get layers for WMS request as comma separated list 
      */
     getReqLayers() {
-        var layers = "";
-        var first=true;
+        let layers = "";
+        let first=true;
         for (i in this.sLayers) {
             if (this.sLayers[i].checked) {
                 layers += ((first ? "" : ",") + this.sLayers[i].Name);
@@ -173,8 +171,8 @@ pol.layers.Wms = class extends pol.layers.Edit {
      * Create a OL layer. 
      */
     createLayer(name) {
-        var url = $("#wmsUrl").val();
-        var layers = this.getReqLayers();
+        const url = $("#wmsUrl").val();
+        const layers = this.getReqLayers();
         console.log("Create WMS layer: URL="+url+", layers="+layers);
        
         var x = new ol.layer.Image({
@@ -218,16 +216,15 @@ pol.layers.Wms = class extends pol.layers.Edit {
     /**
      * Stringify settings for a layer to JSON format. 
      */
-    layer2json(layer) { 
-        var lx = {
-            name:    layer.get("name"),
+    layer2obj(layer) { 
+        const lx = {
             filter:  layer.filt,
             url:     layer.getSource().getUrl(),
             params:  layer.getSource().getParams(),
             checked: layer.checkList,
             srs:     layer.selSrs
         };
-        return JSON.stringify(lx);
+        return lx;
     }
 
 
@@ -235,13 +232,12 @@ pol.layers.Wms = class extends pol.layers.Edit {
     /**
     * Restore a layer from JSON format (see layer2json). 
     */
-    json2layer(js) {
-        var lx = JSON.parse(js);
+    obj2layer(lx) {
         if (lx == null) {
             console.warn("WmsLayer.json2layer: Resulting Layer is null");
             return null;
         }  
-        var x = new ol.layer.Image({
+        const x = new ol.layer.Image({
             name: lx.name, 
             source: new ol.source.ImageWMS ({
                ratio:  1,

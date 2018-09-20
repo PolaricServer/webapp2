@@ -57,10 +57,10 @@ pol.core.Server = class {
     }
 
     
-    /* Area management. To be defined in subclass */
-    getAreas(a, f)   { /* Dummy */ }
-    putArea(a, f)    { /* Dummy */ }
-    removeArea(i)    { /* Dummy */ }
+    /* Store/retrieve JSON objects on server. To be defined in subclass */
+    getObj(tag, f)       { /* Dummy */ }
+    putObj(tag, obj, f)  { /* Dummy */ }
+    removeObj(tag, id)   { /* Dummy */ }
 
 
 

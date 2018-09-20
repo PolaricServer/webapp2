@@ -30,22 +30,22 @@ pol.layers.List = class List extends pol.core.Widget {
         this.myLayers = [];     // Just the layer. Not to be saved directly. 
         this.myLayerNames = []; // Just the name
         this.typeList = {};
-        var t = this;
+        const t = this;
    
         /* Register types */
         t.addType("dummy", "Select layer type..", new pol.layers.Dummy(this));
         t.addType("wms", "Standard WMS layer", new pol.layers.Wms(this));   
         t.addType("wfs", "Standard WFS layer", new pol.layers.Wfs(this));
    
-        var layer = t.typeList["dummy"].obj; 
+        let layer = t.typeList["dummy"].obj; 
 
    
         this.widget = {
             view: function() {
-                var i=0;
+                let i=0;
                 return m("div#layerEdit", [       
                     m("h1", "My map layers"),  
-                    m("table.mapLayers", m("tbody", t.myLayerNames.map(function(x) {
+                    m("table.mapLayers", m("tbody", t.myLayerNames.map( x => {
                         return m("tr", [
                             m("td", m("img", {src:"images/edit-delete.png", onclick: apply(removeLayer, i) })), 
                             m("td", m("img", {src:"images/edit.png", onclick: apply(editLayer, i++) })),
@@ -72,7 +72,7 @@ pol.layers.List = class List extends pol.core.Widget {
    
         /* Handler for select element. Select a type. */
         function selectHandler(e) {
-            var tid = $("#lType").val();
+            const tid = $("#lType").val();
             layer = t.typeList[tid].obj;
             m.redraw();
         }
@@ -80,18 +80,26 @@ pol.layers.List = class List extends pol.core.Widget {
    
         /* Remove layer from list */
         function removeLayer(id) {
-            console.assert(id >= 0 && id <t.myLayers.length, "Assertion failed");;
-            var layer = t.myLayers[id];      
+            console.assert(id >= 0 && id <t.myLayers.length, "Assertion failed");
+	    console.log("Remove layer: ", t.myLayerNames[id]);
+	    
+	    /* If server available and logged in, delete on server as well */
+            const srv = CONFIG.server; 
+            if (srv && srv != null && srv.loggedIn && t.myLayerNames[id].index >= 0) 
+                srv.removeObj("layer", t.myLayerNames[id].index);
+	    
+            const lr = t.myLayers[id];      
             t.myLayers.splice(id,1);
             t.myLayerNames.splice(id,1);
             CONFIG.store("layers.list", t.myLayerNames, true);
-            CONFIG.mb.removeConfiguredLayer(layer);
+            CONFIG.mb.removeConfiguredLayer(lr);
         }
    
    
         /* Move map layer name to editable textInput */
         function editLayer(idx) {
-            var type = t.myLayerNames[idx].type;
+	    console.assert(idx >= 0 && idx <t.myLayers.length, "Assertion failed");
+            const type = t.myLayerNames[idx].type;
             $("#lType").val(type).trigger("change");
             t.typeList[type].obj.edit(t.myLayers[idx]);   
             removeLayer(idx);
@@ -116,26 +124,77 @@ pol.layers.List = class List extends pol.core.Widget {
      * Restore layers from local storage.
      */
     getMyLayers() {
-        var lrs = CONFIG.get("layers.list");
+        const t = this;
+        let lrs = CONFIG.get("layers.list");
         if (lrs == null)
-            return lrs = [];
-  
+            lrs = [];
         for (const i in lrs) {
-            console.log("Restore Layer: i="+i+", name='"+lrs[i].name+"', type="+lrs[i].type);
-            var x = this.myLayers[i] = this.typeList[lrs[i].type].obj.json2layer 
+            const x = this.myLayers[i] = this.typeList[lrs[i].type].obj.json2layer 
                 ( CONFIG.get("layers.layer."+lrs[i].name.replace(/\s/g, "_" )));
             if (x!= null) 
                 CONFIG.mb.addConfiguredLayer(x, lrs[i].name);
+            else {
+                console.warn("Layer is missing (in local storage) for: "+lrs[i].name+". Removing");
+                t.myLayers.splice(i, 1);
+                lrs.splice(i, 1);
+            }
         }
+        CONFIG.store("layers.list", lrs, true);
+
+        for (const x of lrs) {
+            x.server = false; 
+            x.index = -1; 
+        }
+        
+        /* Get layers stored on server (if logged on) */
+        setTimeout( () => {
+            const srv = CONFIG.server; 
+            if (srv != null && srv.loggedIn) {
+                srv.getObj("layer", a => {
+                    for (const obj of a) 
+                        if (obj != null) {
+                            const wr = obj.data;
+                            const x = this.typeList[wr.type].obj.obj2layer(wr.data);        
+                            console.log("Got layer from server: "+wr.name);
+                            
+                            removeDup(wr.name);
+                            lrs.push({name:wr.name, type:wr.type, server:true, index: obj.id});
+                            t.myLayers.push(x);
+                            CONFIG.mb.addConfiguredLayer(x, wr.name);
+                        }
+                    m.redraw();
+                });
+            }    
+        }, 1500);
+        
         return this.myLayerNames = lrs;   
+        
+        
+        function removeDup(name) {
+            for (const i in lrs) {   
+                if (lrs[i].name == name) {
+                    const ly = t.myLayers[i]; 
+                    if (ly!=null) 
+                        CONFIG.mb.removeConfiguredLayer(t.myLayers[i]);
+                    t.myLayers.splice(i, 1);
+                    lrs.splice(i, 1);
+                    return;
+                }
+            }
+        }
     }
-    
+        
+ 
+        
+        
+        
 } /* class */
 
 
 
 pol.widget.setRestoreFunc("layers.List", function(id, pos) {
-    var x = new pol.layers.List(); 
-    x.activatePopup(id, pos, true); 
+    if (!CONFIG.layerlist || CONFIG.layerlist == null)
+	CONFIG.layerlist = new pol.layers.List(); 
+    CONFIG.layerlist.activatePopup(id, pos, true); 
 }); 
 
