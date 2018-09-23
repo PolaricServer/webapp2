@@ -238,7 +238,7 @@ pol.layers.Wms = class extends pol.layers.Edit {
             return null;
         }  
         const x = new ol.layer.Image({
-            name: lx.name, 
+ //           name: lx.name, 
             source: new ol.source.ImageWMS ({
                ratio:  1,
                url:    lx.url,

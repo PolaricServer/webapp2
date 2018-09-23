@@ -122,7 +122,7 @@ pol.core.LayerSwitcher = class extends pol.core.Widget {
          */
         if (!this.mb.getBaseLayer().predicate()) {
             const layers = this.mb.config.baseLayers; 
-            for (var i in layers) {
+            for (const i in layers) {
                 if (layers[i].predicate()) {
                     this.mb.setBaseLayer(i);
                     break;
@@ -130,7 +130,7 @@ pol.core.LayerSwitcher = class extends pol.core.Widget {
             }
         }
         const layers = this.mb.config.oLayers;
-        for (var i in layers)
+        for (const i in layers)
             if (!layers[i].predicate()) {
                 if (layers[i].getVisible() == true)
                     layers[i].wasOn = true; 
@@ -148,7 +148,7 @@ pol.core.LayerSwitcher = class extends pol.core.Widget {
  
  
  pol.widget.setRestoreFunc("pol.core.LayerSwitcher", function(id, pos) {
-    var x = new pol.core.LayerSwitcher(); 
+    const x = new pol.core.LayerSwitcher(); 
     x.activatePopup(id, pos, true); 
  }); 
  

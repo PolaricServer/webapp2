@@ -73,7 +73,7 @@ pol.layers.Wfs = class extends pol.layers.Edit {
         console.log("Create WFS layer: URL="+url+", ftype="+ftype+", style="+styleId+", label="+label);
         // FIXME: Sanitize input !!!!!
     
-        var x = createLayer_WFS( {
+        const x = createLayer_WFS( {
             name: name,
             url: url,
             ftype: ftype,
@@ -107,7 +107,7 @@ pol.layers.Wfs = class extends pol.layers.Edit {
      */   
     layer2obj(layer) { 
         const lx = {
-            name:    layer.get("name"),
+//            name:    layer.get("name"),
             filter:  layer.filt,
             url:     layer.getSource().url,
             ftype:   layer.getSource().ftype,
@@ -129,7 +129,7 @@ pol.layers.Wfs = class extends pol.layers.Edit {
             return null;
         }   
         const x = createLayer_WFS( {
-            name:  lx.name, 
+//            name:  lx.name, 
             url:   lx.url,
             ftype: lx.ftype,
             style: (lx.label && lx.label!=null ? SETLABEL(lx.styleId, lx.label) : GETSTYLE(lx.styleId)),

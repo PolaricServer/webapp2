@@ -47,9 +47,9 @@ pol.layers.List = class List extends pol.core.Widget {
                     m("h1", "My map layers"),  
                     m("table.mapLayers", m("tbody", t.myLayerNames.map( x => {
                         return m("tr", [
-                            m("td", m("img", {src:"images/edit-delete.png", onclick: apply(removeLayer, i) })), 
+                            m("td", m("img", {src:"images/edit-delete.png", onclick: apply(x=>t.removeLayer(x), i) })), 
                             m("td", m("img", {src:"images/edit.png", onclick: apply(editLayer, i++) })),
-                            m("td", {}, x.name) ] );
+                            m("td", {'class': (x.server ? "onserver" : null)}, x.name) ] );
                     }))), m("div", [ 
                         m("span.sleftlab", "Type: "), 
                         m(select, { id: "lType", onchange: selectHandler, 
@@ -69,6 +69,7 @@ pol.layers.List = class List extends pol.core.Widget {
         /* Apply a function to an argument. Returns a new function */
         function apply(f, id) {return function() {f(id); }};  
       
+	
    
         /* Handler for select element. Select a type. */
         function selectHandler(e) {
@@ -78,31 +79,14 @@ pol.layers.List = class List extends pol.core.Widget {
         }
    
    
-        /* Remove layer from list */
-        function removeLayer(id) {
-            console.assert(id >= 0 && id <t.myLayers.length, "Assertion failed");
-	    console.log("Remove layer: ", t.myLayerNames[id]);
-	    
-	    /* If server available and logged in, delete on server as well */
-            const srv = CONFIG.server; 
-            if (srv && srv != null && srv.loggedIn && t.myLayerNames[id].index >= 0) 
-                srv.removeObj("layer", t.myLayerNames[id].index);
-	    
-            const lr = t.myLayers[id];      
-            t.myLayers.splice(id,1);
-            t.myLayerNames.splice(id,1);
-            CONFIG.store("layers.list", t.myLayerNames, true);
-            CONFIG.mb.removeConfiguredLayer(lr);
-        }
-   
    
         /* Move map layer name to editable textInput */
         function editLayer(idx) {
-	    console.assert(idx >= 0 && idx <t.myLayers.length, "Assertion failed");
+            console.assert(idx >= 0 && idx <t.myLayers.length, "idx="+idx);
             const type = t.myLayerNames[idx].type;
             $("#lType").val(type).trigger("change");
             t.typeList[type].obj.edit(t.myLayers[idx]);   
-            removeLayer(idx);
+            t.removeLayer(idx);
             m.redraw();
         }
    
@@ -169,15 +153,15 @@ pol.layers.List = class List extends pol.core.Widget {
         
         return this.myLayerNames = lrs;   
         
-        
+        /* 
+         * 
+         * FIXME: Should names be unique? Field in database schema? 
+         * Handle situation where two or more layers from *database* have the same name. 
+         */
         function removeDup(name) {
             for (const i in lrs) {   
                 if (lrs[i].name == name) {
-                    const ly = t.myLayers[i]; 
-                    if (ly!=null) 
-                        CONFIG.mb.removeConfiguredLayer(t.myLayers[i]);
-                    t.myLayers.splice(i, 1);
-                    lrs.splice(i, 1);
+		    t.removeLayer(i);
                     return;
                 }
             }
@@ -185,7 +169,24 @@ pol.layers.List = class List extends pol.core.Widget {
     }
         
  
-        
+    
+    /**
+     * Remove layer from list 
+     */
+    removeLayer(id) {
+        console.assert(id >= 0 && id < this.myLayers.length, "id="+id);
+	 
+	 /* If server available and logged in, delete on server as well */
+        const srv = CONFIG.server; 
+        if (srv && srv != null && srv.loggedIn && this.myLayerNames[id].index >= 0)
+            srv.removeObj("layer", this.myLayerNames[id].index);
+	 
+        const lr = this.myLayers[id];      
+        this.myLayers.splice(id,1);
+        this.myLayerNames.splice(id,1);
+        CONFIG.store("layers.list", this.myLayerNames, true);
+        CONFIG.mb.removeConfiguredLayer(lr);
+    }       
         
         
 } /* class */
