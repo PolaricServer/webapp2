@@ -71,14 +71,14 @@ pol.layers.Wfs = class extends pol.layers.Edit {
         const styleId = $("#wfsStyle").val();
         const label = $("#wfsLabel").val();
         console.log("Create WFS layer: URL="+url+", ftype="+ftype+", style="+styleId+", label="+label);
-        // FIXME: Sanitize input !!!!!
     
         const x = createLayer_WFS( {
             name: name,
             url: url,
             ftype: ftype,
             style: (label && label!=null ? SETLABEL(styleId, label) : GETSTYLE(styleId)),
-            outputFormat: "text/xml; subtype\=gml/3.1.1"
+            outputFormat: "text/xml; subtype=gml/3.2.1",
+            wfsVersion: "1.1.0"
         });
     
         x.styleId = styleId;
@@ -107,7 +107,6 @@ pol.layers.Wfs = class extends pol.layers.Edit {
      */   
     layer2obj(layer) { 
         const lx = {
-//            name:    layer.get("name"),
             filter:  layer.filt,
             url:     layer.getSource().url,
             ftype:   layer.getSource().ftype,
@@ -129,7 +128,6 @@ pol.layers.Wfs = class extends pol.layers.Edit {
             return null;
         }   
         const x = createLayer_WFS( {
-//            name:  lx.name, 
             url:   lx.url,
             ftype: lx.ftype,
             style: (lx.label && lx.label!=null ? SETLABEL(lx.styleId, lx.label) : GETSTYLE(lx.styleId)),

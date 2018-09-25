@@ -209,19 +209,25 @@ function OR(a, b)
 function createLayer_WFS(opts) 
 {
    if (!opts.outputFormat)
-        opts.outputFormat = "text/xml; subtype\=gml/3.1.1";
-
-   let vSource = new ol.source.Vector({
-     format: new ol.format.WFS(),  // Oops! GML version 3.1.1 only! 
+        opts.outputFormat = "text/xml; subtype=gml/3.1.1";
+   if (!opts.wfsVersion)
+        opts.wfsVersion = "1.1.0"; 
+   if (opts.cql)
+       opts.cql = "&cql_filter="+opts.cql; 
+   else 
+       opts.cql = "";
+        
+   const vSource = new ol.source.Vector({
+     format: new ol.format.WFS(),  
 
      url: function(extent) {
-     if (!opts.srs)
-        opts.srs = CONFIG.mb.view.getProjection().getCode();
+        if (!opts.srs)
+            opts.srs = CONFIG.mb.view.getProjection().getCode();
 
         return opts.url +'?service=WFS&' +
-           'version=1.1.0&request=GetFeature&typename='+opts.ftype+'&' +
+           'version='+opts.wfsVersion+'&request=GetFeature&typename='+opts.ftype+'&' +
            'outputFormat='+opts.outputFormat+'&srsname='+opts.srs+'&' +
-           'bbox=' + extent.join(',');
+           'bbox=' + extent.join(',')+opts.cql;
      },
 
      strategy: ol.loadingstrategy.bbox
