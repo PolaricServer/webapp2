@@ -7,27 +7,29 @@
    /* 
     * Instantiate the map browser and try to restore widgets from a previous session. 
     */  
-   var browser = new pol.core.MapBrowser('map', CONFIG);
+   const browser = new pol.core.MapBrowser('map', CONFIG);
    setTimeout(pol.widget.restore, 1500);
+   
+   CONFIG.layerlist = new pol.layers.List(); 
    
    
     /*
      * Add a tracking-layer using a polaric server backend.
      */  
-    var srv = new pol.tracking.PolaricServer();
-    var mu, flt; 
-    setTimeout(function() {
-        mu = new pol.tracking.Tracking(srv);
-        flt = new pol.tracking.Filters(mu);
+    const srv = new pol.tracking.PolaricServer();
+    setTimeout( () => {
+        const mu = new pol.tracking.Tracking(srv);
+        const flt = new pol.tracking.Filters(mu);
         CONFIG.server = srv;
         CONFIG.tracks = mu;
         
         if (srv.auth.userid != "") {
-            var not = new pol.tracking.Notifier();
+            const not = new pol.tracking.Notifier();
             CONFIG.notifier = not; 
         }
     }, 1000); 
    
+    CONFIG.labelStyle = new pol.tracking.LabelStyle();
     
 
    /* 
@@ -44,18 +46,17 @@
      *********************************************************/
    
     browser.ctxMenu.addCallback("MAP", function(m, ctxt) {
-        m.add('Show map reference', function () 
-            { browser.show_MaprefPix( [m.x, m.y] ); });  
+        m.add('Show map reference', () => browser.show_MaprefPix( [m.x, m.y] ) );  
         if (srv.auth.sar) 
-	        m.add('Add object', function() { editObject(m.x, m.y); });
+	        m.add('Add object', () => editObject(m.x, m.y) );
      
          m.add(null);
-         m.add('Center point', function()   
-            { browser.view.setCenter( browser.map.getCoordinateFromPixel([m.x, m.y])); } );
-         m.add('Zoom in', function()        
-            { browser.view.setZoom(browser.view.getZoom()+1); } );
-         m.add('Zoom out',  function()      
-            { browser.view.setZoom(browser.view.getZoom()-1); } );
+         m.add('Center point', () =>   
+            browser.view.setCenter( browser.map.getCoordinateFromPixel([m.x, m.y])) );
+         m.add('Zoom in', () =>        
+            browser.view.setZoom(browser.view.getZoom()+1) );
+         m.add('Zoom out', () =>     
+            browser.view.setZoom(browser.view.getZoom()-1) );
     });
 
    
@@ -65,49 +66,51 @@
    
     browser.ctxMenu.addCallback("TOOLBAR", function(m, ctxt) {
         
-        m.add("History...", function()
-            { var x = new pol.tracking.db.History();
+        m.add("History...", () =>
+            { const x = new pol.tracking.db.History();
                 x.activatePopup("history", [50, 70]) });
-        m.add("My trackers", function()
-            { var x = new pol.tracking.db.MyTrackers();
-                x.activatePopup("mytrackers", [50, 70]) }); 
-        m.add("Notification", function()
-            { var x = new pol.tracking.NotifyList();
-                x.activatePopup("notifications", [50, 70]) });
-        m.add("Bulletin board", function()
-            { var x = new pol.tracking.BullBoard();
+        if (srv.loggedIn) {
+            m.add("My trackers", () =>
+                { const x = new pol.tracking.db.MyTrackers();
+                    x.activatePopup("mytrackers", [50, 70]) }); 
+            m.add("Notification", () =>
+                { const x = new pol.tracking.NotifyList();
+                    x.activatePopup("notifications", [50, 70]) });
+        }
+        m.add("Bulletin board", () =>
+            { const x = new pol.tracking.BullBoard();
                 x.activatePopup("bullboard", [50,70]) });
-        m.add('Search items', function () 
-            { var x = new pol.tracking.Search(); 
+        m.add('Search items', () => 
+            { const x = new pol.tracking.Search(); 
                 x.activatePopup("trackerSearch", [50,70]) }); 
      
-        m.add('Find position', function () 
-            { var x = new pol.core.refSearch(); x.activatePopup("refSearch", [50,70]) });
-        m.add('Area List', function () 
-            { browser.toolbar.arealist.activatePopup("AreaList", [50,70]) });
-        m.add('Layer List', function () 
-            { var x = new pol.layers.List(); x.activatePopup("LayerList", [50,70]) });
+        m.add('Find position', () => 
+            { const x = new pol.core.refSearch(); 
+                x.activatePopup("refSearch", [50,70]) });
+        m.add('Area List', () => 
+            browser.toolbar.arealist.activatePopup("AreaList", [50,70]) );
+        m.add('Layer List', () => 
+            CONFIG.layerlist.activatePopup("LayerList", [50,70]) );
         
         m.add(null);
         
         if (srv.auth.sar) {                 
-            m.add('Add object', function() { editObject(null, null); });
-            m.add('Remove object', function() { deleteObject(null); });
+            m.add('Add object', () => editObject(null, null) );
+            m.add('Remove object', () => deleteObject(null) );
         }
         m.add(null);
      
         if (srv.loggedIn)
-            m.add('Log out', function() {
-            srv.logout(); 
-        });
+            m.add('Log out', () => srv.logout() );
         else
-            m.add('Log in', function () {
-            srv.login();
-        });
+            m.add('Log in', () => srv.login() );
         if (srv.auth.admin) {
             m.add("Admin/configuration..", webConfig);
             m.add("Set/change password..", setPasswd);
         }
+        m.add(null);
+        m.add("Label font +", () => CONFIG.labelStyle.next());
+        m.add("Label font -", () => CONFIG.labelStyle.previous());
     });
    
    
@@ -117,19 +120,18 @@
      *********************************************************/
    
     browser.ctxMenu.addCallback("POINT", function(m, ctxt) {
-        m.add('Show info', function() 
-          { srv.infoPopup(ctxt.point, [m.x, m.y]); });
+        m.add('Show info', () => srv.infoPopup(ctxt.point, [m.x, m.y]) );
         if (srv.auth.sar) { 
-            m.add('Global settings', function() { globalSettings(ctxt.ident);});
-            m.add('Manage tags..', function() { setTags(ctxt.ident);});
+            m.add('Global settings', () => globalSettings(ctxt.ident) );
+            m.add('Manage tags..', () => setTags(ctxt.ident) );
         }
       
         if (mu.labelHidden(ctxt.ident))
-            m.add('Show label', function() { mu.hideLabel(ctxt.ident, false); });
+            m.add('Show label', () => mu.hideLabel(ctxt.ident, false) );
         else
-            m.add('Hide label', function() { mu.hideLabel(ctxt.ident, true); });
+            m.add('Hide label', () => mu.hideLabel(ctxt.ident, true) );
           
-        m.add('Last movements', function () { historyPopup(ctxt.ident, [m.x, m.y]); });
+        m.add('Last movements', () => historyPopup(ctxt.ident, [m.x, m.y]) );
     });
    
    
@@ -139,8 +141,8 @@
      *********************************************************/
     
     browser.ctxMenu.addCallback("SIGN", function(m, ctxt) {
-        m.add('Show info', function() {srv.infoPopup(ctxt.point, [m.x, m.y]); });
-        m.add('Do funny things', function () { alert("What?"); });
+        m.add('Show info', () => srv.infoPopup(ctxt.point, [m.x, m.y]) );
+        m.add('Do funny things', () => alert("What?") );
     });
      
     

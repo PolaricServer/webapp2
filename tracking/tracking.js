@@ -528,6 +528,8 @@ pol.tracking.Tracking = class {
             this.removePoint(ov["delete"][i]);
 
         CONFIG.mb.map.render();
+        if (CONFIG.labelStyle)
+            CONFIG.labelStyle.setFont();
     }
     
 } /* class */
