@@ -43,7 +43,7 @@ pol.widget._stored = {};
   * @param {function} f, function that restore the widget. Should take a element id and pixPos as arguments. 
   */
 pol.widget.setRestoreFunc = function(id, f) {
-    console.assert(id != null && f != null, "Assertion failed");
+    console.assert(id != null && f != null, "id="+id+", f="+f);
     pol.widget._restore[id] = f; 
 }
 
@@ -90,7 +90,7 @@ pol.core.Widget = class {
      */
     activate(w) 
     { 
-        console.assert(w && w != null, "Assertion failed");
+        console.assert(w && w != null, "w="+w);
         this.delement = w; 
         m.mount(this.delement, this.widget);
     }
@@ -105,9 +105,12 @@ pol.core.Widget = class {
      */
     activatePopup(id, pixPos, pinned) 
     {
-        console.assert(this.widget && id != null 
-            && pixPos[0] >= 0 && pixPos[1] >= 0, "Assertion failed");
-
+        console.assert(id != null && pixPos != null 
+            && pixPos[0] >= 0 && pixPos[1] >= 0, "id="+id+", pixPos="+pixPos);
+        
+        if (pixPos == null)
+            pixPos = [20, 20];
+            
         const t = this; 
         this.pos = pixPos;        
         if (!pinned)

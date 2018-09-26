@@ -27,6 +27,8 @@
   * @param {pol.core.Config} config - Configuration class instance
   */
  
+
+
 pol.core.MapBrowser = class {
      
    /* Constructor
@@ -34,7 +36,7 @@ pol.core.MapBrowser = class {
     * @param {pol.core.Config} config - Configuration class instance
     */
     constructor(targ, config) {
-        console.assert(targ && targ != null && config && config != null, "Assertion failed");
+        console.assert(targ && targ != null && config && config != null, "targ="+targ+", config="+config);
      
         const t = this;
         config.mb = this;
@@ -135,7 +137,7 @@ pol.core.MapBrowser = class {
      * 
      */
     changeBaseLayer(idx) {
-        console.assert(idx >= 0 && idx <= this.config.baseLayers.length, "Assertion failed");
+        console.assert(idx >= 0 && idx <= this.config.baseLayers.length, "idx="+idx);
     
         const ls = this.config.baseLayers[idx];
         if ( !ls || ls==null)
@@ -209,11 +211,11 @@ pol.core.MapBrowser = class {
 
 
     addConfiguredLayer(layer, name) {
-        console.assert(layer != null && name != null, "Assertion failed");
+        console.assert(layer != null && name != null, "layer="+layer+", name="+name);
         const i = this.config.addLayer(layer, name);
         const visible = this.config.get('core.olayer.'+i);
         if (visible == null)
-            this.config.store('core.olayer.' + i, true); 
+            this.config.store('core.olayer.' + i, true); // default on 
         else
             this.config.oLayers[i].setVisible(visible);
    
@@ -232,7 +234,9 @@ pol.core.MapBrowser = class {
 
 
     removeConfiguredLayer(layer) {
-        console.assert(layer != null, "Assertion failed");
+        console.assert(layer != null, "layer=null");
+        if (layer==null)
+            return;
         this.map.removeLayer(layer);   
         this.config.removeLayer(layer);
     }

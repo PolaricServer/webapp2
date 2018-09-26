@@ -104,7 +104,7 @@ pol.core.PopupMenu = class {
      */
     insert(sect, txt, func, arg)
     {
-        assert(sect>=0 && sect<this.sections.length, "Assertion failed");
+        assert(sect>=0 && sect<this.sections.length, "sect="+sect);
    
         if (this.secNo == 0) {
             this.add(txt,func,arg);
@@ -133,7 +133,7 @@ pol.core.PopupMenu = class {
      */
     activate(x, y)
     {
-        console.assert(x>0 && y>0, "Assertion failed");
+        console.assert(x>0 && y>0, "x="+x+", y="+y);
     
         if (this.lastItem != null)
             this.lastItem.className = 'ITEM_last';
@@ -292,7 +292,7 @@ pol.core.ContextMenu = class {
      * @param {number} y - Pixel position y.
      */ 
     show(ctxt, x, y)  {
-        console.assert(ctxt != null && ctxt.name && x>0 && y>0, "Assertion failed");
+        console.assert(ctxt != null && ctxt.name && x>0 && y>0, "ctxt="+ctxt+", x="+x+", y="+y);
         const t = this; 
         t.txt.clear();
         t.txt.x = x; 

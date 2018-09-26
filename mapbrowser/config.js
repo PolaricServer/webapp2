@@ -87,7 +87,7 @@ pol.core.Config = class extends ol.Object {
      */
 
     addLayer(layer, name) {
-        console.assert(layer != null, "Assertion failed");
+        console.assert(layer != null, "layer=null");
         if (name && name != null) 
             layer.set("name", name);
         if (!layer.predicate) 
@@ -99,7 +99,9 @@ pol.core.Config = class extends ol.Object {
 
    
     removeLayer(layer) {
-        console.assert(layer != null, "Assertion failed");
+        console.assert(layer != null, "layer=null");
+        if (layer==null)
+            return;
         for (const i in this.oLayers)
             if (this.oLayers[i] === layer) {
                 this.oLayers.splice(i, 1);
@@ -129,7 +131,7 @@ pol.core.Config = class extends ol.Object {
      *  @returns The value of the setting.
      */
     get(id) { 
-        console.assert(id!=null, "Assertion failed");
+        console.assert(id!=null, "id=null");
     
         /* Look in session-storage first, if not found there, 
         * look in local-storage. 
@@ -156,7 +158,7 @@ pol.core.Config = class extends ol.Object {
      * 
      */
     store(id, value, save) { 
-        console.assert(id != null && value != null, "Assertion failed"); 
+        console.assert(id != null && value != null, "id="+id+", value="+value); 
         const val = JSON.stringify(value);
         this.sstorage["polaric." + id] = val; 
         if (save)
@@ -170,6 +172,7 @@ pol.core.Config = class extends ol.Object {
      * @param {string} id - Key of setting. 
      */
     remove(id) {
+        console.assert(id!=null, "id=null");
         this.sstorage.removeItem("polaric."+id);
         this.storage.removeItem("polaric."+id+":"+this.uid);
     }
@@ -183,7 +186,7 @@ pol.core.Config = class extends ol.Object {
      * 
      */
     set(id, value) { 
-        console.assert(id != null && value != null, "Assertion failed");
+        console.assert(id != null && value != null, "id="+id+", value="+value");
         this.props[id] = value; 
     }
     

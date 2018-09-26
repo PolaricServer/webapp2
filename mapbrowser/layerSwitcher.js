@@ -103,7 +103,7 @@ pol.core.LayerSwitcher = class extends pol.core.Widget {
  
     toggleOverlay(i) {
         i -= this.mb.config.baseLayers.length;
-        console.assert(i >= 0 && i <= this.mb.config.oLayers.length, "Assertion failed");
+        console.assert(i >= 0 && i <= this.mb.config.oLayers.length, "i="+i);
         const prev = this.mb.config.oLayers[i].getVisible(); 
         this.mb.config.oLayers[i].setVisible(!prev);
         this.mb.config.store('core.olayer.' + i, !prev); 
