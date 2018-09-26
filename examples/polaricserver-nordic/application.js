@@ -126,10 +126,10 @@
             m.add('Manage tags..', () => setTags(ctxt.ident) );
         }
       
-        if (mu.labelHidden(ctxt.ident))
-            m.add('Show label', () => mu.hideLabel(ctxt.ident, false) );
+        if (CONFIG.tracks.labelHidden(ctxt.ident))
+            m.add('Show label', () => CONFIG.tracks.hideLabel(ctxt.ident, false) );
         else
-            m.add('Hide label', () => mu.hideLabel(ctxt.ident, true) );
+            m.add('Hide label', () => CONFIG.tracks.hideLabel(ctxt.ident, true) );
           
         m.add('Last movements', () => historyPopup(ctxt.ident, [m.x, m.y]) );
     });

@@ -96,7 +96,7 @@ pol.tracking.Tracking = class {
    
         /* Add click handler for tracking-features. Click on icons and pop up some info... */
         browser.map.on("click", e => {
-            const points = mu.getPointsAt(e.pixel);
+            const points = t.getPointsAt(e.pixel);
             if (points != null && points.length > 0) {
                 if (points.length == 1)
                     t.server.infoPopup(points[0], e.pixel);

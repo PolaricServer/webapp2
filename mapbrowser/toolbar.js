@@ -77,6 +77,7 @@ pol.core.Toolbar = class extends ol.control.Control  {
    
         /* Distance measurement */
         let measure_on = false; 
+        let measure = null;
         pol.core.addHandlerId("tb_measure", true, 
             (e)=> {
                 measure_on = (measure_on ? false : true);
@@ -86,7 +87,8 @@ pol.core.Toolbar = class extends ol.control.Control  {
                 }
                 else {
                     $("#tb_measure").attr("class", "");
-                    measure.deactivate();
+                    if (measure!=null)
+                        measure.deactivate();
                 }
             } );
    

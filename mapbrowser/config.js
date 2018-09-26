@@ -186,7 +186,7 @@ pol.core.Config = class extends ol.Object {
      * 
      */
     set(id, value) { 
-        console.assert(id != null && value != null, "id="+id+", value="+value");
+        console.assert(id != null && value != null, "id="+id+", value="+value);
         this.props[id] = value; 
     }
     
