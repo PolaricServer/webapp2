@@ -24,8 +24,7 @@ var isMobile = false;
 
 /**
  * @classdesc
- * Popup window manager class. 
- * For now, there is only one active popup at a time. 
+ * Popup window manager class.  
  *
  * @constructor
  * @param {pol.core.MapBrowser} mb - Map browser instance.
@@ -151,38 +150,37 @@ pol.core.Popup = class {
             t.popup_(pdiv, x, y, props.image);
     
             if (props.label)
-            t.allowedPopups++;
+                t.allowedPopups++;
            
+
             if (props.draggable) {
-                if (props.pinned)
+                if (props.pinned) 
                     pdiv._pinned = true;
-                var pinimage = document.createElement('img');
-                pinimage.className = "popup_pin";
+                
                 if (pdiv._pinned) { 
-                    pinimage.src = "images/pin-red.png";
                     t.allowedPopups++;
                     t.activepopup = null;
-                } else
-                pinimage.src = "images/pin-green.png";
-                pdiv.appendChild(pinimage);
- 
-                pinimage.onclick = function(e) {
-                    pdiv._pinned = (pdiv._pinned ? false : true); 
                     if (props.pin)
                         props.pin(pdiv._pinned); // Pin callback
-                    if (pdiv._pinned) {
-                        pinimage.src = "images/pin-red.png";
-                        t.activepopup = null;
-                        t.allowedPopups++;
-                    } 
-                    else {
-                        pinimage.src = "images/pin-green.png";
-                        t.removePopup();
+                
+                
+                    /* Close icon */
+                    const closeimage = document.createElement('img');
+                    closeimage.className = "popup_close";
+                    closeimage.src = "images/16px/close.png";
+                    pdiv.appendChild(closeimage);
+                
+                    /* close click handler */
+                    closeimage.onclick = function(e) {
+                        pdiv._pinned = false; 
                         t.activepopup = pdiv;
                         t.allowedPopups--;
+                        t.removePopup();
+                        if (props.pin)
+                            props.pin(pdiv._pinned); // Pin callback
                     }
-                };
-            }  }, 200);
+                }
+            }  }, 300);
         
         pdiv.onmousedown = function(e) 
             { e = (e)?e:((event)?event:null); e.stopPropagation(); return null; };

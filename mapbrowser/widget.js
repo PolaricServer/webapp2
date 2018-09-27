@@ -78,7 +78,7 @@ pol.core.Widget = class {
     
     constructor() {
         this.pos = null;
-        this.pinned = false;
+        this.pinned = true;
         this.classname = null;
     }
 
@@ -114,8 +114,10 @@ pol.core.Widget = class {
         const t = this; 
         this.pos = pixPos;        
         if (!pinned)
-            pinned = false;
+            pinned = true;
         t.pinned = pinned;
+        
+        console.log("activatePopup: pinned="+t.pinned);
      
         return this.popup = browser.gui.showPopup( {
             vnode: this.widget,
@@ -123,7 +125,7 @@ pol.core.Widget = class {
             draggable: true,
             dragStop: dragStop,
             pin: pinCb,
-            pinned: pinned,
+            pinned: t.pinned,
             id: id,
             cclass: "widget"
         });
@@ -131,6 +133,7 @@ pol.core.Widget = class {
      
         function pinCb(p) {
             t.pinned = p;
+            console.log("PinCb: "+p);
             if (p) 
                 save();
             else

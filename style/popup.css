@@ -1,8 +1,12 @@
- 
+
 div.POPUP img.popup_pin {
+  visibility: hidden;
+}
+div.POPUP img.popup_close {
   position: inherit;
-  top: 6px;
-  right: 6px;
+  top: 0.55em;
+  right: 0.3em;
+  height: 1.3em;
 }
 
 
@@ -30,8 +34,8 @@ div.widget { overflow: hidden !important;}
 div.POPUPMENU {
   padding-bottom: 0.3em;
   margin-bottom: 0.7em;
-  line-height: 1.2em;
-  background: #fefeee; 
+  line-height: 1.3em;
+  background: #eed; 
   z-index: 1301 !important;
 }
 
