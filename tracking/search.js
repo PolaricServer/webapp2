@@ -75,13 +75,16 @@ pol.tracking.Search = class extends pol.core.Widget {
    
         /* Return tags that user has checked, as a comma-separated list */
         function getTagArgs() {
-            var tags = "";
-            $('div.taglist>input').each( i => {
-                if ($(this).prop("checked")==true)
-                    tags = tags + (tags=="" ? "" : ",") + $(this).prop('id').substring(4);
+            let tags = "";
+            $('div.taglist>input').each( (i,x) => {
+                if (x.checked==true) {
+                    tags = tags + (tags=="" ? "" : ",") + x.id.substring(4);
+                }
             });
+            console.log("TAGS: "+tags);
             return tags;
         }
+    
     
         /* Process tags from server */
         function tagListCallback(info) {
@@ -93,7 +96,7 @@ pol.tracking.Search = class extends pol.core.Widget {
         
             setTimeout(() => {
                 $('div.taglist>input').change( e => {
-                    setTimeout(() => { getTags(null, getTagArgs(), tagListCallback);}, 200 );
+                    setTimeout(() => getTags(null, getTagArgs(), tagListCallback), 200 );
                 });}, 300);
         }
     

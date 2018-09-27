@@ -15,9 +15,14 @@
     height: 32px; 
     top: 2px; left: 8px; 
     border: 1px solid #aaa; 
+    background: #e6eee6ba;
     box-shadow: 1px 1px 12px #797;
     z-index: 1;
 }
+.toolbar:hover {
+    background: #f0f4f0ba;
+}
+
 
 .toolbar img {margin: 5px; margin-top: 3px}
 .toolbar img:hover {background: #ffe; border-radius: 6px}

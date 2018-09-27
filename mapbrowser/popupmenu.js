@@ -217,7 +217,7 @@ pol.core.addHandler = function (element, icon, func)
 {
     let rect = null; 
     if (icon) {      
-        rect = element.getBoundingClientRect();
+        setTimeout( () => rect = element.getBoundingClientRect(), 200);
         element.onclick = _handler;
     }
     element.oncontextmenu = _handler;
@@ -355,7 +355,7 @@ pol.core.ContextMenu = class {
      * @param {string} domId - Id of DOM element. 
      * @param {string} name - Name of menu context.
      * @param {boolean} icon - True if element is a icon that can react on left mouse click.
-     * @param {Function|undefined} contextfunc - Function that return a context. If null the default 
+     * @param {Function|undefined} func - Function that return a context. If null the default 
      * name will  be used.
      */
     addMenuId(domId, name, icon, func) {
