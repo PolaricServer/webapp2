@@ -294,7 +294,12 @@ pol.tracking.Tracking = class {
         }
         element.onmouseenter = function(e) { 
             element._cancel = false;
-            setTimeout(() => {if (!element._cancel) t.redrawFeature(ident);}, 800);
+            setTimeout(() => {
+	      if (!element._cancel) 
+		  t.redrawFeature(ident);
+	      if (CONFIG.labelStyle)
+		  CONFIG.labelStyle.setFont();
+	    }, 800);
         }
         element.onmouseleave = function(e) {
             element._cancel = true; 
@@ -489,13 +494,14 @@ pol.tracking.Tracking = class {
      * we need to fetch it from the server.
      */
     goto_Point(ident) {
-        console.assert(ident!=null && ident!="", "Assertion failed");
+        console.assert(ident!=null && ident!="", "ident="+ident);
 
         this.server.GET("/finditem", {ajax:true, id:ident}, info => {
             if (info == null) {
                 console.log("Goto point: Not found on server");
                 return;
             }
+            
            /*
             * The returned info should be three tokens delimited by commas:
             * an id (string) and x and y coordinates (number)

@@ -124,7 +124,7 @@ pol.core.LayerSwitcher = class extends pol.core.Widget {
             const layers = this.mb.config.baseLayers; 
             for (const i in layers) {
                 if (layers[i].predicate()) {
-                    this.mb.setBaseLayer(i);
+                    this.mb.changeBaseLayer(i);
                     break;
                 }
             }

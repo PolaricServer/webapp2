@@ -48,6 +48,10 @@ function formatDTG(date) {
 }
 
 
+/**
+ * Subscribe to notifications from server and provide a notifications 
+ * icon on toolbar. 
+ */
 
 pol.tracking.Notifier = class {
     
@@ -72,7 +76,11 @@ pol.tracking.Notifier = class {
         );
         t.updateNumber(); 
          
-        /* Subscribe to notifications from server */
+        /* 
+	 * Subscribe to notifications from server using the pubsub service: 
+	 * Related to user (if logged in), general system notifications and 
+	 * (if authorized) related to admin user 
+	 */
         t.server.pubsub.subscribe("notify:" + t.server.auth.userid, 
             x => t.add(x) );   
         t.server.pubsub.subscribe("notify:SYSTEM", 
@@ -82,7 +90,7 @@ pol.tracking.Notifier = class {
                 x => t.add(x) );
     
         /* Remove notifications older than ttl. Skip if ttl is 0 */
-        setInterval(function() {
+        setInterval( () => {
             for (i in t.list) {
                 const x = t.list[i];
                 if (x.ttl <= 0)
@@ -96,7 +104,9 @@ pol.tracking.Notifier = class {
     } /* constructor */
 
 
-    /* Update number on toolbar */
+    /** 
+     * Update number on toolbar. 
+     */
     updateNumber() {
         $('#not_number').remove();
         if (this.list.length > 0)
@@ -105,7 +115,9 @@ pol.tracking.Notifier = class {
     }
 
 
-    /* Add notification */
+    /**
+     * Add notification. 
+     */
     add(not) {
         this.audio.play();
         this.list.unshift(not);
@@ -115,7 +127,9 @@ pol.tracking.Notifier = class {
     }
 
 
-    /* Remove notification */
+    /**
+     * Remove notification. 
+     */
     remove(idx) {
         this.list.splice(idx,1);
         this.updateNumber(); 
@@ -217,7 +231,7 @@ pol.tracking.NotifyList.updateScroller = function()
 }
 
     
-pol.widget.setRestoreFunc("tracking.NotifyList", function(id, pos) {
-    var x = new pol.tracking.NotifyList(); 
+pol.widget.setRestoreFunc("tracking.NotifyList", (id, pos) => {
+    const x = new pol.tracking.NotifyList(); 
     x.activatePopup(id, pos, true); 
 }); 

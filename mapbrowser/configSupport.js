@@ -82,7 +82,51 @@ function SCALE(res)
 
    
    
-   
+/**
+ * Generate a WMTS tilegrid object. 
+ * - projection
+ * - start matrixId
+ * - end matrixId
+ * - matrixId prefix 
+ * - size (top level resolution) - optional
+ * - origin coordinate - optional
+ */
+function TILEGRID_WMTS(proj, start, end, prefix, siz, origin) {
+    const projExtent = proj.getExtent(); 
+    const size = (siz ? siz : ol.extent.getWidth(projExtent) / 256); 
+    let resolutions = [];
+    let matrixIds = []; 
+    let i=0;
+    for (let z = start; z <= end; z++) {
+        resolutions[i] = size / Math.pow(2, z);
+        matrixIds[i++] = (prefix && prefix != null ? prefix + ":" + z : z);
+    }
+    return new ol.tilegrid.WMTS( {
+        extent: projExtent,
+        origin: (origin ? origin : ol.extent.getTopLeft(utmproj.getExtent())),
+        resolutions: resolutions, 
+        matrixIds: matrixIds
+    });
+}   
+ 
+
+ function createLayer_MapCache(opt) {
+    const layer = new ol.layer.Tile({
+          name: (opt.name ? opt.name : "noname"), 
+          preload: 2,
+          opacity: (opt.opacity ? opt.opacity : 1),
+          
+          source: new ol.source.TileWMS({
+              url: (opt.url? opt.url : CONFIG.get('server') + "mapcache/wms?"),
+              projection: utmproj,
+              params: {'LAYERS': opt.layers, VERSION: "1.1.1", TRANSPARENT: true},
+              tilegrid: opt.tilegrid,
+              cacheSize: 4096
+          })
+       });
+    return layer; 
+}
+
    
 /**
  * Configure some layers. 
@@ -135,11 +179,8 @@ function VIEWS(views)
  * Note that POLYGON is defined in standard lat long projection (EPSG:4326)
  */ 
 function POLYGON( points ) {
-    let plist = []; 
-    for (let i in points)
-      plist.push( new ol.geom.Point(points[i].lng, points[i].lat));
-    const ring = new ol.geom.LinearRing(plist);
-    return new ol.geom.Polygon([ring]);
+    points.push(points[0]);
+    return new ol.geom.Polygon([points]);
 }
 
 
@@ -159,10 +200,16 @@ function is_visible(polygon)
 } 
 
 
+
+
+/**
+ * Returns a function that tests if extent intersects a polygon *
+ */
 function IN_EXTENT(polygon) {
   return function() 
     {return is_visible(polygon);}
 }
+
     
 
 function scale() 
@@ -187,7 +234,15 @@ function RESOLUTION_LT (res)
 
 function RESOLUTION_GT (res)
    { return function() {return CONFIG.mb.getResolution() > res; }}
+   
+   
+function SCALE_LT (sc)
+   { return function() {return CONFIG.mb.getScale() < sc; }}
 
+
+function SCALE_GT (sc)
+   { return function() {return CONFIG.mb.getScale() > sc; }}
+   
    
 function AND(a, b)
    { return function() {return a() && b();} }

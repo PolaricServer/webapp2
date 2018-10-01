@@ -116,8 +116,6 @@ pol.core.Widget = class {
         if (!pinned)
             pinned = true;
         t.pinned = pinned;
-        
-        console.log("activatePopup: pinned="+t.pinned);
      
         return this.popup = browser.gui.showPopup( {
             vnode: this.widget,
@@ -133,7 +131,6 @@ pol.core.Widget = class {
      
         function pinCb(p) {
             t.pinned = p;
-            console.log("PinCb: "+p);
             if (p) 
                 save();
             else

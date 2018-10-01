@@ -254,10 +254,10 @@ pol.core.Popup = class {
      */
     showImageGeo(geoPos) {
         setTimeout( () => {
-            t.geoPos = geoPos;
+            this.geoPos = geoPos;
             var pixPos = this.mb.map.getPixelFromCoordinate
                 (ol.proj.fromLonLat(geoPos, this.mb.view.getProjection()));
-            t.popup_(null, pixPos[0], pixPos[1], true);
+            this.popup_(null, pixPos[0], pixPos[1], true);
         }, 900);
     }
 
@@ -354,6 +354,7 @@ pol.core.Popup = class {
             this.activepopup.appendChild(this.image);
             this.image.src='images/cross.png';
             this.image.style.position='absolute';
+            this.image.className="marker";
         }
 
         /* Add the popup window div to the viewport */

@@ -112,7 +112,7 @@ td.onserver {color: #050;font-style: normal}
 
 .leftlab, .sleftlab, label.lleftlab {
   float: left;
-  width: 8.5em;
+  width: 9.0em;
   text-align: right;
   padding-right: 7px;
   color: gray;
@@ -224,4 +224,6 @@ form.mapref hr { border: dotted 1px #888 }
 #editLayer, #wfsLabel {width: 16em}
 #layerEdit div.buttons {padding-left: 5.7em; padding-top: 0.4em; margin-top: 0.1em; }
 #layerEdit div.wserver {margin-top: 0.5em}
+
+img.marker {margin-top: -9px; margin-left: -9px; border: 10px #FF00 solid; border-radius: 20px; background: #ff57}
 
