@@ -56,7 +56,7 @@ pol.core.LayerSwitcher = class extends pol.core.Widget {
                                 m("input#blayer"+idx, {
                                     onclick: handleSelect(idx), 
                                     type:"radio", name:"layer", value:"layer"+ (idx), 
-                                    checked: (x== t.mb.map.getLayers().item(0) ? "checked" : null) 
+                                    checked: (x == t.mb.map.getLayers().item(0) ? "checked" : null) 
                                 }), nbsp,
                                 x.get("name"), br])
                             : null) 
@@ -106,7 +106,8 @@ pol.core.LayerSwitcher = class extends pol.core.Widget {
         console.assert(i >= 0 && i <= this.mb.config.oLayers.length, "i="+i);
         const prev = this.mb.config.oLayers[i].getVisible(); 
         this.mb.config.oLayers[i].setVisible(!prev);
-        this.mb.config.store('core.olayer.' + i, !prev); 
+        
+        this.mb.config.store('core.olayer.' +  this.mb.config.oLayers[i].get("name"), !prev); 
     }
  
 
@@ -129,6 +130,7 @@ pol.core.LayerSwitcher = class extends pol.core.Widget {
                 }
             }
         }
+        /* Overlays */
         const layers = this.mb.config.oLayers;
         for (const i in layers)
             if (!layers[i].predicate()) {

@@ -138,7 +138,6 @@ function LAYERS (attrs, layers)
       for (var i=0; i < layers.length; i++) 
       {     	 
   	     var x = layers[i];
-	 
          if ( !x.attribution && attrs.attribution) 
              x.attribution = attrs.attribution;     
  	     if (!x.predicate && attrs.predicate)
@@ -149,7 +148,7 @@ function LAYERS (attrs, layers)
          if (attrs.base) 
 	         CONFIG.baseLayers.push( x );
 	     else {
-             x.setVisible(CONFIG.get('olayer.'+CONFIG.oLayersCount++));
+             x.setVisible(CONFIG.get('core.olayer.'+x.get("name")));
 	         CONFIG.oLayers.push( x ); 
          }
       } 
@@ -211,18 +210,18 @@ function IN_EXTENT(polygon) {
 }
 
     
-
-function scale() 
-   { return (!CONFIG.mb ? -1 : CONFIG.get('resolution')); }
-
   
 function selectedBase(x)
    { return  CONFIG.mb != null && CONFIG.mb.getBaseLayer().get('name') == x; }
   
+  
+function SELECTED_BASE(x)
+   { return function() {return selectedBase(x); }}
 
+   
 function is_proj(x)
    { return (CONFIG.mb.getProjection() === x); }
-  
+   
   
 function IS_PROJ(x)
    { return function() {return is_proj(x);}}
@@ -250,6 +249,10 @@ function AND(a, b)
    
 function OR(a, b)
    { return function() {return a() || b();} }
+   
+   
+function NOT(x)
+   { return function() {return !x(); }}
    
    
    

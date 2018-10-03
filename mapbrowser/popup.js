@@ -302,8 +302,12 @@ pol.core.Popup = class {
         if (this.image != null) {
             this.image.style.left= -9+'px';
             this.image.style.top= -9+'px';
+        } 
+        else {
+           if (x<0) x=0;
+           if (y<0) y=0;
         }
-      
+        
         /* 
          * If part if window is outside the viewport, we may adjust the 
          * position of the window. It may be easier to just move the map, but

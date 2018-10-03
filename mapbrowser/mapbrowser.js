@@ -213,9 +213,10 @@ pol.core.MapBrowser = class {
     addConfiguredLayer(layer, name) {
         console.assert(layer != null && name != null, "layer="+layer+", name="+name);
         const i = this.config.addLayer(layer, name);
-        const visible = this.config.get('core.olayer.'+i);
+        const visible = this.config.get('core.olayer.'+name)
+         
         if (visible == null)
-            this.config.store('core.olayer.' + i, true); // default on 
+            this.config.store('core.olayer.' + name, false);
         else
             this.config.oLayers[i].setVisible(visible);
    

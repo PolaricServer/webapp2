@@ -175,7 +175,7 @@ pol.tracking.NotifyList = class extends pol.core.Widget {
         };
     
         setTimeout(
-            pol.tracking.NotifyList.updateScroller, 300);
+            pol.tracking.NotifyList.updateScroller, 1000);
     
         /* 
          * Select the icon from the type of notification. 
