@@ -49,10 +49,16 @@ pol.tracking.Tracking = class {
         var init = true;
         t.producer = new pol.tracking.MapUpdate(t.server);
 
+	/* Show label for point or not */
         t.showLabel = CONFIG.get("tracking.showlabel");
         if (t.showLabel == null)
             t.showLabel = {};
-
+	
+	/* Show trail for point or not */
+        t.showTrail = CONFIG.get("tracking.showtrail");
+        if (t.showTrail == null)
+            t.showTrail = {};
+	
         /* Set up vector layer and source */
         t.layer = CONFIG.mb.addVectorLayer(
             /* 
@@ -227,7 +233,8 @@ pol.tracking.Tracking = class {
 
 
         /* Draw the trail first. */
-        this.addTrail(p);
+	if (!this._trailHidden(p.ident, false))
+            this.addTrail(p);
 
         let feature = this.source.getFeatureById(p.ident);
         if (feature == null) {
@@ -355,13 +362,62 @@ pol.tracking.Tracking = class {
         CONFIG.store("tracking.showlabel", this.showLabel);
     }
 
+    
+    
+    /**
+     * Return true if label is hidden.
+     */
+    _trailHidden(id, dfl) {
+        if (this.showTrail[id] != null)
+            return this.showTrail[id]==false;
+        return dfl;
+    }
 
+
+    /**
+     * Return true if label is hidden.
+     */
+    trailHidden(id) {
+        const feature = this.source.getFeatureById(id);
+	const trail = this.source.getFeatureById(id +'.trail');
+        if (feature == null)
+            return false;
+        const x = this._trailHidden(id, false);
+	return x;
+    }
+    
+    
+    /**
+     * Hide trail.
+     */
+    hideTrail(id, hide) {
+        this.showTrail[id] = !hide;
+	const feature = this.source.getFeatureById(id);
+        const trail = this.source.getFeatureById(id +'.trail');
+	const tpoints = this.source.getFeatureById(id+'.trailpoints');
+	
+        if (hide) {      
+	    if (trail !=null)
+               this.source.removeFeature(trail);
+	    if (tpoints !=null)
+               this.source.removeFeature(tpoints);	    
+        }
+        else
+	    if (feature.point != null)
+	      this.addTrail(feature.point);
+	    
+        CONFIG.mb.map.render();
+        CONFIG.store("tracking.showtrail", this.showTrail);
+    }
+    
+    
+    
     /**
      * Add a trail.
      * TODO: Add some method to disable/enable this for a point?
      */
     addTrail(p) {
-        console.assert(p!=null, "Assertion failed");
+        console.assert(p!=null, "p is null");
         let feature = this.source.getFeatureById(p.ident+'.trail');
         /* If feature exists and redraw flag is false. Just return */
         if (feature != null && !p.redraw)

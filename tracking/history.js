@@ -29,7 +29,7 @@ pol.tracking.db = pol.tracking.db || {};
 
 pol.tracking.db.History = class extends pol.core.Widget {
     
-    constructor() {
+    constructor(item) {
         super();
         var t = this;
     
@@ -89,21 +89,9 @@ pol.tracking.db.History = class extends pol.core.Widget {
     
     
         t.list = JSON.parse(CONFIG.get('tracking.db.hist'));
-        t.item = JSON.parse(CONFIG.get('tracking.db.hist.item'));
         if (t.list==null)
             t.list=[];
-        if (t.item==null)
-            t.item = {call:'',fromdate:null,fromtime:null,todate:null,totime:null};
-        it = Object.assign({},t.item);
-    
-        if (t.item.fromdate == null)
-            t.item.fromdate = formatDate(new Date());
-        if (t.item.todate == null || t.item.todate == '-')
-            t.item.todate = formatDate(new Date());
-        if (t.item.fromtime == null)
-            t.item.fromtime = formatTime(new Date());
-        if (t.item.totime == null || t.totime == '-')
-            t.item.totime = formatTime(new Date());   
+        t.setItem(item);
     
         setTimeout( 
             () => $('#hist_end_date, #hist_end_time').prop('disabled', t.item.open), 
@@ -228,30 +216,60 @@ pol.tracking.db.History = class extends pol.core.Widget {
         function saveList() { 
             CONFIG.store('tracking.db.hist', JSON.stringify(t.list), false);
         }
-
-     
-        function formatDate(d) {
-            return ""+d.getFullYear() + "-" + 
-                (d.getMonth()<9 ? "0" : "") + (d.getMonth()+1) + "-" +
-                (d.getDate()<10 ? "0" : "")  + d.getDate();
-        }
- 
- 
-        function formatTime(d) {
-            return "" +
-                (d.getHours()<10 ? "0" : "") + d.getHours() + ":" +
-                (d.getMinutes()<10 ? "0" : "") + d.getMinutes();
-        }
  
     } /* constructor */
     
+    
+    
+    
+    setItem(item) {
+      	if (item) {
+	    this.item = {call:item,fromdate:null,fromtime:null,todate:null,totime:null};
+	    CONFIG.store('tracking.db.hist.item', JSON.stringify(this.item), false);
+	    m.redraw();
+        }
+	else
+	    this.item = JSON.parse(CONFIG.get('tracking.db.hist.item'));
+	
+        if (this.item==null)
+            this.item = {call:'',fromdate:null,fromtime:null,todate:null,totime:null};
+         this.it = Object.assign({},this.item);
+    
+        if (this.item.fromdate == null)
+            this.item.fromdate = formatDate(new Date());
+        if (this.item.todate == null || this.item.todate == '-')
+            this.item.todate = formatDate(new Date());
+        if (this.item.fromtime == null)
+            this.item.fromtime = formatTime(new Date());
+        if (this.item.totime == null || this.totime == '-')
+            this.item.totime = formatTime(new Date());  
+        return this;
+    }
+
 } /* class */
 
 
 
- 
+/* FIXME: source file? namespace? Module? */
+
+function formatDate(d) {
+    return ""+d.getFullYear() + "-" + 
+        (d.getMonth()<9 ? "0" : "") + (d.getMonth()+1) + "-" +
+        (d.getDate()<10 ? "0" : "")  + d.getDate();
+}
+
+
+function formatTime(d) {
+    return "" +
+        (d.getHours()<10 ? "0" : "") + d.getHours() + ":" +
+        (d.getMinutes()<10 ? "0" : "") + d.getMinutes();
+}
+
+
+
 
 pol.widget.setRestoreFunc("tracking.db.History", function(id, pos) {
-    var x = new pol.tracking.db.History(); 
-    x.activatePopup(id, pos, true); 
+    if (!CONFIG.history) 
+	CONFIG.history = new pol.tracking.db.History(); 
+    CONFIG.history.activatePopup(id, pos, true); 
 }); 
