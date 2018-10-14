@@ -65,25 +65,34 @@ pol.tracking.PolaricServer = class extends pol.core.Server {
 
 
     
+
     loginStatus() {
         this.GET("/authStatus", "", 
             x => { 
-                this.loggedIn = true;
                 this.auth = JSON.parse(x);
-                console.log("Logged in to server (userid="+this.auth.userid+").");
-                CONFIG.mb.toolbar.changeIcon
-                    ("toolbar_login", "images/unlocked.png", 
-                     () => this.logout(), 
-                     "Logged in as: '"+this.auth.userid+"'. Click to log out");
+		console.log("user="+this.auth.userid);
+                if (this.auth.userid == null || this.auth.userid == 'null') {
+		    console.log("Not logged in");
+		    this.loggedIn = false;
+		    CONFIG.mb.toolbar.changeIcon
+		      ("toolbar_login", "images/locked.png", () => this.login(), "Click to log in");
+		}
+		else {
+		  console.log("Logged in to server (userid="+this.auth.userid+").");
+		  this.loggedIn = true;
+		  CONFIG.mb.toolbar.changeIcon
+		      ("toolbar_login", "images/unlocked.png", 
+		      () => this.logout(), 
+		      "Logged in as: '"+this.auth.userid+"'. Click to log out");
+		}
             }, 
             (xhr, st, err) => {
                 this.loggedIn = false; 
-                console.log("Not logged in: "+st); 
+                console.log("Couldn't get login info: "+st); 
                 CONFIG.mb.toolbar.changeIcon
                     ("toolbar_login", "images/locked.png", () => this.login(), "Click to log in");
             });
     }
-
    
 
     /** 
