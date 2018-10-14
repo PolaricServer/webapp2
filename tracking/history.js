@@ -34,7 +34,6 @@ pol.tracking.db.History = class extends pol.core.Widget {
         var t = this;
     
         t.classname = "tracking.db.History"; 
-        t.server = CONFIG.server;
         t.item = null;
         t.list = []; 
     
@@ -150,10 +149,8 @@ pol.tracking.db.History = class extends pol.core.Widget {
         function showAll() {
             getSearch();
             CONFIG.tracks.clear();
-            for (i in t.list) {
-                var x = t.list[i];
-                showTrail(x);
-            }
+            for (const x of t.list) 
+                setTimeout(() => showTrail(x), 100);
         }
     
     
@@ -172,8 +169,8 @@ pol.tracking.db.History = class extends pol.core.Widget {
         /* Show the trail for a given item */
         function showTrail(x) {
             var qstring = "?tfrom="+x.fromdate+"/"+x.fromtime+"&tto="+x.todate+"/"+x.totime;
-            t.server.GET("/hist/"+x.call+"/trail"+qstring, "", 
-                x => CONFIG.tracks.update(JSON.parse(x)) );
+            CONFIG.server.GET("/hist/"+x.call+"/trail"+qstring, "", 
+                x => CONFIG.tracks.update(JSON.parse(x), true) );
         }
     
      
@@ -183,7 +180,7 @@ pol.tracking.db.History = class extends pol.core.Widget {
                 parms += '&station' + i + '=' + t.list[i].call + '&tfrom' + i + '=' + t.list[i].fromdate+"/" + 
                     t.list[i].fromtime + '&tto' + i + '=' +  t.list[i].todate + "/" + t.list[i].totime;
  
-            document.getElementById("downloadframe").src = t.server.url + '/gpx?' + parms; 
+            document.getElementById("downloadframe").src = CONFIG.server.url + '/gpx?' + parms; 
         }
    
    

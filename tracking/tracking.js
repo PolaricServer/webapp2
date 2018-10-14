@@ -2,7 +2,7 @@
  Map browser based on OpenLayers 5. Tracking.
  Present tracking data from Polaric Server backend as a map-layer.
 
- Copyright (C) 2017 Øyvind Hanssen, LA7ECA, ohanssen@acm.org
+ Copyright (C) 2017-2018 Øyvind Hanssen, LA7ECA, ohanssen@acm.org
 
  This program is free software: you can redistribute it and/or modify
  it under the terms of the GNU Affero General Public License as published
@@ -42,6 +42,8 @@ pol.tracking.Tracking = class {
         t.filter = null;
         t.ready = false;
         t.server = srv;
+	t.srch = false; 
+	
         t.iconpath = CONFIG.get('iconpath');
         if (t.iconpath == null)
             t.iconpath = '';
@@ -90,11 +92,12 @@ pol.tracking.Tracking = class {
                     t.showList(pts, [e.clientX, e.clientY], true);
                     return {name: "_STOP_"};
                 }
-                return { 
-                    name: (pol.tracking.isSign(pts[0]) ? "SIGN" : "POINT"), 
-                    ident: pts[0].getId(),
-                    point: pts[0]
-                  };
+                if (pts.length > 0) 
+		    return { 
+                        name: (pol.tracking.isSign(pts[0]) ? "SIGN" : "POINT"), 
+                        ident: pts[0].getId(),
+                        point: pts[0]
+                    };
             }
             else return null;
         });
@@ -186,7 +189,7 @@ pol.tracking.Tracking = class {
     redrawFeature(id) {
         const t = this;
         const feature = t.source.getFeatureById(id);
-        console.assert(feature != null, "Assertion failed. feature=null");
+        console.assert(feature != null, "feature=null");
         if (feature==null)
             return; 
         const pt = feature.point;
@@ -200,9 +203,9 @@ pol.tracking.Tracking = class {
      */
     clear() {
         const ft = this.source.getFeatures()
-        for (i in ft)
+        for (const x of ft) 
             /* For some strange reason, removing feature directly doesn't work */
-            this.removePoint(ft[i].getId());
+            this.removePoint(x.getId());
     }
 
 
@@ -211,7 +214,7 @@ pol.tracking.Tracking = class {
      * Set filter and re-subscribe.
      */
     setFilter(flt) {
-        console.assert(flt!=null && flt!="", "Assertion failed");
+        console.assert(flt!=null && flt!="", "flt="+flt);
         this.filter = flt;
         if (this.ready) {
             this.clear();
@@ -462,7 +465,7 @@ pol.tracking.Tracking = class {
      * TODO: Should points be clickable, to pop up some info?
      */
     addTrailPoints(p) {
-        console.assert(p!=null, "Assertion failed");
+        console.assert(p!=null, "p is null");
         let feature = this.source.getFeatureById(p.ident+'.trailpoints');
         if (feature !=null)
             this.source.removeFeature(feature);
@@ -536,7 +539,6 @@ pol.tracking.Tracking = class {
         console.assert(pix!=null && pix[0]>=0 && pix[1]>=null, "Assertion failed");
         const pp = CONFIG.mb.map.getFeaturesAtPixel( pix,
             {hitTolerance: 3, layerFilter: x => {return (x == this.layer)}});
-
         if (pp == null)
             return null;
         else return pp.filter(x => x.point);
@@ -579,7 +581,14 @@ pol.tracking.Tracking = class {
     /**
      * Update using JSON data from Polaric Server backend
      */
-    update(ov) {
+    update(ov, srch) {
+        if (ov == null)
+	    return;
+	
+	if (!srch && this.srch)
+	    this.clear();
+	this.srch = srch;
+	
         for (i in ov.points)
             this.addPoint(ov.points[i]);
    
