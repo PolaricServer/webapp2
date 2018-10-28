@@ -91,7 +91,8 @@ pol.tracking.db.MyTrackers = class extends pol.core.Widget {
             m.redraw();
         });
         getTrackers();
-        setTimeout( iconGrey, 500); 
+        setTimeout( ()=> t.iconGrey(), 1000); 
+        setTimeout( ()=> t.iconGrey(), 2000);
         
         setInterval(getTrackers, 120000);
         // FIXME: Use pubsub service? 
@@ -162,20 +163,7 @@ pol.tracking.db.MyTrackers = class extends pol.core.Widget {
         /* Automatic checkbox handler */
         function auto() {
             t.edit.auto = (t.edit.auto ? false : true);
-            iconGrey();
-        }
-        
-        
-        /* Grey out icon if automatic is set */
-        function iconGrey() {
-            if (t.edit.auto) {
-                $("#iconpick>img").css("background", "grey");
-                $("#iconpick>img").css("opacity", "0.5");
-            }
-            else {
-                $("#iconpick>img").css("background", "");
-                $("#iconpick>img").css("opacity", "");
-            }
+            t.iconGrey();
         }
         
         
@@ -211,7 +199,7 @@ pol.tracking.db.MyTrackers = class extends pol.core.Widget {
             const tr = t.myTrackers[i]; 
             t.edit = tr;
             tr.auto = (tr.icon == null);
-            iconGrey();
+            t.iconGrey();
             $("#addTracker").val(tr.id).trigger("change");
             $("#alias").val(tr.alias).trigger("change");
             $("#iconpick>img").attr("src", (tr.auto? t.icons[t.dfl] : tr.icon)).trigger("change");
@@ -235,8 +223,22 @@ pol.tracking.db.MyTrackers = class extends pol.core.Widget {
     } /* constructor */
     
     
+    /* Grey out icon if automatic is set */
+    iconGrey() {
+        if (this.edit.auto) {
+            $("#iconpick>img").css("background", "grey");
+            $("#iconpick>img").css("opacity", "0.5");
+        }
+        else {
+            $("#iconpick>img").css("background", "");
+            $("#iconpick>img").css("opacity", "");
+        }
+    }
+        
+        
     setIdent(id) {
         $("#addTracker").val(id).trigger("change");
+        this.iconGrey();
     }
 
 } /* class */
@@ -247,6 +249,5 @@ pol.tracking.db.MyTrackers = class extends pol.core.Widget {
 pol.widget.setRestoreFunc("tracking.db.MyTrackers", function(id, pos) {
     if (!CONFIG.server.loggedIn)
         return;
-    var x = new pol.tracking.db.MyTrackers(); 
-    x.activatePopup(id, pos, true); 
+    CONFIG.trackers.activatePopup(id, pos, true); 
 }); 

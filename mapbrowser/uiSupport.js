@@ -180,7 +180,7 @@ const iconPick = {
         const yy = (vn.state.selected ? vn.state.selected : xx);
         
         setTimeout( ()=> {
-            if (yy)
+            if (yy && $("#iconpick").get(0))
                 $("#iconpick").get(0).value = yy
         }, 600);
         

@@ -100,7 +100,15 @@ div.histt {
 .histt table tr:last-child {border-bottom: none}
 .histt table img {height: 13px}
 
-table.mytrackers {margin-top: -0.2em; margin-bottom: 0.4em}
-table.mytrackers td {padding-bottom: 0; padding-top: 0; padding-right: .7em; height: 0.5em;}
-table.mytrackers td { height: 0.5em !important}
-table.mytrackers img {height: 15px}
+
+table.mytrackers {margin-top: -0.3em; margin-bottom: 0.4em}
+
+table.mytrackers td {
+    padding-bottom: 0; padding-top: 0; padding-right: .3em; 
+    padding-left: .2em; height: 0.5em; border-right: 1px dotted #555
+}
+
+table.mytrackers tr { border-bottom: 1px dotted #999; height: 0.5em !important}
+table.mytrackers tr:last-child {border-bottom: none}
+table.mytrackers td:last-child {border-right: none}
+table.mytrackers img {height: 17px; vertical-align: middle}
