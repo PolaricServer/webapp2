@@ -223,7 +223,7 @@ pol.core.Popup = class {
     {
         const d =  this.showPopup(props);
         srv.GET(service, data, 
-            txt => {d.innerHTML = txt; });
+            txt => {d.innerHTML = txt;});
         return d;
     }
     

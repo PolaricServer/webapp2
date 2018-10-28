@@ -42,7 +42,7 @@ pol.tracking.Tracking = class {
         t.filter = null;
         t.ready = false;
         t.server = srv;
-	t.srch = false; 
+        t.srch = false; 
 	
         t.iconpath = CONFIG.get('iconpath');
         if (t.iconpath == null)
@@ -51,12 +51,12 @@ pol.tracking.Tracking = class {
         var init = true;
         t.producer = new pol.tracking.MapUpdate(t.server);
 
-	/* Show label for point or not */
+        /* Show label for point or not */
         t.showLabel = CONFIG.get("tracking.showlabel");
         if (t.showLabel == null)
             t.showLabel = {};
 	
-	/* Show trail for point or not */
+        /* Show trail for point or not */
         t.showTrail = CONFIG.get("tracking.showtrail");
         if (t.showTrail == null)
             t.showTrail = {};

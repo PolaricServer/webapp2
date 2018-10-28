@@ -24,7 +24,7 @@ pol.tracking.PolaricServer = class extends pol.core.Server {
     
     constructor() {
         super();
-        this.auth = { userid: "", admin: false, sar: false }; 
+        this.auth = { userid: "", admin: false, sar: false, services: "" }; 
         CONFIG.mb.toolbar.addIcon(2, "images/locked.png", "toolbar_login", null, "Log in");
         this.loginStatus();
         this.pubsub = new pol.tracking.PubSub(this);
@@ -70,21 +70,21 @@ pol.tracking.PolaricServer = class extends pol.core.Server {
         this.GET("/authStatus", "", 
             x => { 
                 this.auth = JSON.parse(x);
-		console.log("user="+this.auth.userid);
+                console.log("user="+this.auth.userid);
                 if (this.auth.userid == null || this.auth.userid == 'null') {
-		    console.log("Not logged in");
-		    this.loggedIn = false;
-		    CONFIG.mb.toolbar.changeIcon
-		      ("toolbar_login", "images/locked.png", () => this.login(), "Click to log in");
-		}
-		else {
-		  console.log("Logged in to server (userid="+this.auth.userid+").");
-		  this.loggedIn = true;
-		  CONFIG.mb.toolbar.changeIcon
-		      ("toolbar_login", "images/unlocked.png", 
-		      () => this.logout(), 
-		      "Logged in as: '"+this.auth.userid+"'. Click to log out");
-		}
+                    console.log("Not logged in");
+                    this.loggedIn = false;
+                    CONFIG.mb.toolbar.changeIcon
+                        ("toolbar_login", "images/locked.png", () => this.login(), "Click to log in");
+                }
+            else {
+                console.log("Logged in to server (userid="+this.auth.userid+").");
+                this.loggedIn = true;
+                CONFIG.mb.toolbar.changeIcon
+                    ("toolbar_login", "images/unlocked.png", 
+                    () => this.logout(), 
+                    "Logged in as: '"+this.auth.userid+"'. Click to log out");
+            }
             }, 
             (xhr, st, err) => {
                 this.loggedIn = false; 
