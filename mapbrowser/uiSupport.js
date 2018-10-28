@@ -133,7 +133,8 @@ const checkBox = {
          {
             onclick: vn.attrs.onclick,
             type:"checkbox", name: vn.attrs.name, value: vn.attrs.id, 
-            checked: (vn.attrs.checked ? "checked" : null) 
+            checked: (vn.attrs.checked ? "checked" : null),
+            onchange: (vn.attrs.onchange)
          }), nbsp, vn.children);
     }
 }
@@ -146,6 +147,55 @@ const select = {
     }
 }
 
+
+
+/*
+ * Attributes: 
+ *  - id - id for div element (optional)
+ *  - icons - array of image file names.
+ *  - default - index (in icons array) of icon to be selected by default. (optional) 
+ */
+const iconPick = {
+    oncreate: function(vn) {
+        const inp = vn.state;
+        inp.id=vn.attrs.id;     
+    },    
+    
+    doSelect: function(vn, x) {
+        vn.state.selected = x;
+        $("div#iconlist").css("visibility", "hidden");
+        $("div#iconlist").css("max-height", "1px");
+        $("#iconpick").get(0).value = x;                 
+    },
+    
+    showIcons: function() {
+        $("div#iconlist").css("visibility", "visible");
+        $("div#iconlist").css("max-height", "");
+    },
+    
+    view: function(vn) {
+        const icons = vn.attrs.icons; 
+        const dfl = (vn.attrs.default ? vn.attrs.default : 0); 
+        const xx = (vn.attrs.value && vn.attrs.value!=null ? vn.attrs.value : icons[dfl]);
+        const yy = (vn.state.selected ? vn.state.selected : xx);
+        
+        setTimeout( ()=> {
+            if (yy)
+                $("#iconpick").get(0).value = yy
+        }, 600);
+        
+        return m("span", [ 
+            m("span#iconpick", { onclick:() => this.showIcons(), 
+                onchange: ()=> { vn.state.selected = $("#iconpick>img").val()} }, 
+                m("img", {src: yy} )), 
+                 
+            m("div#iconlist", {style: "max-height: 1px"}, icons.map( x=> {
+                return m("img", { src: x, onclick: ()=> this.doSelect(vn, x) })
+            }) 
+        )])
+    }
+    
+}
 
 
 const Datepick = {
@@ -257,4 +307,10 @@ const latLngInput = {
           $("#ll_EW").html( (val=="E" ? "W" : "E"));
     }
  }
+ 
+
+
+
+
+ 
  

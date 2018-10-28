@@ -110,7 +110,7 @@ tr:hover {background: #ff8}
 td {color: #111; font-style: italic}
 td.onserver {color: #050;font-style: normal}
 
-.leftlab, .sleftlab, label.lleftlab {
+.leftlab, .sleftlab, .xsleftlab, label.lleftlab {
   float: left;
   width: 9.0em;
   text-align: right;
@@ -120,6 +120,10 @@ td.onserver {color: #050;font-style: normal}
 
 .sleftlab {
   width: 5.5em;
+} 
+
+.xsleftlab {
+  width: 4em;
 } 
 
 .lleftlab {
@@ -217,7 +221,7 @@ form.mapref hr { border: dotted 1px #888 }
 #layerEdit {min-width: 32em}
 #layerEdit table {margin-left: 5.7em; margin-bottom: 0.4em}
 #layerEdit select {margin-bottom: 0.2em; background: #ddd; border: outset 1px; border-radius: 4px; color: #040}
-#layerEdit>div {padding-top: 0.8em; border-top: 3px solid #9a9}
+#layerEdit>div, #trackerEdit>div {padding-top: 0.8em; border-top: 3px solid #9a9}
 #layerEdit input {margin-bottom: 0.2em; margin-right: 0.3em; border-radius: 4px}
 #layerEdit div.spec {border: 1px dotted #bbb; background: #e0e5dc ; padding-top: 0.3em; margin-top: 1em}
 #wmsUrl, #wfsUrl, #wfsFtype, #wmsLayers {width: 28em}
@@ -226,4 +230,27 @@ form.mapref hr { border: dotted 1px #888 }
 #layerEdit div.wserver {margin-top: 0.5em}
 
 img.marker {margin-top: -9px; margin-left: -9px; border: 10px #FF00 solid; border-radius: 20px; background: #ff57}
+
+#iconpick>img { 
+    padding: 1px; margin: 1px; 
+    border: 1px solid #aaa; background: 
+    white; height: 22px; width: 22px
+}
+
+#iconpick  {vertical-align: top}
+
+div#iconlist {
+    visibility: hidden;  margin-top: -5em;
+    border: solid 2px #977; max-width: 20em;  position: fixed; background: #ddc
+}
+
+
+div#iconlist>img 
+   { padding: 2px 1px 0px 1px; border 1px #ddc }
+   
+div#iconlist>img:hover 
+   { background: white; border: 1px dotted red; margin: -1px } 
+
+
+#trackerEdit span#butt { margin-top: 0.3em; margin-left: 4.4em }
 
