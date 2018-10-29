@@ -52,7 +52,7 @@ pol.tracking.db.MyTrackers = class extends pol.core.Widget {
                                 m("img", {src:"images/edit.png", onclick: apply(edit, i++) })),
                             m("td", {onclick: apply(goto, x.id)}, x.id),
                             m("td", x.alias),
-                            m("td", (x.icon == null ? "" :  m("img", {src:x.icon}))),
+                            m("td", (x.icon == null || x.auto ? "" :  m("img", {src:x.icon}))),
                             m("td", (x.active ? m("img", {src:"images/16px/ok.png"}) : ""))
                         ]);
                     }))),
@@ -92,7 +92,7 @@ pol.tracking.db.MyTrackers = class extends pol.core.Widget {
         });
         getTrackers();
         setTimeout( ()=> t.iconGrey(), 1000); 
-        setTimeout( ()=> t.iconGrey(), 2000);
+        setTimeout( ()=> t.iconGrey(), 3000);
         
         setInterval(getTrackers, 120000);
         // FIXME: Use pubsub service? 
@@ -107,8 +107,14 @@ pol.tracking.db.MyTrackers = class extends pol.core.Widget {
         function getTrackers() {
             t.server.GET("/users/"+t.server.auth.userid+ "/trackers", "", x => { 
                 t.myTrackers = JSON.parse(x);
-                for (var tt of t.myTrackers)
-                    tt.icon = t.iconpath+"/icons/"+tt.icon; 
+                for (var tt of t.myTrackers) {
+                    if (tt.icon == null) {
+                        tt.auto = true; 
+                        tt.icon = t.icons[t.dfl];
+                    }
+                    else 
+                        tt.icon = t.iconpath+"/icons/"+tt.icon;
+                }
                 m.redraw();
             } );
         }
@@ -119,6 +125,7 @@ pol.tracking.db.MyTrackers = class extends pol.core.Widget {
             $("#alias").val("").trigger("change");
             $("#iconpick>img").attr("src", t.icons[t.dfl]).trigger("change");
             add();
+            setTimeout( ()=> t.iconGrey(), 1000); 
         }
   
   
@@ -133,6 +140,7 @@ pol.tracking.db.MyTrackers = class extends pol.core.Widget {
                 alias: $("#alias").val(), 
                 icon: (t.edit.auto ? null : icn2)
             };
+            
             if (data.alias=="") 
                 data.alias = null;
             if (data.id == null || data.id == "")
@@ -143,7 +151,8 @@ pol.tracking.db.MyTrackers = class extends pol.core.Widget {
                 x => {
                     console.log("Added/updated tracker: "+data.id);
                     removeDup(data.id);
-                    data.icon = (t.edit.auto ? null : icn);
+		    data.auto = t.edit.auto; 
+                    data.icon = (t.edit.auto ? t.icons[t.dfl] : icn);
                     if (x=="OK-ACTIVE")
                         data.active=true;
                     t.myTrackers.push(data);
@@ -198,7 +207,6 @@ pol.tracking.db.MyTrackers = class extends pol.core.Widget {
         function edit(i) { 
             const tr = t.myTrackers[i]; 
             t.edit = tr;
-            tr.auto = (tr.icon == null);
             t.iconGrey();
             $("#addTracker").val(tr.id).trigger("change");
             $("#alias").val(tr.alias).trigger("change");

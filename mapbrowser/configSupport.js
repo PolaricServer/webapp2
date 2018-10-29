@@ -41,6 +41,8 @@ function AJAXPREFIX(p)
 function ICONPATH(p)
  { CONFIG.set('iconpath', p); }
  
+function DEFAULT_ICON(i)
+ { CONFIG.set('default_icon', i) }; 
  
 function ll2proj(p)
  { return ol.proj.transform(p, 'EPSG:4326', CONFIG.mb.view.getProjection()); }
