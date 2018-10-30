@@ -28,6 +28,7 @@ pol.tracking.PolaricServer = class extends pol.core.Server {
         CONFIG.mb.toolbar.addIcon(2, "images/locked.png", "toolbar_login", null, "Log in");
         this.loginStatus();
         this.pubsub = new pol.tracking.PubSub(this);
+        CONFIG.mb.toolbar.addIcon(2, "images/sar.png", "sarmode");
     }
 
 
@@ -70,7 +71,6 @@ pol.tracking.PolaricServer = class extends pol.core.Server {
         this.GET("/authStatus", "", 
             x => { 
                 this.auth = JSON.parse(x);
-                console.log("user="+this.auth.userid);
                 if (this.auth.userid == null || this.auth.userid == 'null') {
                     console.log("Not logged in");
                     this.loggedIn = false;

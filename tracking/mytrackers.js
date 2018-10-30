@@ -151,7 +151,7 @@ pol.tracking.db.MyTrackers = class extends pol.core.Widget {
                 x => {
                     console.log("Added/updated tracker: "+data.id);
                     removeDup(data.id);
-		    data.auto = t.edit.auto; 
+                    data.auto = t.edit.auto; 
                     data.icon = (t.edit.auto ? t.icons[t.dfl] : icn);
                     if (x=="OK-ACTIVE")
                         data.active=true;
@@ -243,6 +243,9 @@ pol.tracking.db.MyTrackers = class extends pol.core.Widget {
         }
     }
         
+    onActivate() {
+        setTimeout(()=> this.iconGrey(), 600); 
+    }
         
     setIdent(id) {
         $("#addTracker").val(id).trigger("change");

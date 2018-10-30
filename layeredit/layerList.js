@@ -139,8 +139,6 @@ pol.layers.List = class List extends pol.core.Widget {
                         if (obj != null) {
                             const wr = obj.data;
                             const x = this.typeList[wr.type].obj.obj2layer(wr.data);        
-                            console.log("Got layer from server: "+wr.name);
-                            
                             removeDup(wr.name);
                             lrs.push({name:wr.name, type:wr.type, server:true, index: obj.id});
                             t.myLayers.push(x);

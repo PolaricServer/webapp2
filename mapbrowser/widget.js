@@ -116,7 +116,10 @@ pol.core.Widget = class {
         if (!pinned)
             pinned = true;
         t.pinned = pinned;
-     
+        
+        if (t.onActivate)
+            t.onActivate(); 
+            
         return this.popup = browser.gui.showPopup( {
             vnode: this.widget,
             pixPos: pixPos,
@@ -127,6 +130,7 @@ pol.core.Widget = class {
             id: id,
             cclass: "widget"
         });
+        
      
      
         function pinCb(p) {

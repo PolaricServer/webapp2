@@ -583,11 +583,16 @@ pol.tracking.Tracking = class {
      */
     update(ov, srch) {
         if (ov == null)
-	    return;
+            return;
 	
-	if (!srch && this.srch)
-	    this.clear();
-	this.srch = srch;
+        if (ov.sarmode)
+            $("#sarmode").addClass("sar_visible");
+        else
+            $("#sarmode").addClass("sar_hidden");
+        
+        if (!srch && this.srch)
+            this.clear();
+        this.srch = srch;
 	
         for (i in ov.points)
             this.addPoint(ov.points[i]);

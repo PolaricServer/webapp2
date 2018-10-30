@@ -218,20 +218,25 @@ pol.tracking.db.History = class extends pol.core.Widget {
     
     
     
+    setCall(call) {
+        this.item.call = call; 
+        m.redraw();
+    }
+    
     
     setItem(item) {
       	if (item) {
-	    this.item = {call:item,fromdate:null,fromtime:null,todate:null,totime:null};
-	    CONFIG.store('tracking.db.hist.item', JSON.stringify(this.item), false);
-	    m.redraw();
+            this.item = {call:item, fromdate:null, fromtime:null, todate:null, totime:null};
+            CONFIG.store('tracking.db.hist.item', JSON.stringify(this.item), false);
+            m.redraw();
         }
-	else
-	    this.item = JSON.parse(CONFIG.get('tracking.db.hist.item'));
+        else
+            this.item = JSON.parse(CONFIG.get('tracking.db.hist.item'));
 	
         if (this.item==null)
-            this.item = {call:'',fromdate:null,fromtime:null,todate:null,totime:null};
-         this.it = Object.assign({},this.item);
-    
+            this.item = {call:'', fromdate:null, fromtime:null, todate:null, totime:null};
+        this.it = Object.assign({},this.item);
+ 
         if (this.item.fromdate == null)
             this.item.fromdate = formatDate(new Date());
         if (this.item.todate == null || this.item.todate == '-')
@@ -242,7 +247,7 @@ pol.tracking.db.History = class extends pol.core.Widget {
             this.item.totime = formatTime(new Date());  
         return this;
     }
-
+    
 } /* class */
 
 
@@ -266,7 +271,5 @@ function formatTime(d) {
 
 
 pol.widget.setRestoreFunc("tracking.db.History", function(id, pos) {
-    if (!CONFIG.history) 
-	CONFIG.history = new pol.tracking.db.History(); 
     CONFIG.history.activatePopup(id, pos, true); 
 }); 
