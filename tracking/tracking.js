@@ -587,7 +587,7 @@ pol.tracking.Tracking = class {
 	
         if (ov.sarmode)
             $("#sarmode").removeClass("sar_hidden");
-        else {
+        else
             $("#sarmode").addClass("sar_hidden");
 
         if (!srch && this.srch)
