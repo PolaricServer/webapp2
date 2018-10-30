@@ -1,0 +1,49 @@
+
+
+
+/*****************************************************************************
+ * Small screens:
+ * Screen width/height < 500px OR device-width < 25em
+ *****************************************************************************/
+
+
+@media 
+  screen and (max-device-width: 500px),
+  screen and (max-device-width: 25em), 
+  screen and (max-device-height: 500px),
+  screen and (max-device-height: 25em)
+{
+
+   div.POPUPMENU div div {
+      font-size: 1.2em; 
+      line-height: 1.5em;
+      border-bottom: dotted 1px #999; 	
+   }
+   
+   div.ITEM_sep {
+      border-bottom: solid 1px #444 !important;
+   }
+
+   div.ITEM_last {border-bottom: none !important}
+}
+
+
+
+/* Portrait orientation */
+@media 
+  screen and (max-device-width: 500px),
+  screen and (max-device-width: 25em) 
+{
+   #toolbar_login {visibility: hidden; width: 0}
+   #tb_measure {visibility: hidden; width: 0}
+}
+
+
+
+/* Landscape orientation */
+@media 
+  screen and (max-device-height: 500px),
+  screen and (max-device-height: 25em) 
+{
+
+}
