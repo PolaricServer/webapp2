@@ -15,10 +15,10 @@
      * Add a tracking-layer using a polaric server backend.
      */  
     const srv = new pol.tracking.PolaricServer();
+    CONFIG.server = srv;
     setTimeout( () => {
         const mu = new pol.tracking.Tracking(srv);
         const flt = new pol.tracking.Filters(mu);
-        CONFIG.server = srv;
         CONFIG.tracks = mu;
         CONFIG.trackers = new pol.tracking.db.MyTrackers(); 
             
@@ -47,12 +47,12 @@
      * Map menu
      *********************************************************/
    
-    browser.ctxMenu.addCallback("MAP", function(m, ctxt) {
+    browser.ctxMenu.addCallback("MAP", (m, ctxt)=> {
         m.add('Show map reference', () => browser.show_MaprefPix( [m.x, m.y] ) );  
         if (srv.auth.sar) {
 	        m.add('Add object', () => editObject(m.x, m.y) );
-		m.add('Add sign', () => editSign(m.x, m.y) );
-	}
+            m.add('Add sign', () => editSign(m.x, m.y) );
+        }
         m.add(null);
         m.add('Center point', () =>   
             browser.view.setCenter( browser.map.getCoordinateFromPixel([m.x, m.y])) );
@@ -67,7 +67,7 @@
      * Toolbar menu
      *********************************************************/
    
-    browser.ctxMenu.addCallback("TOOLBAR", function(m, ctxt) {
+    browser.ctxMenu.addCallback("TOOLBAR", (m, ctxt)=> {
         
 
         m.add('Search items', () => 
@@ -128,7 +128,7 @@
      * Point menu
      *********************************************************/
    
-    browser.ctxMenu.addCallback("POINT", function(m, ctxt) {
+    browser.ctxMenu.addCallback("POINT", (m, ctxt)=> {
         m.add('Show info', () => srv.infoPopup(ctxt.point, [m.x, m.y]) );
         m.add('Last movements', () => historyPopup(ctxt.ident, [m.x, m.y]) );
 
@@ -168,7 +168,7 @@
      * Sign menu
      *********************************************************/
     
-    browser.ctxMenu.addCallback("SIGN", function(m, ctxt) {
+    browser.ctxMenu.addCallback("SIGN", (m, ctxt)=> {
         m.add('Show info', () => srv.infoPopup(ctxt.point, [m.x, m.y]) );
         m.add('Do funny things', () => alert("What?") );
     });
