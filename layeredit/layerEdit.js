@@ -87,7 +87,7 @@ pol.layers.Edit = class {
    
         /* To be redefined in subclass */
         function reset() { }
-   
+        
    
         /** 
          * Add a map layer to list 
@@ -127,7 +127,8 @@ pol.layers.Edit = class {
     } /* constructor */
 
     
-
+    onclose() {}
+    
     /* To be defined in subclass */
     enabled()
         { return false; }
@@ -163,6 +164,8 @@ pol.layers.Edit = class {
     edit(layer) {
         $("#editLayer").val(layer.get("name")).trigger("change").attr("ok", true);
         this.filt = layer.filt;
+        if (this.filt == null) 
+            this.filt = {ext:null, zoom:null, proj:null};
         $("#vis.extent").prop("checked", (this.filt.ext != null)).trigger("change");
         $("#vis.zoom").prop("checked", (this.filt.zoom != null)).trigger("change");
         $("#vis.proj").prop("checked", (this.filt.proj != null)).trigger("change");
@@ -177,8 +180,16 @@ pol.layers.Edit = class {
     createLayer(n) {
         return null; 
     }
-
-
+    
+    
+    
+    /* 
+     * Remove info specific to layer-type. 
+     * To be redefined in subclass 
+     */
+    removeLayer(layer) { }
+        
+        
     /**
      * Stringify settings for a layer to JSON format. 
      * layer2obj is to be defined in subclass. 

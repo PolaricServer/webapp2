@@ -309,6 +309,42 @@ const latLngInput = {
  }
  
 
+ 
+
+/**
+ * Use an element as a drag-drop zone for files.
+ */
+
+function dragdrop(element, onchange) {
+	
+	element.addEventListener("dragover", activate)
+	element.addEventListener("dragleave", deactivate)
+	element.addEventListener("dragend", deactivate)
+	element.addEventListener("drop", deactivate)
+	element.addEventListener("drop", update)
+	window.addEventListener("blur", deactivate)
+
+	function activate(e) {
+		e.preventDefault();
+        $(element).addClass("dragover");
+	}
+
+	function deactivate() {
+        $(element).removeClass("dragover");
+    }
+	
+	
+    /* This is called when item is dropped on the element 
+     * options.onchange is called using the dropped items as argument.. 
+     */
+	function update(e) {
+		e.preventDefault()
+		if (typeof onchange == "function") {
+			onchange((e.dataTransfer || e.target))
+		}
+	}
+}
+
 
 
 

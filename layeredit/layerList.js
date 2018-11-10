@@ -36,8 +36,9 @@ pol.layers.List = class List extends pol.core.Widget {
         t.addType("dummy", "Select layer type..", new pol.layers.Dummy(this));
         t.addType("wms", "Standard WMS layer", new pol.layers.Wms(this));   
         t.addType("wfs", "Standard WFS layer", new pol.layers.Wfs(this));
+        t.addType("gpx", "GPX files upload", new pol.layers.Gpx(this));
    
-        let layer = t.typeList["dummy"].obj; 
+        this.layer = t.typeList["dummy"].obj; 
 
    
         this.widget = {
@@ -52,13 +53,14 @@ pol.layers.List = class List extends pol.core.Widget {
                             m("td", {'class': (x.server ? "onserver" : null)}, x.name) ] );
                     }))), m("div", [ 
                         m("span.sleftlab", "Type: "), 
-                        m(select, { id: "lType", onchange: selectHandler, 
+                        m(select, { id: "lType", 
+                            onchange: selectHandler, 
                             list: Object.keys(t.typeList).map( x=> 
                                 { return  {label: t.typeList[x].label, val: x, obj: t.typeList[x].obj}; } ) 
                         }), 
-                        m(layer.widget) 
+                        m(t.layer.widget) 
                     ] ) ] );
-            }
+            },
         };
    
    
@@ -74,7 +76,7 @@ pol.layers.List = class List extends pol.core.Widget {
         /* Handler for select element. Select a type. */
         function selectHandler(e) {
             const tid = $("#lType").val();
-            layer = t.typeList[tid].obj;
+            t.layer = t.typeList[tid].obj;
             m.redraw();
         }
    
@@ -92,8 +94,8 @@ pol.layers.List = class List extends pol.core.Widget {
    
     } /* constructor */
 
-
-
+    
+    
     /**
      * Add a type with a Layer editor.
      */
@@ -178,8 +180,9 @@ pol.layers.List = class List extends pol.core.Widget {
         const srv = CONFIG.server; 
         if (srv && srv != null && srv.loggedIn && this.myLayerNames[id].index >= 0)
             srv.removeObj("layer", this.myLayerNames[id].index);
-	 
+
         const lr = this.myLayers[id];      
+        this.layer.removeLayer(lr); 
         this.myLayers.splice(id,1);
         this.myLayerNames.splice(id,1);
         CONFIG.store("layers.list", this.myLayerNames, true);

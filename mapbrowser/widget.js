@@ -91,11 +91,10 @@ pol.core.Widget = class {
     activate(w) 
     { 
         console.assert(w && w != null, "w="+w);
-        this.delement = w; 
+	this.delement = w; 
         m.mount(this.delement, this.widget);
     }
- 
- 
+
  
  
     /** 
@@ -128,7 +127,7 @@ pol.core.Widget = class {
             pin: pinCb,
             pinned: t.pinned,
             id: id,
-            cclass: "widget"
+            cclass: "widget",
         });
         
      

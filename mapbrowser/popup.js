@@ -72,14 +72,16 @@ pol.core.Popup = class {
         if (this.activepopup == null)
             return;
         if (this.offCallback != null)
-        this.offCallback(); 
+            this.offCallback(); 
         this.isMenu = false;
         this.allowedPopups++;
                        
+	setTimeout(()=> {
         this.activepopup.style.display = "none" ;
         this.activepopup.parentNode.removeChild(this.activepopup);
         this.activepopup = null;
         this.geoPos = null;
+	}, 100);
     }
 
 
@@ -113,6 +115,7 @@ pol.core.Popup = class {
      * @param {boolean|undefined} props.image - true if we want a cross to be displayed at the position.
      * @param {boolean|undefined} props.draggable - true if we want the popup to be draggable and pinnable.
      * @param {string|undefined} props.id - unique identifier (used as id of element).
+     * @param {function|undefined} props.onclose - handler to be called when window closes. 
      * 
      */
     showPopup(props) 
@@ -172,12 +175,15 @@ pol.core.Popup = class {
                 
                     /* close click handler */
                     closeimage.onclick = function(e) {
+			if (props.vnode)
+			    m.mount(pdiv, null);
                         pdiv._pinned = false; 
                         t.activepopup = pdiv;
                         t.allowedPopups--;
                         t.removePopup();
                         if (props.pin)
                             props.pin(pdiv._pinned); // Pin callback
+
                     }
                 }
             }  }, 300);

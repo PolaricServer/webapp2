@@ -254,3 +254,11 @@ div#iconlist>img:hover
 
 #trackerEdit span#butt { margin-top: 0.3em; margin-left: 4.4em }
 
+.dragdrop {
+    border: 3px dotted; margin-bottom: 5px; padding: 0.3em; 
+    background: #cee; width: 25em; min-height: 3em;
+    display: inline-block; font-size: x-small
+}
+.dragdrop img {vertical-align: middle}
+.dragover {background: #cfc}
+

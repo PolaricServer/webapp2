@@ -260,7 +260,23 @@ function NOT(x)
    
   
   
-/************************ WFS Layer and Style config *****************************/
+/************************ Vector Layers and Style config *****************************/
+
+
+function createLayer_GPX(opts)
+{
+    const gSource = new ol.source.Vector({
+        format: new ol.format.GPX(),  
+        url: opts.url
+    });
+    
+    return new ol.layer.Vector({
+        name: opts.name,
+        source: gSource,
+        style: opts.style
+    });
+    
+}
 
 
 
@@ -280,6 +296,8 @@ function createLayer_WFS(opts)
    const vSource = new ol.source.Vector({
      format: new ol.format.WFS(),  
 
+         
+    // FIXME: Is this used at all? 
      url: function(extent) {
         if (!opts.srs)
             opts.srs = CONFIG.mb.view.getProjection().getCode();

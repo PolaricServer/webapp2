@@ -77,7 +77,9 @@ pol.core.Server = class {
             type: type,
             data: data, 
             success: success,
-            error: error,
+            error: error,  
+            contentType: false,
+            processData: (type!="POST"),
             crossDomain: true,
             xhrFields: { withCredentials: true }
         });
