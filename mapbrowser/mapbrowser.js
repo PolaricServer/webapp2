@@ -210,16 +210,18 @@ pol.core.MapBrowser = class {
 
 
 
-    addConfiguredLayer(layer, name) {
+    addConfiguredLayer(layer, name, v) {
         console.assert(layer != null && name != null, "layer="+layer+", name="+name);
         const i = this.config.addLayer(layer, name);
         let visible = this.config.get('core.olayer.'+name)
          
         if (visible == null) {
-	     visible = false; 
-	     this.config.store('core.olayer.' + name, false);
-	}
-	this.config.oLayers[i].setVisible(visible);
+            visible = false; 
+            if (v)
+                visible = v;
+            this.config.store('core.olayer.' + name, visible);
+        }
+        this.config.oLayers[i].setVisible(visible);
    
         /* Remove extra layers to keep the order */
         for (var j in this.xLayers)

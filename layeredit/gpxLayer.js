@@ -107,7 +107,10 @@ pol.layers.Gpx = class extends pol.layers.Edit {
     } /* constructor */
     
 
-
+    
+    allowed() 
+        { return CONFIG.server.loggedIn; }
+        
 
     /**
      * Return true if add button can be enabled 
@@ -131,6 +134,7 @@ pol.layers.Gpx = class extends pol.layers.Edit {
         m.redraw(); 
         return x; 
     }  
+    
     
     
     // FIXME: Do similar for other layer classes
@@ -213,7 +217,8 @@ pol.layers.Gpx = class extends pol.layers.Edit {
             console.warn("WfsLayer.json2layer: Resulting Layer is null");
             return null;
         }   
-        console.log("obj2layer: files=", lx.files);
+        if (!lx.files)
+            lx.files = [];
         return this._createLayer(lx.name, lx.styleId, lx.name, lx.files);
     }
       

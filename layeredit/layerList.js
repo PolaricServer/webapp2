@@ -28,7 +28,7 @@ pol.layers.List = class List extends pol.core.Widget {
         super();
         this.classname = "layers.List"; 
         this.myLayers = [];     // Just the layer. Not to be saved directly. 
-        this.myLayerNames = []; // Just the name
+        this.myLayerNames = []; // Just the name and the type
         this.typeList = {};
         const t = this;
    
@@ -55,8 +55,10 @@ pol.layers.List = class List extends pol.core.Widget {
                         m("span.sleftlab", "Type: "), 
                         m(select, { id: "lType", 
                             onchange: selectHandler, 
-                            list: Object.keys(t.typeList).map( x=> 
-                                { return  {label: t.typeList[x].label, val: x, obj: t.typeList[x].obj}; } ) 
+                            list: Object.keys(t.typeList)
+                                .filter( x=> {return (t.typeList[x].obj.allowed());} )
+                                .map( x=> 
+                                    {return {label: t.typeList[x].label, val: x, obj: t.typeList[x].obj};})
                         }), 
                         m(t.layer.widget) 
                     ] ) ] );
@@ -107,23 +109,27 @@ pol.layers.List = class List extends pol.core.Widget {
     
 
     /**
-     * Restore layers from local storage.
+     * Restore layers from local storage and from server.
      */
     getMyLayers() {
         const t = this;
-        let lrs = CONFIG.get("layers.list");
+	
+        /* lrs is a list of name,type pairs */
+        let lrs = null; // CONFIG.get("layers.list");
         if (lrs == null)
             lrs = [];
+        
+        /* Go through layers from local storage and add them if valid */
         for (const i in lrs) {
-            const x = this.myLayers[i] = this.typeList[lrs[i].type].obj.json2layer 
+            const editor = this.typeList[lrs[i].type];
+            const x = editor.obj.json2layer 
                 ( CONFIG.get("layers.layer."+lrs[i].name.replace(/\s/g, "_" )));
-            if (x!= null) 
+            if (x!= null && editor.obj.allowed()) {
+                t.myLayers.push(x);
                 CONFIG.mb.addConfiguredLayer(x, lrs[i].name);
-            else {
-                console.warn("Layer is missing (in local storage) for: "+lrs[i].name+". Removing");
-                t.myLayers.splice(i, 1);
-                lrs.splice(i, 1);
             }
+            else 
+                lrs.splice(i, 1);
         }
         CONFIG.store("layers.list", lrs, true);
 
@@ -132,7 +138,10 @@ pol.layers.List = class List extends pol.core.Widget {
             x.index = -1; 
         }
         
-        /* Get layers stored on server (if logged on) */
+        /* 
+        * If logged in, get layers stored on server.
+        * Duplicates from local storage are removed.
+        */
         setTimeout( () => {
             const srv = CONFIG.server; 
             if (srv != null && srv.loggedIn) {
@@ -144,6 +153,7 @@ pol.layers.List = class List extends pol.core.Widget {
                             removeDup(wr.name);
                             lrs.push({name:wr.name, type:wr.type, server:true, index: obj.id});
                             t.myLayers.push(x);
+                            console.log("add layer to list: "+wr.name);
                             CONFIG.mb.addConfiguredLayer(x, wr.name);
                         }
                     m.redraw();
@@ -161,8 +171,8 @@ pol.layers.List = class List extends pol.core.Widget {
         function removeDup(name) {
             for (const i in lrs) {   
                 if (lrs[i].name == name) {
-		    t.removeLayer(i);
-                    return;
+                    t.removeLayer(i);
+                        return;
                 }
             }
         }
@@ -174,7 +184,7 @@ pol.layers.List = class List extends pol.core.Widget {
      * Remove layer from list 
      */
     removeLayer(id) {
-        console.assert(id >= 0 && id < this.myLayers.length, "id="+id);
+        console.assert(id >= 0 && id < this.myLayers.length, "id="+id+", length="+this.myLayers.length);
 	 
 	 /* If server available and logged in, delete on server as well */
         const srv = CONFIG.server; 

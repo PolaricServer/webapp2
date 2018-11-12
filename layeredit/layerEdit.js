@@ -46,7 +46,6 @@ pol.layers.Edit = class {
                     m(checkBox, {id:"vis.proj", onclick: filterProj, checked: (t.filt.proj != null) },
                         "Base projection", br),
                     m(t.fields),
-             
                     m("div.buttons", [
                         m("input#addButton", 
                           { disabled: !t.enabled(), type: "button", onclick: add, value: "Add" } ),
@@ -56,6 +55,7 @@ pol.layers.Edit = class {
             }
         };
    
+        
    
         /* To be redefined in subclass */
         this.fields = {
@@ -96,13 +96,13 @@ pol.layers.Edit = class {
         {  
             const name = $("#editLayer").val(); 
             const layer = t.createLayer(name);
-       
-            if (layer != null) {
-                layer.predicate = t.createFilter(t.filt);
-                layer.filt = {ext:t.filt.ext, zoom:t.filt.zoom, proj:t.filt.proj}; 
-                CONFIG.mb.addConfiguredLayer(layer, name);
-            }
 
+            if (layer==null)
+                return false; 
+            
+            layer.predicate = t.createFilter(t.filt);
+            layer.filt = {ext:t.filt.ext, zoom:t.filt.zoom, proj:t.filt.proj}; 
+            CONFIG.mb.addConfiguredLayer(layer, name, true);
             list.myLayerNames.push( {name: name, type: t.typeid} );
             list.myLayers.push( layer );
 
@@ -129,7 +129,10 @@ pol.layers.Edit = class {
     
     onclose() {}
     
+    
     /* To be defined in subclass */
+    allowed() 
+        { return true; }
     enabled()
         { return false; }
 
