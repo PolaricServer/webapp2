@@ -87,10 +87,8 @@ pol.layers.List = class List extends pol.core.Widget {
         /* Move map layer name to editable textInput */
         function editLayer(idx) {
             console.assert(idx >= 0 && idx <t.myLayers.length, "idx="+idx);
-            console.log("editLayer: idx="+idx);
             const type = t.myLayerNames[idx].type;
             $("#lType").val(type).trigger("change");
-            console.log("t.myLayers[idx]=", t.myLayers[idx]);
             t.typeList[type].obj.edit(t.myLayers[idx]);   
             t.removeLayer(idx);
             m.redraw();
@@ -155,13 +153,12 @@ pol.layers.List = class List extends pol.core.Widget {
                             removeDup(wr.name);
                             lrs.push({name:wr.name, type:wr.type, server:true, index: obj.id});
                             t.myLayers.push(x);
-                            console.log("add layer to list: "+wr.name);
                             CONFIG.mb.addConfiguredLayer(x, wr.name);
                         }
                     m.redraw();
                 });
             }    
-        }, 1500);
+        }, 800);
         
         return this.myLayerNames = lrs;   
         
@@ -198,10 +195,12 @@ pol.layers.List = class List extends pol.core.Widget {
     }       
         
         
-    /* Remove layer from list */
+    /* Remove layer from list and local storage */
     _removeLayer(id, lr) {
         if (!lr)
             lr = this.myLayers[id];
+        if (this.myLayerNames[id].id)
+            CONFIG.remove("layers.layer."+this.myLayerNames[id].id.replace(/\s/g, "_" ));
         this.myLayers.splice(id,1);
         this.myLayerNames.splice(id,1);
         CONFIG.store("layers.list", this.myLayerNames, true);

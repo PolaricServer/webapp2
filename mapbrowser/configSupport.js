@@ -273,7 +273,8 @@ function createLayer_GPX(opts)
     return new ol.layer.Vector({
         name: opts.name,
         source: gSource,
-        style: opts.style
+        style: opts.style,
+        gpxLayer: true
     });
     
 }

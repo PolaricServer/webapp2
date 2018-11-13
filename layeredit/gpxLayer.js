@@ -63,6 +63,32 @@ pol.layers.Gpx = class extends pol.layers.Edit {
     
     
     
+        /* 
+         * Click handler for features. Consider moving this to a separate source file/class 
+         */
+        browser.map.on("click", e => {
+            const pp = CONFIG.mb.map.getFeaturesAtPixel( e.pixel,
+                {hitTolerance: 3, layerFilter: x => {
+                    return (x.values_.gpxLayer);
+                }});
+            if (pp && pp != null)
+                showList(pp, e.pixel);
+        });
+            
+        function showList(features, pixel) {
+            const t = this;
+            const widget =  {
+                view: function() {
+                    return m("div.featurelist", [
+                        m("table", features.map( x => { 
+                            return m("tr", m("td", x.values_.name)) 
+                        }))])
+                }
+            }
+            browser.gui.showPopup( {vnode: widget, geoPos: browser.pix2LonLat(pixel)} );    
+        }
+        
+        
     
         /* Handler for when files are dropped */
         function dropFile(e) {
@@ -185,8 +211,8 @@ pol.layers.Gpx = class extends pol.layers.Edit {
      */
     edit(layer) {
         super.edit(layer);
-        $("#wfsStyle").val(layer.styleId).trigger("change");
-        $("#wfsLabel").val(layer.label).trigger("change");
+        $("#gpxStyle").val(layer.styleId).trigger("change");
+        $("#gpxLabel").val(layer.label).trigger("change");
         this.files = layer.files.splice(0); 
         for (let x of this.files)
             x.used = false; 
@@ -221,7 +247,7 @@ pol.layers.Gpx = class extends pol.layers.Edit {
         }   
         if (!lx.files)
             lx.files = [];
-        return this._createLayer(lx.name, lx.styleId, lx.name, lx.files);
+        return this._createLayer(lx.name, lx.styleId, lx.label, lx.files);
     }
       
 } /* class */

@@ -23,7 +23,7 @@ div.POPUP {
   background: #f0f5ec;
   z-index: 1301 !important; 
   padding: 0.3em !important;
-  min-width: 15em;
+  min-width: 2em;
   border-radius: 4px;
   max-height: 95%; 
 }
