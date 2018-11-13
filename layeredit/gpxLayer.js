@@ -72,7 +72,7 @@ pol.layers.Gpx = class extends pol.layers.Edit {
             for (const f of e.files) {
                 if (f.type == "" && f.name.substr(f.name.lastIndexOf(".")+1) == "gpx")
                     f.type = "application/gpx+xml";
-                
+		
                 if (f.type == "application/gpx+xml" || f.type == "application/x-gpx+xml") {
                     formData.append("file" + i++, f);
                     names.push(f.name);
@@ -187,7 +187,9 @@ pol.layers.Gpx = class extends pol.layers.Edit {
         super.edit(layer);
         $("#wfsStyle").val(layer.styleId).trigger("change");
         $("#wfsLabel").val(layer.label).trigger("change");
-        this.files = layer.files.splice(0);
+        this.files = layer.files.splice(0); 
+        for (let x of this.files)
+            x.used = false; 
         m.redraw();
     }
 

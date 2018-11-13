@@ -87,8 +87,10 @@ pol.layers.List = class List extends pol.core.Widget {
         /* Move map layer name to editable textInput */
         function editLayer(idx) {
             console.assert(idx >= 0 && idx <t.myLayers.length, "idx="+idx);
+            console.log("editLayer: idx="+idx);
             const type = t.myLayerNames[idx].type;
             $("#lType").val(type).trigger("change");
+            console.log("t.myLayers[idx]=", t.myLayers[idx]);
             t.typeList[type].obj.edit(t.myLayers[idx]);   
             t.removeLayer(idx);
             m.redraw();
@@ -171,7 +173,7 @@ pol.layers.List = class List extends pol.core.Widget {
         function removeDup(name) {
             for (const i in lrs) {   
                 if (lrs[i].name == name) {
-                    t.removeLayer(i);
+                    t._removeLayer(i);
                         return;
                 }
             }
@@ -186,19 +188,27 @@ pol.layers.List = class List extends pol.core.Widget {
     removeLayer(id) {
         console.assert(id >= 0 && id < this.myLayers.length, "id="+id+", length="+this.myLayers.length);
 	 
-	 /* If server available and logged in, delete on server as well */
+        /* If server available and logged in, delete on server as well */
         const srv = CONFIG.server; 
         if (srv && srv != null && srv.loggedIn && this.myLayerNames[id].index >= 0)
             srv.removeObj("layer", this.myLayerNames[id].index);
-
-        const lr = this.myLayers[id];      
-        this.layer.removeLayer(lr); 
+        const lr = this.myLayers[id];     
+        this.typeList[this.myLayerNames[id].type].obj.removeLayer(lr); 
+        this._removeLayer(id, lr);
+    }       
+        
+        
+    /* Remove layer from list */
+    _removeLayer(id, lr) {
+        if (!lr)
+            lr = this.myLayers[id];
         this.myLayers.splice(id,1);
         this.myLayerNames.splice(id,1);
         CONFIG.store("layers.list", this.myLayerNames, true);
         CONFIG.mb.removeConfiguredLayer(lr);
-    }       
         
+    }
+    
         
 } /* class */
 
