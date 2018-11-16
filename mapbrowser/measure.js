@@ -128,17 +128,42 @@ pol.core.Measure = class {
         }
         
         
+        function bearing(c1, c2) {
+            var cr1 = toRadians(c1[1]), cr2 = toRadians(c2[1]);
+            var d = toRadians(c2[0]-c1[0]);
+            var y = Math.sin(d) * Math.cos(cr2);
+            var x = Math.cos(cr1)*Math.sin(cr2) -
+                Math.sin(cr1) * Math.cos(cr2) * Math.cos(d);
+            var brng = Math.atan2(y, x);
+            return (toDegrees(brng) + 360) % 360;
+        }
+        
+        
+        // Converts from degrees to radians.
+        function toRadians(degrees) {
+            return degrees * Math.PI / 180;
+        }
+        
+        
+        // Converts from radians to degrees.
+        function toDegrees(radians) {
+            return radians * 180 / Math.PI;
+        }
         
         function formatLength(line) {
             const coordinates = line.getCoordinates();
             const sourceProj = CONFIG.mb.view.getProjection();
             let length = 0;
+            let c1=0, c2=0;
             for (let i = 0, ii = coordinates.length - 1; i < ii; ++i) {
-                const c1 = ol.proj.transform(coordinates[i], sourceProj, 'EPSG:4326');
-                const c2 = ol.proj.transform(coordinates[i + 1], sourceProj, 'EPSG:4326');
+                c1 = ol.proj.transform(coordinates[i], sourceProj, 'EPSG:4326');
+                c2 = ol.proj.transform(coordinates[i + 1], sourceProj, 'EPSG:4326');
                 length += ol.sphere.getDistance(c1, c2);
             }
-     
+    
+            let brng = bearing(c1, c2);
+          
+    
             let output = "";
             if (length > 100) {
                 output = (Math.round(length / 1000 * 100) / 100) +
@@ -147,6 +172,7 @@ pol.core.Measure = class {
                 output = (Math.round(length * 100) / 100) +
                     ' ' + 'm';
             }
+            output += " &nbsp"+Math.round(brng*10)/10+"\u00B0";
             return output;
         };
     } /* constructor */
