@@ -93,7 +93,7 @@ pol.tracking.Tracking = class {
                     return {name: "_STOP_"};
                 }
                 if (pts.length > 0) 
-		    return { 
+                    return { 
                         name: (pol.tracking.isSign(pts[0]) ? "SIGN" : "POINT"), 
                         ident: pts[0].getId(),
                         point: pts[0]
@@ -113,7 +113,12 @@ pol.tracking.Tracking = class {
                     t.showList(points, e.pixel);
             }
         });
-
+        
+        
+        t.source.on("clear", ()=> {
+            t.clear(); 
+        });
+        
 
         /* Called when (Web socket) connection to server is opened. */
         t.producer.onopen = function() {
@@ -127,6 +132,9 @@ pol.tracking.Tracking = class {
         }
 
 
+
+        
+        
         /* Called when move of map starts */
         function onMoveStart() {
             if (!init) {
@@ -236,7 +244,7 @@ pol.tracking.Tracking = class {
 
 
         /* Draw the trail first. */
-	if (!this._trailHidden(p.ident, false))
+        if (!this._trailHidden(p.ident, false))
             this.addTrail(p);
 
         let feature = this.source.getFeatureById(p.ident);
@@ -305,11 +313,11 @@ pol.tracking.Tracking = class {
         element.onmouseenter = function(e) { 
             element._cancel = false;
             setTimeout(() => {
-	      if (!element._cancel) 
-		  t.redrawFeature(ident);
-	      if (CONFIG.labelStyle)
-		  CONFIG.labelStyle.setFont();
-	    }, 800);
+                if (!element._cancel) 
+                    t.redrawFeature(ident);
+                if (CONFIG.labelStyle)
+                    CONFIG.labelStyle.setFont();
+            }, 800);
         }
         element.onmouseleave = function(e) {
             element._cancel = true; 
@@ -382,11 +390,11 @@ pol.tracking.Tracking = class {
      */
     trailHidden(id) {
         const feature = this.source.getFeatureById(id);
-	const trail = this.source.getFeatureById(id +'.trail');
+        const trail = this.source.getFeatureById(id +'.trail');
         if (feature == null)
             return false;
         const x = this._trailHidden(id, false);
-	return x;
+        return x;
     }
     
     
@@ -395,19 +403,19 @@ pol.tracking.Tracking = class {
      */
     hideTrail(id, hide) {
         this.showTrail[id] = !hide;
-	const feature = this.source.getFeatureById(id);
+        const feature = this.source.getFeatureById(id);
         const trail = this.source.getFeatureById(id +'.trail');
-	const tpoints = this.source.getFeatureById(id+'.trailpoints');
+        const tpoints = this.source.getFeatureById(id+'.trailpoints');
 	
         if (hide) {      
-	    if (trail !=null)
+            if (trail !=null)
                this.source.removeFeature(trail);
-	    if (tpoints !=null)
+            if (tpoints !=null)
                this.source.removeFeature(tpoints);	    
         }
         else
-	    if (feature.point != null)
-	      this.addTrail(feature.point);
+            if (feature.point != null)
+                this.addTrail(feature.point);
 	    
         CONFIG.mb.map.render();
         CONFIG.store("tracking.showtrail", this.showTrail);
@@ -417,7 +425,6 @@ pol.tracking.Tracking = class {
     
     /**
      * Add a trail.
-     * TODO: Add some method to disable/enable this for a point?
      */
     addTrail(p) {
         console.assert(p!=null, "p is null");

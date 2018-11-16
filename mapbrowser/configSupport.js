@@ -297,25 +297,23 @@ function createLayer_WFS(opts)
    const vSource = new ol.source.Vector({
      format: new ol.format.WFS(),  
 
-         
-    // FIXME: Is this used at all? 
+        
      url: function(extent) {
-        if (!opts.srs)
-            opts.srs = CONFIG.mb.view.getProjection().getCode();
-
+        let srs = CONFIG.mb.view.getProjection().getCode();
+        if (!srs)
+            srs=opts.srs;
+            
         return opts.url +'?service=WFS&' +
            'version='+opts.wfsVersion+'&request=GetFeature&typename='+opts.ftype+'&' +
-           'outputFormat='+opts.outputFormat+'&srsname='+opts.srs+'&' +
+           'outputFormat='+opts.outputFormat+'&srsname='+srs+'&' +
            'bbox=' + extent.join(',')+opts.cql;
      },
 
      strategy: ol.loadingstrategy.bbox
    });
    
-   vSource.url = opts.url;
    vSource.ftype = opts.ftype;
    vSource.oformat = opts.oformat;
-   vSource.srs = opts.srs;
    
    return new ol.layer.Vector({
       name: opts.name,

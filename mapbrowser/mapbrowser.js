@@ -245,7 +245,7 @@ pol.core.MapBrowser = class {
         this.config.removeLayer(layer);
     }
 
-
+    
 
     /**
      * Center the map around given coordinates [longitude, latitude]. 
@@ -389,6 +389,27 @@ pol.core.MapBrowser = class {
     
     
     
+    /**
+     * Refresh vector layers (used when projection/view is changed. 
+     */
+    refreshLayers() {
+        checkLayers(this.map.getLayers());
+	
+        function checkLayers(layers) {	
+            layers.forEach( (x)=> {
+                if (x instanceof ol.layer.Vector) {
+                    var s = x.getSource();
+                    s.clear();
+                    s.refresh();
+                    // FIXME: How to reset URL in remote sources? 
+                }
+                else if (x instanceof ol.layer.Group) 
+                checkLayers(x.getLayers());
+            });
+        }
+    }
+       
+    
     
     /**
      * Change the projection of the map view.
@@ -421,8 +442,8 @@ pol.core.MapBrowser = class {
     
         this.prevProj = this.view.getProjection();
         this.prevGda = gda;
-       
         this.map.setView(this.view);
+        this.refreshLayers();
         this.view.changed();
     }
     
