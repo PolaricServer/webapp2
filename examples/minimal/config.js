@@ -2,6 +2,7 @@
 
 
 
+
   /*
    * Map browser configuration
    *
@@ -15,6 +16,7 @@
   SCALE     ( 20000 );
 
 
+  
   /*
    * Layers.
    *
@@ -44,3 +46,6 @@
          })
      ]
   );
+
+
+

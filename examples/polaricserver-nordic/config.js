@@ -136,7 +136,7 @@ LAYERS({
 
 LAYERS({ 
     base: true,
-    predicate: AND( SCALE_LT(6000000), OR( IN_EXTENT(Norway), IN_EXTENT(Svalbard) )),
+    predicate: AND( SCALE_LT(8000000), OR( IN_EXTENT(Norway), IN_EXTENT(Svalbard) )),
     projection: utmproj,
     attribution: "Statens kartverk"
 },
@@ -154,7 +154,7 @@ LAYERS({
 
 LAYERS({ 
     base: true,
-    predicate:  AND( SCALE_LT(6000000), IN_EXTENT(Norway)),
+    predicate:  AND( SCALE_LT(8000000), IN_EXTENT(Norway)),
     projection: utmproj,
     attribution: "Statens kartverk"
 },
@@ -304,6 +304,12 @@ LAYERS ({
                     NOT( SELECTED_BASE("Norgeskart bakgrunn (cache)"))))
 },
 [
+    createLayer_GPX({
+        name: "GPX lag", 
+        url: "oslo.maraton.gpx",
+        style: GETSTYLE("Blue")
+    }),
+
     createLayer_MapCache( {
         name: "Dybdedata sjø/kyst (cache2)",
         opacity: 0.9,
@@ -371,6 +377,9 @@ LAYERS ({
  * Note that we simplify a bit: we just need to give the values for the options
  * given to ol.style Stroke, ol.style.Fill and ol.style.Text. We also offer
  * convenience functions CIRCLE and ICON to define image properties.
+ * 
+ * Maybe styles could be defined in a separate config file?
+ * Maybe styles could be grouped. 
  *********************************************************************************/
 
 STYLES ([
@@ -378,24 +387,24 @@ STYLES ([
         stroke: {color: 'rgba(200,0,0,1)', width: 1.5},
 	    fill  : 'rgba(255,240,220,0.3)',
 	    text  : {scale: 1.2, fill: '#300', stroke: {color: '#fff', width: 3} },
-	    image : CIRCLE(7, {fill: '#f66'})
+	    image : CIRCLE(5, {fill: '#f448'})
    },
-   { id: "Green",
+   { id: "Green+red",
         stroke: {color: 'rgba(0,100,0,1)', width: 1.5},
 	    fill  : 'rgba(220,255,220,0.3)',
 	    text  : {scale: 1.2, fill: '#300', stroke: {color: '#fff', width: 3} },
-	    image : CIRCLE(7, {fill: '#f66'})
+	    image : CIRCLE(5, {fill: '#f448'})
    },
    { id: "Blue",
         stroke: {color: 'rgba(0,0,200,1)', width: 1.5, lineDash: [3,3]},
 	    fill  : 'rgba(200,220,253,0.3)',
 	    text  : {scale: 1.2, fill: '#003', stroke: {color: '#fff', width: 3} },
-	    image : CIRCLE(7, {fill: '#66f'})
+	    image : CIRCLE(5, {fill: '#55f8'})
    },
    { id: "Blue - No fill",
         stroke: {color: 'rgba(0,0,200,1)', width: 1.5},
 	    text  : {scale: 1.2, fill: '#003', stroke: {color: '#fff', width: 3} },
-	    image : CIRCLE(7, {fill: '#66f'})
+	    image : CIRCLE(5, {fill: '#55f8'})
    },
    { id: "Fireicon",
         text  : {baseline: 'Bottom', scale: 1.2, fill: '#003', stroke: {color: '#fff', width: 3} },

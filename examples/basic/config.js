@@ -5,7 +5,7 @@
     * Here, we test with the UTM zone 33 projection. Which is used in Norway.
     */
 
-   var utm33 = ADD_PROJECTION
+    var utmproj = ADD_PROJECTION
     (  "EPSG:32633", "+proj=utm +zone=33 +ellps=WGS84 +datum=WGS84 +units=m +no_defs",
        [-2500000, 3500000, 3045984, 9045984]
     );
@@ -17,20 +17,18 @@
     * See http://openlayers.org/en/latest/apidoc/ol.tilegrid.TileGrid.html
     */
 
-   var KV_grid = new ol.tilegrid.TileGrid({
+    var KV_grid = new ol.tilegrid.TileGrid({
                   extent: [-20037508.34, -20037508.34, 20037508.34, 20037508.34],
                   resolutions: [39135.75848201023, 19567.87924100512, 9783.93962050256, 4891.96981025128,2445.98490512564, 1222.99245256282, 611.49622628141, 305.7481131407048, 152.8740565703525, 76.43702828517624, 38.21851414258813, 19.10925707129406,9.554628535647032, 4.777314267823516, 2.388657133911758, 1.194328566955879]
                });
 
 
-   var KV_grid_UTM = new ol.tilegrid.TileGrid({
+    var KV_grid_UTM = new ol.tilegrid.TileGrid({
                   extent: [-2500000, 3500000, 3045984, 9045984],
                   resolutions: [21664, 10832, 5416, 2708, 1354, 677, 338.5, 169.25, 84.625, 42.3125, 21.15625, 10.5781255, 5.2890625, 2.64453125, 1.322265625]
                });
 
-
-
-
+    
 
   /*
    * Map browser configuration
@@ -82,7 +80,7 @@
   LAYERS(
      { base: true,
        predicate: TRUE,
-       projection: utm33,
+       projection: utmproj,
        attribution: "Statens kartverk"
      },
      [
@@ -94,14 +92,14 @@
 
                 
       new ol.layer.Tile({
-            name: "Kartverket Topo 2 (Norway)",
+            name: "Kartverket Topo 4 (Norway)",
             preload: 2,
             opacity: 0.66,
 
             source: new ol.source.TileWMS({
                url: "http://opencache.statkart.no/gatekeeper/gk/gk.open?",
-               projection: utm33,
-               params: {'LAYERS': 'topo2', VERSION: "1.1.1"},
+               projection: utmproj,
+               params: {'LAYERS': 'topo4', VERSION: "1.1.1"},
                tilegrid: KV_grid_UTM,
                cacheSize: 4096
 

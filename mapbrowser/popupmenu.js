@@ -319,7 +319,7 @@ pol.core.ContextMenu = class {
         {
             const lst = t.callbacks[cname]; 
             if (lst)
-                for (i=0; i<lst.length; i++) {
+                for (let i=0; i<lst.length; i++) {
                     const f = lst[i]; 
                     if (f != null) 
                     f(t.txt, ctxt); 
