@@ -89,10 +89,12 @@ pol.tracking.Tracking = class {
             const pts = t.getPointsAt([e.clientX, e.clientY]);
             if (pts && pts != null) {
                 if (pts.length > 1) {
+                    /* More than one point. Show a list */
                     t.showList(pts, [e.clientX, e.clientY], true);
                     return {name: "_STOP_"};
                 }
                 if (pts.length > 0) 
+                    /* Just one point */
                     return { 
                         name: (pol.tracking.isSign(pts[0]) ? "SIGN" : "POINT"), 
                         ident: pts[0].getId(),
@@ -166,6 +168,7 @@ pol.tracking.Tracking = class {
      */
     showList(points, pixel, cmenu) {
         const t = this;
+        
         const widget =  {
             view: function() {
                 return m("div", [
@@ -183,10 +186,12 @@ pol.tracking.Tracking = class {
         function showContext(e, x) {
             if (cmenu) {
                 CONFIG.mb.gui.removePopup();
-                CONFIG.mb.ctxMenu.showOnPos(
-                    { name: (pol.tracking.isSign(x) ? "SIGN" : "POINT"), 
-                      point: x,
-                      ident: x.getId()}, pixel); }
+                CONFIG.mb.ctxMenu.showOnPos( { 
+                    name: (pol.tracking.isSign(x) ? "SIGN" : "POINT"), 
+                    point: x,
+                    ident: x.getId()
+                }, pixel )
+            }    
             else
                 t.server.infoPopup(x, pixel)
         }

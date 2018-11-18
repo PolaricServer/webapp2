@@ -76,12 +76,10 @@ pol.core.Popup = class {
         this.isMenu = false;
         this.allowedPopups++;
                        
-	setTimeout(()=> {
         this.activepopup.style.display = "none" ;
         this.activepopup.parentNode.removeChild(this.activepopup);
         this.activepopup = null;
         this.geoPos = null;
-	}, 100);
     }
 
 

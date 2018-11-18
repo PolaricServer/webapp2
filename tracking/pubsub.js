@@ -35,7 +35,7 @@ pol.tracking.PubSub = class {
             /* Each room is an array of subscribers (callback functions) */
    
         let url = server.wsurl; 
-        url += '/notify';   
+        url += 'notify';   
         console.log("Opening Websocket. URL: "+url);
         t.websocket = new WebSocket(url);
 
@@ -117,7 +117,7 @@ pol.tracking.PubSub = class {
 
 
     /**
-     * Send a object to a room (through the websocket connection
+     * Send a object to a room (through the websocket connection)
      */
     put(room, obj) {
         this.putText(room, JSON.stringify(obj));

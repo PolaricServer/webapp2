@@ -27,7 +27,9 @@ pol.core.Server = class {
      * Constructor.
      */
     constructor() {
-        const host = CONFIG.get('server');
+        let host = CONFIG.get('server');
+        if (host.charAt(host.length) != '/')
+            host += '/';
     
         /* Compute URL base (for ordinary Ajax/REST) */
         let prefix = CONFIG.get('ajaxprefix');

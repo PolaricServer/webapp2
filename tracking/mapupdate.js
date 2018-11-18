@@ -36,7 +36,7 @@ pol.tracking.MapUpdate = class {
          * We may have an array of subscribers instead? 
          */
         var url = server.wsurl; 
-        url += '/jmapdata';
+        url += 'jmapdata';
    
         console.log("Opening Websocket. URL: "+url);
         t.websocket = new WebSocket(url);

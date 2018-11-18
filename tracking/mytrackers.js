@@ -81,9 +81,11 @@ pol.tracking.db.MyTrackers = class extends pol.core.Widget {
             }
         };
     
+        if (!t.server.hasDb)
+            return;
 
         /* Get icons from server */
-        t.server.GET("/system/icons/default", "", x => {
+        t.server.GET("system/icons/default", "", x => {
             t.icons = JSON.parse(x);
             for (i in t.icons)
                t.icons[i] = t.iconpath + t.icons[i];
@@ -105,7 +107,7 @@ pol.tracking.db.MyTrackers = class extends pol.core.Widget {
     
         /* Get list of trackers from server */
         function getTrackers() {
-            t.server.GET("/users/"+t.server.auth.userid+ "/trackers", "", x => { 
+            t.server.GET("users/"+t.server.auth.userid+ "/trackers", "", x => { 
                 t.myTrackers = JSON.parse(x);
                 for (var tt of t.myTrackers) {
                     if (tt.icon == null) {
@@ -146,7 +148,7 @@ pol.tracking.db.MyTrackers = class extends pol.core.Widget {
             if (data.id == null || data.id == "")
                 return; 
             
-            t.server.POST("/users/"+t.server.auth.userid+ "/trackers", 
+            t.server.POST("users/"+t.server.auth.userid+ "/trackers", 
                 JSON.stringify(data), 
                 x => {
                     console.log("Added/updated tracker: "+data.id);
@@ -195,7 +197,7 @@ pol.tracking.db.MyTrackers = class extends pol.core.Widget {
         /* Delete a tracker from the list */
         function remove(i) {
 	      const tr = t.myTrackers[i]; 
-	      t.server.DELETE("/users/"+t.server.auth.userid+ "/trackers/"+tr.id, 
+	      t.server.DELETE("users/"+t.server.auth.userid+ "/trackers/"+tr.id, 
 		  x => {
 		     console.log("Removed tracker: "+tr.id);
 		     t.myTrackers.splice(i, 1);
