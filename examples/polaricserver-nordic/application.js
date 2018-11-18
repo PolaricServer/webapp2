@@ -51,7 +51,8 @@
         m.add('Show map reference', () => browser.show_MaprefPix( [m.x, m.y] ) );  
         if (srv.auth.sar) {
 	        m.add('Add object', () => editObject(m.x, m.y) );
-            m.add('Add sign', () => editSign(m.x, m.y) );
+            if (srv.hasDb)
+                m.add('Add sign', () => editSign(m.x, m.y) );
         }
         m.add(null);
         m.add('Center point', () =>   
@@ -78,7 +79,6 @@
                 x.activatePopup("refSearch", [50,70]) });
         if (srv.auth.sar) {                 
             m.add('Add object', () => editObject(null, null) );
-            m.add('Remove object', () => deleteObject(null) );
         }
         m.add('Area List', () => 
             browser.toolbar.arealist.activatePopup("AreaList", [50,70]) );
@@ -109,14 +109,16 @@
         
         
         if (srv.loggedIn) {
-            m.add("My trackers", () =>
-                { CONFIG.trackers.activatePopup("mytrackers", [50, 70]) }); 
+            if (srv.hasDb) 
+                m.add("My trackers", () =>
+                    { CONFIG.trackers.activatePopup("mytrackers", [50, 70]) }); 
             m.add("Notification", () =>
                 { const x = new pol.tracking.NotifyList();
                     x.activatePopup("notifications", [50, 70]) });
         }
-        m.add("History...", () =>
-            { CONFIG.history.activatePopup("history", [50, 70]) });
+        if (srv.hasDb) 
+            m.add("History...", () =>
+                { CONFIG.history.activatePopup("history", [50, 70]) });
         m.add("Bulletin board", () =>
             { const x = new pol.tracking.BullBoard();
                 x.activatePopup("bullboard", [50,70]) });
@@ -131,11 +133,13 @@
     browser.ctxMenu.addCallback("POINT", (m, ctxt)=> {
         m.add('Show info', () => srv.infoPopup(ctxt.point, [m.x, m.y]) );
         m.add('Last movements', () => historyPopup(ctxt.ident, [m.x, m.y]) );
-
+        
         if (srv.auth.sar) { 
             m.add('Global settings', () => globalSettings(ctxt.ident) );
             m.add('Manage tags..', () => setTags(ctxt.ident) );
             m.add('Reset info', () => resetInfo(ctxt.ident) );
+            if (ctxt.point.point.own)
+                m.add('Remove object', () => deleteObject(ctxt.ident) );
         }
         m.add(null);
         
@@ -150,13 +154,14 @@
             m.add('Hide trail', () => CONFIG.tracks.hideTrail(ctxt.ident, true) );
         m.add(null);
         
-        if (srv.auth.sar) { 
+        if (srv.auth.sar && srv.hasDb) { 
             m.add('Add to my trackers', () => 
                 {  CONFIG.trackers.activatePopup("mytrackers", [50, 70]); 
                    setTimeout(()=> CONFIG.trackers.setIdent(ctxt.ident), 500); 
                 }); 
         }
-        m.add("History...", () =>
+        if (srv.hasDb)
+            m.add("History...", () =>
             { CONFIG.history.activatePopup("history", [50, 70]);       
               CONFIG.history.setCall(ctxt.ident); } );
         
@@ -170,7 +175,6 @@
     
     browser.ctxMenu.addCallback("SIGN", (m, ctxt)=> {
         m.add('Show info', () => srv.infoPopup(ctxt.point, [m.x, m.y]) );
-        m.add('Do funny things', () => alert("What?") );
     });
      
     

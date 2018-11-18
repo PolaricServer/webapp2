@@ -68,7 +68,7 @@ pol.core.AreaList = class extends pol.core.Widget {
         /* Get areas stored on server (if logged on) */
         setTimeout( () => {
             const srv = CONFIG.server; 
-            if (srv != null && srv.loggedIn) {
+            if (srv != null && srv.loggedIn && srv.hasDb) {
                 srv.getObj("area", a => {
                     for (const obj of a) 
                         if (obj != null) {
@@ -103,7 +103,7 @@ pol.core.AreaList = class extends pol.core.Widget {
         function removeArea(id) {
             // If server available and logged in, delete on server as well
             const srv = CONFIG.server; 
-            if (srv && srv != null && srv.loggedIn && t.myAreas[id].index >= 0) 
+            if (srv && srv != null && srv.loggedIn && srv.hasDb && t.myAreas[id].index >= 0) 
                 srv.removeObj("area", t.myAreas[id].index);
             t.myAreas.splice(id, 1);
             CONFIG.store("core.AreaList", t.myAreas, true);
@@ -133,7 +133,7 @@ pol.core.AreaList = class extends pol.core.Widget {
 
             /* IF server available and logged in, store on server as well */
             const srv = CONFIG.server; 
-            if (srv && srv != null && srv.loggedIn)
+            if (srv && srv != null && srv.loggedIn && srv.hasDb)
                 srv.putObj("area", area, i => { 
                     area.index = i;
                     area.server = true;

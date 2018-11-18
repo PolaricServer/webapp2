@@ -144,7 +144,7 @@ pol.layers.List = class List extends pol.core.Widget {
         */
         setTimeout( () => {
             const srv = CONFIG.server; 
-            if (srv != null && srv.loggedIn) {
+            if (srv != null && srv.loggedIn && srv.hasDb) {
                 srv.getObj("layer", a => {
                     for (const obj of a) 
                         if (obj != null) {
@@ -187,7 +187,7 @@ pol.layers.List = class List extends pol.core.Widget {
 	 
         /* If server available and logged in, delete on server as well */
         const srv = CONFIG.server; 
-        if (srv && srv != null && srv.loggedIn && this.myLayerNames[id].index >= 0)
+        if (srv && srv != null && srv.loggedIn && srv.hasDb && this.myLayerNames[id].index >= 0)
             srv.removeObj("layer", this.myLayerNames[id].index);
         const lr = this.myLayers[id];     
         this.typeList[this.myLayerNames[id].type].obj.removeLayer(lr); 
