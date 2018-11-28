@@ -35,12 +35,16 @@ pol.core.Server = class {
         let prefix = CONFIG.get('ajaxprefix');
         if (prefix == null)
             prefix = '';
+	if (prefix.charAt(prefix.length != '/'))
+	    prefix += '/';
         this.url = host + prefix;
     
         /* Compute Websocket URL base */
         prefix = CONFIG.get('wsprefix');
         if (prefix == null)
             prefix = '';
+	if (prefix.charAt(prefix.length != '/'))
+	    prefix += '/';
         const uparts = host.split(/:\/\//);
         this.wsurl = (uparts[0] === 'https' ? 'wss' : 'ws'); 
         this.wsurl = this.wsurl + "://"+ uparts[1] + prefix

@@ -64,7 +64,9 @@ pol.core.MapBrowser = class {
         t.prevGda = 1;
         t.config.set('core.baselayer', 0);
         t.baseLayerIdx = t.config.get('core.baselayer');
-     
+        
+        t.featureInfo = new pol.core.FeatureInfo(this);
+        
         // Set up layers, initial scale, etc..
         t.initializeLayers(config);
         t.setResolution(t.config.get('core.resolution'));
@@ -74,20 +76,19 @@ pol.core.MapBrowser = class {
         t.gui = new pol.core.Popup(t);
         t.ctxMenu = new pol.core.ContextMenu(t.gui);
         t.toolbar.setDefaultItems();
-   
-     
+
         /* Set up handler for move and zoom. Store new center and scale */
         t.map.on('moveend', onMove);
    
         /* Screen pixels per meter */
         t.dpm = dotsPerInch()*39.37;
-     
+        
         function onMove() {
             t.config.store('core.center', 
                 ol.proj.toLonLat(t.view.getCenter(), t.view.getProjection()), true); 
             t.config.store('core.resolution', t.view.getResolution(), true);
         }
-    
+        
      
         /* Hack to find the actual screen resolution in dots per inch */
         function dotsPerInch() {
@@ -176,8 +177,11 @@ pol.core.MapBrowser = class {
   
         /* Overlay layers */
         if (config.oLayers.length > 0) 
-            for (var i=0; i < config.oLayers.length; i++) 
-                this.map.addLayer(config.oLayers[i]);
+            for (var i=0; i < config.oLayers.length; i++) {
+                const layer = config.oLayers[i]
+                this.featureInfo.registerRecursive(layer);
+                this.map.addLayer(layer);
+            }
     };
 
 
@@ -228,6 +232,7 @@ pol.core.MapBrowser = class {
             this.map.removeLayer(this.xLayers[j]);
   
         /* Add configured layer */
+        this.featureInfo.registerRecursive(layer);
         this.map.addLayer(layer);
    
         /* And put the extra layers back on top of the stack */
@@ -241,6 +246,7 @@ pol.core.MapBrowser = class {
         console.assert(layer != null, "layer=null");
         if (layer==null)
             return;
+        this.featureInfo.unregister(layer);
         this.map.removeLayer(layer);   
         this.config.removeLayer(layer);
     }

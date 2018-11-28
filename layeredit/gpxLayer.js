@@ -65,7 +65,7 @@ pol.layers.Gpx = class extends pol.layers.Edit {
     
         /* 
          * Click handler for features. Consider moving this to a separate source file/class 
-         */
+         *
         browser.map.on("click", e => {
             const pp = CONFIG.mb.map.getFeaturesAtPixel( e.pixel,
                 {hitTolerance: 3, layerFilter: x => {
@@ -80,14 +80,15 @@ pol.layers.Gpx = class extends pol.layers.Edit {
             const widget =  {
                 view: function() {
                     return m("div.featurelist", [
-                        m("table", features.map( x => { 
+                        m("table", features.map( x => {
+                            console.log(x);
                             return m("tr", m("td", x.values_.name)) 
                         }))])
                 }
             }
             browser.gui.showPopup( {vnode: widget, geoPos: browser.pix2LonLat(pixel)} );    
         }
-        
+          */
         
     
         /* Handler for when files are dropped */
@@ -171,7 +172,6 @@ pol.layers.Gpx = class extends pol.layers.Edit {
             const sl = createLayer_GPX( {
                 url: CONFIG.server.url+"/files/gpx/"+f.id,
                 style: (label && label!=null ? SETLABEL(styleId, label) : GETSTYLE(styleId))
-                // FIXME: How to use labels? 
             });
             sublayers.push(sl);
             f.used = true;

@@ -30,7 +30,6 @@ console.assert = console.assert || function() {};
 
 
 
-
 /** 
  *  Configuration of map browser application.
  */
@@ -44,7 +43,7 @@ pol.core.Config = class extends ol.Object {
     constructor (uid) {
         super();
         this.uid = (uid ? uid : "0");
-        this.mb = null;
+        this.mb = null;  
         this.server = null;
         this.storage = window.localStorage;
         this.sstorage = window.sessionStorage;
@@ -193,4 +192,6 @@ pol.core.Config = class extends ol.Object {
 } /* class */
 
    
+
+const CONFIG = new pol.core.Config(pol.uid); 
  

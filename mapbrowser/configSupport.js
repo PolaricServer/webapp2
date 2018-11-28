@@ -19,7 +19,7 @@
 */
 
 
-var CONFIG = new pol.core.Config(pol.uid); 
+
 pol.uid = "ol4test"; // What is this? Still needed?
 
 
@@ -270,13 +270,26 @@ function createLayer_GPX(opts)
         url: opts.url
     });
     
-    return new ol.layer.Vector({
+    const layer = new ol.layer.Vector({
         name: opts.name,
         source: gSource,
         style: opts.style,
         gpxLayer: true
     });
     
+    /* 
+     * If info-display handler present, register it.
+     * If not, use a default setup. 
+     */
+    if (opts.info)
+        layer.displayInfo = opts.info; 
+    else 
+        layer.displayInfo = FEATUREINFO([
+           {val: "$(name)"},
+           {val: "$(desc)"}
+        ])
+    
+    return layer;
 }
 
 
@@ -315,12 +328,30 @@ function createLayer_WFS(opts)
    vSource.ftype = opts.ftype;
    vSource.oformat = opts.oformat;
    
-   return new ol.layer.Vector({
+   const layer = new ol.layer.Vector({
       name: opts.name,
       source: vSource,
       style: opts.style
    });
+   
+   // If info-display handler present, register it. 
+   if (opts.info)
+       layer.displayInfo = opts.info; 
+   return layer;
 }
+   
+
+function FEATUREINFO(fi) {
+    return function(feat) {
+        let fi2 = fi.slice(0);
+        for (i in fi) {
+            feat.values_.get = function(key) {return this[key];}
+            fi2[i] = {lbl:fi[i].lbl, val: evalExpr(fi[i].val, feat.values_)};
+        }
+        return fi2;
+    }
+}
+   
    
 
 function STYLES( st ) {
@@ -379,12 +410,17 @@ function setLabel(id, label) {
 
 function SETLABEL(id, label) {
     return function(f,r) {
-        var lbl = label.replace( /\$\([^\)]+\)/g, 
-            x => f.get( x.substring(2, x.length-1)) 
-        );
-        return setLabel(id, lbl); 
+        return setLabel(id, evalExpr(label,f)); 
     }
 }
+
+
+function evalExpr(expr, f) {
+    return expr.replace( /\$\([^\)]+\)/g, 
+            x => f.get( x.substring(2, x.length-1)) 
+        );
+}
+
 
 
 function TESTRES(r, lt, gt) {
