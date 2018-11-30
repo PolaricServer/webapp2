@@ -41,6 +41,16 @@ pol.core.FeatureInfo = class {
                 })
         });
         
+   
+        
+        browser.map.on('movestart', ()=> {
+            for (const x of t.layers) {
+                if (x.layer instanceof ol.layer.Vector) 
+                    x.layer.getSource().clear(true);
+            }
+        });
+
+        
         
         /*
          * Show a list of feature names to select from 
@@ -102,9 +112,13 @@ pol.core.FeatureInfo = class {
                 );
                 if (feats == null)
                     continue;
+                let prev = null;
                 for (const f of feats) {
                     f.handler = lr.handler;
+                    if (prev != null && f.values_ == prev.values_) 
+                        continue;
                     features.push(f)
+                    prev = f;
                 }
             }
             if (features.length == 0)
@@ -157,7 +171,8 @@ pol.core.FeatureInfo = class {
                     this.layers.splice(i, 1);
     }
     
-    
+            
+            
 }
 
 
