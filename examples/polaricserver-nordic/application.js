@@ -9,6 +9,9 @@
     */  
    const browser = new pol.core.MapBrowser('map', CONFIG);
    setTimeout(pol.widget.restore, 1500);
+   setTimeout(()=> {
+       $('#map').append('<img class="logo" src="'+CONFIG.get('logo')+'">"');
+   }, 100);
    
    
     /*
@@ -69,7 +72,6 @@
      *********************************************************/
    
     browser.ctxMenu.addCallback("TOOLBAR", (m, ctxt)=> {
-        
 
         m.add('Search items', () => 
             { const x = new pol.tracking.Search(); 

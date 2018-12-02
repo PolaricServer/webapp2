@@ -28,6 +28,8 @@ pol.uid = "ol4test"; // What is this? Still needed?
  * Convenience functions to be used in config file
  * 
  */
+function LOGO(url)
+ { CONFIG.set('logo', url); }
 
 function SERVER(url) 
  { CONFIG.set('server', url); }
@@ -119,11 +121,12 @@ function TILEGRID_WMTS(proj, start, end, prefix, siz, origin) {
           opacity: (opt.opacity ? opt.opacity : 1),
           
           source: new ol.source.TileWMS({
-              url: (opt.url? opt.url : CONFIG.get('server') + "mapcache/wms?"),
+              url: (opt.url? opt.url : CONFIG.get('server') + "/mapcache/wms?"),
               projection: utmproj,
               params: {'LAYERS': opt.layers, VERSION: "1.1.1", TRANSPARENT: true},
               tilegrid: opt.tilegrid,
-              cacheSize: 4096
+              cacheSize: 4096,
+              attributions: opt.attributions
           })
        });
     return layer; 
@@ -301,7 +304,7 @@ function createLayer_WFS(opts)
    if (!opts.outputFormat)
         opts.outputFormat = "text/xml; subtype=gml/3.1.1";
    if (!opts.wfsVersion)
-        opts.wfsVersion = "1.1.0"; 
+        opts.wfsVersion = "1.1.0";
    if (opts.cql)
        opts.cql = "&cql_filter="+opts.cql; 
    else 
@@ -341,6 +344,8 @@ function createLayer_WFS(opts)
 }
    
 
+   
+   
 function FEATUREINFO(fi) {
     return function(feat) {
         let fi2 = fi.slice(0);

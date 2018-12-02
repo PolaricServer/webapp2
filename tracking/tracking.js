@@ -117,6 +117,13 @@ pol.tracking.Tracking = class {
         });
         
         
+        browser.map.on("change:view", e => {
+            t.clear();
+            const ovr = browser.map.getOverlays(); 
+            setTimeout(()=>ovr.clear(), 10);
+        });
+        
+        
         t.source.on("clear", ()=> {
             t.clear(); 
         });
@@ -134,7 +141,6 @@ pol.tracking.Tracking = class {
         }
 
 
-
         
         
         /* Called when move of map starts */
@@ -145,6 +151,7 @@ pol.tracking.Tracking = class {
                 t.clear();
             }
         }
+        
 
         /* Called when move of map ends */
         function onMoveEnd() {
@@ -159,7 +166,7 @@ pol.tracking.Tracking = class {
 
     } /* constructor */
 
-
+    
 
 
 
@@ -308,6 +315,7 @@ pol.tracking.Tracking = class {
             positioning: 'center-left'
         });
         lbl.setPosition(pos);
+        lbl.tracklabel=true;
         CONFIG.mb.map.addOverlay(lbl);
     
         /* Mouse event handlers */

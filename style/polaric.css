@@ -9,6 +9,24 @@
  
  body { margin: 0px; }
 
+
+.ol-attribution {
+ text-align: left;
+ width: 20em;
+ bottom:0;
+ left:.3em;
+ background: #0000 !important;
+}
+
+.ol-attribution ul {
+    background: #eee7;
+    padding: 3px;
+}
+
+.ol-attribution button {
+   visibility: hidden;
+}
+
 .toolbar {
     padding-left: 12px;
     padding-right: 0px;
@@ -136,3 +154,9 @@ img.selected {background: #f60 !important}
 .sar_visible {visibility: visible}
 .sar_hidden {visibility: hidden; width: 0}
 
+
+img.logo { 
+    position: absolute; 
+    left: 6px; 
+    bottom: 1.7em
+}

@@ -42,7 +42,8 @@ pol.core.MapBrowser = class {
         config.mb = this;
         t.config = config; 
         t.toolbar = new pol.core.Toolbar({}, t);
-     
+        t.attribution = new ol.control.Attribution({collapsed: false}); 
+        
         t.view = new ol.View({   
             projection: t.config.get('core.projection'),                         
             center: ol.proj.fromLonLat(t.config.get('core.center'), t.config.get('core.projection')), 
@@ -56,7 +57,8 @@ pol.core.MapBrowser = class {
             controls: [
                 new ol.control.ScaleLine({}),
                 new pol.core.MousePos({}),
-                t.toolbar
+                t.toolbar,
+                t.attribution
             ],
             view: t.view
         });

@@ -5,7 +5,7 @@
 #
 
 cd mapbrowser
-closure-compiler --language_in ECMASCRIPT6 --js config.js --js server.js --js jscoord.js --js mapref.js --js mapbrowser.js --js widget.js --js uiSupport.js --js popup.js --js popupmenu.js --js measure.js --js toolbar.js --js areaList.js --js mousepos.js --js layerSwitcher.js --js refSearch.js --js configSupport.js > ../mapbrowser-min.js
+closure-compiler --language_in ECMASCRIPT6 --js config.js --js server.js --js jscoord.js --js mapref.js --js mapbrowser.js --js widget.js --js featureinfo.js --js uiSupport.js --js popup.js --js popupmenu.js --js measure.js --js toolbar.js --js areaList.js --js mousepos.js --js layerSwitcher.js --js refSearch.js --js configSupport.js > ../mapbrowser-min.js
 
 cd ..
 cd layeredit

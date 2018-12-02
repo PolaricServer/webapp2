@@ -7,11 +7,15 @@
  *************************************************************/
 
 /* Backend server base URL */
-SERVER("https://aprs.no/");
-// SERVER('http://osys.no:8081')
+
+// Comment out these 3 and uncomment the next to use osys server
+SERVER("https://aprs.no");
 WSPREFIX("ws");
 AJAXPREFIX("srv");
+// SERVER('http://osys.no:8081');
+
 ICONPATH("aprsd");
+LOGO("images/nrrl.gif");
 
 // default icon (index in icon list)
 DEFAULT_ICON(61); 
@@ -101,6 +105,9 @@ const Svalbard = POLYGON([
 
 
 
+const KV_ATTR = "Maps: © <a href=\"kartverket.no\">Kartverket</a>"
+
+
 
 /***********************************************************************************************
  * Layers.
@@ -122,7 +129,6 @@ LAYERS({
     base: true,
     predicate: TRUE,
     projection: "EPSG:900913",
-    attribution: "Openstreetmap"
 },
 [
     new ol.layer.Tile({
@@ -132,20 +138,22 @@ LAYERS({
 ]);
 
 
+
+
 /* Base layers in UTM projection. Norway */
 
 LAYERS({ 
     base: true,
     predicate: AND( SCALE_LT(8000000), OR( IN_EXTENT(Norway), IN_EXTENT(Svalbard) )),
     projection: utmproj,
-    attribution: "Statens kartverk"
 },
 [
     createLayer_MapCache( {
         name: "Norgeskart bakgrunn (cache)",
-        opacity: 0.66,
+        opacity: 0.65,
         layers: "bw_grunnkart",
         tilegrid: KV_grid_UTM,
+        attributions: KV_ATTR
     })
 ]);
        
@@ -156,7 +164,6 @@ LAYERS({
     base: true,
     predicate:  AND( SCALE_LT(8000000), IN_EXTENT(Norway)),
     projection: utmproj,
-    attribution: "Statens kartverk"
 },
 [    
     new ol.layer.Tile({
@@ -170,7 +177,8 @@ LAYERS({
             projection: utmproj,
             style: 'default',
             tileGrid: KV_grid_WMTS,
-            cacheSize: 4096
+            cacheSize: 4096, 
+            attributions: KV_ATTR
         })
     }),      
     
@@ -185,7 +193,8 @@ LAYERS({
             projection: utmproj,
             style: 'default',
             tileGrid: KV_grid_WMTS,
-            cacheSize: 4096
+            cacheSize: 4096, 
+            attributions: KV_ATTR
         })
     }),
 ]);                    
@@ -200,7 +209,6 @@ LAYERS({
     base: true,
     predicate: IN_EXTENT(Sweden),
     projection: utmproj,
-    attribution: "Lantmäteriet"
 },
 [     
     new ol.layer.Tile({
@@ -215,7 +223,8 @@ LAYERS({
             style: "default",
             attribution: "Kart: <a href=\"https://lantmateriet.se\">Lantmäteriet</a> - CC/BY", 
             tileGrid: LM_grid,
-            cacheSize: 4096
+            cacheSize: 4096,
+            attributions: "Maps: © Lantmäteriet"
         })
     }),
     new ol.layer.Tile({
@@ -230,6 +239,7 @@ LAYERS({
             style: "default",
             attribution: "Kart: <a href=\"https://lantmateriet.se\">Lantmäteriet</a> - CC/BY", 
             tileGrid: LM_grid,
+            attributions: "Maps: © Lantmäteriet"
         })
     })
 ]);
@@ -343,15 +353,28 @@ LAYERS ({
         name : "O-kart dekning (UMB)",
         url  : "http://gis.umb.no/nof/o_kart_wfs",
         ftype: "okart:o-kart_nof",
-        style: TESTRES( 50, SETLABEL("Blue", "$(id): $(kartnavn)"), GETSTYLE("Red"))
+        
+        style: TESTRES( 50, SETLABEL("Blue", "$(id): $(kartnavn)"), GETSTYLE("Red")), 
+        info : FEATUREINFO([
+            {lbl: "id", val: "$(id)"},
+            {lbl: "Kartnavn", val: "$(kartnavn)"},
+            {lbl: "Målestokk", val: "$(maalestokk)"},
+            {lbl: "Utgiver", val: "$(utgiver)"}
+        ])
     }), 
       
     createLayer_WFS({
         name : "Brannstasjoner (DSB)",
         url  : "https://ogc.dsb.no/wfs.ashx", 
         ftype: "layer_183",
-        style: GETSTYLE("Fireicon")
-    })
+        
+        style: GETSTYLE("Fireicon"),
+        info : FEATUREINFO([
+            {val: "$(brannstasj)"},
+            {val: "$(brannvesen)"},
+            {val: "Type $(stasjonsty)"}
+        ])
+      })
 
     /* TESTRES, SETLABEL and GETSTYLE return functions that return styles.
      * TESTRES returns the second argument if resolution is less than 50, and
