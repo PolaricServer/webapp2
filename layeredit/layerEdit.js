@@ -102,26 +102,32 @@ pol.layers.Edit = class {
             
             layer.predicate = t.createFilter(t.filt);
             layer.filt = {ext:t.filt.ext, zoom:t.filt.zoom, proj:t.filt.proj}; 
-            CONFIG.mb.addConfiguredLayer(layer, name, true);
-            list.myLayerNames.push( {name: name, type: t.typeid} );
-            list.myLayers.push( layer );
-
-            // Save the layer name list. 
-            CONFIG.store("layers.list", list.myLayerNames, true);
-            // Save the layer using the concrete subclass
-            CONFIG.store("layers.layer."+name.replace(/\s/g, "_"), t.layer2json(layer), true);       
             
             /* IF server available and logged in, store on server as well */
             const srv = CONFIG.server; 
             if (srv && srv != null && srv.loggedIn) {
                 const obj = {type: t.typeid, name: name, data: t.layer2obj(layer)}; 
                 srv.putObj("layer", obj, i => { 
-                    layer.index = i;
+                    layer.index = JSON.parse(i);
                     layer.server = true;
                     m.redraw();
+                    _add();
                 });
             }
-            return false;
+            else
+                _add(); 
+            return false; 
+            
+            function _add() {
+                CONFIG.mb.addConfiguredLayer(layer, name, true);
+                list.myLayerNames.push( {name: name, type: t.typeid, server: layer.server, index: layer.index} );
+                list.myLayers.push( layer );
+
+                // Save the layer name list. 
+                CONFIG.store("layers.list", list.myLayerNames, true);
+                // Save the layer using the concrete subclass
+                CONFIG.store("layers.layer."+name.replace(/\s/g, "_"), t.layer2json(layer), true);       
+            }
         }
    
     } /* constructor */

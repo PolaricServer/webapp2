@@ -44,6 +44,8 @@ pol.core.MapBrowser = class {
         t.toolbar = new pol.core.Toolbar({}, t);
         t.attribution = new ol.control.Attribution({collapsed: false}); 
         
+        let center = t.config.get('core.projection');
+
         t.view = new ol.View({   
             projection: t.config.get('core.projection'),                         
             center: ol.proj.fromLonLat(t.config.get('core.center'), t.config.get('core.projection')), 
@@ -465,18 +467,9 @@ pol.core.MapBrowser = class {
         let h = '<span class="sleftlab">UTM:</span>' + pol.mapref.formatUTM(coord) +'<br>' +
                   '<nobr><span class="sleftlab">Latlong:</span>' + pol.mapref.formatDM(coord) +'<br>'  + 
                   '</nobr><span class="sleftlab">Loc:</span>' + pol.mapref.formatMaidenhead(coord); 
-        if (CONFIG.server.auth.sar) {
-             h += '<hr><span id="mapref_link">Add APRS object here</span>';
-             setTimeout(()=> $('#mapref_link').click(addObject), 500);
-        }
         this.gui.removePopup();       
         this.gui.showPopup( 
             {html: h, geoPos: coord, image: true} );
-        
-        function addObject() {
-            /* The editObject function need to be defined in application.js */
-            editObject(coord[0], coord[1]);
-        }
     }
 
 

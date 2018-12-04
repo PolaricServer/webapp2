@@ -26,6 +26,8 @@ div.POPUP {
   min-width: 2em;
   border-radius: 4px;
   max-height: 95%; 
+  margin-left: 7px; 
+  margin-right: 7px; 
 }
 
 div.widget { overflow: hidden !important;}

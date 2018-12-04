@@ -64,10 +64,11 @@ pol.core.FeatureInfo = class {
                 return m("div", [
                     m("table.items", this.list.map( x => { 
                         const info = x.handler(x);
+                        const idx = i++;
                         return m("tr", m("td", { 
                             onclick: e=> {
                                 CONFIG.mb.gui.removePopup();
-                                infoWidget.popup(this.ev, this.list[i++]);
+                                infoWidget.popup(this.ev, this.list[idx] );
                             }
                         }, info[0].val))}))
                 ])

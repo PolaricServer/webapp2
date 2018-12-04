@@ -160,3 +160,21 @@ img.logo {
     left: 6px; 
     bottom: 1.7em
 }
+
+span.welcome {
+    overflow: scroll;
+    display: inline-table;
+    max-width: 75em
+}
+
+
+.welcome {overflow: scroll}
+
+.welcome p, welcome ul{
+    margin-left: 0.5em;
+    margin-right: 2em;
+}
+.welcome li {
+    padding-bottom: 0.5em
+}
+

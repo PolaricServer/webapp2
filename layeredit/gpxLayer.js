@@ -61,34 +61,7 @@ pol.layers.Gpx = class extends pol.layers.Edit {
             onremove: ()=> cleanup()
         }  
     
-    
-    
-        /* 
-         * Click handler for features. Consider moving this to a separate source file/class 
-         *
-        browser.map.on("click", e => {
-            const pp = CONFIG.mb.map.getFeaturesAtPixel( e.pixel,
-                {hitTolerance: 3, layerFilter: x => {
-                    return (x.values_.gpxLayer);
-                }});
-            if (pp && pp != null)
-                showList(pp, e.pixel);
-        });
-            
-        function showList(features, pixel) {
-            const t = this;
-            const widget =  {
-                view: function() {
-                    return m("div.featurelist", [
-                        m("table", features.map( x => {
-                            console.log(x);
-                            return m("tr", m("td", x.values_.name)) 
-                        }))])
-                }
-            }
-            browser.gui.showPopup( {vnode: widget, geoPos: browser.pix2LonLat(pixel)} );    
-        }
-          */
+
         
     
         /* Handler for when files are dropped */
@@ -97,15 +70,16 @@ pol.layers.Gpx = class extends pol.layers.Edit {
             let i = 0;
             let names = []; 
             for (const f of e.files) {
-                if (f.type == "" && f.name.substr(f.name.lastIndexOf(".")+1) == "gpx")
-                    f.type = "application/gpx+xml";
+	        let type = f.type;
+                if (type == "" && f.name.substr(f.name.lastIndexOf(".")+1) == "gpx")
+                    type = "application/gpx+xml";
 		
-                if (f.type == "application/gpx+xml" || f.type == "application/x-gpx+xml") {
+                if (type == "application/gpx+xml" || type == "application/x-gpx+xml") {
                     formData.append("file" + i++, f);
                     names.push(f.name);
                 }
                 else
-                    alert("ERROR: Unsupported format: "+f.type);
+                    alert("ERROR: Unsupported format: '"+type+"'");
             }
             if (i>0)
                 CONFIG.server.POST("/files/gpx", formData,
