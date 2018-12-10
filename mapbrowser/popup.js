@@ -181,7 +181,8 @@ pol.core.Popup = class {
                         t.removePopup();
                         if (props.pin)
                             props.pin(pdiv._pinned); // Pin callback
-                        props.onclose();
+                        if (props.onclose)
+                            props.onclose();
                     }
                 }
             }  }, 300);

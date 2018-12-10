@@ -107,7 +107,11 @@ pol.tracking.db.MyTrackers = class extends pol.core.Widget {
     
         /* Get list of trackers from server */
         function getTrackers() {
-            t.server.GET("users/"+t.server.auth.userid+ "/trackers", "", x => { 
+            const userid = t.server.auth.userid;
+            console.assert(userid && userid!=null, "userid="+userid);
+            if (userid == null)
+                return;
+            t.server.GET("users/"+userid+ "/trackers", "", x => { 
                 t.myTrackers = JSON.parse(x);
                 for (var tt of t.myTrackers) {
                     if (tt.icon == null) {
