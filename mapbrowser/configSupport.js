@@ -2,7 +2,7 @@
  Map browser based on OpenLayers 5. 
  configuration support. 
  
- Copyright (C) 2017 Øyvind Hanssen, LA7ECA, ohanssen@acm.org
+ Copyright (C) 2017-2018 Øyvind Hanssen, LA7ECA, ohanssen@acm.org
  
  This program is free software: you can redistribute it and/or modify
  it under the terms of the GNU Affero General Public License as published 
@@ -28,6 +28,9 @@ pol.uid = "ol4test"; // What is this? Still needed?
  * Convenience functions to be used in config file
  * 
  */
+function WELCOME(on)
+ { CONFIG.set("welcome_popup", on); }
+ 
 function LOGO(url)
  { CONFIG.set('logo', url); }
 
@@ -48,7 +51,6 @@ function DEFAULT_ICON(i)
  
 function ll2proj(p)
  { return ol.proj.transform(p, 'EPSG:4326', CONFIG.mb.view.getProjection()); }
- 
  
 function proj2ll(p)
  { return ol.proj.transform(p, CONFIG.mb.view.getProjection(), 'EPSG:4326'); }
@@ -78,8 +80,6 @@ function SUPPORTED_PROJ( proj )
    
 function CENTER(lng, lat) 
    { CONFIG.set('core.center', [lng, lat]); }
-
-   
    
 function SCALE(res)
    { CONFIG.set('core.resolution', res); }
@@ -270,7 +270,19 @@ function createLayer_GPX(opts)
 {
     const gSource = new ol.source.Vector({
         format: new ol.format.GPX(),  
-        url: opts.url
+            
+        loader: (extent, resolution, projection) => {
+            CONFIG.server.GET(opts.url, null, 
+                resp => {
+                    var ff = gSource.getFormat().readFeatures(resp, {featureProjection: projection});
+                    gSource.addFeatures(ff);
+                },
+                resp => {
+                    console.warn("Get GPX object: "+resp);
+                    gSource.removeLoadedExtent(extent);
+                } 
+            );
+        },
     });
     
     const layer = new ol.layer.Vector({

@@ -2,7 +2,7 @@
  Map browser based on OpenLayers 5. Layer editor. 
  GPX file layer. 
  
- Copyright (C) 2017-2018 Øyvind Hanssen, LA7ECA, ohanssen@acm.org
+ Copyright (C) 2018 Øyvind Hanssen, LA7ECA, ohanssen@acm.org
  
  This program is free software: you can redistribute it and/or modify
  it under the terms of the GNU Affero General Public License as published 
@@ -144,7 +144,7 @@ pol.layers.Gpx = class extends pol.layers.Edit {
         let sublayers = [];
         for (const f of files) {
             const sl = createLayer_GPX( {
-                url: CONFIG.server.url+"/files/gpx/"+f.id,
+                url: "/files/gpx/"+f.id, // CONFIG.server.url+"/files/gpx/"+f.id,
                 style: (label && label!=null ? SETLABEL(styleId, label) : GETSTYLE(styleId))
             });
             sublayers.push(sl);
