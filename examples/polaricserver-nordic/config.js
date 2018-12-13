@@ -1,24 +1,37 @@
 
 /*************************************************************
- * Map browser configuration for aprs.no. 
+ * Map browser configuration.
+ * (This is quite close to the configuration used on aprs.no)
  * 
  * (c) 2017-2018 LA7ECA, Ø. Hanssen
  *
  *************************************************************/
 
-/* Backend server base URL */
-
-// Comment out these 3 and uncomment the next to use osys server
+/* 
+ * Backend server base URL. 
+ */
 SERVER("https://aprs.no");
+
+
+/* 
+ * WSPREFIX is the url prefix for websocket interface
+ * AJAXPREFIX is the url prefix used for other webservices/REST-API.
+ * ICONPATH is the url prefix used for icons.  
+ * aprs.no uses "ws" and "srv". Default is to use a separate port: 8081. 
+ */
 WSPREFIX("ws");
 AJAXPREFIX("srv");
-// SERVER('http://osys.no:8081');
 
 ICONPATH("aprsd");
+
+
+/* Logo to be placed in lower left corner of the map */
 LOGO("images/nrrl.gif");
 
-// default icon (index in icon list)
+
+/* default icon (index in icon list) */
 DEFAULT_ICON(61); 
+
 
 /* Default projection and list of supported projections */
 PROJECTION( "EPSG:900913" );
@@ -30,6 +43,10 @@ CENTER    ( 14, 66 );
 SCALE     ( 20000 );
 
 
+/* If set to true, a popup window will appear when application is started, 
+ * showing the content: 'welcome.html'. 
+ */
+WELCOME(false);
 
 
 /*

@@ -2,17 +2,28 @@
     * This is an example of how an application can be constructed using polaric components.  
     * Se also config.js for configuration of the application. 
     */
-
-
+   
+    /* 
+     * Display a warning if MSIE is used. 
+     * Note that to display this for IE browser and to be able to use IE11
+     * and other old browser be sure to use the compiled/minified javascript code, 
+     * including this file.
+     */
+    var ua = window.navigator.userAgent;
+    var msie = ua.indexOf("MSIE ");
+    var trident = ua.indexOf('Trident/');
+    if (msie > 0 || trident > 0)
+       alert("Note that MSIE is not supported. A more recent browser is recommended");
+   
+      
    /* 
     * Instantiate the map browser and try to restore widgets from a previous session. 
     */  
    const browser = new pol.core.MapBrowser('map', CONFIG);
    setTimeout(pol.widget.restore, 1500);
-   setTimeout(()=> {
-       $('#map').append('<img class="logo" src="'+CONFIG.get('logo')+'">"');
-   }, 100);
-   
+    $('#map').append('<img class="logo" src="'+CONFIG.get('logo')+'">"');
+
+
    
     /*
      * Add a tracking-layer using a polaric server backend.
@@ -23,7 +34,7 @@
         const mu = new pol.tracking.Tracking(srv);
         const flt = new pol.tracking.Filters(mu);
         CONFIG.tracks = mu;
-        CONFIG.trackers = new pol.tracking.db.MyTrackers(); 
+        CONFIG.trackers = (srv.loggedIn ? new pol.tracking.db.MyTrackers() : null); 
             
         if (srv.auth.userid != null) {
             const not = new pol.tracking.Notifier();
@@ -35,6 +46,18 @@
     CONFIG.layerlist = new pol.layers.List(); 
     CONFIG.history = new pol.tracking.db.History();
 
+    
+    /* Welcome text */
+    if (!CONFIG.get("skip_welcome")) setTimeout(()=> {
+       let d = browser.gui.showPopup( {
+           pixPos: [5,30], 
+           draggable: true, 
+           pinned: true, 
+           onclose: ()=> {CONFIG.store("skip_welcome", true);}
+        });
+       $.ajax("welcome.html", {success: txt=> {d.innerHTML = txt}} ); 
+    },2000);
+    
     
     
    /* 
