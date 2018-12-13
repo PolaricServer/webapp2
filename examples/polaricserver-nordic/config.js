@@ -422,6 +422,7 @@ LAYERS ({
  * Maybe styles could be grouped. 
  *********************************************************************************/
 
+var defaultStyle = 'Red';
 STYLES ([
    { id: "Red",
         stroke: {color: 'rgba(200,0,0,1)', width: 1.5},

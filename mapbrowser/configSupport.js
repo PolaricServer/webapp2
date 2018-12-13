@@ -396,8 +396,14 @@ function STYLES( st ) {
 }
 
 
-function getStyle(id)
-   { return CONFIG.styles[id]; }
+function getStyle(id) { 
+    let x = CONFIG.styles[id]; 
+    if (!x) {
+        console.warn("Unknown style id: "+id);
+        x = CONFIG.styles[defaultStyle];
+    }
+    return x;
+}
 
    
    
@@ -418,9 +424,9 @@ function GETSTYLE(id) {
    
    
 function setLabel(id, label) {
-   const x = CONFIG.styles[id].clone(); 
+   let x = CONFIG.styles[id].clone(); 
    if (label && label != null)
-         x.getText().setText(label);
+        x.getText().setText(label);
    return x;
 }
 
