@@ -15,10 +15,12 @@ cd ..
 cd tracking
 closure-compiler --language_in ECMASCRIPT6 --js tracking.js --js polaricserver.js --js pubsub.js --js mapupdate.js --js search.js --js filters.js notifier.js bullboard.js history.js labelStyle.js mytrackers.js > ../tracking-min.js
 
+cd ..
+closure-compiler --language_in ECMASCRIPT6 --js application.js > application-min.js
+
 #
 # combine and minify css
 #
-cd ..
 cd style
 cat polaric.css popup.css tracking.css mobil.css | cleancss -o style-min.css
 
