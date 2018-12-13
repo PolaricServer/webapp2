@@ -75,10 +75,14 @@ pol.tracking.db.History = class extends pol.core.Widget {
                         m(showList),
                   
                         m("input#hist_b1", {type: "button", value: "Search", onclick: search}),
-                        m("input#hist_b2", {type: "button", value: "Add", onclick: add}),
-                        m("input#hist_b3", {type: "button", value: "Show all", onclick: showAll}),
-                        m("input#hist_b4", {type: "button", value: "Export", onclick: exportGpx}),
-                        m("input#hist_back", {type: "button", value: "Back", onclick: goBack})
+                        m("input#hist_b2", {type: "button", value: "Add", 
+                            title: "Add search to list", onclick: add}),
+                        m("input#hist_b3", {type: "button", value: "Show all", 
+                            title: "Show all trails in list", onclick: showAll}),
+                        m("input#hist_b4", {type: "button", value: "Export", 
+                            title: "Export to GPX file", onclick: exportGpx}),
+                        m("input#hist_back", {type: "button", value: "Back", 
+                            title: "Return to realtime tracking", onclick: goBack})
                     ]),
                     m("iframe#downloadframe", {style: "display:none"})
                 ]);

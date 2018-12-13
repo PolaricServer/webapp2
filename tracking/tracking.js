@@ -602,8 +602,12 @@ pol.tracking.Tracking = class {
 
     
     searchMode(on) {
-        if (this.srch && on)
+        if (on)
             this.clear();
+        if (this.srch && !on) {
+            this.clear();
+            this.producer.subscribe(this.filter, x => this.update(x) );
+        }
         this.srch = on;
     }
     
