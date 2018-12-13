@@ -92,7 +92,7 @@ img.selected {background: #f60 !important}
 	background:rgba(235,255,235,.6);
 	border-radius:4px;
 	bottom:6.8em;
-	left: unset;
+	left: auto;
     right:0.7em;
     z-index: 1
 }
@@ -178,3 +178,15 @@ span.welcome {
     padding-bottom: 0.5em
 }
 
+
+#hist_back {color: gray}
+.searchMode {
+    color: black !important;
+	animation:blinkingBox .9s infinite;
+}
+@keyframes blinkingBox{
+	2%{		background: #faa;	}
+	48%{	background: #faa;	}
+    52%{    background: #eee;}
+    98%{ 	background: #eee; }
+}

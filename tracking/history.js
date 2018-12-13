@@ -24,7 +24,7 @@ pol.tracking.db = pol.tracking.db || {};
 
 
 /**
- * Reference search (in a popup window). 
+ * Historic trail search (in a popup window). 
  */
 
 pol.tracking.db.History = class extends pol.core.Widget {
@@ -78,7 +78,7 @@ pol.tracking.db.History = class extends pol.core.Widget {
                         m("input#hist_b2", {type: "button", value: "Add", onclick: add}),
                         m("input#hist_b3", {type: "button", value: "Show all", onclick: showAll}),
                         m("input#hist_b4", {type: "button", value: "Export", onclick: exportGpx}),
-                        m("input#hist_b5", {type: "button", value: "Reset"})
+                        m("input#hist_back", {type: "button", value: "Back", onclick: goBack})
                     ]),
                     m("iframe#downloadframe", {style: "display:none"})
                 ]);
@@ -132,7 +132,6 @@ pol.tracking.db.History = class extends pol.core.Widget {
         
         /* Show trail for item */
         function showItem(i) {
-            CONFIG.tracks.clear();
             showTrail(t.list[i]);
         }
     
@@ -140,7 +139,6 @@ pol.tracking.db.History = class extends pol.core.Widget {
         /* Search button handler */   
         function search() {
             getSearch();
-            CONFIG.tracks.clear();
             showTrail(t.item);
         }
 
@@ -148,11 +146,16 @@ pol.tracking.db.History = class extends pol.core.Widget {
         /* Show all items button handler */
         function showAll() {
             getSearch();
-            CONFIG.tracks.clear();
             for (const x of t.list) 
                 setTimeout(() => showTrail(x), 100);
         }
     
+    
+        function goBack() {
+            $('#hist_back').removeClass('searchMode');
+            CONFIG.tracks.searchMode(false);
+        }
+        
     
         /* Toggle the open end checkbox */
         function hOpen() {
@@ -170,7 +173,11 @@ pol.tracking.db.History = class extends pol.core.Widget {
         function showTrail(x) {
             var qstring = "?tfrom="+x.fromdate+"/"+x.fromtime+"&tto="+x.todate+"/"+x.totime;
             CONFIG.server.GET("/hist/"+x.call+"/trail"+qstring, "", 
-                x => CONFIG.tracks.update(JSON.parse(x), true) );
+                x => {
+                    $('#hist_back').addClass('searchMode');
+                    CONFIG.tracks.searchMode(true);
+                    CONFIG.tracks.update(JSON.parse(x), true);
+                });
         }
     
      

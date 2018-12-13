@@ -145,6 +145,8 @@ pol.tracking.Tracking = class {
         
         /* Called when move of map starts */
         function onMoveStart() {
+            if (t.srch)
+                return;
             if (!init) {
                 /* Clear the layer while moving the map */
                 t.layer.setVisible(false);
@@ -155,6 +157,8 @@ pol.tracking.Tracking = class {
 
         /* Called when move of map ends */
         function onMoveEnd() {
+            if (t.srch)
+                return;
             if (init)
                 init = false;
             else {
@@ -409,7 +413,7 @@ pol.tracking.Tracking = class {
         const x = this._trailHidden(id, false);
         return x;
     }
-    
+
     
     /**
      * Hide trail.
@@ -596,12 +600,21 @@ pol.tracking.Tracking = class {
         });
     }
 
-
+    
+    searchMode(on) {
+        if (this.srch && on)
+            this.clear();
+        this.srch = on;
+    }
+    
+    
 
     /**
      * Update using JSON data from Polaric Server backend
      */
     update(ov, srch) {
+        if (this.srch && !srch)
+            return
         if (ov == null)
             return;
 	
