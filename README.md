@@ -5,7 +5,7 @@ Re-write of client webapp for Polaric Server. It is my hope that this will be mo
 * Layer Editor. Widgets for letting the user edit his/her own map-layers (currently supporting WFS and WMS). 
 * Tracking. Display trackers/objects as features in a map-layer. It uses the Polaric Server backend to get updates wia websocket and JSON. 
 
-Demo on http://test.aprs.no
+This software is now installed on http://aprs.no. 
 
 
 ## Example applications/setups
@@ -14,7 +14,7 @@ In the subdirectory 'examples' you find example setups. 'application.js' is used
 
 * The 'minimal' directory is a minimal setup with OSM only. 
 * The 'basic' directory is a basic setup with just map browsing. OSM + norwegian map. 
-* The 'polaricserver-nordic' uses a polaric server backend, OSM and norwegian maps. 
+* The 'polaricserver-nordic' uses a polaric server backend, OSM and norwegian maps. This is rather close to the setup on aprs.no. 
 
 Feel free to experiment with setups.. You may use the script setup.sh to copy files to/from the example directories. 
 
@@ -30,10 +30,12 @@ To run it, copy the content of this directory to a directory that can be accesse
 
 Run the minified (and possibly transpiled) version by pointing the browser at index.html
 A developer version (runs source code directly) by pointing the browser at index-dev.html. 
+To use the minified version of application.js, you will need to edit index.html or replace
+the file. 
 
 ## Hacking
 
-Contributions and hacks are welcome. Or fell free to tell us what you think. It is based on OpenLayers 5 and Ecmascript 6 (2015) version of Javascript and uses namespaces. We hope to migrate to ES6 modules soon. 
+Contributions and hacks are welcome. Or fell free to tell us what you think. It is based on OpenLayers 5 and Ecmascript 6 (2015) version of Javascript and uses namespaces. We hope to migrate to ES6 modules at a later stage. 
   
 ## Licence
 This is free software. License is GNU Affero General Public License. See <http://www.gnu.org/licenses/>.
