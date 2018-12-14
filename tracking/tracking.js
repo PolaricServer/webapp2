@@ -602,7 +602,7 @@ pol.tracking.Tracking = class {
 
     
     searchMode(on) {
-        if (on)
+        if (!this.srch && on)
             this.clear();
         if (this.srch && !on) {
             this.clear();

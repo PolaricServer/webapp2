@@ -74,15 +74,15 @@ pol.tracking.db.History = class extends pol.core.Widget {
                   
                         m(showList),
                   
-                        m("input#hist_b1", {type: "button", value: "Search", onclick: search}),
-                        m("input#hist_b2", {type: "button", value: "Add", 
-                            title: "Add search to list", onclick: add}),
-                        m("input#hist_b3", {type: "button", value: "Show all", 
-                            title: "Show all trails in list", onclick: showAll}),
-                        m("input#hist_b4", {type: "button", value: "Export", 
-                            title: "Export to GPX file", onclick: exportGpx}),
-                        m("input#hist_back", {type: "button", value: "Back", 
-                            title: "Return to realtime tracking", onclick: goBack})
+                        m("button#hist_b1", {type: "button", onclick: search}, "Search"),
+                        m("button#hist_b2", {type: "button", 
+                            title: "Add search to list", onclick: add}, "Add"),
+                        m("button#hist_b3", {type: "button", 
+                            title: "Show all trails in list", onclick: showAll}, "Show all"),
+                        m("button#hist_b4", {type: "button", 
+                            title: "Export to GPX file", onclick: exportGpx}, "Export"),
+                        m("button#hist_back", {type: "button",  
+                            title: "Return to realtime tracking", onclick: goBack}, "Back")
                     ]),
                     m("iframe#downloadframe", {style: "display:none"})
                 ]);
@@ -136,6 +136,7 @@ pol.tracking.db.History = class extends pol.core.Widget {
         
         /* Show trail for item */
         function showItem(i) {
+            CONFIG.tracks.clear();
             showTrail(t.list[i]);
         }
     
@@ -150,6 +151,7 @@ pol.tracking.db.History = class extends pol.core.Widget {
         /* Show all items button handler */
         function showAll() {
             getSearch();
+            CONFIG.tracks.clear();
             for (const x of t.list) 
                 setTimeout(() => showTrail(x), 100);
         }
