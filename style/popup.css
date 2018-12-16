@@ -107,7 +107,7 @@ th {
 table, #searchresult table 
 {border-collapse: collapse;}
 
-.items td, #historypopup td, #searchresult td {
+.items td, #historypopup td, #searchresult td, #rawAprs td {
   padding-left: 0.5em; 
   padding-right: 0.5em;
   padding-bottom: 0.2em;
@@ -168,7 +168,7 @@ div#tags {
   width: 32em; 
   padding: 3px
 }
-
+div#tags input {margin: 0.15em}
 
 input[type=text] {background: white; height: 1.6em}
 input[readonly]  {background: #cef; height: 1.6em}
