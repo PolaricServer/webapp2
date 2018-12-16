@@ -43,12 +43,34 @@ pol.core.MapBrowser = class {
         t.config = config; 
         t.toolbar = new pol.core.Toolbar({}, t);
         t.attribution = new ol.control.Attribution({collapsed: false}); 
+        t.permaLink = false; 
         
-        let center = t.config.get('core.projection');
-
+        var resolution = t.config.get('core.resolution');
+        var center = t.config.get('core.center');
+        var rotation = 0;       
+        t.config.set('core.baselayer', 0);
+        t.baseLayerIdx = t.config.get('core.baselayer');
+        
+        if (window.location.hash !== '') {
+            // try to restore center, zoom-level and rotation from the URL
+            var hash = window.location.hash.replace('#map=', '');
+            var parts = hash.split('/');
+            if (parts.length === 5) {
+                t.permaLink = true;
+                resolution = parseFloat(parts[0]);
+                center = [
+                    parseFloat(parts[1]),
+                    parseFloat(parts[2])
+                ];
+                rotation = parseFloat(parts[3]);
+                t.baseLayerIdx = parseInt(parts[4], 10);
+                console.log("resolution="+resolution);
+            }
+        }
+        
         t.view = new ol.View({   
             projection: t.config.get('core.projection'),                         
-            center: ol.proj.fromLonLat(t.config.get('core.center'), t.config.get('core.projection')), 
+            center: ol.proj.fromLonLat(center, t.config.get('core.projection')), 
             zoom: 2
         });
   
@@ -66,33 +88,44 @@ pol.core.MapBrowser = class {
         });
 
         t.prevGda = 1;
-        t.config.set('core.baselayer', 0);
-        t.baseLayerIdx = t.config.get('core.baselayer');
-        
         t.featureInfo = new pol.core.FeatureInfo(this);
         
         // Set up layers, initial scale, etc..
         t.initializeLayers(config);
-        t.setResolution(t.config.get('core.resolution'));
         t.xLayers = [];
-     
+        t.setResolution(resolution);
+        
         // Popup windows and context menus */
         t.gui = new pol.core.Popup(t);
         t.ctxMenu = new pol.core.ContextMenu(t.gui);
         t.toolbar.setDefaultItems();
-
-        /* Set up handler for move and zoom. Store new center and scale */
-        t.map.on('moveend', onMove);
-   
+        
         /* Screen pixels per meter */
         t.dpm = dotsPerInch()*39.37;
+    
+        t.shouldUpdate = true; 
+   
+        window.addEventListener('popstate', event => {
+            if (event.state === null)
+                return;
+            map.getView().setCenter(ol.proj.fromLonLat
+                (event.state.center, t.config.get('core.projection')));
+            map.getView().setResolution(event.state.resolution);
+            map.getView().setRotation(event.state.rotation);
+            shouldUpdate = false;
+        });
+        
+        /* Set up handler for move and zoom. Store new center and scale */
+        t.map.on('moveend', onMove);
+        t.map.on('moveend', ()=> t.updatePermalink() );
+        
         
         function onMove() {
             t.config.store('core.center', 
                 ol.proj.toLonLat(t.view.getCenter(), t.view.getProjection()), true); 
             t.config.store('core.resolution', t.view.getResolution(), true);
         }
-        
+      
      
         /* Hack to find the actual screen resolution in dots per inch */
         function dotsPerInch() {
@@ -106,12 +139,56 @@ pol.core.MapBrowser = class {
         }
     } /* constructor */
 
+    
+    
+
+    setPermalink(on) {  
+        this.permaLink = on; 
+        if (!on) {
+            window.location.hash = '';
+            var href = window.location.href;
+            if (href[href.length-1] == '#')
+                window.location.href = href.substr(0, href.length-1);
+        }
+        else
+            this.updatePermalink();
+    }
+ 
+ 
+    getPermalink()
+        { return this.permaLink; }
+      
+       
+       
+    updatePermalink() {
+        if (!this.permaLink)
+            return;
+        if (!this.shouldUpdate) {
+            this.shouldUpdate = true;
+            return;
+        }
+
+        var center =  ol.proj.toLonLat(this.view.getCenter(), this.view.getProjection());
+        var hash = '#map=' +
+            Math.round(this.view.getResolution() *1000/1000) + '/' +
+            Math.round(center[0] * 1000) / 1000 + '/' +
+            Math.round(center[1] * 1000) / 1000 + '/' +
+            this.view.getRotation() + '/' +
+            this.baseLayerIdx;
+        var state = {
+            resolution: this.view.getResolution(),
+            center: center,
+            rotation: this.view.getRotation(),
+            baselayer: this.baseLayerIdx
+        };
+        window.history.pushState(state, 'map', hash);
+    }
+ 
  
  
     addContextMenu(name, func) {
         this.ctxMenu.addMenuId("map", "MAP", false, func);
     }
- 
  
  
  

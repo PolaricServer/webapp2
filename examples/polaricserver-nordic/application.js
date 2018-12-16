@@ -48,7 +48,8 @@
 
     
     /* Welcome text */
-    if (!CONFIG.get("skip_welcome")) setTimeout(()=> {
+    if (CONFIG.get("welcome_popup") && !CONFIG.get("skip_welcome")) 
+      setTimeout(()=> {
        let d = browser.gui.showPopup( {
            pixPos: [5,30], 
            draggable: true, 
@@ -111,6 +112,10 @@
             CONFIG.layerlist.activatePopup("LayerList", [50,70]) );
 
         m.add(null);
+        if (browser.getPermalink())
+            m.add("Permalink OFF", () => browser.setPermalink(false)); 
+        else
+            m.add("Permalink ON", () => browser.setPermalink(true)); 
         
         m.add("Label font +", () => CONFIG.labelStyle.next());
         m.add("Label font -", () => CONFIG.labelStyle.previous());
@@ -185,11 +190,15 @@
                    setTimeout(()=> CONFIG.trackers.setIdent(ctxt.ident), 500); 
                 }); 
         }
-        if (srv.hasDb)
-            m.add("History...", () =>
-            { CONFIG.history.activatePopup("history", [50, 70]);       
-              CONFIG.history.setCall(ctxt.ident); } );
-        
+        if (srv.hasDb) {
+            m.add("History...", () => { 
+                CONFIG.history.activatePopup("history", [50, 70]);       
+                CONFIG.history.setCall(ctxt.ident); 
+            } );
+            m.add("Raw APRS packets", () => {
+                rawAprsPackets(ctxt.ident, [m.x, m.y]);
+            } );
+        }
     });
    
    
@@ -259,3 +268,11 @@
    
     function findItem(x) 
         { CONFIG.tracks.goto_Point(x); }
+     
+    function rawAprsPackets(ident, pix) { 
+        browser.gui.remotePopup(
+            srv, "/rawAprsPackets", 
+            {ident: ident}, 
+            {id: "rawAprs", geoPos: browser.pix2LonLat(pix)});
+    }
+    
