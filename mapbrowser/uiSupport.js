@@ -129,7 +129,8 @@ const textInput = {
  */
 const checkBox = {
     view: function(vn) {
-        return m("span", m("input#" + vn.attrs.id, 
+        return m("span", {title: vn.attrs.title}, 
+            m("input#" + vn.attrs.id, 
          {
             onclick: vn.attrs.onclick,
             type:"checkbox", name: vn.attrs.name, value: vn.attrs.id, 
@@ -309,6 +310,15 @@ const latLngInput = {
  }
  
 
+ 
+const removeEdit = {
+    view: vn => {
+        return m("span.removeEdit", [ 
+            m("img", {src:"images/edit-delete.png", onclick: vn.attrs.remove }), 
+            m("img", {src:"images/edit.png", onclick: vn.attrs.edit }),
+        ]);    
+    }
+}
  
 
 /**

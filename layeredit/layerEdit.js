@@ -39,17 +39,21 @@ pol.layers.Edit = class {
                     m("span.sleftlab", "Name: "),   
                     m(textInput, {id:"editLayer", size: 16, maxLength:25, regex: /^[^\<\>\'\"]+$/i }), br,  
                     m("span.sleftlab", "Visibility: "),
-                    m(checkBox, {id:"vis.extent", onclick: filterExtent, checked: (t.filt.ext != null) }, 
+                    m(checkBox, {id:"vis.extent", onclick: filterExtent, checked: (t.filt.ext != null), 
+                        title: "Check to make layer visible only if if overlaps this extent" }, 
                         "Map extent", nbsp, nbsp),
-                    m(checkBox, {id:"vis.zoom", onclick: filterZoom, checked: (t.filt.zoom != null) },
+                    m(checkBox, {id:"vis.zoom", onclick: filterZoom, checked: (t.filt.zoom != null),
+                        title: "Check to make layer visible only from this zoom level" },
                         "Zoom level+", nbsp, nbsp),
-                    m(checkBox, {id:"vis.proj", onclick: filterProj, checked: (t.filt.proj != null) },
+                    m(checkBox, {id:"vis.proj", onclick: filterProj, checked: (t.filt.proj != null), 
+                        title: "Check to make layer visible only with this base map projection" },
                         "Base projection", br),
                     m(t.fields),
                     m("div.buttons", [
-                        m("input#addButton", 
-                          { disabled: !t.enabled(), type: "button", onclick: add, value: "Add" } ),
-                        m("input", { type: "reset", onclick: reset, value: "Reset" } )
+                        m("button#addButton", 
+                          { disabled: !t.enabled(), type: "button", onclick: add, 
+                            title: "Add layer to list"}, "Add" ),
+                        m("button", { type: "reset", onclick: reset, title: "Clear input fields"}, "Reset" )
                     ])
                 ]);
             }

@@ -38,10 +38,8 @@ pol.core.AreaList = class extends pol.core.Widget {
                     m("h1", "My map areas"),  
                     m("table.mapAreas", m("tbody", t.myAreas.map( x => {
                         return m("tr", [
-                            m("td", m("img", 
-                                {src:"images/edit-delete.png", onclick: apply(removeArea, i) })), 
-                            m("td", m("img", 
-                                {src:"images/edit.png", onclick: apply(editArea, i) })),
+                            m("td", m(removeEdit, 
+                                { remove: apply(removeArea, i), edit: apply(editArea, i) })),
                             m("td", 
                                 {onclick: apply(gotoExtent, i++), 'class': (x.server ? "onserver" : null) }, 
                                  x.name)
@@ -49,7 +47,7 @@ pol.core.AreaList = class extends pol.core.Widget {
                     }))),
                     m(textInput, {id:"editArea", value: t.currName, size: 16, maxLength:25, 
                         regex: /^[^\<\>\'\"]+$/i }),
-                    m("button", {onclick: add}, "Add")
+                    m("button", {onclick: add, title: "Add area to list"}, "Add")
                 ])
             }
         }

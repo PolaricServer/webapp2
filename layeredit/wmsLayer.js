@@ -44,7 +44,7 @@ pol.layers.Wms = class extends pol.layers.Edit {
                 return m("div.spec", [ 
                     m("span.sleftlab", "Server: "),   
                     m(textInput, {id:"wmsUrl", size: 40, maxLength:160, regex: /^.+$/i }),
-                    m("input", { type: "button", onclick: getCap, value: "Get" } ),
+                    m("button", { type: "button", onclick: getCap}, "Get"),
                     br,
                     m("span.sleftlab", "Projection:"),
                     m(select, {id: "sel_srs", onchange: selectSRS, list: t.srs.map( x=> {
@@ -63,7 +63,7 @@ pol.layers.Wms = class extends pol.layers.Edit {
                     m("span.sleftlab", "Title: "),
                     m("span", {title: t.cap.Service.Abstract}, t.cap.Service.Title), br,    
                     m("span.sleftlab", "Layers:"),
-                    m("table", {id: "layerSelect"}, m("tbody", t.sLayers.map( function(x) {
+                    m("table", {id: "layerSelect"}, m("tbody", t.sLayers.map( x => {
                         return m("tr", [ 
                             m("td", {cssclass: (x.level2 ? "level2" : null)}, 
                             m(checkBox, {onclick: apply(selLayer, x), checked: x.checked}, x.Title))

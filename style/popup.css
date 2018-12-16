@@ -233,14 +233,38 @@ form.mapref hr { border: dotted 1px #888 }
 
 #layerEdit {min-width: 32em}
 #layerEdit table {margin-left: 5.7em; margin-bottom: 0.4em}
-#layerEdit select {margin-bottom: 0.2em; background: #ddd; border: outset 1px; border-radius: 4px; color: #040}
-#layerEdit>div, #trackerEdit>div {padding-top: 0.8em; border-top: 3px solid #9a9}
-#layerEdit input {margin-bottom: 0.2em; margin-right: 0.3em; border-radius: 4px}
-#layerEdit div.spec {border: 1px dotted #bbb; background: #e0e5dc ; padding-top: 0.3em; margin-top: 1em}
+#layerEdit>div, #trackerEdit>div {padding-top: 0.8em; border-top: 2px solid #999}
+
+#layerEdit div.spec {
+   border: 1px dotted #bbb; 
+   background: #e0e5dc; 
+   margin-top: 0.5em; 
+   padding-top: 0.4em; 
+   padding-bottom: 0.4em
+}
+
 #wmsUrl, #wfsUrl, #wfsFtype, #wmsLayers {width: 28em}
 #editLayer, #wfsLabel {width: 16em}
-#layerEdit div.buttons {padding-left: 5.7em; padding-top: 0.4em; margin-top: 0.1em; }
+
+#layerEdit div.buttons {
+  padding-left: 5.7em; padding-top: 0.3em; 
+  border-top: 2px solid #aaa
+}
+
 #layerEdit div.wserver {margin-top: 0.5em}
+
+#layerEdit #vis {margin-bottom: 0.5em}
+
+
+button {
+  border: 2px outset #999; 
+  padding: .18em; padding-left: .45em; padding-right: .45em; 
+  margin: 3px; 
+  background: #ded;
+  border-radius: 3px
+}
+button:active {border: 2px inset #999; background: #efe}
+
 
 img.marker {margin-top: -9px; margin-left: -9px; border: 10px #FF00 solid; border-radius: 20px; background: #ff57}
 
@@ -264,8 +288,6 @@ div#iconlist>img
 div#iconlist>img:hover 
    { background: white; border: 1px dotted red; margin: -1px } 
 
-
-#trackerEdit span#butt { margin-top: 0.3em; margin-left: 4.4em }
 
 .dragdrop {
     border: 3px dotted; margin-bottom: 5px; padding: 0.3em; 

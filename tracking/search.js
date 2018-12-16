@@ -44,8 +44,8 @@ pol.tracking.Search = class extends pol.core.Widget {
                             "Keywords (tags): ", br, m("div#tags", m.trust(t.tags)),
                             "Free text search: ", m(textInput, 
                                 {id: "search", size: 10, maxLength: 40, value:"*",regex: /^.*$/i}),
-                            m("input#searchbutton", 
-                                {onclick: searchHandler, type: "button", value: "Search"})
+                            m("button#searchbutton", 
+                                {onclick: searchHandler, type: "button"}, "Search" )
                         ])], 
                     br, m("div#searchresult"))]);
             }

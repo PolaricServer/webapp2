@@ -48,15 +48,15 @@ pol.tracking.db.MyTrackers = class extends pol.core.Widget {
                     m("h1", "My trackers"),  
                     m("table.mytrackers", m("tbody", t.myTrackers.map(x => {
                         return m("tr", [
-                            m("td", m("img", {src:"images/edit-delete.png", onclick: apply(remove, i) }), 
-                                m("img", {src:"images/edit.png", onclick: apply(edit, i++) })),
+                            m("td",
+                                m(removeEdit, {remove: apply(remove,i), edit: apply(edit, i++)})),
                             m("td", {onclick: apply(goto, x.id)}, x.id),
                             m("td", x.alias),
                             m("td", (x.icon == null || x.auto ? "" :  m("img", {src:x.icon}))),
                             m("td", (x.active ? m("img", {src:"images/16px/ok.png"}) : ""))
                         ]);
                     }))),
-                    m("div", [
+                    m("form.mytrackers", [
                         m("span.xsleftlab", "Ident:"),
                         m(textInput, 
                             { id:"addTracker", value: t.edit.id, size: 16, 
@@ -70,9 +70,11 @@ pol.tracking.db.MyTrackers = class extends pol.core.Widget {
                         m("span.xsleftlab", "Icon:"), 
                             m(iconPick, {value: t.edit.icon, icons: t.icons, default: t.dfl, id: "iconpick"} ),
                         m("span#auto", 
-                            m(checkBox, {id: "symbol-auto", onclick: auto, checked: t.edit.auto}, "Automatic")
+                            m(checkBox, {id: "symbol-auto", onclick: auto, checked: t.edit.auto, 
+                               title: "If checked, icon is automatically selected (from aprs symbol)" },
+                              "Automatic")
                         ),br,
-                        m("span#butt", [
+                        m("div.butt", [
                             m("button", { onclick: add }, "Update"),
                             m("button", { onclick: clear }, "Clear")
                         ])

@@ -48,8 +48,7 @@ pol.layers.List = class List extends pol.core.Widget {
                     m("h1", "My map layers"),  
                     m("table.mapLayers", m("tbody", t.myLayerNames.map( x => {
                         return m("tr", [
-                            m("td", m("img", {src:"images/edit-delete.png", onclick: apply(x=>t.removeLayer(x), i) })), 
-                            m("td", m("img", {src:"images/edit.png", onclick: apply(editLayer, i++) })),
+                            m(removeEdit, {remove: apply(x=>t.removeLayer(x), i), edit: apply(editLayer, i++) }),
                             m("td", {'class': (x.server ? "onserver" : null)}, x.name) ] );
                     }))), m("div", [ 
                         m("span.sleftlab", "Type: "), 
@@ -184,7 +183,6 @@ pol.layers.List = class List extends pol.core.Widget {
      */
     removeLayer(id) {
         console.assert(id >= 0 && id < this.myLayers.length, "id="+id+", length="+this.myLayers.length);
-	 
         /* If server available and logged in, delete on server as well */
         const srv = CONFIG.server; 
         if (srv && srv != null && srv.loggedIn && srv.hasDb && this.myLayerNames[id].index >= 0)

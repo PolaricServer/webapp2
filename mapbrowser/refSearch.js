@@ -38,16 +38,16 @@ pol.core.refSearch = class refSearch extends pol.core.Widget {
                     m("form.mapref", [  
                         m("span.sleftlab", {title: "MGRS 100x100m square"}, "MGRS ref: "), 
                         m(mgrsInput),
-                        m("input#butt_mgrs", {type: "button", value: "Find"}), hr,
+                        m("button#butt_mgrs", {type: "button"}, "Find"), hr,
               
                         m("span.sleftlab", "UTM ref: "),
                         m(utmInput), 
-                        m("input#butt_utm", {type: "button", value: "Find", style: "margin-right:3.5em"}), hr,     
+                        m("button#butt_utm", {type: "button", style: "margin-right:3.5em"}, "Find"), hr,     
                         m("span.sleftlab", 
                             {title: "Degrees, decimal-minutes (click to change hemisphere)"}, 
                             "Lat Long: "),
                             m(latLngInput),
-                            m("input#butt_ll", {type: "button", value: "Find"})
+                            m("button#butt_ll", {type: "button"}, "Find")
                     ])
                 ])
             }

@@ -82,33 +82,40 @@ div.own   { background: #ccffcc; color: #0000cc }
 
 .datepick input {width: 7em; }
 
-table.hist {margin-top: -0.2em; margin-bottom: -0.2em}
-table.hist td {padding-bottom: 0; padding-top: 0; padding-right: .7em; height: 0.5em;}
-table.hist tr {border-bottom: 1px dotted #999; height: 0.5em !important}
-table.hist tr:last-child {border-bottom: none}
-table.hist img {height: 13px}
-
-
 div.histt {
    margin-top: 0.6em; margin-bottom: 0.6em; 
-   border-top: 2px solid #999; border-bottom: 2px solid #999; 
-   padding-top: 0.2em; padding-bottom: 0.2em
+   border-bottom: 2px solid #999; 
+   padding-bottom: 0.3em
 }
-
+.histt table {margin-left: 0.5em}
 .histt table td {padding-bottom: 0; padding-top: 0; padding-right: .7em; height: 0.5em;}
+.histt table td .removeEdit {padding-right: -0.7em}
 .histt table tr {border-bottom: 1px dotted #999; height: 0.5em !important}
 .histt table tr:last-child {border-bottom: none}
-.histt table img {height: 13px}
+.histt .removeEdit {margin-right: 0}
 
+.histbutt {
+    margin-top: 0.5em; 
+    border-top: 2px solid #999; 
+    padding-top: 0.4em; 
+    padding-left: 0.5em
+}
+
+#trackerEdit span.butt { 
+    margin-top: 0.3em; margin-left: 4.4em; 
+}
 
 table.mytrackers {margin-top: -0.3em; margin-bottom: 0.4em}
 
 table.mytrackers td {
     padding-bottom: 0; padding-top: 0; padding-right: .3em; 
-    padding-left: .2em; height: 0.5em; border-right: 1px dotted #555
+    padding-left: .2em; border-right: 1px dotted #555
 }
 
-table.mytrackers tr { border-bottom: 1px dotted #999; height: 0.5em !important}
+table.mytrackers td img {vertical-align: middle}
+table.mytrackers tr {border-bottom: 1px dotted #999; height: 0.4em !important}
 table.mytrackers tr:last-child {border-bottom: none}
 table.mytrackers td:last-child {border-right: none}
-table.mytrackers img {height: 17px; vertical-align: middle}
+form.mytrackers {border-top: 2px solid #999; padding-top: 0.6em}
+form.mytrackers input#alias {margin-right: 0.6em}
+div.butt {padding-left: 2em; border-top: 2px solid #999; margin-top: 0.3em; padding-top: 0.3em}

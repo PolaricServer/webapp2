@@ -44,10 +44,8 @@ pol.tracking.db.History = class extends pol.core.Widget {
                 var i=0;
                 return m("div.histt", m("table", t.list.map( x => {
                     return m("tr", 
-                        m("td", [ 
-                            m("img", { src:"images/edit-delete.png", onclick:apply(deleteItem, i) }),
-                            m("img", { src:"images/edit.png", onclick:apply(editItem, i) }) 
-                        ]),
+                        m("td", 
+                            m(removeEdit, {remove: apply(deleteItem, i), edit: apply(editItem, i)})),
                         m("td", {onclick:apply(showItem, i++)}, x.call), 
                         m("td", x.fromdate+"/"+x.fromtime),
                         m("td", x.todate+"/"+x.totime)
@@ -62,6 +60,7 @@ pol.tracking.db.History = class extends pol.core.Widget {
             view: function() {
                 return m("div", [
                     m("h1", "Historical tracks"),
+                    m(showList),    
                     m("form.hist", [ 
                         m("span.sleftlab", "Callsign: "),
                         m(textInput, {id:"hist_call", value: t.item.call, size: 10, maxLength:20, 
@@ -70,19 +69,20 @@ pol.tracking.db.History = class extends pol.core.Widget {
                         m(dateTimeInput, {id: "hist_start", dvalue: t.item.fromdate, tvalue: t.item.fromtime}), br,
                         m("span.sleftlab", "End: "),
                         m(dateTimeInput, {id: "hist_end", dvalue: t.item.todate, tvalue: t.item.totime}), 
-                        m(checkBox, {id: "hist_open", onclick: hOpen, checked: t.item.open}, "Open end"), br,
-                  
-                        m(showList),
-                  
-                        m("button#hist_b1", {type: "button", onclick: search}, "Search"),
-                        m("button#hist_b2", {type: "button", 
-                            title: "Add search to list", onclick: add}, "Add"),
-                        m("button#hist_b3", {type: "button", 
-                            title: "Show all trails in list", onclick: showAll}, "Show all"),
-                        m("button#hist_b4", {type: "button", 
-                            title: "Export to GPX file", onclick: exportGpx}, "Export"),
-                        m("button#hist_back", {type: "button",  
-                            title: "Return to realtime tracking", onclick: goBack}, "Back")
+                        m(checkBox, {id: "hist_open", onclick: hOpen, checked: t.item.open, 
+                            title: "If checked, end-time is now" }, "Open end"), br,
+                        
+                        m("div.histbutt", [
+                            m("button#hist_b1", {type: "button", onclick: search}, "Search"),
+                            m("button#hist_b2", {type: "button", 
+                                title: "Add search to list", onclick: add}, "Add"),
+                            m("button#hist_b3", {type: "button", 
+                                title: "Show all trails in list", onclick: showAll}, "Show all"),
+                            m("button#hist_b4", {type: "button", 
+                                title: "Export to GPX file", onclick: exportGpx}, "Export"),
+                            m("button#hist_back", {type: "button",  
+                                title: "Return to realtime tracking", onclick: goBack}, "Back")
+                        ])
                     ]),
                     m("iframe#downloadframe", {style: "display:none"})
                 ]);
