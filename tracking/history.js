@@ -144,6 +144,7 @@ pol.tracking.db.History = class extends pol.core.Widget {
         /* Search button handler */   
         function search() {
             getSearch();
+            CONFIG.tracks.clear();
             showTrail(t.item);
         }
 

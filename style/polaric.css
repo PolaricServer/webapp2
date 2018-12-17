@@ -167,7 +167,6 @@ span.welcome {
     max-width: 75em
 }
 
-
 .welcome {overflow: scroll}
 
 .welcome p, welcome ul{
@@ -177,20 +176,6 @@ span.welcome {
 .welcome li {
     padding-bottom: 0.5em
 }
-
-
-#hist_back {color: gray}
-.searchMode {
-    color: black !important;
-	animation:blinkingBox .9s infinite;
-}
-@keyframes blinkingBox{
-	2%{		background: #faa;	}
-	48%{	background: #faa;	}
-    52%{    background: #eee;}
-    98%{ 	background: #eee; }
-}
-
 
 .removeEdit img {height: 14px}
 .removeEdit {margin-right: 0.2em}

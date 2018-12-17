@@ -52,7 +52,7 @@ pol.tracking.db.MyTrackers = class extends pol.core.Widget {
                                 m(removeEdit, {remove: apply(remove,i), edit: apply(edit, i++)})),
                             m("td", {onclick: apply(goto, x.id)}, x.id),
                             m("td", x.alias),
-                            m("td", (x.icon == null || x.auto ? "" :  m("img", {src:x.icon}))),
+                            m("td", (x.icon == null || x.auto ? "" :  m("img.icon", {src:x.icon}))),
                             m("td", (x.active ? m("img", {src:"images/16px/ok.png"}) : ""))
                         ]);
                     }))),
@@ -75,8 +75,8 @@ pol.tracking.db.MyTrackers = class extends pol.core.Widget {
                               "Automatic")
                         ),br,
                         m("div.butt", [
-                            m("button", { onclick: add }, "Update"),
-                            m("button", { onclick: clear }, "Clear")
+                            m("button", { type: "button", onclick: add }, "Update"),
+                            m("button", { type: "button", onclick: clear }, "Clear")
                         ])
                     ])
                 ])
