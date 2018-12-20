@@ -52,7 +52,7 @@ pol.tracking.db.HeardVia = class extends pol.core.Widget {
                         m("td", {onclick:apply(showItem, i++)}, x.call), 
                         m("td", x.fromdate),
                         m("td", x.todate),
-			m("td", {style: 'width:1em;', style: 'background: #'+x.color})
+                        m("td", {style: 'background: #'+x.color})
                     );
                 })))
             }

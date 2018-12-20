@@ -151,9 +151,9 @@
         if (srv.hasDb) {
             m.add("History...", () =>
                 { CONFIG.history.activatePopup("history", [50, 70]) });
-            m.add("Raw APRS packets", () => {
-                rawAprsPackets(ctxt.ident, [m.x, m.y]);
-            } );    
+            m.add("Heard points via..", () => {
+                CONFIG.heard.activatePopup("heard", [50, 70]); 
+            });
         }
         
         m.add("Bulletin board", () =>
