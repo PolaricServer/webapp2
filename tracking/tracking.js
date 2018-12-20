@@ -514,6 +514,23 @@ pol.tracking.Tracking = class {
     }
 
 
+    
+    addCoveragePoints(p, ident, color) {
+        const style = new ol.style.Style({
+            image: new ol.style.Circle({
+                fill:  new ol.style.Fill({ color: "#"+color}),
+                radius: 5
+            })
+        });
+        const feature = new ol.Feature(new ol.geom.MultiPoint([]));
+        feature.setId(ident+'.coveragepoints');
+        for (const x of p)
+            feature.getGeometry().appendPoint(
+                new ol.geom.Point( ll2proj(x.pos)));        
+        feature.setStyle(style);
+        this.source.addFeature(feature);
+    }
+    
 
     /**
      * Add a line (representing a path between nodes)
@@ -636,6 +653,9 @@ pol.tracking.Tracking = class {
    
         for (i in ov.lines)
             this.addLine(ov.lines[i]);
+        
+        if (ov.pcloud != null)
+            this.addCoveragePoints(ov.pcloud, ov.ident, ov.color);
 
         for (i in ov["delete"])
             this.removePoint(ov["delete"][i]);

@@ -45,6 +45,7 @@
     CONFIG.labelStyle = new pol.tracking.LabelStyle();
     CONFIG.layerlist = new pol.layers.List(); 
     CONFIG.history = new pol.tracking.db.History();
+    CONFIG.heard = new pol.tracking.db.HeardVia();
 
     
     /* Welcome text */
@@ -146,9 +147,15 @@
                 { const x = new pol.tracking.NotifyList();
                     x.activatePopup("notifications", [50, 70]) });
         }
-        if (srv.hasDb) 
+        
+        if (srv.hasDb) {
             m.add("History...", () =>
                 { CONFIG.history.activatePopup("history", [50, 70]) });
+            m.add("Raw APRS packets", () => {
+                rawAprsPackets(ctxt.ident, [m.x, m.y]);
+            } );    
+        }
+        
         m.add("Bulletin board", () =>
             { const x = new pol.tracking.BullBoard();
                 x.activatePopup("bullboard", [50,70]) });
@@ -191,13 +198,17 @@
                 }); 
         }
         if (srv.hasDb) {
+            m.add("Raw APRS packets", () => {
+                rawAprsPackets(ctxt.ident, [m.x, m.y]);
+            } );
             m.add("History...", () => { 
                 CONFIG.history.activatePopup("history", [50, 70]);       
                 CONFIG.history.setCall(ctxt.ident); 
             } );
-            m.add("Raw APRS packets", () => {
-                rawAprsPackets(ctxt.ident, [m.x, m.y]);
-            } );
+            m.add("Heard points via..", () => {
+                CONFIG.heard.setCall(ctxt.ident);
+                CONFIG.heard.activatePopup("heard", [50, 70]); 
+            });
         }
     });
    

@@ -88,13 +88,15 @@ pol.core.Widget = class {
      * Display widget in the given DOM element. 
      * @param {Element} w - DOM element to display the layer switcher.  
      */
-    activate(w) 
-    { 
+    activate(w) { 
         console.assert(w && w != null, "w="+w);
-	this.delement = w; 
+        this.delement = w; 
         m.mount(this.delement, this.widget);
+        this.delement.addEventListener("unload", this.onclose);
     }
 
+    
+    onclose() { }
  
  
     /** 
@@ -128,6 +130,7 @@ pol.core.Widget = class {
             pinned: t.pinned,
             id: id,
             cclass: "widget",
+            onclose: ()=> t.onclose()
         });
         
      

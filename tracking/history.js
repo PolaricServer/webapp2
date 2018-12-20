@@ -36,6 +36,7 @@ pol.tracking.db.History = class extends pol.core.Widget {
         t.classname = "tracking.db.History"; 
         t.item = null;
         t.list = []; 
+	t.searchmode = false; 
     
         var it = null;
     
@@ -151,7 +152,6 @@ pol.tracking.db.History = class extends pol.core.Widget {
    
         /* Show all items button handler */
         function showAll() {
-            getSearch();
             CONFIG.tracks.clear();
             for (const x of t.list) 
                 setTimeout(() => showTrail(x), 100);
@@ -159,7 +159,10 @@ pol.tracking.db.History = class extends pol.core.Widget {
     
     
         function goBack() {
-            $('#hist_back').removeClass('searchMode');
+            if (!t.searchmode)
+	        return;
+	    $('#hist_back').removeClass('searchMode');
+	    t.searchmode = true;
             CONFIG.tracks.searchMode(false);
         }
         
@@ -182,6 +185,7 @@ pol.tracking.db.History = class extends pol.core.Widget {
             CONFIG.server.GET("/hist/"+x.call+"/trail"+qstring, "", 
                 x => {
                     $('#hist_back').addClass('searchMode');
+		    t.searchmode = true;
                     CONFIG.tracks.searchMode(true);
                     CONFIG.tracks.update(JSON.parse(x), true);
                 });
@@ -230,6 +234,10 @@ pol.tracking.db.History = class extends pol.core.Widget {
  
     } /* constructor */
     
+    
+    onclose() {
+        CONFIG.tracks.searchMode(false);
+    }
     
     
     setCall(call) {

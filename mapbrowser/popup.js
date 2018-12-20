@@ -175,14 +175,14 @@ pol.core.Popup = class {
                     closeimage.onclick = function(e) {
                         if (props.vnode)
                             m.mount(pdiv, null);
+		        if (props.onclose)
+                            props.onclose();
                         pdiv._pinned = false; 
                         t.activepopup = pdiv;
                         t.allowedPopups--;
                         t.removePopup();
                         if (props.pin)
                             props.pin(pdiv._pinned); // Pin callback
-                        if (props.onclose)
-                            props.onclose();
                     }
                 }
             }  }, 300);

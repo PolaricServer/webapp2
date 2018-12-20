@@ -82,19 +82,22 @@ div.own   { background: #ccffcc; color: #0000cc }
 
 .datepick input {width: 7em; }
 
-div.histt {
+#hist_call, #hist_start_date, #hist_end_date, #hrd_call, #hrd_start, #hrd_end {width: 7em}
+#hist_start_time, #hist_end_time {width: 4em}
+
+div.histt, div.hrdvia {
    margin-top: 0.6em; margin-bottom: 0.6em; 
    border-bottom: 2px solid #999; 
    padding-bottom: 0.3em
 }
-.histt table {margin-left: 0.5em}
-.histt table td {padding-bottom: 0; padding-top: 0; padding-right: .7em; height: 0.5em;}
-.histt table td .removeEdit {padding-right: -0.7em}
-.histt table tr {border-bottom: 1px dotted #999; height: 0.5em !important}
-.histt table tr:last-child {border-bottom: none}
-.histt .removeEdit {margin-right: 0}
+.histt table, .hrdvia table {margin-left: 0.5em}
+.histt table td, .hrdvia table td {padding-bottom: 0; padding-top: 0; padding-right: .7em; height: 0.5em;}
+.histt td .removeEdit, .hrdvia td .removeEdit {padding-right: -0.7em}
+.histt table tr, .hrdvia table tr {border-bottom: 1px dotted #999; height: 0.5em !important}
+.histt table tr:last-child, .hrdvia table tr:last-child {border-bottom: none}
+.histt .removeEdit, .hrdvia .removeEdit {margin-right: 0}
 
-.histbutt {
+.histbutt, .hrdbutt {
     margin-top: 0.5em; 
     border-top: 2px solid #999; 
     padding-top: 0.4em; 
