@@ -43,6 +43,9 @@ pol.tracking.Tracking = class {
         t.ready = false;
         t.server = srv;
         t.srch = false; 
+        t.tracked = CONFIG.get("tracking.tracked");
+        if (t.tracked == "null")
+            t.tracked = null;
 	
         t.iconpath = CONFIG.get('iconpath');
         if (t.iconpath == null)
@@ -275,6 +278,9 @@ pol.tracking.Tracking = class {
     
         /* update position, etc. */
         feature.getGeometry().setCoordinates(c);
+        if (this.tracked != null && this.tracked == p.ident)
+            CONFIG.mb.setCenter(p.pos, 70);
+            
         if (p.label != null) 
             feature.alias = p.label.id;
         feature.point = p;
@@ -311,6 +317,8 @@ pol.tracking.Tracking = class {
         let element = document.createElement('div');
         element.className = label.style;
         element.innerHTML = label.id;
+        if (ident == this.tracked)
+            $(element).addClass("tracked");
    
         let lbl = new ol.Overlay({
             element: element,
@@ -626,6 +634,21 @@ pol.tracking.Tracking = class {
             this.producer.subscribe(this.filter, x => this.update(x) );
         }
         this.srch = on;
+    }
+    
+    
+    setTracked(ident) {
+        this.tracked = ident; 
+        this.clear();
+        this.producer.subscribe(this.filter, x => this.update(x) );
+        CONFIG.store("tracking.tracked", (ident==null? "null" : ident));
+    }
+    
+    
+    isTracked(ident) {
+        if (this.tracked == null)
+            return false; 
+        return (this.tracked == ident);
     }
     
     

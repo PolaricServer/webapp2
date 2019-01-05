@@ -211,7 +211,12 @@ pol.core.MapBrowser = class {
             this.map.getView().getProjection()); 
     }
     
-   
+    lonLat2Pix(x) {
+        return this.map.getPixelFromCoordinate(
+            ol.proj.fromLonLat(x, this.map.getView().getProjection()));
+    }
+    
+    
  
     /**
      * Select base layer. 
@@ -337,9 +342,17 @@ pol.core.MapBrowser = class {
     /**
      * Center the map around given coordinates [longitude, latitude]. 
      * @param {ol.Coordinate} center - Coordinate where map is to be centered (in latlong projection).
+     * @param {number|undefined} threshold - minimum move in pixels. 
      * 
      */
-    setCenter(center) {
+    setCenter(center, threshold) {
+        if (threshold) {
+            const p1 = this.lonLat2Pix(this.getCenter());
+            const p2 = this.lonLat2Pix(center);
+            if (Math.abs(p1[0] - p2[0]) < threshold &&
+                Math.abs(p1[1] - p2[1]) < threshold)
+                return;
+        }   
         this.view.setCenter(
             ol.proj.fromLonLat(center, this.view.getProjection())
         ); 

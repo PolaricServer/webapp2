@@ -33,11 +33,20 @@ div.lflash {
    color: #c44;
 }
 
-
 div.tracked {
    color: #60d;
-   border: #45e 5px double;
+   border: 2px solid; 
+   animation:blinkingLbl 1.7s infinite;
 }
+
+@keyframes blinkingLbl {
+ 0%   { background: #ccffee}
+ 48%  { background: #ccffee }
+ 52%  { background: #fdd}
+ 100% { background: #fdd}
+}
+
+
 div.igate { background: #dfc; border: 2px solid #262}
 div.wdigi { background: #fcc; border: 2px solid #522}
 div.own   { background: #ccffcc; color: #0000cc }

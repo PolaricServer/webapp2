@@ -179,7 +179,11 @@
                 m.add('Remove object', () => deleteObject(ctxt.ident) );
         }
         m.add(null);
-        
+        if (CONFIG.tracks.isTracked(ctxt.ident))
+            m.add("Auto tracking OFF", () => CONFIG.tracks.setTracked(null) );
+        else
+            m.add("Auto tracking ON", () => CONFIG.tracks.setTracked(ctxt.ident) );
+            
         if (CONFIG.tracks.labelHidden(ctxt.ident))
             m.add('Show label', () => CONFIG.tracks.hideLabel(ctxt.ident, false) );
         else
