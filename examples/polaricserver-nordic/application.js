@@ -46,7 +46,7 @@
     CONFIG.layerlist = new pol.layers.List(); 
     CONFIG.history = new pol.tracking.db.History();
     CONFIG.heard = new pol.tracking.db.HeardVia();
-
+    CONFIG.gSettings = new pol.tracking.GlobalSettings(); 
     
     /* Welcome text */
     if (CONFIG.get("welcome_popup") && !CONFIG.get("skip_welcome")) 
@@ -172,7 +172,10 @@
         m.add('Last movements', () => historyPopup(ctxt.ident, [m.x, m.y]) );
         
         if (srv.auth.sar) { 
-            m.add('Global settings', () => globalSettings(ctxt.ident) );
+            m.add('Global settings', () => {
+                CONFIG.gSettings.activatePopup("globalsettings", [m.x, m.y]);
+                setTimeout(()=> {CONFIG.gSettings.setIdent(ctxt.ident);}, 1000);
+            });
             m.add('Manage tags..', () => setTags(ctxt.ident) );
             m.add('Reset info', () => resetInfo(ctxt.ident) );
             if (ctxt.point.point.own)
@@ -247,9 +250,6 @@
      
     function sarMode()
         { srv.popup('SarMode', 'sarmode', 500, 320); }
-
-    function globalSettings(ident)
-        { srv.popup('PointEdit', 'station_sec?id=' + ident + '&edit=true', 780, 600); }
 
     function setPasswd()
         { srv.popup('Password', 'passwd', 430, 250); }

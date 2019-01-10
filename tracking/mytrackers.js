@@ -1,4 +1,3 @@
- 
 /*
  Map browser based on OpenLayers 5. Tracking. 
  Search historic data on tracker points on server.  
@@ -27,19 +26,14 @@ pol.tracking.db = pol.tracking.db || {};
  * Reference search (in a popup window). 
  */
 
-pol.tracking.db.MyTrackers = class extends pol.core.Widget {
+pol.tracking.db.MyTrackers = class extends pol.tracking.TrackerAlias {
 
     constructor() {
         super();
         var t = this;
     
         t.classname = "tracking.db.MyTrackers"; 
-        t.server = CONFIG.server;
         t.myTrackers = [];
-        t.edit = {id:"", alias:"", icon: "", auto: true};
-        t.icons = [];
-        t.iconpath = CONFIG.get("iconpath");
-        t.dfl = CONFIG.get("default_icon");
 
         this.widget = {
             view: function() {
@@ -56,28 +50,10 @@ pol.tracking.db.MyTrackers = class extends pol.core.Widget {
                             m("td", (x.active ? m("img", {src:"images/16px/ok.png"}) : ""))
                         ]);
                     }))),
-                    m("form.mytrackers", [
-                        m("span.xsleftlab", "Ident:"),
-                        m(textInput, 
-                            { id:"addTracker", value: t.edit.id, size: 16, 
-                                maxLength:25, regex: /^[^\<\>\'\"]+$/i }), br,
-                         
-                        m("span.xsleftlab", "Alias:"),
-                        m(textInput,
-                            { id: "alias", value: t.edit.alias, size: 16,
-                                maxLength: 32, regex: /.*/i }), br,
-                    
-                        m("span.xsleftlab", "Icon:"), 
-                            m(iconPick, {value: t.edit.icon, icons: t.icons, default: t.dfl, id: "iconpick"} ),
-                        m("span#auto", 
-                            m(checkBox, {id: "symbol-auto", onclick: auto, checked: t.edit.auto, 
-                               title: "If checked, icon is automatically selected (from aprs symbol)" },
-                              "Automatic")
-                        ),br,
-                        m("div.butt", [
-                            m("button", { type: "button", onclick: add }, "Update"),
-                            m("button", { type: "button", onclick: clear }, "Clear")
-                        ])
+                    m(t.aliasWidget),
+                    m("div.butt", [
+                        m("button", { type: "button", onclick: add }, "Update"),
+                        m("button", { type: "button", onclick: ()=> {t.clear();} }, "Clear")
                     ])
                 ])
             }
@@ -86,18 +62,8 @@ pol.tracking.db.MyTrackers = class extends pol.core.Widget {
         if (!t.server.hasDb)
             return;
 
-        /* Get icons from server */
-        t.server.GET("system/icons/default", "", x => {
-            t.icons = JSON.parse(x);
-            for (i in t.icons)
-               t.icons[i] = t.iconpath + t.icons[i];
-            sortList();
-            m.redraw();
-        });
-        getTrackers();
-        setTimeout( ()=> t.iconGrey(), 1000); 
-        setTimeout( ()=> t.iconGrey(), 3000);
-        
+
+        getTrackers();        
         setInterval(getTrackers, 120000);
         // FIXME: Use pubsub service? 
         
@@ -116,25 +82,13 @@ pol.tracking.db.MyTrackers = class extends pol.core.Widget {
             t.server.GET("users/"+userid+ "/trackers", "", x => { 
                 t.myTrackers = JSON.parse(x);
                 for (var tt of t.myTrackers) {
-                    if (tt.icon == null) {
-                        tt.auto = true; 
-                        tt.icon = t.icons[t.dfl];
-                    }
-                    else 
-                        tt.icon = t.iconpath+"/icons/"+tt.icon;
+                    console.log(tt);
+                    t.setIcon(tt, tt.icon); 
                 }
                 m.redraw();
             } );
         }
         
-        
-        function clear() {
-            t.edit.auto = true; 
-            $("#alias").val("").trigger("change");
-            $("#iconpick>img").attr("src", t.icons[t.dfl]).trigger("change");
-            add();
-            setTimeout( ()=> t.iconGrey(), 1000); 
-        }
   
   
         /* Add a tracker to the list. Update if it already exists */
@@ -143,7 +97,7 @@ pol.tracking.db.MyTrackers = class extends pol.core.Widget {
             let icn2 = icn.substr(icn.lastIndexOf("/")+1);
 
             const data = {
-                id: $("#addTracker").val().toUpperCase(), 
+                id: $("#trackerId").val().toUpperCase(), 
                 user: t.server.auth.userid, 
                 alias: $("#alias").val(), 
                 icon: (t.edit.auto ? null : icn2)
@@ -174,13 +128,6 @@ pol.tracking.db.MyTrackers = class extends pol.core.Widget {
                         '\n"' + x.responseText + '"');
                 }
             );
-        }
-  
-  
-        /* Automatic checkbox handler */
-        function auto() {
-            t.edit.auto = (t.edit.auto ? false : true);
-            t.iconGrey();
         }
         
         
@@ -216,7 +163,7 @@ pol.tracking.db.MyTrackers = class extends pol.core.Widget {
             const tr = t.myTrackers[i]; 
             t.edit = tr;
             t.iconGrey();
-            $("#addTracker").val(tr.id).trigger("change");
+            $("#trackerId").val(tr.id).trigger("change");
             $("#alias").val(tr.alias).trigger("change");
             $("#iconpick>img").attr("src", (tr.auto? t.icons[t.dfl] : tr.icon)).trigger("change");
             m.redraw();
@@ -227,38 +174,9 @@ pol.tracking.db.MyTrackers = class extends pol.core.Widget {
             if (CONFIG.tracks)
                 CONFIG.tracks.goto_Point(id);
         }
-        
-    
-        function formatTime(time) {
-            var ltime = new Date(time);
-            var hour = ltime.getHours();
-            var min = ltime.getMinutes();
-            return hour+":"+(min<=9 ? '0': '') + min; 
-        }
  
     } /* constructor */
-    
-    
-    /* Grey out icon if automatic is set */
-    iconGrey() {
-        if (this.edit.auto) {
-            $("#iconpick>img").css("background", "grey");
-            $("#iconpick>img").css("opacity", "0.5");
-        }
-        else {
-            $("#iconpick>img").css("background", "");
-            $("#iconpick>img").css("opacity", "");
-        }
-    }
-        
-    onActivate() {
-        setTimeout(()=> this.iconGrey(), 600); 
-    }
-        
-    setIdent(id) {
-        $("#addTracker").val(id).trigger("change");
-        this.iconGrey();
-    }
+
 
 } /* class */
 
