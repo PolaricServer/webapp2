@@ -1,6 +1,6 @@
  /*
     Map browser based on OpenLayers 5. 
-    Copyright (C) 2017-2018 Øyvind Hanssen, LA7ECA, ohanssen@acm.org
+    Copyright (C) 2017-2019 Øyvind Hanssen, LA7ECA, ohanssen@acm.org
     
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU Affero General Public License as published 
@@ -26,12 +26,11 @@
   * @param {Element|string} targ - target DOM element or id of element
   * @param {pol.core.Config} config - Configuration class instance
   */
- 
-
 
 pol.core.MapBrowser = class {
      
-   /* Constructor
+   /* 
+    * Constructor.
     * @param {Element|string} targ - target DOM element or id of element
     * @param {pol.core.Config} config - Configuration class instance
     */
@@ -45,6 +44,7 @@ pol.core.MapBrowser = class {
         t.attribution = new ol.control.Attribution({collapsed: false}); 
         t.permaLink = false; 
         
+        /* Get info about resolution, center of map, etc. from local storage */
         var resolution = t.config.get('core.resolution');
         var center = t.config.get('core.center');
         var rotation = 0;       
@@ -68,12 +68,14 @@ pol.core.MapBrowser = class {
             }
         }
         
+        /* OpenLayers view */
         t.view = new ol.View({   
             projection: t.config.get('core.projection'),                         
             center: ol.proj.fromLonLat(center, t.config.get('core.projection')), 
             zoom: 2
         });
   
+        /* OpenLayers map */
         t.map = new ol.Map({
             target: targ,
             loadTilesWhileInteracting: true,
@@ -142,6 +144,10 @@ pol.core.MapBrowser = class {
     
     
 
+    /** 
+     * Turn permalink mode on/off (the browser url automatically reflects 
+     * zoom level, map-selection etc.).
+     */
     setPermalink(on) {  
         this.permaLink = on; 
         if (!on) {
@@ -159,7 +165,9 @@ pol.core.MapBrowser = class {
         { return this.permaLink; }
       
        
-       
+    /** 
+     * Update permalink url. 
+     */
     updatePermalink() {
         if (!this.permaLink)
             return;
@@ -187,7 +195,7 @@ pol.core.MapBrowser = class {
  
  
     addContextMenu(name, func) {
-        this.ctxMenu.addMenuId("map", "MAP", false, func);
+        this.ctxMenu.addMenuId("map", name, false, func);
     }
  
  
@@ -203,14 +211,20 @@ pol.core.MapBrowser = class {
 
 
     /**
-     * Get Long Lat coordinate from pixel.
+     * Get Long Lat coordinate from pixel position.
      * @param {ol.Pixel} x - pixel position
      */
     pix2LonLat(x) {
         return ol.proj.toLonLat(this.map.getCoordinateFromPixel(x), 
             this.map.getView().getProjection()); 
     }
+       
     
+    
+    /**
+     * Get pixel position from Long Lat coordinate.
+     * @param {LonLat} x - Long Lat position
+     */
     lonLat2Pix(x) {
         return this.map.getPixelFromCoordinate(
             ol.proj.fromLonLat(x, this.map.getView().getProjection()));
@@ -439,7 +453,6 @@ pol.core.MapBrowser = class {
     
     /**
      * Set/get the resolution of the map. 
-     * 
      */
     getResolution() {
        return this.config.get('core.resolution');
