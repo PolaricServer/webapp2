@@ -48,6 +48,23 @@
 .toolbar>div {height: 32px;float: left; display: inline; margin-right: 15px}
 
 
+.ol-zoom {
+    top:60px;
+    left: 10px;
+    background: #aaa;
+    box-shadow: 1px 1px 12px #797;
+}
+
+.ol-zoom:hover {
+    background: #aaa;
+}
+
+.ol-zoom button {
+    color: blue !important;
+}
+
+
+
 img.selected {background: #f60 !important}
 
 .mousepos {

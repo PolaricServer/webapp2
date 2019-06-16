@@ -83,6 +83,7 @@ pol.core.MapBrowser = class {
             controls: [
                 new ol.control.ScaleLine({}),
                 new pol.core.MousePos({}),
+                new ol.control.Zoom({}),
                 t.toolbar,
                 t.attribution
             ],
