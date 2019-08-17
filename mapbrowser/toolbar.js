@@ -62,7 +62,8 @@ pol.core.Toolbar = class extends ol.control.Control  {
         this.addSection();
         this.addIcon(0, "images/menu.png", "toolbar", null, "Main menu");
         this.addSection();
-        this.addIcon(1, "images/layers.png", "tb_layers", null, "Layer selector");
+        
+        this.addIcon(1, "images/layers.png",  "tb_layers", null, "Layer selector");
         this.addIcon(1, "images/areaselect.png", "tb_area", null, "Area menu");
         this.addSection();
         this.addIcon(2, "images/ruler1.png", "tb_measure", null, "Measure distance");

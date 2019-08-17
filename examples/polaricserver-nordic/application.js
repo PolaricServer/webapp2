@@ -9,6 +9,7 @@
      * and other old browser be sure to use the compiled/minified javascript code, 
      * including this file.
      */
+    var mobile = navigator.platform.match(/i(Phone|Pad)|Android/i);
     var ua = window.navigator.userAgent;
     var msie = ua.indexOf("MSIE ");
     var trident = ua.indexOf('Trident/');
@@ -49,7 +50,7 @@
     CONFIG.gSettings = new pol.tracking.GlobalSettings(); 
     
     /* Welcome text */
-    if (CONFIG.get("welcome_popup") && !CONFIG.get("skip_welcome")) 
+    if (!mobile && CONFIG.get("welcome_popup") && !CONFIG.get("skip_welcome")) 
       setTimeout(()=> {
        let d = browser.gui.showPopup( {
            pixPos: [5,30], 
@@ -125,10 +126,10 @@
         if (srv.auth.sar) {
             m.add("SAR mode..", () => sarMode()); 
             m.add(null);
+            m.add("Set/change password..", setPasswd);
         }
         if (srv.auth.admin) {
             m.add("Admin/configuration..", webConfig);
-            m.add("Set/change password..", setPasswd);
         }
         m.add(null);
         
