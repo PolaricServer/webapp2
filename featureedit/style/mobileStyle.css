@@ -1,0 +1,125 @@
+/* Copyright (c) 2019, Njaal Dolonen, Nicolay Skjelbred, Jan-Magnus Solheim.
+ * All rights reserved. See LICENSE for more detail. 
+ */
+
+@media (max-device-width: 719px) and (orientation: portrait),
+(max-device-height: 719px) and (orientation: landscape)
+{
+    #modifyToggle, #snapToggle, #tb_draw, #divide, #tooltip, .non-interactive, .drawButton, .drawSelect
+    {
+        display: none !important;
+    }
+
+    #drawbox
+    {
+        background: none;
+        border: none;
+    }
+}
+
+@media (max-device-width: 480px) and (orientation: portrait)
+{
+    
+    .colorOption, .drawIcon
+    {
+        width: 25px;
+        height: 25px;
+        display: flex;
+        margin: 2px 0px 2px auto;
+    }
+
+    #showMetrics
+    {
+        font-family: Arial, Helvetica, sans-serif;
+        font-size: 30px;
+        border: 2px outset rgba(0, 65, 245, 0.452);
+        border-radius: 5px;
+    }
+    
+    #drawbox
+    {
+        position: absolute;
+        top: 10px; 
+        right: 5px;
+        padding: 5px;
+        border: none;
+        border-radius: 0px;
+        background: none;
+        width: 120px;
+        height: 80vh;
+    }
+    
+    #drawbox div
+    { margin: 0px; }
+
+    .non-interactive
+    {
+        /* display: none; */
+        pointer-events: none;
+        -webkit-user-select: none;
+        -moz-user-select: none;
+        -ms-user-select: none;
+        user-select: none;
+        -ms-touch-select: none;
+    }
+    
+    
+    .drawButton, .drawSelect, #tb_draw/* , .drawIcon */
+    {
+        
+        background-image: linear-gradient( #eeeeee,#dcf7ff );
+        font-family: Arial, Helvetica, sans-serif;
+        font-size: 8px;
+        font-weight: lighter;
+        cursor: pointer;
+        color: #00295e;
+        opacity: 0.85;
+        border: 1px solid #00000066;
+        box-shadow: #00295e;
+        text-shadow: 0px 1px 0px rgba(0, 0, 0, 0.13);
+        border-radius: 3px;
+    }
+
+    .drawButton 
+    { 
+        /* display: none; */
+        width: 110px;
+        height: 30px;
+        margin: 2px;
+        font-size: 8px; 
+    }
+    
+    .drawSelect
+    {
+        display: none;
+        width: 220px;
+        background-image:transparent;
+        margin-bottom: 3px;
+    }
+        
+    .drawIcon
+    {
+        /* display: default; */
+        width: 35px;
+        height: 35px;
+        opacity: 0.7;
+        border: solid 2px #ffffff70;
+        border-radius: 40px;
+    }
+    
+    .selectedColor
+    {
+        border: solid 3px #0084ff !important
+        /* box-shadow: 0 0 1px 3px rgba(0, 102, 255, 0.7); */
+    }
+    
+    .selectedFunction
+    {
+        border-color: #ff4500ff  !important
+    }
+}
+
+@media (max-device-height: 480px) and (orientation: landscape)
+    {   
+        
+    }

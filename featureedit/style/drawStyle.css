@@ -1,0 +1,173 @@
+/* Copyright (c) 2019, Njaal Dolonen, Nicolay Skjelbred, Jan-Magnus Solheim.
+ * SAll rights reserved. See LICENSE for more detail.  
+ */
+ 
+#drawBox, #iconBox
+{
+    padding: 8px;
+    max-width: 25vw;
+    max-height: 80vh;
+}
+
+.drawIcon
+{
+    width: 35px;
+    height: 35px;
+    opacity: 0.7;
+    border: solid 2px #3a90ff70;
+    border-radius: 40px;
+    background-color: #ffffff;
+}
+
+
+#tooltip
+{
+    height: 24px;
+    width: 24px;
+    cursor: pointer;
+    opacity: 0.7;
+    border: solid 2px #ff450000;
+    border-radius: 40px;
+    position: absolute;
+    right: 5px;
+    top: 25%;
+}
+
+.dropdownSelect
+{
+    width: 90%;
+    margin: 0px;
+    padding: 0px;
+    border: 1px solid #000000; 
+    cursor: pointer;
+    z-index: 1;
+    display:flex;
+    background-color: rgb(255, 255, 255);
+    border-radius: 4px;
+}
+
+#currentType
+{
+    width: 100%;
+    height: 100%;
+}
+
+#selectingType
+{
+    opacity: 1;
+    position: absolute;;
+    display:none;
+}
+
+
+
+.dropdownSelect p
+{
+    padding: 3px;
+    margin: 0px;
+    color: #000000;
+    font-size: 16px;
+}
+
+ .colorOption
+ {
+     height: 25px;
+     width: 25px;
+     display: inline-flex;    
+     border-radius: 50%;
+     opacity: 0.7;
+     border: 2px double rgba(0, 0, 0, 0.7);
+     margin: 1px;
+ }
+ 
+ .colorOption:hover
+ {
+     opacity:1;
+     border-color: #fff;
+     cursor: pointer;
+ }
+ 
+ .selectedColor
+{
+    border: solid 3px #0084ff !important;
+    /* box-shadow: 0 0 1px 3px rgba(0, 102, 255, 0.7); */
+}
+
+ .selectedFunction
+ {
+     border-color: #ff4500ff  !important;
+ }
+ 
+ #selectingType>p:hover
+{
+    border: 1px solid #ff4500;
+    cursor: pointer;
+}
+
+.drawIcon:hover, #tooltip:hover
+{
+    opacity: 1.0;
+    background-color: #eeeeee;
+    border: solid 2px #0666e4;
+    cursor: pointer;
+}
+
+.drawTab
+{
+   position: relative;
+   display: flex;
+   /* margin: -4px !important; */
+   padding: 0px !important;
+   border: none;
+}
+
+.drawTab>p
+{
+   width: 50%;  
+   border-bottom: 2px solid #00000056; 
+   padding: 10px !important;
+   margin: 0px !important;
+}
+
+#iconTab
+{
+    border-left: 2px solid #00000056; 
+}
+
+.drawTab
+{ 
+  font-family: arial, helvetica, sans-serif; 
+  font-size: 1.0em; 
+  background: #ccced5;
+  padding: 0.6em  0.8em 0.3em 0.5em;
+  margin: -4px;
+}
+
+.drawTab>p:hover
+{
+    /* background: #ebf1e8; */
+    background: #e9ebf3;
+
+}
+
+.drawTab .selectedTab 
+{
+    font-weight: bold;
+    /* background: #ccced5; */
+    background: #e2e4ec;
+}
+
+#iconBox
+{
+    overflow-y: scroll;
+    max-height: 350px;
+    max-width: 250px;
+
+}
+
+.selectedIcon
+{
+    /* border-radius: 40px; */
+    background-color: #ff4500ff;
+    border: 1px solid rgba(0, 0, 0, 0.5) !important;
+}

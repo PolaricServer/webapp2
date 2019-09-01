@@ -11,7 +11,7 @@
  * Backend server base URL. 
  */
 SERVER("https://aprs.no");
-
+//SERVER("http://osys.no:8081");
 
 /* 
  * WSPREFIX is the url prefix for websocket interface

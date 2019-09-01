@@ -16,6 +16,10 @@ cd tracking
 closure-compiler --language_in ECMASCRIPT6 --js tracking.js --js polaricserver.js --js pubsub.js --js mapupdate.js --js search.js --js filters.js notifier.js bullboard.js history.js heardvia.js labelStyle.js trackeralias.js globalsettings.js mytrackers.js > ../tracking-min.js
 
 cd ..
+cd featureedit
+closure-compiler --language_in ECMASCRIPT6 --js snow/drawConfig.js --js snow/drawGlobals.js --js snow/undoFunctions.js --js snow/drawStyle.js --js snow/drawFunctions.js --js snow/drawTooltipHelper.js --js snow/drawEvents.js --js snow/gpxDownload.js --js snow/drawIcons.js --js snow/mithrilDrawBox.js --js snow/mithrilIcons.js --js snow/measureTooltip.js --js featureEdit.js >  ../featureedit-min.js
+
+cd ..
 closure-compiler --language_in ECMASCRIPT6 --js application.js > application-min.js
 
 #

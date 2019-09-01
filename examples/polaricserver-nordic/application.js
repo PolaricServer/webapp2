@@ -21,6 +21,7 @@
     * Instantiate the map browser and try to restore widgets from a previous session. 
     */  
    const browser = new pol.core.MapBrowser('map', CONFIG);
+   CONFIG.browser = browser;
    setTimeout(pol.widget.restore, 1500);
     $('#map').append('<img class="logo" src="'+CONFIG.get('logo')+'">"');
 
@@ -62,6 +63,8 @@
     },2000);
     
     
+    pol.features.init(CONFIG.browser.map);
+      
     
    /* 
     * Set up application-specific context menus. We may define named contexts. The toolbar 
@@ -99,6 +102,14 @@
    
     browser.ctxMenu.addCallback("TOOLBAR", (m, ctxt)=> {
 
+ //       m.add('Feature editor', () =>
+ //           { loadDrawOnMount(); });
+        m.add( 'Feature editor', () => 
+            { const x = new pol.features.Edit();
+                x.activatePopup("featureEdit", [50, 70]) });
+        
+        
+        
         m.add('Search items', () => 
             { const x = new pol.tracking.Search(); 
                 x.activatePopup("trackerSearch", [50,70]) }); 
