@@ -2,10 +2,11 @@
 Re-write of client webapp for Polaric Server. It is my hope that this will be more modular and more user- and developer friendly. It is mainly dsesigned as a library/application framework that can be instantiated as specific applications, not necessarily only with a "Polaric" backend server. It comes with an example setup as a tracking-application using a Polaric Server backend. Currently, the following modules are being implemented. 
 
 * Core (mapbrowser). A basic map-browser that can be set up with map layers and with a framework for popup widgets. 
-* Layer Editor. Widgets for letting the user edit his/her own map-layers (currently supporting WFS and WMS). 
+* Layer Editor. Widgets for letting the user edit his/her own map-layers (currently supporting WFS, WMS and GPX file upload). 
+* Feature Editor (work in progress). Drawing polygons, lines and circles. Icon markings. This uses code from https://github.com/Menthelice/SnowMarkerModule. 
 * Tracking. Display trackers/objects as features in a map-layer. It uses the Polaric Server backend to get updates wia websocket and JSON. 
 
-This software is currently running on http://aprs.no. 
+This software is currently running on http://aprs.no. New features may be tested on http://test.aprs.no. 
 
 
 ## Example applications/setups
@@ -27,6 +28,11 @@ will save the current application setup in root directory to examples/minimal
 To run it, copy the content of this directory to a directory that can be accessed through a web-server. Copy the files in one of the example directories to the root web-directory (or use the script setup.sh) and edit 'config.js' and possibly 'application.js' to suit your needs.
 
 For testing and development, point your browser at index-dev.html instead of index.html or replace the file. It runs the source code directly.
+
+Softlink featureedit/images/drawIcons to images/drawIcons 
+Softlink featureedit/images/iconpack to images/iconpack
+
+Make sure that the webserver will follow links in this directory. 
 
 For production installations you may use compile-js.sh to minify the javascript code (and the provided index.html). To compile you need to have installed a recent version of the Google Closure compiler. This can also "transpile" the code to ES4 or ES5 versions of Javascript to support somewhat older browsers. To use a minified version of application.js, you will need to edit index.html. 
 
