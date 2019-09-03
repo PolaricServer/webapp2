@@ -56,11 +56,26 @@ snow.drawTools =
                 "title":"Tooltip Helper, click and mouseover other functions", 
                 onclick:snow.tooltip_click
             }),
+            
             m("div",
             [   
                 m("label", 
                 {"class":"non-interactive"}, 
-                ["Draw type ", m.trust("&nbsp;")]),
+                ["Feature type: ", m.trust("&nbsp;")]),
+                m("select",
+                { 
+                    id: "gSelect", 
+                    onchange: ()=> {snow.setCurrentType($("#gSelect").val());}
+                },
+                [
+                    m("option", {value: "optPolygon"}, 'Polygon'),
+                    m("option", {value: "optLine"}, 'Line String'),
+                    m("option", {value: "optCircle"}, 'Circle')
+                ]),
+            
+                m("label", 
+                {"class":"non-interactive"}, 
+                ["Draw type: ", m.trust("&nbsp;")]),
                 //Draw Types
                 m("div", 
                 [
@@ -78,52 +93,11 @@ snow.drawTools =
                     }),
                 ]),
             
-                //Geometry Selection
-                m("label", 
-                {"class":"non-interactive"},
-                ["Geometry type ", m.trust("&nbsp;"),]),
-                m("div", 
-                {
-                    "id":"selectingType", 
-                    "class":"dropdownSelect"
-                }, [
-                    m("p", 
-                    {
-                        "id":"optPolygon", 
-                        "class":"dropdownOption", 
-                        onclick: snow.setCurrentType_click
-                    }, "Polygon"),
-                    m("p", 
-                    {
-                        "id":"optLine", 
-                        "class":"dropdownOption", 
-                        onclick: snow.setCurrentType_click
-                    }, "LineString"),
-                    m("p", 
-                    {
-                        "id":"optCircle", 
-                        "class":"dropdownOption", 
-                        onclick: snow.setCurrentType_click
-                    }, "Circle"),
-                ]),
-                m("div", 
-                {
-                    "id":"type", 
-                    "class":"dropdownSelect"
-                }, 
-                [
-                    m("p", 
-                    {
-                        "id":"currentType",
-                        onclick:snow.showDropdownOptions_click }, 
-                        "Polygon"),
-                ]),
-                
                 //Color Selection
                 m("label", 
                 {"class":"non-interactive"},
                 [
-                        "Color Selector ", m.trust("&nbsp;"),
+                        "Color Selector: ", m.trust("&nbsp;"),
                 ]),        
                 m("div", 
                 {"id":"ColorSelecter"},
@@ -176,7 +150,7 @@ snow.drawTools =
                 //Draw Functions
                 m("label", 
                 {"class":"non-interactive"},
-                ["Functions ", m.trust("&nbsp;")]),
+                ["Functions: ", m.trust("&nbsp;")]),
                 m("div",
                 [
                     m("img", 
@@ -212,27 +186,6 @@ snow.drawTools =
                    // m("img", {"src":"images/download","id":"downloadGPX", "class" : "drawIcon"}),
                 ]),
             ]),
-            //TODO:REMOVE?
-            // m("div",
-            // [
-            //     // m("button", {"id":"printMetric", "class" : "drawButton"}, "Print Area"),m
-            //     m("p", {"id":"showMetrics", "class":"non-interactive"}, "Areal")m
-            // ]),
-            // m("div",
-            // [
-            // m("button", {"id":"writeJSON", "class" : "drawButton"}, "Write JSON"),
-            // m("button", {"id":"readJSON", "class" : "drawButton"}, "Read JSON"),
-            //     m("button", {"id":"undoChange", "class":"drawButton"}, "Undo"),
-            //     m("button", {"id":"redoChange", "class":"drawButton"}, "Redo"),
-            //     m("button", {"id":"logGPX",     "class":"drawButton"}, "log gpx"),
-            //     m("button", {"id":"logKML",     "class":"drawButton"}, "log kml")
-            // ]),
-            // m("div", {"id":"","class":"downloadFiles"},
-            // [
-            //     m("button", {"id":"", "class":"drawButton"}, "Draw new Path"),
-            //     m("input",  {"id":"fileNameGpxDownload", "type":"text", "value":"path.gpx"}),
-            //     m("button", {"id":"downloadGPX", "class":"drawButton"}, "Download GPX")
-            // ])
         ])   
     }
 }

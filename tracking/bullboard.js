@@ -79,7 +79,7 @@ pol.tracking.BullBoard = class extends pol.core.Widget {
         getGroups();
         getMessages();
         getAnn();
-    
+        
     
         t.server.pubsub.subscribe("bullboard", x => {
             getGroups();

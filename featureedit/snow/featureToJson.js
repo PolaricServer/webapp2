@@ -3,21 +3,24 @@
  * All rights reserved. See LICENSE for more detail.  
  * */ 
 
+
+
+
  //writes all selected features to json
-function featuresToJSON()
+snow.__featuresToJSON = function()
 {
-    if ( selectedFeatures[0] )
+    if ( snow.selectedFeatures[0] )
     {
         let json = '{ "objects" : ['
         let first = true
-        selectedFeatures.forEach( (f) => 
+        snow.selectedFeatures.forEach( (f) => 
         {  
             if( first )
             { first = false }
             else
             { json += ',' }
             let originalStyle = null
-            originalStyles.forEach(function(e)
+            snow.originalStyles.forEach(function(e)
             {
                 if( f.ol_uid == e.ol_uid )
                 { originalStyle = e.style.getStroke().getColor() }
@@ -25,13 +28,13 @@ function featuresToJSON()
             if( originalStyle )
             {
                 json += '{"style" : "' + originalStyle + '", "drawObj":'
-                json += JSON.stringify(GetGeoJSONFromFeature(f))
+                json += JSON.stringify(snow.GetGeoJSONFromFeature(f))
                 json += '}'
             } 
             else 
             { console.log("error: No Style Set") }
         })
-        json += ']}'
+        json += ']}';
         console.log(json)
         parsedJSON = JSON.parse(json)
         console.log(json)
@@ -39,51 +42,56 @@ function featuresToJSON()
     }  
 }
 
+
+
+
 //gets the GeoJSON from a feature
-function GetGeoJSONFromFeature(feature) 
+snow.GetGeoJSONFromFeature = function(feature) 
 {
+    const jsf = new jsonFormat(); 
     //converts a circle to a Polygon
     if ( feature.getGeometry().getType() == "Circle" ) 
     {  
         const circle = feature.getGeometry()
         feature.setGeometry(PolygonGeom.fromCircle(circle))
-    }
-    var geoJSON = jsonFormat.writeFeatureObject(feature); 
+    } 
+    var geoJSON = jsf.writeFeatureObject(feature); 
     return geoJSON;
 }
 
 
 // return features from a layer
-function GetFeaturesFromLayer(layer)
+snow.GetFeaturesFromLayer = function(layer)
 {
     var source = layer.getSource()
     var feature = source.getFeatures()
     return feature;
 }
 
+
 //function to read incoming json
-function readJSON(jsonArray)
+snow.readJSON = function(jsonArray)
 {
     jsonArray.objects.forEach( (obj) =>
     {
-        drawFeatureToMap(obj)
+        snow.drawFeatureToMap(obj)
     })
 }
 
+
 //takes in an jsonObject and writes it to the map
-function drawFeatureToMap(jsonObject) 
+snow.drawFeatureToMap = function(jsonObject) 
 {
-
-
     let featureStyle = getStyle(jsonObject.style)
     let featureObject = jsonObject.drawObj    
     let feature = jsonFormat.readFeature(featureObject)
     feature.setStyle(featureStyle)
-    drawSource.addFeature(feature)
+    snow.drawSource.addFeature(feature)
 }
 
+
 //Sample JSON test object
-function createJSONTestObject()
+snow.createJSONTestObject = function()
 {
     let jsonTestString = '' + 
     '{"style" : "#000000", "drawObj":'+

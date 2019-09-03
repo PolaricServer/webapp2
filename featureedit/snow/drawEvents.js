@@ -41,7 +41,7 @@ snow.modifyToggle_click = function()
         { snow.addModify() }
     else
         { snow.removeModify() }
-        snow.toggleModify = !snow.toggleModify
+    snow.toggleModify = !snow.toggleModify
 } //End modifyToggle_click()
 
 
@@ -52,9 +52,9 @@ snow.snapToggle_click = function()
     if( snow.toggleDraw )
     {
         if ( !snow.toggleSnap )
-        { snow.addSnap() }
+            { snow.addSnap() }
         else
-        { snow.removeSnap() }
+            { snow.removeSnap() }
         snow.toggleSnap = !snow.toggleSnap
     }
 } //End snapToggle_click()
@@ -281,27 +281,28 @@ snow.manualSelect = function(pixel)
         let tempObj = false
         let tempInd = 0
         //Loops throught all selected features and returns their original style.
-        selectedFeatures.forEach( function(f)
+        snow.selectedFeatures.forEach( function(f)
         {
             //Finds the original style/color of the feature f and saves it to tempObj.
-            originalStyles.forEach( function(e)
+            snow.originalStyles.forEach( function(e)
             {
                 if ( f.ol_uid == e.ol_uid )
                 {
                     tempObj = e
-                    tempInd = originalStyles.indexOf(e)
+                    tempInd = snow.originalStyles.indexOf(e)
                 }
             }) //End originalStyles.forEach()
             if ( tempObj )
             {   
                 //Gives the feature back it's original style.     
                 f.setStyle(tempObj.style) 
-                originalStyles.splice(tempInd, 1) //Removes the style object from originalStyles.
+                snow.originalStyles.splice(tempInd, 1) 
+                //Removes the style object from originalStyles.
             }
         }) //End selectedFeatures.forEach()
         //removes all metrics from map
         if( snow.toggleAreal )
-        { snow.removeAllMeasureTooltip() }
+            { snow.removeAllMeasureTooltip() }
         snow.selectedFeatures = []
     } //End if 
 } //End manualSelect()
@@ -372,10 +373,8 @@ snow.selectIcons = function(f)
 
 
 //OnClick handler for selecting geometry type.
-snow.setCurrentType_click = function(e)
+snow.setCurrentType = function(selectedID)
 {
-    let selectedID = e.target.id
-    $('#currentType').text($("#"+selectedID).text())
     //Checks geometry type and refreshes draw.
     if ( selectedID == "optPolygon" )
         { snow.drawType = "Polygon" }
@@ -386,27 +385,6 @@ snow.setCurrentType_click = function(e)
     else //error happened selecting type.
         { console.log("Unexpected error while selecting geometry type") }
     snow.refreshDraw()
-    //Hides dropdown after selecting type.
-    $('#selectingType').hide()
-    snow.dropdownShown = false
 } //End setCurrentType_click()   
 
 
-
-//OnClick handler for showing the geometry type options.
-snow.showDropdownOptions_click = function()
-{
-    $('#selectingType').show()
-    snow.dropdownShown = true
-} //End showDropdownOptions_click()
-
-
-
-//OnClick handler for hiding drop down when selected Geometry type.
-//TODO: add handler to catch click event outside dropdown box.
-snow.closeDropdown = function()
-{
-    if(snow.dropdownShown)
-    { $('#selectingType').hide() }
-    snow.dropdownShown = false
-} //End closeDropdown()

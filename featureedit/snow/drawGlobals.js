@@ -49,7 +49,6 @@ snow.currentStyle = null;
 
 //originalStyles Contains the original ol_uid of a feature and the style.
 //selectedFeatures Contains the currently selected Features.
-let originalStyles = [], selectedFeatures = []
 snow.originalStyles = [];
 snow.selectedFeatures = [];
 
@@ -60,12 +59,12 @@ snow.drawType = "Polygon"
 snow.testHex = function(color)
 {
     if( !color )
-    { return false }
+        { return false }
     //regex of hex with 3 or 6 letters
     else if ( color.search(/^#([0-9a-f]{3}|[0-9a-f]{6})$/i) == 0 )
-    { return true }
+        { return true }
     else
-    { return false }
+        { return false }
 }
 
 //Global opacity declaration.
@@ -118,7 +117,6 @@ snow.cssColors = () => {
 //Default source for drawing.
 snow.drawSource = new VectorSource()
 
-
 snow.drawLayer = new VectorLayer(
     { source: snow.drawSource }
 )
@@ -138,11 +136,11 @@ snow.init = function(map) {
         { snow.manualSelect(e.pixel) })
 
     //handle different upper/lowercase variations
-    activateFreedraw.toUpperCase()
+    snow.activateFreedraw.toUpperCase()
     //check for answer, always false if not a YES variation
     if ( snow.activateFreedraw == "Y" || snow.activateFreedraw == "YES" 
          || snow.activateFreedraw == "JA")
-    { snow.toggleFreehand = true }   
+        { snow.toggleFreehand = true }   
     else 
-    { snow.toggleFreehand = false }
+        { snow.toggleFreehand = false }
 }

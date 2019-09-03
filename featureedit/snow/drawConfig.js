@@ -1,4 +1,6 @@
 
+var snow = snow || {};
+
 
 //Set the desired colors underneat with Hex Variables.
 //must contain a string like #fff with values between 0-9 and a-f and 3 or 6 hex decimals
@@ -19,4 +21,4 @@ var color6 = "#33ccff"
 var color7 = "#a300a3"
 
 //Activate Freehand drawing? Y/N
-var activateFreedraw = "N"
+snow.activateFreedraw = "N"
