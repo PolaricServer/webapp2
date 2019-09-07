@@ -1,7 +1,8 @@
 /*
  Map browser based on OpenLayers 5. 
+ Feature editor widget (drawing tool) based on snowcode project.
  
- Copyright (C) 2017-2018 Øyvind Hanssen, LA7ECA, ohanssen@acm.org
+ Copyright (C) 2019 Øyvind Hanssen, LA7ECA, ohanssen@acm.org
  
  This program is free software: you can redistribute it and/or modify
  it under the terms of the GNU Affero General Public License as published 
@@ -27,14 +28,18 @@ pol.features.init = function(map) {
 }
 
 /*
- * This class should support
+ * This class should (probably) support
  *  - Setting the name of the drawing layer. If so, it will be added to "My Layers" as well. 
  *  - Setting name/properties (metainfo) of selected feature. 
  *  - Change of drawing layer. 
- *  - Saving of drawing layer's content. One REST call/database update per feature. 
- *  - Restoring of drawing layer's content. Whole layer (or single feature to update other clients) 
+ *  - Saving of drawing layer's content. One REST call/database update per feature. DONE.
+ *  - Restoring of drawing layer's content. Whole layer (or single feature to update other clients). DONE.
  *  - Exporting layer or selected features as GeoJSON or GPX. 
+ *  - Move/copy features between layers. 
+ *  - Share features with other users. 
+ *  - Share layers with other users. 
  */
+
 
 pol.features.Edit = class extends pol.core.Widget {
 
@@ -57,41 +62,95 @@ pol.features.Edit = class extends pol.core.Widget {
         setTimeout(snow.cssColors, 500)
         snow.deleteHighlightHandler() 
         
-        /* Handlers to be called when features are changed */
-        /* May trigger saving of features to server */
-        snow.drawSource.on("addfeature",    (e)=> fHandler(e) );
-        snow.drawSource.on("changefeature", (e)=> fHandler(e) );
-        snow.drawSource.on("removefeature", (e)=> fHandler(e) );
-   
         /* 
-         * Handler for feature changes. Triggers
-         * saving of features if changes has happened and paused
-         * for 2 seconds.
-         */  
-        function fHandler(e) {
-            let x = e.feature;
-            if (timer)
-                clearTimeout(timer);
-            
-            timer = setTimeout(()=> { 
-                console.log("*** SAVE FEATURE *** "); 
-                t.feature2obj(x);
-                timer=null;
-            }, 500);
+         * Handlers to be called when features are added, changed or removed
+         * May trigger REST calls to server 
+         * FIXME: Maybe snowcode should have its own events
+         */
+        snow.drawSource.on("removefeature", e=> {
+            if (e.feature.remove == true) {
+                e.feature.remove = NaN; 
+                changeHandler(e.feature, 'rm');
+            }
+        });
+       
+        snow.drawSource.on("changefeature", e=> {
+            if (e.feature.select==true)
+                e.feature.select = NaN;
+            else
+                changeHandler(e.feature, "chg");
+        });
+        
+        snow.setCallbacks( 
+            e=>changeHandler(e.feature, "add") ,
+            null 
+        );
+        
+        /* 
+         * If the view (projection) is changed, we need to restore features 
+         * from server. 
+         */
+        CONFIG.mb.map.on("change:view", ()=> {t.restoreFeatures()});
+        
+        
+        /* 
+         * Updating of server should happend after a delay since 
+         * a series of change events may happens in short period. 
+         */ 
+        let tmr = null;
+        function changeHandler(x, op) {
+            if (tmr != null)
+                clearTimeout(tmr);
+            tmr = setTimeout(()=> {
+                doUpdate(x, op);
+                tmr = null;
+            }, 1000); 
         }
         
-        
-        
-        
+        /* 
+         * Update server. Operations: "add", "chg" (change) and "rm" (remove). 
+         * Change is implemented as a remove and put. 
+         */ 
+        function doUpdate(x, op) {
+            console.log("OP = "+op);
+            const srv = CONFIG.server; 
+            if (srv != null && srv.loggedIn && srv.hasDb) {
+                if (op=='chg' || op=="rm")
+                    srv.removeObj("feature", x.index);
+                if (op=='add' || op=='chg') 
+                    srv.putObj("feature", t.feature2obj(x), i => {x.index = i;} );
+            }
+        }
         
     } /* constructor */
     
 
+    /* Restore features from server */
+    restoreFeatures() {
+        const srv = CONFIG.server; 
+        if (srv != null && srv.loggedIn && srv.hasDb) {
+            srv.getObj("feature", a => {
+                for (const obj of a) 
+                    if (obj != null) {
+                        let f = this.obj2feature(obj.data);
+                        f.index = obj.id;
+                        snow.drawSource.addFeature(f);
+                    }
+            });
+        }
+    }
+    
+    
+    /* Convert feature to object that can be stringified as JSON */
     feature2obj(f) {
-        const geom = f.getGeometry();
+        
+        /* First: transform to latlong projection! */
+        let geom = f.getGeometry().clone();
+        geom.transform(CONFIG.mb.view.getProjection(), 'EPSG:4326');
+        
         let obj = {
             type: geom.getType(), 
-            style: f.getStyle()
+            style: this.style2obj(f.getStyle()),
         };
         if ( obj.type == "Circle" )  {
             obj.center = geom.getCenter(), 
@@ -103,19 +162,55 @@ pol.features.Edit = class extends pol.core.Widget {
         else if (obj.type == "LineString") {           
             obj.coord = geom.getCoordinates();
         }
-        
-        console.log(obj);
+        else
+            console.error("Unknown geom type: "+obj.type);
+         
+        return obj;
     }
     
     
-    
+    /* Convert object to feature (see also feature2obj) */
     obj2feature(obj) {
+        let geom = null;
         if ( obj.type == "Circle" )  {
+            geom = new ol.geom.Circle(obj.center, obj.radius);
         }
         else if (obj.type == "Polygon") {
+            geom = new ol.geom.Polygon(obj.coord);
         }
-        else if (obj.type == "LineString") {           
+        else if (obj.type == "LineString") {
+            geom = new ol.geom.LineString(obj.coord);
         }
+        else
+            console.error("Unknown geom type: "+obj.type);
+        let feat = new ol.Feature();
+        geom.transform('EPSG:4326', CONFIG.mb.view.getProjection());
+        feat.setGeometry(geom);
+        feat.setStyle(this.obj2style(obj.style));
+        return feat;
+    }
+    
+    
+    /* Convert style to object that can be stringified as JSON */
+    style2obj(st) {
+        let obj = {
+            stroke: { 
+                color:st.getStroke().getColor(), 
+                width:st.getStroke().getWidth()
+            }, 
+            fill: {color: st.getFill().getColor()}
+        };
+        return obj;
+    }
+    
+    
+    /* Convert object to style (se also style2obj */
+    obj2style(obj) {
+        let st = new ol.style.Style({ 
+                stroke: new ol.style.Stroke(obj.stroke),
+                fill: new ol.style.Fill(obj.fill)
+            }); 
+        return st;
     }
     
     
@@ -127,5 +222,6 @@ pol.features.Edit = class extends pol.core.Widget {
 
 pol.widget.setRestoreFunc("features.Edit", (id, pos) => {
     var x = new pol.features.Edit(); 
-    x.activatePopup(id, pos, true); 
+    x.activatePopup(id, pos, true);
+    x.restoreFeatures();
 }); 

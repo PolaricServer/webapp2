@@ -3,34 +3,55 @@
  * All rights reserved. See LICENSE for more detail.  
  * */ 
 
+snow.drawCB = null; 
+snow.modifyCB = null;
+
+
+/* Set callbacks for draw-end and modify-end */
+snow.setCallbacks = function(draw, modify) {
+    snow.drawCB = draw;
+    snow.modifyCB = modify; 
+}
+
+
+
 //Function to add drawing functionality to map.
 snow.addDraw = function()
 {
-    draw = new Draw(
+    snow.draw = new Draw(
     {
         source: snow.drawSource,
         type: snow.drawType,
         freehand: snow.toggleFreehand,
     })
-    snow.drawMap.addInteraction(draw)
+    snow.drawMap.addInteraction(snow.draw)
     $('#drawToggle').addClass('selectedFunction')
 
     //Adds style to drawn feature and adds it to the undo Array.
-    draw.on('drawend', function (e)
-    { 
+    snow.draw.on('drawend', e=>{ 
          e.feature.setStyle(snow.currentStyle)
          snow.addNewChange(e.feature)
+         
+         if (e.feature.getGeometry().getType() == "Circle")
+            setTimeout(()=>snow.selectMarkedArea(e.feature), 100);
     })
+    if (snow.drawCB)
+        snow.draw.on('drawend', snow.drawCB);
+    
 } //End addDraw()
+
 
 //Function to add modify functionality to map.
 snow.addModify = function()
 {
     //Defines modify interractions.
-    modify = new Modify({source: snow.drawSource})
-    snow.drawMap.addInteraction(modify)
+    snow.modify = new Modify({source: snow.drawSource})
+    snow.drawMap.addInteraction(snow.modify)
     $('#modifyToggle').addClass('selectedFunction')
+    if (snow.modifyCB)
+        snow.modify.on("modifyend", snow.modifyCB); 
 } //End addModify()
+
 
 //Function to snap on geometry types.
 snow.addSnap = function()
@@ -40,19 +61,22 @@ snow.addSnap = function()
     $('#snapToggle').addClass('selectedFunction')
 } //End addSnap()
 
+
 //Function to disable draw functionality.
 snow.removeDraw = function()
 { 
-    snow.drawMap.removeInteraction(draw) 
+    snow.drawMap.removeInteraction(snow.draw) 
     $('#drawToggle').removeClass('selectedFunction')
 } //End removeDraw()
+
 
 //Function to disable Modify functionality from the map.
 snow.removeModify = function() 
 { 
-    snow.drawMap.removeInteraction(modify)
+    snow.drawMap.removeInteraction(snow.modify)
     $('#modifyToggle').removeClass('selectedFunction')
 } //End removeModify()
+
 
 //Function to disable geometry snapping on draw.
 snow.removeSnap = function()
@@ -60,6 +84,7 @@ snow.removeSnap = function()
     snow.drawMap.removeInteraction(snow.snap)
     $('#snapToggle').removeClass('selectedFunction')
 } //End removeSnap()
+
 
 //Function to refresh draw functionality, used to refresh parameters(colors/type/freehand).
 snow.refreshDraw = function()

@@ -17,10 +17,10 @@ snow.getStyle = function(colorVal)
         stroke: new Stroke(
         {
             color: colorVal,
-            width: 3
+            width: 2.3
         }),
         fill: new Fill(
-        { color: colorVal + hexOpacity })
+            { color: colorVal + hexOpacity })
     })
     return colorStyle
 }
@@ -36,11 +36,13 @@ snow.selectStyle = new Style(
     stroke: new Stroke(
     {
         color: hexSelectStroke,
-        width: '3'
+        width: '3.1',
+        lineDash: [3,3.5]
     }),
     fill: new Fill(
     { color: hexSelectFill + hexOpacity })
 })
+
 
 //Toggles orange border on deleteLayer when clicking and removes it on mouseleave.
 snow.deleteHighlightHandler = function() 

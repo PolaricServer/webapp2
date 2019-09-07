@@ -15,7 +15,7 @@ snow.addMeasureOverlay = function(f=null)
     //Adds a tooltip to a feature.
     function createTooltip(f)
     {
-        createMeasureTooltip(f)
+        snow.createMeasureTooltip(f)
         //Gets the coordinate of the feature.
         if ( f.getGeometry() instanceof PolygonGeom ) 
         {
@@ -30,9 +30,9 @@ snow.addMeasureOverlay = function(f=null)
             tooltipCoord = f.getGeometry().getCenter()
         }
         //Adds Area measurement to the overlay.
-        measureTooltipElement.innerHTML = snow.getAreal(f);
+        snow.measureTooltipElement.innerHTML = snow.getAreal(f);
         //Sets the position of the overlay on top of the feature.
-        measureTooltip.setPosition(tooltipCoord);
+        snow.measureTooltip.setPosition(tooltipCoord);
     } //End createTooltip()
 
     //Checks if input is given.
@@ -42,9 +42,9 @@ snow.addMeasureOverlay = function(f=null)
     }
     else if ( snow.selectedFeatures[0] )
     {
-        selectedFeatures.forEach( (f) =>
+        snow.selectedFeatures.forEach( (f) =>
         {
-            createTooltip(f)
+           createTooltip(f)
         })
     }
 } //End addMeasureOverlay()
@@ -86,7 +86,7 @@ snow.removeSingleMeasureTooltip = function(f)
             let element = e.element
             element.parentNode.removeChild(element)
             snow.drawMap.removeOverlay(e.overlay)
-            let eIndex = tooltipObjects.indexOf(e)
+            let eIndex = snow.tooltipObjects.indexOf(e)
             snow.tooltipObjects.splice(eIndex, 1)
         }
     })
