@@ -62,9 +62,9 @@
        $.ajax("welcome.html", {success: txt=> {d.innerHTML = txt}} ); 
     },2000);
     
-    
+    /* FIXME: May put init into Edit class constructor */
     pol.features.init(CONFIG.browser.map);
-      
+    const edit = new pol.features.Edit();
     
    /* 
     * Set up application-specific context menus. We may define named contexts. The toolbar 
@@ -102,13 +102,8 @@
    
     browser.ctxMenu.addCallback("TOOLBAR", (m, ctxt)=> {
 
- //       m.add('Feature editor', () =>
- //           { loadDrawOnMount(); });
-        m.add( 'Feature editor', () => 
-            { const x = new pol.features.Edit();
-                x.activatePopup("featureEdit", [50, 70]) });
-        
-        
+        m.add( 'Feature editor (draw tool)', () => 
+            { edit.activatePopup("featureEdit", [50, 70]) });
         
         m.add('Search items', () => 
             { const x = new pol.tracking.Search(); 

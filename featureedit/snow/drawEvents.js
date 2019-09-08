@@ -271,7 +271,7 @@ snow.manualSelect = function(pixel)
         }
         //If type is a Polygon, Circle or LineString it's a drawn object/feature.
         else if ( fType == 'Circle' || fType == 'Polygon' 
-            || snow.fType == 'LineString' )
+            || fType == 'LineString' )
         {
             snow.selectMarkedArea(f)
         }

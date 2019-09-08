@@ -28,16 +28,17 @@ pol.features.init = function(map) {
 }
 
 /*
- * This class should (probably) support
- *  - Setting the name of the drawing layer. If so, it will be added to "My Layers" as well. 
- *  - Setting name/properties (metainfo) of selected feature. 
- *  - Change of drawing layer. 
+ * TODO:
  *  - Saving of drawing layer's content. One REST call/database update per feature. DONE.
- *  - Restoring of drawing layer's content. Whole layer (or single feature to update other clients). DONE.
- *  - Exporting layer or selected features as GeoJSON or GPX. 
- *  - Move/copy features between layers. 
- *  - Share features with other users. 
- *  - Share layers with other users. 
+ *  - Restoring of drawing layer's content. DONE.
+ *  - Split this class - DrawableLayer and Editor
+ *  - Allow multiple instances of drawable layer. Use layer-editor to create/manage layers. 
+ *  - Allow move/copy of features between layers. 
+ *  - Show properties of feature on click. 
+ *  - Context menu
+ *  - Allow set/edit of name/properties (metainfo) of selected feature. Use this editor or separate window?
+ *  - Allow exporting of layer or selected features as GeoJSON or GPX. 
+ *  - Allow sharing of features with other users. 
  */
 
 
@@ -92,6 +93,8 @@ pol.features.Edit = class extends pol.core.Widget {
          */
         CONFIG.mb.map.on("change:view", ()=> {t.restoreFeatures()});
         
+        /* Features should loaded even if editor is not active */
+        setTimeout(()=>t.restoreFeatures(), 1000); 
         
         /* 
          * Updating of server should happend after a delay since 
@@ -112,7 +115,6 @@ pol.features.Edit = class extends pol.core.Widget {
          * Change is implemented as a remove and put. 
          */ 
         function doUpdate(x, op) {
-            console.log("OP = "+op);
             const srv = CONFIG.server; 
             if (srv != null && srv.loggedIn && srv.hasDb) {
                 if (op=='chg' || op=="rm")

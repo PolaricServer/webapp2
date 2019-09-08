@@ -81,10 +81,9 @@ pol.tracking.db.MyTrackers = class extends pol.tracking.TrackerAlias {
                 return;
             t.server.GET("users/"+userid+ "/trackers", "", x => { 
                 t.myTrackers = JSON.parse(x);
-                for (var tt of t.myTrackers) {
-                    console.log(tt);
+                for (var tt of t.myTrackers) 
                     t.setIcon(tt, tt.icon); 
-                }
+                
                 m.redraw();
             } );
         }
