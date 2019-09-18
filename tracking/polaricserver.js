@@ -26,10 +26,11 @@ pol.tracking.PolaricServer = class extends pol.core.Server {
         super();
         this.auth = { userid: "", admin: false, sar: false, services: "" }; 
         this.hasDb = false;
-        CONFIG.mb.toolbar.addIcon(2, "images/locked.png", "toolbar_login", null, "Log in");
+        CONFIG.mb.toolbar.addSection(3);
+        CONFIG.mb.toolbar.addIcon(3, "images/locked.png", "toolbar_login", null, "Log in");
         this.loginStatus();
         this.pubsub = new pol.tracking.PubSub(this);
-        CONFIG.mb.toolbar.addIcon(2, "images/sar.png", "sarmode");
+        CONFIG.mb.toolbar.addIcon(3, "images/sar.png", "sarmode");
     }
 
 

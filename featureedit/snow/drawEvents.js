@@ -76,7 +76,6 @@ snow.deleteLayer_click = function()
                 snow.drawSource.removeFeature(e) 
                 snow.removeSingleMeasureTooltip(e) 
             })
-            snow.originalStyles = []
             snow.selectedFeatures = [] 
             snow.addNewChange() //Updates the undo function array.
         }
@@ -139,9 +138,9 @@ snow.colorOption_click = function(e)
         {          
             e.chStyle = true; 
             e.setStyle(snow.currentStyle)
+            e.originalStyle = NaN; 
         })
         snow.selectedFeatures = [] 
-        snow.originalStyles = [] 
     }
 } //End colorOption_click()
 
@@ -257,7 +256,8 @@ snow.featureCheck = false //True = feature on pixel/location.
 //Created cause of problems with ol.Select being global and causing unintended issues.
 snow.manualSelect = function(pixel) 
 {
-
+    if (snow.toggleDraw)
+        return; 
     snow.featureCheck = false
     //Checks for features at pixel and toggles Select on them.
     snow.drawMap.forEachFeatureAtPixel(pixel, function(f) 
@@ -280,32 +280,17 @@ snow.manualSelect = function(pixel)
     //Deselects all features when clicking somewhere without a feature.
     if( !snow.featureCheck )
     {
-        let tempObj = false
-        let tempInd = 0
         //Loops throught all selected features and returns their original style.
         snow.selectedFeatures.forEach( f =>
         {
-            //Finds the original style/color of the feature f and saves it to tempObj.
-            snow.originalStyles.forEach( e =>
-            {
-                if ( f.ol_uid == e.ol_uid )
-                {
-                    tempObj = e
-                    tempInd = snow.originalStyles.indexOf(e)
-                }
-            }) //End originalStyles.forEach()
-            if ( tempObj )
-            {   
-                //Gives the feature back it's original style. 
-                f.select = true;
-                f.setStyle(tempObj.style) 
-                snow.originalStyles.splice(tempInd, 1) 
-                //Removes the style object from originalStyles.
-            }
+            /* Deselect */
+            f.setStyle(f.originalStyle); 
+            f.originalStyle = NaN; 
         }) //End selectedFeatures.forEach()
+     
         //removes all metrics from map
         if( snow.toggleAreal )
-            { snow.removeAllMeasureTooltip() }
+            snow.removeAllMeasureTooltip()
         snow.selectedFeatures = []
     } //End if 
 } //End manualSelect()
@@ -314,52 +299,40 @@ snow.manualSelect = function(pixel)
 //Function for selecting marked areas. 
 snow.selectMarkedArea = function(f)
 {
-    f.select = true; 
     if ( snow.drawSource.getFeatures().includes(f) && !snow.selectedFeatures.includes(f) )
     {
-        //Saves the original style of the feature to an object, with ol_uid as identifier.
-        let currentObject = {"ol_uid" : f.ol_uid, "style" : f.getStyle()}
-        snow.originalStyles.push(currentObject) 
-        // FIXME: We need to save the original style. This is not a good way to do it. 
-
-        //Sets the Style of the selected object to selectStyle.
+        /* Select */
+        f.originalStyle = f.getStyle();
         f.setStyle(snow.selectStyle)
-    
         snow.selectedFeatures.push(f)
+        snow.lastSelected = f;
         //adds area for the selected feature to the map
         if ( snow.toggleAreal )
-        {
             snow.addMeasureOverlay(f)
-        }
+
+        $(document).trigger("selectfeature"); 
     }
+
+    
     //Deselects the clicked feature if it was already selected.
     else if( snow.selectedFeatures.includes(f) )
     {
-        snow.originalStyles.forEach( (e) => 
-        {        
-            if ( f.ol_uid == e.ol_uid )
-            {
-                //Sets the original style back to the feature.
-                let eIndex = snow.originalStyles.indexOf(e)
-                f.setStyle(e.style)
-                //Removes the object from originalStyles and selectedFeatures as its no longer selected.
-                snow.originalStyles.splice(eIndex, 1)
-                let fIndex = snow.selectedFeatures.indexOf(f)
-                snow.selectedFeatures.splice(fIndex, 1)
-                //removes the area overlay from the feature from the map
-                if ( snow.toggleAreal )
-                {
-                    snow.removeSingleMeasureTooltip(f)
-                }
-            }
-        })
+        /* Deselect */
+        f.setStyle(f.originalStyle);
+        f.originalStyle = NaN;
+        let fIndex = snow.selectedFeatures.indexOf(f)
+        snow.selectedFeatures.splice(fIndex, 1)
+        
+        if ( snow.toggleAreal )
+            snow.removeSingleMeasureTooltip(f)
     }
-
 
     //Sets the featureCheck to true to prevent the deselect all.
     if( !snow.featureCheck )
-    { snow.featureCheck = true }
+        snow.featureCheck = true
+
 } //End selectMarkedArea()
+
 
 
 
@@ -373,7 +346,7 @@ snow.selectIcons = function(f)
         console.log("Icon")
     } 
     else 
-    { snow.droppingIcon = false }
+        snow.droppingIcon = false
 } //End selectIcons()
 
 
@@ -383,13 +356,13 @@ snow.setCurrentType = function(selectedID)
 {
     //Checks geometry type and refreshes draw.
     if ( selectedID == "optPolygon" )
-        { snow.drawType = "Polygon" }
+        snow.drawType = "Polygon"
     else if ( selectedID == "optLine" )
-        { snow.drawType = "LineString" }
+        snow.drawType = "LineString"
     else if ( selectedID == "optCircle")
-        { snow.drawType = "Circle" }
+        snow.drawType = "Circle"
     else //error happened selecting type.
-        { console.log("Unexpected error while selecting geometry type") }
+        console.log("Unexpected error while selecting geometry type")
     snow.refreshDraw()
 } //End setCurrentType_click()   
 

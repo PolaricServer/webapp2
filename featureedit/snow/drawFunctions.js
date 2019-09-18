@@ -3,14 +3,12 @@
  * All rights reserved. See LICENSE for more detail.  
  * */ 
 
-snow.drawCB = null; 
-snow.modifyCB = null;
+snow.drawCB = []
 
 
 /* Set callbacks for draw-end and modify-end */
-snow.setCallbacks = function(draw, modify) {
-    snow.drawCB = draw;
-    snow.modifyCB = modify; 
+snow.addDrawCB = function(draw) {
+    snow.drawCB.push(draw);
 }
 
 
@@ -29,14 +27,16 @@ snow.addDraw = function()
 
     //Adds style to drawn feature and adds it to the undo Array.
     snow.draw.on('drawend', e=>{ 
-         e.feature.setStyle(snow.currentStyle)
+         e.feature.setStyle(snow.currentStyle.clone());
          snow.addNewChange(e.feature)
          
-         if (e.feature.getGeometry().getType() == "Circle")
-            setTimeout(()=>snow.selectMarkedArea(e.feature), 100);
+ /*        if (e.feature.getGeometry().getType() == "LineString" ||
+             e.feature.getGeometry().getType() == "Circle" 
+         )
+            setTimeout(()=>snow.selectMarkedArea(e.feature), 100); */
     })
-    if (snow.drawCB)
-        snow.draw.on('drawend', snow.drawCB);
+    for (f of snow.drawCB)
+        snow.draw.on('drawend', f);
     
 } //End addDraw()
 
@@ -48,8 +48,6 @@ snow.addModify = function()
     snow.modify = new Modify({source: snow.drawSource})
     snow.drawMap.addInteraction(snow.modify)
     $('#modifyToggle').addClass('selectedFunction')
-    if (snow.modifyCB)
-        snow.modify.on("modifyend", snow.modifyCB); 
 } //End addModify()
 
 

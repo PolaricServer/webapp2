@@ -30,13 +30,16 @@ pol.features.init = function(map) {
 /*
  * TODO:
  *  - Saving of drawing layer's content. One REST call/database update per feature. DONE.
- *  - Restoring of drawing layer's content. DONE.
+ *  - Restoring of drawing layer's content. DONE. 
+ *  - Allow set/edit of label/properties (metainfo) of selected feature. Use this 
+ *    editor or separate window?. DONE (label).
+ * 
  *  - Split this class - DrawableLayer and Editor
  *  - Allow multiple instances of drawable layer. Use layer-editor to create/manage layers. 
- *  - Allow move/copy of features between layers. 
+ *  - Allow move/copy of features between layers.
+ *  - Display label on map if user activates this..  
  *  - Show properties of feature on click. 
  *  - Context menu
- *  - Allow set/edit of name/properties (metainfo) of selected feature. Use this editor or separate window?
  *  - Allow exporting of layer or selected features as GeoJSON or GPX. 
  *  - Allow sharing of features with other users. 
  */
@@ -46,27 +49,28 @@ pol.features.Edit = class extends pol.core.Widget {
 
     constructor() {
         super();
-        this.classname = "features.Edit"; 
+        this.classname = "features.Edit";
         const t = this;
         let tool = snow.drawTools;
         let timer = null;
         
         this.widget = {
             view: function() {
+                setTimeout(snow.cssColors, 500)
                 return m("div", [       
-                    m("h1", "Feature editor"),
-                    m(tool),
+                    m("h1", "Feature draw tool"),
+                    m(tool), 
+                    m("div.link_id", {onclick: propsHandler}, "Feature properties...")
                 ])
             }
         };
    
-        setTimeout(snow.cssColors, 500)
+
         snow.deleteHighlightHandler() 
         
         /* 
          * Handlers to be called when features are added, changed or removed
          * May trigger REST calls to server 
-         * FIXME: Maybe snowcode should have its own events
          */
         snow.drawSource.on("removefeature", e=> {
             if (e.feature.remove == true) {
@@ -76,15 +80,11 @@ pol.features.Edit = class extends pol.core.Widget {
         });
        
         snow.drawSource.on("changefeature", e=> {
-            if (e.feature.select==true)
-                e.feature.select = NaN;
-            else
-                changeHandler(e.feature, "chg");
+            changeHandler(e.feature, "chg");
         });
         
-        snow.setCallbacks( 
-            e=>changeHandler(e.feature, "add") ,
-            null 
+        snow.addDrawCB( 
+            e=> changeHandler(e.feature, "add")
         );
         
         /* 
@@ -97,39 +97,32 @@ pol.features.Edit = class extends pol.core.Widget {
         setTimeout(()=>t.restoreFeatures(), 1000); 
         
         /* 
-         * Updating of server should happend after a delay since 
+         * Updating of server should happen after a delay since 
          * a series of change events may happens in short period. 
          */ 
         let tmr = null;
         function changeHandler(x, op) {
-            if (tmr != null)
+            if (tmr != null && op == "chg")
                 clearTimeout(tmr);
             tmr = setTimeout(()=> {
-                doUpdate(x, op);
+                t.doUpdate(x, op);
                 tmr = null;
             }, 1000); 
         }
         
-        /* 
-         * Update server. Operations: "add", "chg" (change) and "rm" (remove). 
-         * Change is implemented as a remove and put. 
-         */ 
-        function doUpdate(x, op) {
-            const srv = CONFIG.server; 
-            if (srv != null && srv.loggedIn && srv.hasDb) {
-                if (op=='chg' || op=="rm")
-                    srv.removeObj("feature", x.index);
-                if (op=='add' || op=='chg') 
-                    srv.putObj("feature", t.feature2obj(x), i => {x.index = i;} );
-            }
+        
+        function propsHandler() {
+            let props = new pol.features.Properties(t);
+            props.activatePopup('props_popup', [60, 60], true);
         }
+
         
     } /* constructor */
     
 
     /* Restore features from server */
     restoreFeatures() {
-        const srv = CONFIG.server; 
+        const srv = CONFIG.server;
         if (srv != null && srv.loggedIn && srv.hasDb) {
             srv.getObj("feature", a => {
                 for (const obj of a) 
@@ -141,18 +134,35 @@ pol.features.Edit = class extends pol.core.Widget {
             });
         }
     }
-    
-    
+   
+   
+   /* 
+    * Update server. Operations: "add", "chg" (change) and "rm" (remove). 
+    * Change is implemented as a remove and put. 
+    */ 
+    doUpdate(x, op) {
+        const srv = CONFIG.server; 
+        if (srv != null && srv.loggedIn && srv.hasDb) {
+            if (op=='chg' || op=="rm")
+                srv.removeObj("feature", x.index);
+            if (op=='add' || op=='chg') 
+                srv.putObj("feature", this.feature2obj(x), i => {x.index = i;} );
+        }
+    }
+        
+        
     /* Convert feature to object that can be stringified as JSON */
     feature2obj(f) {
         
         /* First: transform to latlong projection! */
         let geom = f.getGeometry().clone();
+        let st = (f.originalStyle ? f.originalStyle : f.getStyle()); 
         geom.transform(CONFIG.mb.view.getProjection(), 'EPSG:4326');
         
         let obj = {
             type: geom.getType(), 
-            style: this.style2obj(f.getStyle()),
+            style: this.style2obj(st),
+            label: f.label
         };
         if ( obj.type == "Circle" )  {
             obj.center = geom.getCenter(), 
@@ -189,6 +199,7 @@ pol.features.Edit = class extends pol.core.Widget {
         geom.transform('EPSG:4326', CONFIG.mb.view.getProjection());
         feat.setGeometry(geom);
         feat.setStyle(this.obj2style(obj.style));
+        feat.label = obj.label;
         return feat;
     }
     
@@ -208,10 +219,9 @@ pol.features.Edit = class extends pol.core.Widget {
     
     /* Convert object to style (se also style2obj */
     obj2style(obj) {
-        let st = new ol.style.Style({ 
-                stroke: new ol.style.Stroke(obj.stroke),
-                fill: new ol.style.Fill(obj.fill)
-            }); 
+        let st = snow.getStyle(); 
+        st.setStroke(new ol.style.Stroke(obj.stroke)),
+        st.setFill(new ol.style.Fill(obj.fill)); 
         return st;
     }
     
@@ -223,7 +233,5 @@ pol.features.Edit = class extends pol.core.Widget {
 
 
 pol.widget.setRestoreFunc("features.Edit", (id, pos) => {
-    var x = new pol.features.Edit(); 
-    x.activatePopup(id, pos, true);
-    x.restoreFeatures();
+    CONFIG.featureEdit.activatePopup(id, pos, true);
 }); 

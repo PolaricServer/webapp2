@@ -321,3 +321,4 @@ div#iconlist>img:hover
 .dragdrop img {vertical-align: middle}
 .dragover {background: #cfc}
 
+.link_id {margin-top: 0.7em; border-top: 1px solid #666; color: #555; font-size: 90%}

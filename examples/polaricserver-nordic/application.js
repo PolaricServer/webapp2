@@ -61,10 +61,18 @@
         });
        $.ajax("welcome.html", {success: txt=> {d.innerHTML = txt}} ); 
     },2000);
+      
     
     /* FIXME: May put init into Edit class constructor */
     pol.features.init(CONFIG.browser.map);
-    const edit = new pol.features.Edit();
+    CONFIG.featureEdit = new pol.features.Edit();
+    
+    CONFIG.mb.toolbar.addIcon(2, "images/draw.png", "tb_draw", ()=> 
+       { CONFIG.featureEdit.activatePopup("featureEdit", [50, 70]); },
+       null, "Draw tool");
+    
+    
+    
     
    /* 
     * Set up application-specific context menus. We may define named contexts. The toolbar 
@@ -100,11 +108,7 @@
      * Toolbar menu
      *********************************************************/
    
-    browser.ctxMenu.addCallback("TOOLBAR", (m, ctxt)=> {
-
-        m.add( 'Feature editor (draw tool)', () => 
-            { edit.activatePopup("featureEdit", [50, 70]) });
-        
+    browser.ctxMenu.addCallback("TOOLBAR", (m, ctxt)=> {    
         m.add('Search items', () => 
             { const x = new pol.tracking.Search(); 
                 x.activatePopup("trackerSearch", [50,70]) }); 

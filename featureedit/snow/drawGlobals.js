@@ -51,6 +51,7 @@ snow.currentStyle = null;
 //selectedFeatures Contains the currently selected Features.
 snow.originalStyles = [];
 snow.selectedFeatures = [];
+snow.lastSelected = null;
 
 //Default draw type: "Polygon", Options: "LineString", "Polygon", "Circle".
 snow.drawType = "Polygon"

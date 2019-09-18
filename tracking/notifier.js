@@ -67,7 +67,7 @@ pol.tracking.Notifier = class {
             t.list = [];
 
         /* Add nofifications icon to toolbar */
-        CONFIG.mb.toolbar.addDiv(2 ,"toolbar_not", "Nofifications");
+        CONFIG.mb.toolbar.addDiv(3 ,"toolbar_not", "Nofifications");
         $('#toolbar_not').append('<img src="images/bell.png"></img>');
         $('#toolbar_not').click(
             () => { 

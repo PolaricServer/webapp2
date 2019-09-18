@@ -36,16 +36,17 @@
     background: #e6eee6ba;
     box-shadow: 1px 1px 12px #797;
     z-index: 1;
+    font-stretch: condensed;
 }
 .toolbar:hover {
     background: #f0f4f0ba;
 }
 
 
-.toolbar img {margin: 5px; margin-top: 3px}
+.toolbar img {margin: 4px; margin-top: 3px}
 .toolbar img:hover {background: #ffe; border-radius: 6px}
-.toolbar .x-space {margin-right: 15px}
-.toolbar>div {height: 32px;float: left; display: inline; margin-right: 15px}
+.toolbar .x-space {margin-right: 11px}
+.toolbar>div {height: 32px;float: left; display: inline; margin-right: 11px}
 
 
 .ol-zoom {
@@ -197,5 +198,12 @@ span.welcome {
 .removeEdit img {height: 14px}
 .removeEdit {margin-right: 0.2em}
 
+.selected {background: #fca}
+table.features {margin-left: 1em}
 
-
+table.features td { 
+    border: 1px dotted #888; 
+    padding-left: 0.3em; 
+    padding-right: 0.2em; 
+    padding-bottom: 0px;
+}

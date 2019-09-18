@@ -12,7 +12,7 @@ snow.setStyleColor = function(colorVal)
 //Returns a style with a certain color.
 snow.getStyle = function(colorVal)
 {
-    let colorStyle = new Style(
+    let st = new Style(
     {
         stroke: new Stroke(
         {
@@ -20,9 +20,16 @@ snow.getStyle = function(colorVal)
             width: 2.3
         }),
         fill: new Fill(
-            { color: colorVal + hexOpacity })
+            { color: colorVal + hexOpacity }),
+            
+        text: new ol.style.Text(
+            { fill: new Fill({color: colorVal}),
+              stroke: new Stroke( {width: 2.5, color: "#fff"} ), 
+              scale: 1.0
+            }
+        )
     })
-    return colorStyle
+    return st
 }
 
 
