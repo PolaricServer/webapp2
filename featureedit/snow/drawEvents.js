@@ -87,6 +87,15 @@ snow.deleteLayer_click = function()
 } //End deleteLayer_click()
 
 
+
+snow.deleteFeature = function(f)
+{
+    f.remove = true; 
+    snow.drawSource.removeFeature(f);
+}
+
+
+
 snow.drawingColor = "selectBlack";
 
 

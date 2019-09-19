@@ -33,12 +33,13 @@ pol.features.init = function(map) {
  *  - Restoring of drawing layer's content. DONE. 
  *  - Allow set/edit of label/properties (metainfo) of selected feature. Use this 
  *    editor or separate window?. DONE (label).
+ *  - Turn off select of features if this tool is not active. DONE. 
  * 
  *  - Allow style without fill. Dashed line? Revise colour choices. 
- *  - Turn off select of features if this tool is not active. 
  *  - Show properties of feature on click. 
  *  - Context menu
- *  - Split this class - DrawableLayer and Editor
+ *  - Allow default drawing layer to be hidden (when tool not active). Show in layer-list. 
+ *  - Split this class - DrawableLayer and Editor. 
  *  - Allow multiple instances of drawable layer. Use layer-editor to create/manage layers. 
  *  - Allow move/copy of features between layers.
  *  - Display label on map if user activates this..  

@@ -189,8 +189,7 @@ pol.tracking.Tracking = class {
                     m("table.items", points.map( x => { 
                         return m("tr", [ m("td", { 
                             onclick: function(e) 
-                                {t.redrawFeature(x.getId()); showContext(e, x); },
-                            title: x.getId()
+                                {t.redrawFeature(x.getId()); showContext(e, x); }
                         }, x.alias), m("td", m.trust(x.point.title)) ] ); }))
                 ])
             }
