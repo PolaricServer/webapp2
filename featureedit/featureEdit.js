@@ -34,12 +34,14 @@ pol.features.init = function(map) {
  *  - Allow set/edit of label/properties (metainfo) of selected feature. Use this 
  *    editor or separate window?. DONE (label).
  * 
+ *  - Allow style without fill. Dashed line? Revise colour choices. 
+ *  - Turn off select of features if this tool is not active. 
+ *  - Show properties of feature on click. 
+ *  - Context menu
  *  - Split this class - DrawableLayer and Editor
  *  - Allow multiple instances of drawable layer. Use layer-editor to create/manage layers. 
  *  - Allow move/copy of features between layers.
  *  - Display label on map if user activates this..  
- *  - Show properties of feature on click. 
- *  - Context menu
  *  - Allow exporting of layer or selected features as GeoJSON or GPX. 
  *  - Allow sharing of features with other users. 
  */
@@ -120,6 +122,17 @@ pol.features.Edit = class extends pol.core.Widget {
     } /* constructor */
     
 
+    onActivate() {
+        snow.activate();
+    }
+    
+    onclose() {
+        snow.deselectAll();
+        snow.deactivate();
+    }
+    
+    
+    
     /* Restore features from server */
     restoreFeatures() {
         const srv = CONFIG.server;

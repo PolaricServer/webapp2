@@ -279,21 +279,28 @@ snow.manualSelect = function(pixel)
 
     //Deselects all features when clicking somewhere without a feature.
     if( !snow.featureCheck )
-    {
-        //Loops throught all selected features and returns their original style.
-        snow.selectedFeatures.forEach( f =>
-        {
-            /* Deselect */
-            f.setStyle(f.originalStyle); 
-            f.originalStyle = NaN; 
-        }) //End selectedFeatures.forEach()
-     
-        //removes all metrics from map
-        if( snow.toggleAreal )
-            snow.removeAllMeasureTooltip()
-        snow.selectedFeatures = []
-    } //End if 
+        snow.deselectAll();
 } //End manualSelect()
+
+
+
+snow.deselectAll = function() 
+{
+    //Loops throught all selected features and returns their original style.
+    snow.selectedFeatures.forEach( f =>
+    {
+        /* Deselect */
+        f.setStyle(f.originalStyle); 
+        f.originalStyle = NaN; 
+    }) //End selectedFeatures.forEach()
+     
+    //removes all metrics from map
+    if( snow.toggleAreal )
+        snow.removeAllMeasureTooltip()
+    snow.selectedFeatures = []
+}
+
+
 
 
 //Function for selecting marked areas. 

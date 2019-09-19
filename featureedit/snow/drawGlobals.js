@@ -131,11 +131,6 @@ snow.init = function(map) {
     snow.drawMap = map;
     snow.drawMap.addLayer(snow.drawLayer)
 
-    //OnClick handler for selecting features.
-    //TODO: Check if conflicting with other onclick handlers
-    snow.drawMap.on('click', (e) =>
-        { snow.manualSelect(e.pixel) })
-
     //handle different upper/lowercase variations
     snow.activateFreedraw.toUpperCase()
     //check for answer, always false if not a YES variation
@@ -145,3 +140,21 @@ snow.init = function(map) {
     else 
         { snow.toggleFreehand = false }
 }
+
+snow.handleClick = function(e) {
+    snow.manualSelect(e.pixel)
+}
+
+snow.activate = function() {
+    //OnClick handler for selecting features.
+    snow.drawMap.on('click', snow.handleClick)
+}
+
+
+snow.deactivate = function() {
+    // Remove OnClick handler for selecting features.
+    snow.drawMap.un('click', snow.handleClick)
+}
+
+
+

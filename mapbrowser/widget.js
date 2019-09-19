@@ -93,6 +93,8 @@ pol.core.Widget = class {
         this.delement = w; 
         m.mount(this.delement, this.widget);
         this.delement.addEventListener("unload", this.onclose);
+        if (t.onActivate)
+            t.onActivate(); 
     }
 
     
