@@ -6,8 +6,55 @@
 //Sets the current style to the selected color.
 snow.setStyleColor = function(colorVal)
 {
-    snow.currentStyle = snow.getStyle(colorVal)
+//    snow.currentStyle = snow.getStyle(colorVal)
+
+    let st = snow.currentStyle
+    if (st==null)
+        st = snow.getStyle(colorVal)
+    else
+        st = st.clone();
+    st.getStroke().setColor(colorVal)
+    if (st.getFill())
+        st.getFill().setColor(colorVal + hexOpacity )
+    st.getText().getFill().setColor(colorVal);
+    snow.currentStyle = st;
 }
+
+
+snow.setStyleDashed = function(on)
+{
+    let st = snow.currentStyle
+    if (st==null)
+        st = snow.getStyle(hexBlack)
+    else
+        st = st.clone();
+    
+    let nstroke = new Stroke( {
+        color: st.getStroke().getColor(),
+        width: (on? 2.1 : 2.5),
+        lineDash: (on? [3.5, 4] : [0,0])
+    });
+    st.setStroke(nstroke);
+    snow.currentStyle = st;
+}
+
+
+
+snow.setStyleFilled = function(on)
+{
+    let st = snow.currentStyle
+    if (st==null)
+        st = snow.getStyle(hexBlack)
+    else
+        st = st.clone();
+
+    st.setFill(
+        (on? new Fill({ color: st.getStroke().getColor() + hexOpacity }) : null)
+    )
+    snow.currentStyle = st;
+}
+
+
    
 //Returns a style with a certain color.
 snow.getStyle = function(colorVal)
@@ -43,11 +90,11 @@ snow.selectStyle = new Style(
     stroke: new Stroke(
     {
         color: hexSelectStroke,
-        width: '3.1',
-        lineDash: [3,3.5]
+        width: '3.5',
+        lineDash: [4,5]
     }),
     fill: new Fill(
-    { color: hexSelectFill + hexOpacity })
+        { color: hexSelectFill + hexOpacity })
 })
 
 

@@ -73,6 +73,8 @@ snow.drawTools =
                     m("option", {value: "optCircle"}, 'Circle')
                 ]),
             
+                m("div", [
+                m("div.igroup", [
                 m("label", 
                 {"class":"non-interactive"}, 
                 ["Draw type: ", m.trust("&nbsp;")]),
@@ -90,9 +92,32 @@ snow.drawTools =
                         "src":"images/drawIcons/wigglyline_50px.png", 
                         "id":"freehand", "class":"drawIcon", 
                         onclick: snow.freehand_click
-                    }),
+                    }),                    
+                ])
                 ]),
-            
+              
+                m("div.igroup", [
+                m("label", 
+                {"class":"non-interactive"}, 
+                ["Style: ", m.trust("&nbsp;")]),
+                m("div", 
+                [                    
+                    m("img", 
+                    {
+                        "src":"images/drawIcons/line_dashed.png", 
+                        "id":"dashedstyle", "class":"drawIcon", 
+                        onclick: snow.dashedstyle_click
+                    }),
+                    m("img", 
+                    {
+                        "src":"images/drawIcons/polygon_filled.png", 
+                        "id":"filledstyle", "class":"drawIcon", 
+                        onclick: snow.filledstyle_click
+                    }),
+                ])
+                ])
+                ]),
+              
                 //Color Selection
                 m("label", 
                 {"class":"non-interactive"},

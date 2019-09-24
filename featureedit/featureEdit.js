@@ -34,8 +34,8 @@ pol.features.init = function(map) {
  *  - Allow set/edit of label/properties (metainfo) of selected feature. Use this 
  *    editor or separate window?. DONE (label).
  *  - Turn off select of features if this tool is not active. DONE. 
+ *  - Allow style without fill. Dashed line? Revise colour choices. DONE. 
  * 
- *  - Allow style without fill. Dashed line? Revise colour choices. 
  *  - Show properties of feature on click. 
  *  - Context menu
  *  - Allow default drawing layer to be hidden (when tool not active). Show in layer-list. 
@@ -223,9 +223,10 @@ pol.features.Edit = class extends pol.core.Widget {
         let obj = {
             stroke: { 
                 color:st.getStroke().getColor(), 
-                width:st.getStroke().getWidth()
+                width:st.getStroke().getWidth(),
+                lineDash: st.getStroke().getLineDash()
             }, 
-            fill: {color: st.getFill().getColor()}
+            fill: (st.getFill() ? {color: st.getFill().getColor()} : null)
         };
         return obj;
     }
@@ -235,7 +236,7 @@ pol.features.Edit = class extends pol.core.Widget {
     obj2style(obj) {
         let st = snow.getStyle(); 
         st.setStroke(new ol.style.Stroke(obj.stroke)),
-        st.setFill(new ol.style.Fill(obj.fill)); 
+        st.setFill(obj.fill==null ? null : new ol.style.Fill(obj.fill)); 
         return st;
     }
     

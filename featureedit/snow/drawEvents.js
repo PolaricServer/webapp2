@@ -141,6 +141,14 @@ snow.colorOption_click = function(e)
     }//End of switch
     
     //Changes the color of all selected features.
+    snow.updateStyle()
+    
+} //End colorOption_click()
+
+
+
+/* FIXME: Move to proper source file */
+snow.updateStyle = function() {
     if( snow.selectedFeatures[0] )
     {
         snow.selectedFeatures.forEach( (e) =>
@@ -151,7 +159,8 @@ snow.colorOption_click = function(e)
         })
         snow.selectedFeatures = [] 
     }
-} //End colorOption_click()
+}
+
 
 
 
@@ -256,6 +265,44 @@ snow.straight_click = function()
         snow.refreshDraw()
     }
 }//End straight_click()
+ 
+ 
+ 
+snow.dashedstyle = false; 
+snow.filledstyle = true;
+
+        
+snow.dashedstyle_click = function()
+{
+    if (snow.dashedstyle == true) {
+        snow.dashedstyle = false; 
+        $("#dashedstyle").removeClass("selectedFunction")
+    }
+    else {
+        snow.dashedstyle = true
+        $("#dashedstyle").addClass("selectedFunction")
+    }
+    snow.setStyleDashed(snow.dashedstyle);
+    snow.updateStyle();
+    snow.refreshDraw();
+}
+
+
+
+snow.filledstyle_click = function()
+{
+    if (snow.filledstyle == true) {
+        snow.filledstyle = false; 
+        $("#filledstyle").removeClass("selectedFunction")
+    }
+    else {
+        snow.filledstyle = true
+        $("#filledstyle").addClass("selectedFunction")
+    }
+    snow.setStyleFilled(snow.filledstyle);
+    snow.updateStyle();
+    snow.refreshDraw();
+}
  
  
  

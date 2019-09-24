@@ -148,6 +148,10 @@ snow.handleClick = function(e) {
 snow.activate = function() {
     //OnClick handler for selecting features.
     snow.drawMap.on('click', snow.handleClick)
+    setTimeout( ()=> { 
+        $("#filledstyle").addClass("selectedFunction")
+        $('#straight').addClass('selectedFunction')
+    }, 500);
 }
 
 

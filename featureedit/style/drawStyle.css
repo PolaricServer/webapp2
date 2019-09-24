@@ -138,3 +138,5 @@
     background-color: #ff4500ff;
     border: 1px solid rgba(0, 0, 0, 0.5) !important;
 }
+
+div.igroup {display: inline-block; margin-top: 0.5em; margin-right: 0.5em}
