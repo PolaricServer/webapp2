@@ -26,6 +26,6 @@ closure-compiler --language_in ECMASCRIPT6 --js application.js > application-min
 # combine and minify css
 #
 cd style
-cat polaric.css popup.css tracking.css mobil.css | cleancss -o style-min.css
+cat polaric.css popup.css tracking.css mobil.css drawStyle.css mobileStyle.css | cleancss -o style-min.css
 
 cd ..
