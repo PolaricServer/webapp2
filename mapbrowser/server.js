@@ -28,6 +28,21 @@ pol.core.Server = class {
      */
     constructor() {
         let host = CONFIG.get('server');
+        
+        /* Default is to use window.location as host, and port 8081 */
+        if (host == null) {
+            let hh = window.location.host; 
+            let pp = window.location.protocol;
+            host = "";
+            if (pp)
+                host += pp+"//"
+            if (hh)
+                host +=hh;
+            else
+                host += "localhost";
+            host +=":8081"
+        }
+            
         if (host.charAt(host.length) != '/')
             host += '/';
     
@@ -35,16 +50,16 @@ pol.core.Server = class {
         let prefix = CONFIG.get('ajaxprefix');
         if (prefix == null)
             prefix = '';
-	if (prefix.charAt(prefix.length != '/'))
-	    prefix += '/';
+        if (prefix.charAt(prefix.length != '/'))
+            prefix += '/';
         this.url = host + prefix;
     
         /* Compute Websocket URL base */
         prefix = CONFIG.get('wsprefix');
         if (prefix == null)
             prefix = '';
-	if (prefix.charAt(prefix.length != '/'))
-	    prefix += '/';
+        if (prefix.charAt(prefix.length != '/'))
+            prefix += '/';
         const uparts = host.split(/:\/\//);
         this.wsurl = (uparts[0] === 'https' ? 'wss' : 'ws'); 
         this.wsurl = this.wsurl + "://"+ uparts[1] + prefix

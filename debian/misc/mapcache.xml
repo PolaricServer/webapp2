@@ -1,0 +1,316 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+
+<mapcache>
+  <!-- 
+  *******************************************************
+    Set up caches here. Files, sqlite, mbtiles, etc.. 
+  ******************************************************* 
+  -->
+   <cache name="topo2_sqlite" type="sqlite3">
+     <dbfile>/var/lib/polaric/mapcache/maps_topo2.db</dbfile>
+   </cache>
+  
+   <cache name="grunnkart_sqlite" type="sqlite3">
+     <dbfile>/var/lib/polaric/mapcache/maps_grunnkart.db</dbfile>
+   </cache>
+
+   <cache name="overlays_sqlite" type="sqlite3">
+     <dbfile>/var/lib/polaric/mapcache/maps_overlays.db</dbfile>
+   </cache>
+  
+   <cache name="danmark_sqlite" type="sqlite3">
+     <dbfile>/var/lib/polaric/mapcache/maps_danmark.db</dbfile>
+   </cache>
+ 
+   <!-- 
+   **********************************************************************
+     Set up sources here.
+     It is typically an external WMS service. Mapcache supports some
+     other source types like mapserver mapfiles. 
+   ********************************************************************** 
+   -->
+   <source name="kv_topo2cache" type="wms">
+     <getmap>
+       <params>
+         <FORMAT>image/png</FORMAT>
+         <LAYERS>topo4</LAYERS>
+       </params>
+     </getmap>
+     
+     <http>
+       <!-- Opencache.statkart.no -->
+       <url>http://opencache.statkart.no/gatekeeper/gk/gk.open?</url>
+     </http>
+   </source>
+   
+   
+   <source name="kv_grunnkart" type="wms">
+     <getmap>
+       <params>
+         <FORMAT>image/png</FORMAT>
+         <LAYERS>norgeskart_bakgrunn</LAYERS>
+       </params>
+     </getmap>
+     
+     <http>
+       <url>http://opencache.statkart.no/gatekeeper/gk/gk.open?</url>
+     </http>
+   </source>
+   
+   
+   <source name="bw_stedsnavn" type="wms">
+     <getmap>
+       <params>
+         <FORMAT>image/png</FORMAT>
+         <LAYERS>barentswatch_stedsnavn</LAYERS>
+         <TRANSPARENT>true</TRANSPARENT>
+       </params>
+     </getmap>
+     <http>
+       <url>http://opencache.statkart.no/gatekeeper/gk/gk.open?</url>
+     </http>
+   </source>
+   
+   
+   <source name="kv_vegnett" type="wms">
+     <getmap>
+       <params>
+          <FORMAT>image/png</FORMAT>
+          <LAYERS>all</LAYERS>
+          <TRANSPARENT>true</TRANSPARENT>
+       </params>
+     </getmap>
+     <http>
+        <url>http://openwms.statkart.no/skwms1/wms.vegnett?</url>
+     </http>
+   </source>
+
+
+   <source name="kv_dybdedata" type="wms">
+     <getmap>
+       <params>
+          <FORMAT>image/png</FORMAT>
+          <LAYERS>Dybdedata_MS_WMS</LAYERS>
+          <TRANSPARENT>true</TRANSPARENT>
+       </params>
+     </getmap>
+     <http>
+        <url>http://openwms.statkart.no/skwms1/wms.dybdedata?</url>
+     </http>
+   </source>
+   
+   <source name="kv_navigasjon" type="wms">
+     <getmap>
+       <params>
+         <FORMAT>image/png</FORMAT>
+         <LAYERS>1,2,3,4,5,6,7,8,9</LAYERS>
+         <TRANSPARENT>true</TRANSPARENT>
+       </params>
+     </getmap>
+     <http>
+       <url>http://153.44.6.20/arcgis/services/FDV_WMS/MapServer/WmsServer?</url>
+     </http>
+   </source>
+  
+   <source name="ks_danmark" type="wms">
+     <getmap>
+       <params>
+         <FORMAT>image/png</FORMAT>
+         <LAYERS>dtk_skaermkort</LAYERS>
+       </params>
+     </getmap>
+
+     <http>
+        <url>https://kortforsyningen.kms.dk/?servicename=topo_skaermkort&service=WMS&REQUEST=GetMap&login=ohanssen&password=oh67PK&</url>
+     </http>
+   </source>
+
+   <source name="ks_danmark_topo" type="wms">
+     <getmap>
+       <params>
+         <FORMAT>image/png</FORMAT>
+         <LAYERS>topo25_klassisk</LAYERS>
+       </params>
+     </getmap>
+
+     <http>
+        <url>https://kortforsyningen.kms.dk/?servicename=topo25&service=WMS&REQUEST=GetMap&login=ohanssen&password=oh67PK&</url>
+     </http>
+   </source>
+ 
+ 
+   <!-- 
+   **********************************************************************
+     Set up grids here.
+     A grid defines map projection, tile size, extent and resolutions.
+   
+     Resolutions must match the resolutions for the OpenLayers client. 
+     If using tiled cache services (e.g. Kartverket) as sources, we 
+     must match their resolutions excactly as well 
+     (see also mapconfig.js).
+   ********************************************************************** 
+   -->
+   <grid name="utm32">
+     <metadata>
+       <title>UTM zone 32 for Norway. Matches Kartverket cache-service.</title>
+     </metadata>
+     
+     <srs>EPSG:32632</srs>
+     <size>256 256</size>
+     <extent> -2000000,3500000,3545984,9045984 </extent>
+     <resolutions>1354.0 677.0 338.5 169.25 84.625 42.3125 21.15625 10.5781248 5.2890624 2.6445312 1.3222656 0.6611328</resolutions>
+   </grid>
+
+   
+   
+   <grid name="utm33">
+     <metadata>
+       <title>UTM zone 33 for Norway.  Matches Kartverket cache-service.</title>
+     </metadata>
+
+     <srs>EPSG:32633</srs>
+     <size>256 256</size>
+     <extent> -2500000.0,3500000.0,3045984.0,9045984.0 </extent>
+     <resolutions>1354.0 677.0 338.5 169.25 84.625 42.3125 21.15625 10.5781248 5.2890624 2.6445312 1.3222656 0.6611328</resolutions>
+   </grid>
+   
+   
+   <!-- 
+   ********************************************************************
+     Set up tilesets here.
+     A tileset defines a source, a cache, a grid and a format, 
+   ******************************************************************** 
+   -->
+   <tileset name="kv_topo2">
+      <source>kv_topo2cache</source>
+      <cache>topo2_sqlite</cache>
+      <grid>utm33</grid>
+      <format>mixed</format>
+      
+      <metatile>1 1</metatile>
+      <metabuffer>0</metabuffer>
+      <expires>604800</expires>
+      <auto_expire>5184000</auto_expire>
+   </tileset>
+
+   <!-- For compatibility with PolaricDroid -->
+   <tileset name="kv_topo2eu">
+      <source>kv_topo2cache</source>
+      <cache>topo2_sqlite</cache>
+      <grid>utm33</grid>
+      <format>mixed</format>
+
+      <metatile>1 1</metatile>
+      <metabuffer>0</metabuffer>
+      <expires>604800</expires>
+      <auto_expire>5184000</auto_expire>
+   </tileset>
+ 
+
+   <!-- For compatibility with PolaricDroid --> 
+   <tileset name="kv_grunnkart">
+     <source>kv_grunnkart</source>
+     <cache>grunnkart_sqlite</cache>
+     <grid>utm33</grid>
+     <format>PNG</format>
+
+     <metatile>1 1</metatile>
+     <metabuffer>0</metabuffer>
+     <expires>604800</expires>
+     <auto_expire>5184000</auto_expire>
+   </tileset>
+ 
+   <tileset name="bw_stedsnavn">
+     <source>bw_stedsnavn</source>
+     <cache>overlays_sqlite</cache>
+     <grid>utm33</grid>
+     <format>PNG</format>
+     
+     <metatile>1 1</metatile>
+     <metabuffer>0</metabuffer>
+     <expires>604800</expires>
+     <auto_expire>5184000</auto_expire>
+   </tileset>
+   
+   
+   <tileset name="kv_dybdedata">
+     <source>kv_dybdedata</source>
+     <cache>overlays_sqlite</cache>
+     <grid>utm33</grid>
+     <format>PNG</format>
+   
+     <metatile>6 6</metatile>
+     <metabuffer>0</metabuffer>
+     <expires>604800</expires>
+     <auto_expire>5184000</auto_expire>
+   </tileset>
+
+   
+   <tileset name="kv_navigasjon">
+     <source>kv_navigasjon</source>
+     <cache>overlays_sqlite</cache>
+     <grid>utm33</grid>
+     <format>PNG</format>
+     
+     <metatile>6 6</metatile>
+     <metabuffer>0</metabuffer>
+     <expires>604800</expires>
+     <auto_expire>5184000</auto_expire>
+   </tileset>
+   
+   
+   <tileset name="kv_vegnett">
+     <source>kv_vegnett</source>
+     <cache>overlays_sqlite</cache>
+     <grid>utm33</grid>
+     <format>PNG</format>
+    
+     <metatile>6 6</metatile>
+     <metabuffer>0</metabuffer>
+     <expires>604800</expires>
+     <auto_expire>5184000</auto_expire>
+   </tileset>
+ 
+    <tileset name="danmark">
+     <source>ks_danmark</source>
+     <cache>danmark_sqlite</cache>
+     <grid>utm33</grid>
+
+     <format>mixed</format>
+     <metatile>5 5</metatile>
+     <metabuffer>10</metabuffer>
+     <expires>604800</expires>
+     <auto_expire>31536000</auto_expire>
+   </tileset>
+
+   <tileset name="danmark_topo">
+     <source>ks_danmark_topo</source>
+     <cache>danmark_sqlite</cache>
+     <grid>utm33</grid>
+
+     <format>mixed</format>
+     <metatile>5 5</metatile>
+     <metabuffer>10</metabuffer>
+     <expires>604800</expires>
+     <auto_expire>10368000</auto_expire>
+   </tileset>
+
+ 
+ 
+   <default_format>JPEG</default_format>
+  
+   <service type="wms" enabled="true">
+      <full_wms>assemble</full_wms>
+      <resample_mode>bilinear</resample_mode>
+      <format>JPEG</format>
+      <maxsize>4096</maxsize>
+   </service>
+   
+   <service type="wmts" enabled="true"/>
+   <service type="tms" enabled="true"/>
+
+   <errors>report</errors>
+   <lock_dir>/tmp</lock_dir>
+   <log_level>debug</log_level> 
+</mapcache>

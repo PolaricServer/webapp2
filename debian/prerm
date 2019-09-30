@@ -1,0 +1,21 @@
+#!/bin/sh
+set -e
+
+#DEBHELPER#
+
+case "$1" in
+
+    remove|purge)
+       a2dissite aprs.conf > /dev/null 2>&1
+       apache2ctl reload > /dev/null 2>&1 || true
+    ;;
+
+    deconfigure|remove|upgrade|failed-upgrade|abort-install|abort-upgrade|disappear)
+        # Nothing to do here
+    ;;
+
+    *)
+        echo "$0 called with unknown argument \`$1'" >&2
+        exit 1
+    ;;
+esac

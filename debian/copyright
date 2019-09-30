@@ -1,0 +1,49 @@
+
+Files: *
+Copyright: 2019 Øyvind hanssen <ohanssen@acm.org>
+License: AGPL version 3
+(see https://www.gnu.org/licenses/agpl-3.0.html)
+
+Files: debian/*
+Copyright: 2019 Øyvind hanssen <ohanssen@acm.org>
+License: AGPL version 3
+(see https://www.gnu.org/licenses/agpl-3.0.html)
+
+Files: lib/jquery.min.js
+Copyright: jQuery Foundation and other contributors
+License: MIT license
+(see https://github.com/jquery/jquery/blob/master/LICENSE.txt)
+
+Files: lib/ol.js
+Copyright: 2005-present, OpenLayers Contributors All rights reserved.
+Licence: BSD 2-Clause License
+(see https://github.com/openlayers/openlayers/blob/master/LICENSE.md)
+
+Files: lib/jquery-ui.min.js
+Copyright: jQuery Foundation and other contributors
+License: MIT licence
+(see https://github.com/jquery/jquery-ui/blob/master/LICENSE.txt
+
+Files: lib/jquery-ui.table.min.js
+Copyright: 2014 Anthony Wells
+License: MIT license.
+(see https://raw.githubusercontent.com/borgboyone/jquery-ui-table/master/LICENSE)
+
+Files: lib/mithril.min.js
+Copyright: Leo Horie and other contributors
+Licence: MIT license.
+
+Files: lib/moment.min.js
+Copyright: JS Foundation and other contributors
+License: MIT license
+(see https://github.com/moment/moment/blob/develop/LICENSE)
+
+Files lib/pikaday.min.js
+Copyright: 2014 David Bushell
+License: MIT and BSD license
+(see https://github.com/Pikaday/Pikaday/blob/master/LICENSE)
+
+Files: lib/proj4.js
+Copyright: 2014, Mike Adair, Richard Greenwood, Didier Richard, Stephen Irons, Olivier Terral and Calvin Metcalf
+License: MIT license
+(https://github.com/proj4js/proj4js/blob/master/LICENSE.md)

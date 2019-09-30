@@ -1,0 +1,24 @@
+#!/bin/bash
+set -e
+
+
+
+case "$1" in
+    configure|reconfigure)
+        a2enmod expires > /dev/null 2>&1
+        a2enmod deflate > /dev/null 2>&1
+        a2ensite aprs.conf > /dev/null 2>&1 
+        chown www-data:www-data /var/lib/polaric/mapcache
+        apache2ctl restart
+    ;;
+
+    abort-upgrade|abort-remove|abort-deconfigure)
+    ;;
+
+    *)
+        echo "$0 called with unknown argument \`$1'" >&2
+        exit 1
+    ;;
+esac
+
+#DEBHELPER#

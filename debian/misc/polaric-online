@@ -1,0 +1,16 @@
+#!/bin/bash
+#
+# If we lose the connection to the internet, accesses to map-tiles may be extremely slow
+# since mapcache waits for the server connection to timeout. A simple workaround is 
+# to add a iptables rule that immediately returns icmp-port-unreachable. 
+#
+# We may provide an alternative script: /etc/polaric-webapp/online.sh
+#
+        
+if [ -e "/etc/polaric-webapp/online.sh" ]; then
+  . /etc/polaric-webapp/online.sh
+else
+  # If no custom script exists. Assumes that iptables is not used 
+  # for other things. 
+  iptables -F
+fi

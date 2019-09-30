@@ -1,0 +1,32 @@
+.\"                                      Hey, EMACS: -*- nroff -*-
+.\" First parameter, NAME, should be all caps
+.\" Second parameter, SECTION, should be 1-8, maybe w/ subsection
+.\" other parameters are allowed: see man(7), man(1)
+.TH POLARIC-OFFLINE 1 "December 10, 2016"
+.\" Please adjust this date whenever revising the manpage.
+.\"
+.\" Some roff macros, for reference:
+.\" .nh        disable hyphenation
+.\" .hy        enable hyphenation
+.\" .ad l      left justify
+.\" .ad b      justify to both left and right margins
+.\" .nf        disable filling
+.\" .fi        enable filling
+.\" .br        insert line break
+.\" .sp <n>    insert n+1 empty lines
+.\" for manpage-specific macros, see man(7)
+.SH NAME
+polaric-offline \- Prepare system for offline use
+.SH SYNOPSIS
+.B polaric-offline
+.br
+
+.SH DESCRIPTION
+This utility changes some settings to make system work when there is no connection to the internet. 
+The default action is to add a iptables rule to reject all outgoing requests to port 80 and 443 by returning a 
+icmp-port-unreachable. It assumes that iptables is not used for other purposes. 
+The default action for online use is to reset iptables. 
+
+If a script /etc/polaric-webapp/offline.sh exist, this will be used instead. Use this to customise offline settings. 
+.PP
+This program and manual page was written by LA7ECA, Øyvind hanssen <ohanssen@acm.org>.
