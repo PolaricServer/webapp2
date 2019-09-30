@@ -23,19 +23,23 @@ Feel free to experiment with setups.. You may use the script setup.sh to copy fi
 will save the current application setup in root directory to examples/minimal
   
   
-## Running 
+## Installing and running 
 
-To run it, copy the content of this directory to a directory that can be accessed through a web-server. Copy the files in one of the example directories to the root web-directory (or use the script setup.sh) and edit 'config.js' and possibly 'application.js' to suit your needs.
+### Debian package
+A binary Debian package (built on buster) will be available. It installs the software assuming that a Polaric Server backend is installed on the same machine. The config files for the webapp and mapcache are placed in /etc/polaric-webapp2. 
 
-For testing and development, point your browser at index-dev.html instead of index.html or replace the file. It runs the source code directly.
+### Makefile
+The Makefile is used in building Debian packages, but could be used to install the software directly on your system for use with a Polaric Server backend. Modify the Makefile too your needs first, then type 'make' and 'sudo make install'.
 
-Softlink featureedit/images/drawIcons to images/drawIcons 
-Softlink featureedit/images/iconpack to images/iconpack
+### Manual
+To run it, copy or move the content of this directory to a directory that can be accessed through a web-server. Copy the files in one of the example directories to the root web-directory (or use the script setup.sh) and edit 'config.js' and possibly 'application.js' to suit your needs.
 
-Make sure that the webserver will follow links in this directory. 
+For testing and development, point your browser at index-dev.html. It runs the source code directly. 
 
-For production installations you may use compile-js.sh to minify the javascript code (and the provided index.html). To compile you need to have installed a recent version of the Google Closure compiler. This can also "transpile" the code to ES4 or ES5 versions of Javascript to support somewhat older browsers. To use a minified version of application.js, you will need to edit index.html. 
+For production installations you may use compile-js.sh to minify the javascript code (and point the browser to index.html). To compile you need to have installed a recent version of the Google Closure compiler. This can also "transpile" the code to ES4 or ES5 versions of Javascript to support somewhat older browsers. To use a minified version of application.js, you will need to edit index.html. 
 
+### Configuration
+Edit the file config.js to suit your needs. Here you can set up various map sources, backends, etc.. I am sorry little documentation at the moment but some explanations in the file. The config for aprs.no is provided as an example. 
 
 
 ## Hacking
