@@ -26,7 +26,8 @@ will save the current application setup in root directory to examples/minimal
 ## Installing and running 
 
 ### Debian package
-A binary Debian package (built on buster) will be available. It installs the software assuming that a Polaric Server backend is installed on the same machine. The config files for the webapp and mapcache are placed in /etc/polaric-webapp2. 
+A binary Debian package (built on buster) is available. It installs the software assuming that a Polaric Server backend is installed on the same machine. The config files for the webapp and mapcache are placed in /etc/polaric-webapp2. 
+Se /http://aprs.no/dokuwiki/doku.php/install.dev
 
 ### Makefile
 The Makefile is used in building Debian packages, but could be used to install the software directly on your system for use with a Polaric Server backend. Modify the Makefile too your needs first, then type 'make' and 'sudo make install'.
