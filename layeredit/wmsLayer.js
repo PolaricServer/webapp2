@@ -28,22 +28,23 @@ pol.layers.Wms = class extends pol.layers.Edit {
 
     constructor(list) {
         super(list);  
-        this.cap = null;   
-        this.layers = [];
-        this.sLayers = [];
-        this.srs = CONFIG.get('core.supported_proj');
-        if (this.srs == null)
-            this.srs = CONFIG.get('core.projection');
-        
-        this.selected = this.srs[0];
-        this.url = "";
         const t=this;
+        t.cap = null;   
+        t.layers = [];
+        t.sLayers = [];
+        t.srs = CONFIG.get('core.supported_proj');
+        if (t.srs == null)
+            t.srs = CONFIG.get('core.projection');
+        
+        t.selected = this.srs[0];
+        t.url = m.stream("");
+
     
-        this.fields = {
+        t.fields = {
             view: function() { 
                 return m("div.spec", [ 
                     m("span.sleftlab", "Server: "),   
-                    m(textInput, {id:"wmsUrl", size: 40, maxLength:160, regex: /^.+$/i }),
+                    m(textInput, {id:"wmsUrl", size: 40, maxLength:160, value: t.url, regex: /^.+$/i }),
                     m("button", { type: "button", onclick: getCap}, "Get"),
                     br,
                     m("span.sleftlab", "Projection:"),
@@ -57,7 +58,7 @@ pol.layers.Wms = class extends pol.layers.Edit {
         }   
     
         /* Fields representing capabilities of wms service (from GetCapabilities) */
-        this.wfields = {
+        t.wfields = {
             view: function() { 
                 return m("div.wserver", [ 
                     m("span.sleftlab", "Title: "),
@@ -97,6 +98,11 @@ pol.layers.Wms = class extends pol.layers.Edit {
 
 
 
+    reset() {
+        super.reset();
+        this.url("");
+    }
+    
     /*
      * Get capabilities from WMS server
      */
@@ -106,8 +112,7 @@ pol.layers.Wms = class extends pol.layers.Edit {
         t.sLayers=[];
     
         const parser = new ol.format.WMSCapabilities();
-        const u = $("#wmsUrl").val(); 
-        fetch(u+'?service=wms&request=GetCapabilities')
+        fetch(this.url()+'?service=wms&request=GetCapabilities')
             .then( response => response.text() )
             .then( txt => {
                 t.cap = parser.read(txt);
@@ -171,9 +176,8 @@ pol.layers.Wms = class extends pol.layers.Edit {
      * Create a OL layer. 
      */
     createLayer(name) {
-        const url = $("#wmsUrl").val();
         const layers = this.getReqLayers();
-        console.log("Create WMS layer: URL="+url+", layers="+layers);
+        console.log("Create WMS layer: URL="+this.url()+", layers="+layers);
        
         var x = new ol.layer.Image({
             name: name, 
@@ -199,8 +203,7 @@ pol.layers.Wms = class extends pol.layers.Edit {
         super.edit(layer);
    
         /* Specific to WMS layer */
-        this.url = layer.getSource().getUrl();
-        $("#wmsUrl").val(this.url).trigger("change").attr("ok", true);
+        this.url(layer.getSource().getUrl());
         $("#sel_srs").val(layer.selSrs).trigger("change");
    
         this.getCapabilities( () => {

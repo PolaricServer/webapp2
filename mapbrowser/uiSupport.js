@@ -3,7 +3,7 @@
  Misc. common functions and mithril modules for UI via DOM. 
  
  
- Copyright (C) 2017-2018 Øyvind Hanssen, LA7ECA, ohanssen@acm.org
+ Copyright (C) 2017-2019 Øyvind Hanssen, LA7ECA, ohanssen@acm.org
  
  This program is free software: you can redistribute it and/or modify
  it under the terms of the GNU Affero General Public License as published 
@@ -83,14 +83,17 @@ const nbsp = m.trust("&nbsp;");
 const textInput = {
  
     view: function(vn) {
-       return m("input#"+vn.attrs.id, 
+        var t = this;
+ 
+        return m("input#"+vn.attrs.id, 
         { type: "text", config: vn.attrs.config, size: vn.attrs.size, maxLength: vn.attrs.maxLength, 
           contentEditable: (vn.attrs.contentEditable ? vn.attrs.contentEditable : true),
-            oninput: function() {
-                vn.state.data=vn.dom.value;
+                
+            oninput: function(ev) {
+                vn.attrs.value(ev.target.value); 
                 if (!vn.attrs.regex) 
                     return;                
-                if (vn.attrs.regex.test(vn.dom.value)) {
+                if (vn.attrs.regex.test(ev.target.value)) {
                     vn.state.cssclass = "valid";
                     vn.dom.title = "Input OK";
                     $(vn.dom).attr("ok", true);
@@ -101,31 +104,23 @@ const textInput = {
                     $(vn.dom).attr("ok", false);
                 }    
             },
-            onchange: function() {
-                vn.state.data=vn.dom.value;
-                vn.state.cssclass = "";
-                if (!vn.attrs.regex.test(vn.dom.value) && vn.attrs.value) 
-                    setTimeout(function() {
-                        vn.state.cssclass = "";
-                        vn.state.data = NaN;
-                        m.redraw();
-                    }, 4000);
+            onchange: function(ev) {
+                vn.attrs.value(ev.target.value);
+                t.cssclass = "";
             },
             
-            value:
-               ((vn.state.data || vn.state.data == "") ? vn.state.data : 
-                  (vn.attrs.value ? vn.attrs.value: "")),
-                
-            className: (vn.state.cssclass ? vn.state.cssclass : "")
+            value: vn.attrs.value(),
+            className: (t.cssclass ? t.cssclass : "")
         });
    }
 }
 
 
 
+
 /**
- *  Checkbox: 
- *  Parameters: id, onclick, name, checked
+ *  Checkbox 
+ *  Attributes: id, onclick, name, checked
  */
 const checkBox = {
     view: function(vn) {
@@ -141,16 +136,25 @@ const checkBox = {
 }
 
 
+
+/**
+ * Select box 
+ * Attributes: 
+ *  - id - id for div element
+ *  - onchange - function to invoke when change happens
+ *  - list - list of options (val and label)
+ */ 
 const select = {
     view: function(vn) {
         return m("select#"+vn.attrs.id, {onchange: vn.attrs.onchange}, vn.attrs.list.map(
-            x => m("option", {value: x.val}, x.label) ));
+            x => m("option", {value: x.val, style: x.style}, x.label) ));
     }
 }
 
 
 
 /*
+ * Icon picker
  * Attributes: 
  *  - id - id for div element (optional)
  *  - icons - array of image file names.
@@ -223,7 +227,11 @@ const Datepick = {
 
 
 
-
+/*
+ * Value attributes: 
+ *     dvalue - date value (stream)
+ *     tvalue - time (stream) 
+ */
 const dateTimeInput = {
     view: function(vn) {
         return m("span", 
@@ -234,41 +242,116 @@ const dateTimeInput = {
 }
 
 
+
 /** 
  * MGRS input fields. 
  * FIXME: Only one at a time because of use if id attribute. OK? 
  */
-const mgrsInput = {
-    view: function() {
+const mgrsInput = class {
+    constructor () {
+        this.prefix = m.stream("");
+        this.locx = m.stream("");
+        this.locy = m.stream("");
+        CONFIG.mb.map.on('moveend', ()=> {
+            this.setPrefix();
+            this.locx("");
+            this.locy("");
+        });
+        this.setPrefix(); 
+    }
+    
+    setPrefix() {
         const center = CONFIG.mb.getCenter();
+        this.prefix(pol.mapref.MGRSprefix(center));
+    }
+    
+    onupdate (vn) {
+        const x = pol.mapref.parseMGRS(CONFIG.mb, this.prefix(), this.locx(), this.locy())
+        if (vn.attrs) {
+            vn.attrs.value[0] = x[0];
+            vn.attrs.value[1] = x[1];
+        }
+    }
+    
+    
+    view() {
         return m("span", 
                {onclick: function() { pol.ui.autojump("locx", "locy"); }},
-            m(textInput, {id:"mgrsprefix", size: 5, maxlength: 5, 
-               regex: /^[0-9]{2}[C-X][A-Z][A-V]$/i, value: pol.mapref.MGRSprefix(center) }), nbsp,
-            m(textInput, {id:"locx", size: "3", maxLength: "3", regex: /^[0-9]{3}$/ }),
-            m(textInput, {id:"locy", size: "3", maxLength: "3", regex: /^[0-9]{3}$/ }), nbsp );
+            m(textInput, {id:"mgrsprefix", size: "5", maxLength: "5", 
+               regex: /^[0-9]{2}[C-X][A-Z][A-V]$/i, value: this.prefix }), nbsp,
+            m(textInput, {id:"locx", size: "3", maxLength: "3", value: this.locx, regex: /^[0-9]{3}$/ }),
+            m(textInput, {id:"locy", size: "3", maxLength: "3", value: this.locy, regex: /^[0-9]{3}$/ }), nbsp 
+            
+        );
     }
  }
+ 
  
  
 /**
  * UTM input fields.
  * FIXME: Only one at a time because of use if id attribute. OK? 
  */ 
-const utmInput = {
-    view: function() {
-        const uref = CONFIG.mb.getCenterUTM();
+const utmInput = class {
+    
+    constructor() {
+        this.lngZone = m.stream("");
+        this.latZone = m.stream("");
+        this.lat = m.stream("");
+        this.lng = m.stream("");
+    }
+    
+    getFromModel (vn) {
+        console.assert(vn.attrs.value && vn.attrs.value !=null && 
+            Array.isArray(vn.attrs.value), "Model must be array [x,y]");
+        
+        if (this.pModel && vn.attrs.value[0]==this.pModel[0] && vn.attrs.value[1]==this.pModel[1]) {
+            return; 
+        }
+        this.pModel = vn.attrs.value;
+        const uref = ( this.validPoint(this.pModel) ? 
+            pol.mapref.toUTM(this.pModel) : CONFIG.mb.getCenterUTM() );
+        
+        this.lngZone(uref.lngZone);
+        this.latZone(uref.latZone);
+        if (this.validPoint(this.pModel)) {
+            this.lng(uref.lng);
+            this.lat(uref.lat);
+        } else {
+            this.lng("");
+            this.lat("");
+        }
+        
+        function validPoint(x) 
+            {return x[0]!=0 && x[1]!=0;}
+    }
+
+    validPoint(x) 
+        {return x[0]!=0 && x[1]!=0;}
+        
+    onupdate (vn) {
+        const x = pol.mapref.parseUTM(this.lng(), this.lat(), this.latZone(), this.lngZone());
+        if (this.validPoint(x)) {
+            vn.attrs.value[0]=x[0]; 
+            vn.attrs.value[1]=x[1];
+        }
+    }
+
+    
+    view (vn) {
+        const t = this;
+        this.getFromModel(vn);
         return m("span", 
                  { onclick: function() {     
                      pol.ui.autojump('utmz', 'utmnz');
                      pol.ui.autojump('utmnz', 'utmx');
                      pol.ui.autojump('utmx', 'utmy');
                  }},
-            m(textInput, {id:"utmz", size: "2", maxLength: "2", value: uref.lngZone, regex:/^[0-9]{2}$/}), 
-            m(textInput, {id:"utmnz", size: "1", maxLength: "1", value: uref.latZone, 
+            m(textInput, {id:"utmz", size: "2", maxLength: "2", value: t.lngZone, regex:/^[0-9]{2}$/}), 
+            m(textInput, {id:"utmnz", size: "1", maxLength: "1", value: t.latZone, 
                  contentEditable: false}), nbsp, nbsp,
-            m(textInput, {id:"utmx", size: "6", maxLength: "6", regex:/^[0-9]{6}$/}),
-            m(textInput, {id:"utmy", size: "7", maxLength: "7", regex:/^[0-9]{7}$/}), nbsp)
+            m(textInput, {id:"utmx", size: "6", maxLength: "6", value: t.lng, regex:/^[0-9]{6}$/}),
+            m(textInput, {id:"utmy", size: "7", maxLength: "7", value: t.lat, regex:/^[0-9]{7}$/}), nbsp)
     }
  }
  
@@ -279,8 +362,16 @@ const utmInput = {
   */
 const reg_MIN =  /^(([0-5]?[0-9])|60)(\.([0-9]{1,4}))?$/;
  
-const latLngInput = {
-    view: function() {
+const latLngInput = class {
+    
+    constructor() {
+        this.Nd = m.stream("");
+        this.Nm = m.stream("");
+        this.Ed = m.stream("");
+        this.Em = m.stream("");
+    }
+    
+    view(vn) {
         const center = CONFIG.mb.getCenter();
         return m("span",                 
                  { onclick: function() {     
@@ -288,27 +379,69 @@ const latLngInput = {
                      pol.ui.autojump('ll_Nm', 'll_Ed');
                      pol.ui.autojump('ll_Ed', 'll_Em'); 
                  }},
-            m(textInput, {id:"ll_Nd", size: "2", maxLength: "2", regex:/^(([0-8]?[0-9])|90)$/}), "°", nbsp,nbsp,
-            m(textInput, {id:"ll_Nm", size: "6", maxLength: "6", regex: reg_MIN }), "\'", nbsp, 
+            m(textInput, {id:"ll_Nd", size: "2", maxLength: "2", value: this.Nd, regex:/^(([0-8]?[0-9])|90)$/}), "°", nbsp,nbsp,
+            m(textInput, {id:"ll_Nm", size: "6", maxLength: "6", value: this.Nm, regex: reg_MIN }), "\'", nbsp, 
             m("span#ll_NS",   {onclick:this.clickNS}, (center[1] < 0 ? "S":"N")), nbsp, nbsp,
-            m(textInput, {id:"ll_Ed", size: "3", maxLength: "3", regex:/^[0-9]{1,3}$/}), "°", nbsp,nbsp,
-            m(textInput, {id:"ll_Em", size: "6", maxLength: "6", regex: reg_MIN }), "\'", nbsp,  
+            m(textInput, {id:"ll_Ed", size: "3", maxLength: "3", value: this.Ed, regex:/^[0-9]{1,3}$/}), "°", nbsp,nbsp,
+            m(textInput, {id:"ll_Em", size: "6", maxLength: "6", value: this.Em, regex: reg_MIN }), "\'", nbsp,  
             m("span#ll_EW",   {onclick:this.clickEW}, (center[0] < 0 ? "W":"E")), nbsp, nbsp)
-    },
+    }
+        
+    onupdate (vn) {
+        const x = pol.mapref.parseDM(this.Nd(), this.Nm(), this.Ed(), this.Em())
+        if (vn.attrs && vn.attrs.value) {
+            const ns = $("#ll_NS").html();
+            const ew = $("#ll_EW").html();
+            vn.attrs.value[0] = (ew=='W' ? -x[0] : x[0]);
+            vn.attrs.value[1] = (ns=='S' ? -x[1] : x[1]);
+        }
+    }
+    
     
     /* Change betwen E and W by clicking on the letter */
-    clickNS: function() {    
+    clickNS() {    
        const val = $("#ll_NS").html();
           $("#ll_NS").html( (val=="N" ? "S" : "N"));
-    },
+    }
     
     /* Change between N and S by clicking on the letter */
-    clickEW: function() {
+    clickEW() {
        const val = $("#ll_EW").html();
           $("#ll_EW").html( (val=="E" ? "W" : "E"));
     }
- }
+}
  
+ 
+ 
+const latLngInputDec = class {
+    
+    constructor() {
+        this.Nd = m.stream("");
+        this.Ed = m.stream("");
+    }
+    
+    view(vn) {
+        const center = CONFIG.mb.getCenter();
+        return m("span",                 
+                 { onclick: function() {     
+                     pol.ui.autojump('ll_Nd', 'll_Ed'); 
+                 }},
+            m(textInput, {id:"ll_Ndd", size: "8", maxLength: "12", value: this.Nd, 
+                regex:/^\-?(([0-8]?[0-9])(\.[0-9]+)?|90(\.0+)?)?$/}), "° N", nbsp,nbsp,
+            m(textInput, {id:"ll_Edd", size: "9", maxLength: "13", value: this.Ed, 
+                regex:/^\-?[0-9]{1,3}(\.[0-9]+)?$/}), "° E", nbsp,nbsp )
+    }
+        
+    onupdate (vn) {
+        const x = pol.mapref.parseDM(this.Nd(), 0, this.Ed(), 0)
+        if (vn.attrs && vn.attrs.value) {
+            vn.attrs.value[0] = x[0];
+            vn.attrs.value[1] = x[1];
+        }
+    }
+}
+
+
 
  
 const removeEdit = {

@@ -30,14 +30,14 @@ pol.layers.Edit = class {
         const t = this;
         t.list = list;
         t.filt = {ext: null, zoom: null, proj: null};
-   
+        t.lName = m.stream("");
    
         this.widget = {
             view: function() {
                 let i=0;
                 return m("form", [    
                     m("span.sleftlab", "Name: "),   
-                    m(textInput, {id:"editLayer", size: 16, maxLength:25, regex: /^[^\<\>\'\"]+$/i }), br,  
+                    m(textInput, {id:"editLayer", size: 16, maxLength:25, value: t.lName, regex: /^[^\<\>\'\"]+$/i }), br,  
                     m("span.sleftlab", "Visibility: "),
                     m(checkBox, {id:"vis.extent", onclick: filterExtent, checked: (t.filt.ext != null), 
                         title: "Check to make layer visible only if if overlaps this extent" }, 
@@ -53,7 +53,7 @@ pol.layers.Edit = class {
                         m("button#addButton", 
                           { disabled: !t.enabled(), type: "button", onclick: add, 
                             title: "Add layer to list"}, "Add" ),
-                        m("button", { type: "reset", onclick: reset, title: "Clear input fields"}, "Reset" )
+                        m("button", { type: "reset", onclick: ()=>t.reset(), title: "Clear input fields"}, "Reset" )
                     ])
                 ]);
             }
@@ -88,9 +88,6 @@ pol.layers.Edit = class {
             console.log("Set projection filter: " + (t.filt.proj==null ? "null" : t.filt.proj.getCode()));
         }
    
-   
-        /* To be redefined in subclass */
-        function reset() { }
         
    
         /** 
@@ -98,8 +95,7 @@ pol.layers.Edit = class {
          */
         function add() 
         {  
-            const name = $("#editLayer").val(); 
-            const layer = t.createLayer(name);
+            const layer = t.createLayer(t.lName());
 
             if (layer==null)
                 return false; 
@@ -110,7 +106,7 @@ pol.layers.Edit = class {
             /* IF server available and logged in, store on server as well */
             const srv = CONFIG.server; 
             if (srv && srv != null && srv.loggedIn) {
-                const obj = {type: t.typeid, name: name, data: t.layer2obj(layer)}; 
+                const obj = {type: t.typeid, name: t.lName(), data: t.layer2obj(layer)}; 
                 srv.putObj("layer", obj, i => { 
                     layer.index = JSON.parse(i);
                     layer.server = true;
@@ -123,8 +119,8 @@ pol.layers.Edit = class {
             return false; 
             
             function _add() {
-                CONFIG.mb.addConfiguredLayer(layer, name, true);
-                list.myLayerNames.push( {name: name, type: t.typeid, server: layer.server, index: layer.index} );
+                CONFIG.mb.addConfiguredLayer(layer, t.lName(), true);
+                list.myLayerNames.push( {name: t.lName(), type: t.typeid, server: layer.server, index: layer.index} );
                 list.myLayers.push( layer );
 
                 // Save the layer name list. 
@@ -145,7 +141,8 @@ pol.layers.Edit = class {
         { return true; }
     enabled()
         { return false; }
-
+    reset()
+        { this.lName(""); }
 
         
     /**
@@ -175,7 +172,8 @@ pol.layers.Edit = class {
      * To be extended in subclass. 
      */
     edit(layer) {
-        $("#editLayer").val(layer.get("name")).trigger("change").attr("ok", true);
+        this.lName( layer.get("name")); 
+        
         this.filt = layer.filt;
         if (this.filt == null) 
             this.filt = {ext:null, zoom:null, proj:null};

@@ -3,7 +3,7 @@
  Map browser based on OpenLayers 5. Tracking. 
  Search historic data on tracker points on server.  
  
- Copyright (C) 2018 Øyvind Hanssen, LA7ECA, ohanssen@acm.org
+ Copyright (C) 2018-2019 Øyvind Hanssen, LA7ECA, ohanssen@acm.org
  
  This program is free software: you can redistribute it and/or modify
  it under the terms of the GNU Affero General Public License as published 
@@ -36,7 +36,7 @@ pol.tracking.db.History = class extends pol.core.Widget {
         t.classname = "tracking.db.History"; 
         t.item = null;
         t.list = []; 
-	t.searchmode = false; 
+        t.searchmode = false; 
     
         var it = null;
     
@@ -114,21 +114,19 @@ pol.tracking.db.History = class extends pol.core.Widget {
     
         /* Edit item (move it to search form) */
         function editItem (i) {
-            var x = t.list[i];
+            
+            let x = Object.assign({}, t.list[i]);
+            x.call = m.stream(x.call);
+            x.totime = m.stream(x.totime);
+            x.fromtime = m.stream(x.fromtime);
             t.item = x; 
 
-            $("#hist_call").val(x.call).trigger("change");
             $('#hist_start_date').val(x.fromdate).trigger("change");
-            $('#hist_start_time').val(x.fromtime).trigger("change");
-            if (x.open) {
+            if (x.open) 
                 $('#hist_end_date').val(formatDate(new Date())).trigger("change");
-                $('#hist_end_time').val(formatTime(new Date())).trigger("change");
-            }
-            else {
+            else 
                 $('#hist_end_date').val(x.todate).trigger("change");
-                $('#hist_end_time').val(x.totime).trigger("change");
-            }
-            $('#hist_open').prop('checked', x.open).trigger("change");
+            
             $('#hist_end_date, #hist_end_time').prop('disabled', x.open);
             m.redraw();
             deleteItem(i);
@@ -142,22 +140,23 @@ pol.tracking.db.History = class extends pol.core.Widget {
         }
     
     
-        /* Search button handler */   
+        /* Perform search for editable item - button handler */   
         function search() {
             getSearch();
             CONFIG.tracks.clear();
-            showTrail(t.item);
+            showTrail(copyItem());
         }
 
    
-        /* Show all items button handler */
+        /* Show all items in list - button handler */
         function showAll() {
             CONFIG.tracks.clear();
             for (const x of t.list) 
                 setTimeout(() => showTrail(x), 100);
         }
     
-    
+        
+        /* Go back to ordinary tracking mode - button handler */
         function goBack() {
             if (!t.searchmode)
 	        return;
@@ -191,7 +190,8 @@ pol.tracking.db.History = class extends pol.core.Widget {
                 });
         }
     
-     
+        
+        /* Export as GPX file - button handler */
         function exportGpx() {
             let parms = 'ntracks=' + t.list.length;
             for (i=0; i < t.list.length; i++)
@@ -205,24 +205,36 @@ pol.tracking.db.History = class extends pol.core.Widget {
    
         /* Get search parameters. Save them to localstorage as well */   
         function getSearch() {
-            t.item.call     = $('#hist_call').val().toUpperCase();
+            t.item.call(t.item.call().toUpperCase());
             t.item.fromdate = $('#hist_start_date').val();
-            t.item.fromtime = $('#hist_start_time').val();
-            t.item.open = $('#hist_open').prop('checked');
-            if (t.item.open) 
-                t.item.todate = t.item.totime = '-';
-            else {
-                t.item.todate   = $('#hist_end_date').val();    
-                t.item.totime   = $('#hist_end_time').val();
-            } 
+            if (t.item.open) {
+                t.item.totime('-');
+                t.item.todate = '-';
+            }
+            else 
+                t.item.todate   = $('#hist_end_date').val();
+            
             CONFIG.store('tracking.db.hist.item', JSON.stringify(t.item), false);
         }
     
     
+        /* Make a copy of the editable item. Convert stream-values */
+        function copyItem() {
+            let x = Object.assign({}, t.item);
+            x.fromtime = x.fromtime();
+            x.totime = x.totime();
+            x.call = x.call();
+            return x;
+        }
+        
+        
+        
+    
         /* Add search to list */
         function add() {
             getSearch();
-            t.list.push(Object.assign({},t.item));
+            let x = copyItem();
+            t.list.push(x);
             saveList();
         }
     
@@ -241,33 +253,49 @@ pol.tracking.db.History = class extends pol.core.Widget {
     
     
     setCall(call) {
-        this.item.call = call; 
+        this.item.call(call); 
         m.redraw();
     }
     
     
+    newItem(item) {
+        return {
+            call: m.stream((item? item: "")),
+            fromdate: null, todate: null,
+            fromtime: stream(""),
+            totime: stream("")
+        };
+    }
+    
+    
+    
+    /* Initialize fields of editable item */
     setItem(item) {
+        const t = this;
       	if (item) {
-            this.item = {call:item, fromdate:null, fromtime:null, todate:null, totime:null};
-            CONFIG.store('tracking.db.hist.item', JSON.stringify(this.item), false);
+            t.item = newItem(item);
+            CONFIG.store('tracking.db.hist.item', JSON.stringify(t.item), false);
             m.redraw();
         }
-        else
-            this.item = JSON.parse(CONFIG.get('tracking.db.hist.item'));
-	
-        if (this.item==null)
-            this.item = {call:'', fromdate:null, fromtime:null, todate:null, totime:null};
-        this.it = Object.assign({},this.item);
- 
-        if (this.item.fromdate == null)
-            this.item.fromdate = formatDate(new Date());
-        if (this.item.todate == null || this.item.todate == '-')
-            this.item.todate = formatDate(new Date());
-        if (this.item.fromtime == null)
-            this.item.fromtime = formatTime(new Date());
-        if (this.item.totime == null || this.totime == '-')
-            this.item.totime = formatTime(new Date());  
-        return this;
+        else {
+            t.item = JSON.parse(CONFIG.get('tracking.db.hist.item'));
+            t.item.call = m.stream(t.item.call);
+            t.item.fromtime = m.stream(t.item.fromtime);
+            t.item.totime = m.stream(t.item.totime);
+        }
+        if (t.item==null) 
+            t.item = newItem();
+        
+        
+        if (t.item.fromdate == null)
+            t.item.fromdate = formatDate(new Date());
+        if (t.item.todate == null || t.item.todate == '-')
+            t.item.todate = formatDate(new Date());
+        if (t.item.fromtime() == '')
+            t.item.fromtime(formatTime(new Date()));
+        if (t.item.totime() == '' || t.item.totime() == '-')
+            t.item.totime(formatTime(new Date()));  
+        return t;
     }
     
 } /* class */

@@ -94,11 +94,12 @@ pol.tracking.db.MyTrackers = class extends pol.tracking.TrackerAlias {
         function add() {
             let icn = $("#iconpick").get(0).value; 
             let icn2 = icn.substr(icn.lastIndexOf("/")+1);
-
+            console.log("id=", t.edit.id());
+            
             const data = {
-                id: $("#trackerId").val().toUpperCase(), 
+                id: t.edit.id().toUpperCase(), 
                 user: t.server.auth.userid, 
-                alias: $("#alias").val(), 
+                alias: t.edit.alias(),
                 icon: (t.edit.auto ? null : icn2)
             };
             
@@ -160,10 +161,11 @@ pol.tracking.db.MyTrackers = class extends pol.tracking.TrackerAlias {
         
         function edit(i) { 
             const tr = t.myTrackers[i]; 
-            t.edit = tr;
+            t.edit.id(tr.id);
+            t.edit.alias(tr.alias);
+            t.edit.icon = tr.icon; 
+            t.edit.user = tr.user; 
             t.iconGrey();
-            $("#trackerId").val(tr.id).trigger("change");
-            $("#alias").val(tr.alias).trigger("change");
             $("#iconpick>img").attr("src", (tr.auto? t.icons[t.dfl] : tr.icon)).trigger("change");
             m.redraw();
         } 

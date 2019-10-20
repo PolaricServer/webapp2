@@ -28,21 +28,26 @@ pol.layers.Wfs = class extends pol.layers.Edit {
     
     constructor(list) {
         super(list); 
-      
-        this.fields = {
+        const t=this;
+        t.wurl = m.stream("");
+        t.ftype = m.stream("");
+        t.wlabel = m.stream("");
+        
+        
+        t.fields = {
             view: function() { 
                 return m("div.spec", [ 
                     m("span.sleftlab", "WFS URL: "),   
-                    m(textInput, {id:"wfsUrl", size: 40, maxLength:160, regex: /^.+$/i }),br,
+                    m(textInput, {id:"wfsUrl", size: 40, maxLength:160, value: t.wurl, regex: /^.+$/i }),br,
                     m("span.sleftlab", "Feat. type: "),
-                    m(textInput, {id:"wfsFtype", size: 40, maxLength:80, regex: /^.+$/i }),br,
+                    m(textInput, {id:"wfsFtype", size: 40, maxLength:80, value: t.ftype, regex: /^.+$/i }),br,
                     m("span.sleftlab", "Style: "),
                     m(select, {id: "wfsStyle", list: Object.keys(CONFIG.styles).map( x => {
                             return {label: x, val: x, obj: CONFIG.styles[x]}; 
                         }) }), br,
 	       
                     m("span.sleftlab", "Label attr: "),
-                    m(textInput, {id:"wfsLabel", size: 20, maxLength: 60, regex: /^.+$/i }),br
+                    m(textInput, {id:"wfsLabel", size: 20, maxLength: 60, value: t.wlabel, regex: /^.+$/i }),br
                 ]);
             }
         }  
@@ -54,9 +59,8 @@ pol.layers.Wfs = class extends pol.layers.Edit {
     * Return true if add button can be enabled 
     */
     enabled() {
-        return  $("#editLayer").attr("ok") && 
-                $("#wfsUrl").attr("ok") && 
-                $("#wfsFtype").attr("ok"); 
+        return  this.lName && 
+                this.wurl() && this.ftype; 
     }
       
       
@@ -66,23 +70,20 @@ pol.layers.Wfs = class extends pol.layers.Edit {
      */
     createLayer(name) 
     {
-        const url = $("#wfsUrl").val();
-        const ftype = $("#wfsFtype").val();
-        const styleId = $("#wfsStyle").val();
-        const label = $("#wfsLabel").val();
-        console.log("Create WFS layer: URL="+url+", ftype="+ftype+", style="+styleId+", label="+label);
+        console.log("Create WFS layer: URL="+this.wurl()+", ftype="+this.ftype()+
+            ", style="+styleId+", label="+this.wlabel());
     
         const x = createLayer_WFS( {
             name: name,
-            url: url,
-            ftype: ftype,
-            style: (label && label!=null ? SETLABEL(styleId, label) : GETSTYLE(styleId)),
+            url: this.wurl(),
+            ftype: this.ftype(),
+            style: (this.wlabel() != "" ? SETLABEL(styleId, this.wlabel()) : GETSTYLE(styleId)),
             outputFormat: "text/xml; subtype=gml/3.2.1",
             wfsVersion: "1.1.0"
         });
     
         x.styleId = styleId;
-        x.label = label;
+        x.label = this.wlabel();
         return x;
     }
 
@@ -93,13 +94,19 @@ pol.layers.Wfs = class extends pol.layers.Edit {
      */
     edit(layer) {
         super.edit(layer);
-   
-        $("#wfsUrl").val(layer.getSource().url).trigger("change").attr("ok", true);;
-        $("#wfsFtype").val(layer.getSource().ftype).trigger("change").attr("ok", true);;
+        this.wurl(layer.getSource().url);
+        this.ftype(layer.getSource().ftype);
+        this.wlabel(layer.label);
         $("#wfsStyle").val(layer.styleId).trigger("change");
-        $("#wfsLabel").val(layer.label).trigger("change");
     }
 
+    
+    reset() {
+        super.reset(); 
+        this.wurl("");
+        this.ftype("");
+        this.wlabel("");
+    }
     
     
     /**

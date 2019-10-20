@@ -32,11 +32,13 @@ pol.tracking.TrackerAlias = class extends pol.core.Widget {
         super();
         var t = this;
         t.server = CONFIG.server;
-        t.edit = {id:"", alias:"", icon: "", auto: true};
+        t.edit = {id:m.stream(""), alias:m.stream(""), icon: "", auto: true};
         t.icons = [];
         t.iconpath = CONFIG.get("iconpath");
         t.dfl = CONFIG.get("default_icon");
-
+        t.ident = m.stream();
+        t.alias = m.stream();
+        
         this.aliasWidget = {
             view: function() {
                 var i=0;
@@ -65,7 +67,7 @@ pol.tracking.TrackerAlias = class extends pol.core.Widget {
         /* Get icons from server */
         t.server.GET("system/icons/default", "", x => {
             t.icons = JSON.parse(x);
-            for (i in t.icons)
+            for (const i in t.icons)
                t.icons[i] = t.iconpath + t.icons[i];
             m.redraw();
         });
@@ -83,11 +85,11 @@ pol.tracking.TrackerAlias = class extends pol.core.Widget {
     } /* constructor */
     
         
-    /* Clear input field */
+    /* Clear input fields */
     clear() {
         this.edit.auto = true; 
-        $("#trackerId").val("").trigger("change");
-        $("#alias").val("").trigger("change");
+        this.edit.id("");
+        this.edit.alias("");
         $("#iconpick>img").attr("src", this.icons[this.dfl]).trigger("change");
         setTimeout( ()=> this.iconGrey(), 1000); 
     }
@@ -110,7 +112,7 @@ pol.tracking.TrackerAlias = class extends pol.core.Widget {
     }
         
     setIdent(id) {
-        $("#trackerId").val(id).trigger("change");
+        t.edit.id(id);
         this.iconGrey();
     }
     

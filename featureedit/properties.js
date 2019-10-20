@@ -43,11 +43,12 @@ pol.features.Properties = class extends pol.core.Widget {
 
     constructor(dt) {
         super();
-        this.classname = "features.Properties";
-        const features =  () => snow.drawSource.getFeatures();
-        this.selected = null;
-        this.drawTool = dt;
         const t = this;
+        t.classname = "features.Properties";
+        const features =  () => snow.drawSource.getFeatures();
+        t.selected = null;
+        t.drawTool = dt;
+        t.label = m.stream("");
 
         this.widget = {
             view: function() {
@@ -70,7 +71,7 @@ pol.features.Properties = class extends pol.core.Widget {
                     m("span", (t.selected==null? "" : t.selected.getGeometry().getType())), 
                     br,
                     m("span.sleftlab", "Label: "),
-                    m(textInput, {id:"editLabel", size: 16, maxLength:25, regex: /.*$/i }),
+                    m(textInput, {id:"editLabel", size: 16, maxLength:25, value: t.label, regex: /.*$/i }),
                     m("button", {onclick: set, title: "Update properties"}, "Update")
                 ])
             }
@@ -106,7 +107,7 @@ pol.features.Properties = class extends pol.core.Widget {
         
         function _edit(f) {
             t.selected = f;
-            $('#editLabel').val(t.selected.label).trigger("change");
+            t.label(t.selected.label);
             m.redraw();
         }
         
@@ -117,7 +118,7 @@ pol.features.Properties = class extends pol.core.Widget {
         
         
         function set() {
-            t.selected.label = $("#editLabel").val(); 
+            t.selected.label = t.label();
             t.drawTool.doUpdate(t.selected, "chg");
         }
         
@@ -144,10 +145,3 @@ pol.features.Properties = class extends pol.core.Widget {
  
 } /* class */
 
-
-
-
-
-//pol.widget.setRestoreFunc("features.Properties", (id, pos) => {
-//    CONFIG.featureEdit.activatePopup(id, pos, true);
-//}); 

@@ -3,7 +3,7 @@
  Map browser based on OpenLayers 5. Tracking. 
  Search historic data on heard tracker points on server.  
  
- Copyright (C) 2018 Øyvind Hanssen, LA7ECA, ohanssen@acm.org
+ Copyright (C) 2018-19 Øyvind Hanssen, LA7ECA, ohanssen@acm.org
  
  This program is free software: you can redistribute it and/or modify
  it under the terms of the GNU Affero General Public License as published 
@@ -118,10 +118,10 @@ pol.tracking.db.HeardVia = class extends pol.core.Widget {
     
         /* Edit item (move it to search form) */
         function editItem (i) {
-            var x = t.list[i];
-            t.item = x; 
+            let x = Object.assign({}, t.list[i]);
+            x.call = m.stream(x.call);
+            t.item = x;
 
-            $("#hrd_call").val(x.call).trigger("change");
             $('#hrd_start').val(x.fromdate).trigger("change");
             if (x.open) {
                 $('#hrd_end').val(formatDate(new Date())).trigger("change");
@@ -140,7 +140,7 @@ pol.tracking.db.HeardVia = class extends pol.core.Widget {
         function search() {
             getSearch();
             CONFIG.tracks.clear();
-            showCloud(t.item);
+            showCloud(copyItem(t.item));
         }
         
         
@@ -181,7 +181,6 @@ pol.tracking.db.HeardVia = class extends pol.core.Widget {
     
         /* Show the cloud for a given item */
         function showCloud(c, color) {
-            console.log("showCloud: id="+c.call);
             var qstring = "?tfrom="+c.fromdate+"/00:00"+"&tto="
                 + (c.todate=='-' ? '-/-' : c.todate+"/23:59");
             CONFIG.server.GET("/hist/"+c.call+"/hrdvia"+qstring, "", 
@@ -195,11 +194,11 @@ pol.tracking.db.HeardVia = class extends pol.core.Widget {
                     CONFIG.tracks.update(pc, true);
                 });
         }
-    
+
    
         /* Get search parameters. Save them to localstorage as well */   
         function getSearch() {
-            t.item.call     = $('#hrd_call').val().toUpperCase();
+            t.item.call(t.item.call().toUpperCase());
             t.item.fromdate = $('#hrd_start').val();
             t.item.open = $('#hrd_open').prop('checked');
             if (t.item.open) 
@@ -209,14 +208,22 @@ pol.tracking.db.HeardVia = class extends pol.core.Widget {
             
             CONFIG.store('tracking.db.hrd.item', JSON.stringify(t.item), false);
         }
+        
     
+        function copyItem() {
+            let x = Object.assign({}, t.item);
+            x.call = t.item.call();
+            return x; 
+        }
+            
     
         /* Add search to list */
         function add() {
             getSearch();
-            t.item.color = t.colors[t.color];
+            let x = copyItem();
+            x.color = t.colors[t.color];
             t.color = (t.color+1) % 5;
-            t.list.push(Object.assign({},t.item));
+            t.list.push(x);
             saveList();
         }
     
@@ -238,29 +245,30 @@ pol.tracking.db.HeardVia = class extends pol.core.Widget {
 
     
     setCall(call) {
-        this.item.call = call; 
+        this.item.call(call); 
         m.redraw();
     }
     
     
     setItem(item) {
+        const t = this;
       	if (item) {
-            this.item = {call:item, fromdate:null, todate:null};
-            CONFIG.store('tracking.db.hrd.item', JSON.stringify(this.item), false);
+            t.item = {call:m.stream(item), fromdate:null, todate:null};
+            CONFIG.store('tracking.db.hrd.item', JSON.stringify(t.item), false);
             m.redraw();
         }
-        else
-            this.item = JSON.parse(CONFIG.get('tracking.db.hrd.item'));
-	
-        if (this.item==null)
-            this.item = {call:'', fromdate:null, todate:null};
-        this.it = Object.assign({},this.item);
+        else {
+            t.item = JSON.parse(CONFIG.get('tracking.db.hrd.item'));
+            t.item.call = m.stream(item);
+        }
+        if (t.item==null)
+            t.item = {call:m.stream(''), fromdate:null, todate:null};
  
-        if (this.item.fromdate == null)
-            this.item.fromdate = formatDate(new Date());
-        if (this.item.todate == null || this.item.todate == '-')
-            this.item.todate = formatDate(new Date());
-        return this;
+        if (t.item.fromdate == null)
+            t.item.fromdate = formatDate(new Date());
+        if (t.item.todate == null || t.item.todate == '-')
+            t.item.todate = formatDate(new Date());
+        return t;
     }
     
 } /* class */

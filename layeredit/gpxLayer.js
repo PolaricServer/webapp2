@@ -34,7 +34,7 @@ pol.layers.Gpx = class extends pol.layers.Edit {
         super(list); 
         this.files = [];
         const t = this;
-        
+        t.gpxLab = m.stream("");
       
         this.fields = {
             view: ()=> { 
@@ -51,7 +51,7 @@ pol.layers.Gpx = class extends pol.layers.Edit {
                         }) }), br,
 	       
                     m("span.sleftlab", "Label attr: "),
-                    m(textInput, {id:"gpxLabel", size: 20, maxLength: 60, regex: /^.+$/i }),br
+                    m(textInput, {id:"gpxLabel", size: 20, maxLength: 60, value: t.gpxLab, regex: /^.+$/i }),br
                 ]);
             },
             
@@ -128,9 +128,8 @@ pol.layers.Gpx = class extends pol.layers.Edit {
      */
     createLayer(name) {
         const styleId = $("#gpxStyle").val();
-        const label = $("#gpxLabel").val();
-        console.log("Create GPX layer: style="+styleId+", label="+label);
-        const x = this._createLayer(name, styleId, label, this.files);
+        console.log("Create GPX layer: style="+styleId+", label="+this.gpxLab);
+        const x = this._createLayer(name, styleId, this.gpxLab, this.files);
         this.files = []; 
         m.redraw(); 
         return x; 
@@ -144,7 +143,7 @@ pol.layers.Gpx = class extends pol.layers.Edit {
         let sublayers = [];
         for (const f of files) {
             const sl = createLayer_GPX( {
-                url: "/files/gpx/"+f.id, // CONFIG.server.url+"/files/gpx/"+f.id,
+                url: "/files/gpx/"+f.id, 
                 style: (label && label!=null ? SETLABEL(styleId, label) : GETSTYLE(styleId))
             });
             sublayers.push(sl);
@@ -186,7 +185,7 @@ pol.layers.Gpx = class extends pol.layers.Edit {
     edit(layer) {
         super.edit(layer);
         $("#gpxStyle").val(layer.styleId).trigger("change");
-        $("#gpxLabel").val(layer.label).trigger("change");
+        this.gpxLab(layer.label);
         this.files = layer.files.splice(0); 
         for (let x of this.files)
             x.used = false; 

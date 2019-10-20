@@ -27,10 +27,12 @@ pol.core.AreaList = class extends pol.core.Widget {
 
     constructor() {
         super();
-        this.classname = "core.AreaList"; 
-        this.myAreas = [];
         const t = this;
- 
+        t.classname = "core.AreaList"; 
+        t.myAreas = [];
+        t.currName = m.stream("");
+        
+        
         this.widget = {
             view: function() {
                 let i=0;
@@ -111,8 +113,7 @@ pol.core.AreaList = class extends pol.core.Widget {
         /* Move map area name to editable textInput */
         function editArea(id) {
             gotoExtent(id);
-            $("#editArea").val("");
-            $("#editArea").val(t.myAreas[id].name).trigger("change").attr("ok", true);;
+            t.currName(t.myAreas[id].name);
             removeArea(id);
             m.redraw();
         }
@@ -121,9 +122,7 @@ pol.core.AreaList = class extends pol.core.Widget {
         /* Add map extent to list */
         function add() {
             const ext = CONFIG.mb.getExtent();
-            const name = $("#editArea").val(); 
-
-            const area = {name: name, extent: ext};
+            const area = {name: t.currName(), extent: ext};
             area.baseLayer = CONFIG.mb.baseLayerIdx;
             area.oLayers = getOLayers();
             t.myAreas.push(area);

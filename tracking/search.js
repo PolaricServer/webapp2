@@ -34,6 +34,7 @@ pol.tracking.Search = class extends pol.core.Widget {
         this.server = CONFIG.server; 
         this.tags = "";
         const t = this;
+        t.search = m.stream("*");
    
         this.widget = {
             view: function() {
@@ -43,7 +44,7 @@ pol.tracking.Search = class extends pol.core.Widget {
                         m("form", [ 
                             "Keywords (tags): ", br, m("div#tags", m.trust(t.tags)),
                             "Free text search: ", m(textInput, 
-                                {id: "search", size: 10, maxLength: 40, value:"*",regex: /^.*$/i}),
+                                {id: "search", size: 10, maxLength: 40,value: t.search, regex: /^.*$/i}),
                             m("button#searchbutton", 
                                 {onclick: searchHandler, type: "button"}, "Search" )
                         ])], 
@@ -55,7 +56,7 @@ pol.tracking.Search = class extends pol.core.Widget {
    
    
         function searchHandler(e) {
-            searchItems( $('#search').val(), getTagArgs(), searchItemsCallback)                  
+            searchItems(t.search(), getTagArgs(), searchItemsCallback)                  
         };
 
    
@@ -81,7 +82,6 @@ pol.tracking.Search = class extends pol.core.Widget {
                     tags = tags + (tags=="" ? "" : ",") + x.id.substring(4);
                 }
             });
-            console.log("TAGS: "+tags);
             return tags;
         }
     

@@ -29,53 +29,38 @@ pol.core.refSearch = class refSearch extends pol.core.Widget {
 
     constructor() {
         super();
-        this.classname = "core.refSearch"; 
-   
+        const t = this;
+        t.classname = "core.refSearch"; 
+        t.mgrsVal = [0,0];
+        t.utmVal = [0,0];
+        t.llVal = [0,0];
+        t.llVal2 = [0,0];
+        
         this.widget = {
             view: function() {
                 return m("div", [       
                     m("h1", "Show reference on map"),
                     m("form.mapref", [  
                         m("span.sleftlab", {title: "MGRS 100x100m square"}, "MGRS ref: "), 
-                        m(mgrsInput),
-                        m("button#butt_mgrs", {type: "button"}, "Find"), hr,
+                        m(mgrsInput, {value: t.mgrsVal}),
+                        m("button#butt_mgrs", {type: "button", onclick: ()=> browser.goto_Pos(t.mgrsVal, true) }, "Find"), hr,
               
                         m("span.sleftlab", "UTM ref: "),
-                        m(utmInput), 
-                        m("button#butt_utm", {type: "button", style: "margin-right:3.5em"}, "Find"), hr,     
+                        m(utmInput, {value: t.utmVal}), 
+                        m("button#butt_utm", {type: "button", style: "margin-right:3.5em", onclick: ()=> browser.goto_Pos(t.utmVal, true)  }, "Find"), hr,   
+                      
                         m("span.sleftlab", 
                             {title: "Degrees, decimal-minutes (click to change hemisphere)"}, 
                             "Lat Long: "),
-                            m(latLngInput),
-                            m("button#butt_ll", {type: "button"}, "Find")
+                        m(latLngInput, {value: t.llVal}),
+                        m("button#butt_ll", {type: "button", onclick: ()=> browser.goto_Pos(t.llVal, true) }, "Find"), hr,
+                        m("span.sleftlab", {title: "Decimal degrees"}, "Dec. LL: "),
+                        m(latLngInputDec, {value: t.llVal2}),
+                        m("button#butt_lld", {type: "button", onclick: ()=> browser.goto_Pos(t.llVal2, true) }, "Find")
                     ])
                 ])
             }
         };
-
-        /* Add actions to buttons */
-        setTimeout(function() {
-            $('#butt_mgrs').click( ()=> {
-                const pos = pol.mapref.parseMGRS(browser, $('#mgrsprefix').val(), $('#locx').val(), 
-                    $('#locy').val());
-                browser.goto_Pos(pos, true);
-            });
-      
-            $('#butt_utm').click( ()=> {
-                const pos = pol.mapref.parseUTM( $('#utmx').val(), $('#utmy').val(), $('#utmnz').val(), 
-                    $('#utmz').val());
-                browser.goto_Pos(pos, true);
-            });
-      
-            $('#butt_ll').click( () => {
-                const lat_sign = ( $("#ll_NS").html()=="N" ? "" : "-");
-                const lng_sign = ( $("#ll_EW").html()=="E" ? "" : "-");
-                const pos = pol.mapref.parseDM(
-                    lat_sign+$('#ll_Nd').val(), $('#ll_Nm').val(), 
-                    lng_sign+$('#ll_Ed').val(), $('#ll_Em').val());
-                browser.goto_Pos(pos, true );
-            });
-        }, 1000);
 
         browser.map.on('moveend', ()=> { m.redraw();});
     }

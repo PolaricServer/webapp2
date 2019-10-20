@@ -83,6 +83,19 @@ pol.mapref.formatUTM = function(ref)
 }
 
 
+pol.mapref.toUTM = function(ref) 
+{
+    const llref = new LatLng(ref[1], ref[0]);
+    const uref = llref.toUTMRef();
+    const sref = ""+uref; 
+    return {
+        lngZone: sref.substring(0,2),
+        latZone: sref.substring(2,3),
+        lng: sref.substring(4,10),
+        lat: sref.substring(11,18)
+    }
+}
+
    
 pol.mapref.mgrs = pol.mapref.mgrs || {};
 pol.mapref.mgrs.latBands = 'CDEFGHJKLMNPQRSTUVWXX'; 
@@ -130,17 +143,18 @@ pol.mapref.MGRSprefix = function(x)
  */
 pol.mapref.parseDM = function(nd, nm, ed, em)
 {  
-   const yd = parseInt(nd, 10);
+   const yd = parseFloat(nd, 10);
    const ym = parseFloat(nm);
-   const xd = parseInt(ed, 10);
+   const xd = parseFloat(ed, 10);
    const xm = parseFloat(em);
    if (isNaN(yd) || yd<-90 || yd>90 || isNaN(ym) || ym<0 || ym>60 || isNaN(xd) ||
        isNaN(xm) || xm<0 || xm>60) {
-        console.log("ERROR: degrees/minutes out of bounds or input not numeric");
+        console.warn("Degrees/minutes out of bounds or input not numeric");
         return [0,0];
    }
    return [xd+xm/60, yd+ym/60];
 }
+
 
 
 
@@ -155,18 +169,21 @@ pol.mapref.parseDM = function(nd, nm, ed, em)
 
 pol.mapref.parseUTM = function(ax, ay, nz, zz)
  {
-   const x = parseInt(ax, 10);
-   const y = parseInt(ay, 10);
-   const z = parseInt(zz, 10);
-   if (isNaN(x) || isNaN(y) || isNaN(z) ||
-       x<0 || x>999999 || y<0 || y>9999999 || z<0 || z>60) {
-      console.log("ERROR: UTM zone/northing/easting out of bounds or input not numeric");
-      return [0,0];
-   }
+    if (!/^[0-9]{6}$/.test(ax) || !/^[0-9]{7}$/.test(ay) || !/^[0-9]{2}$/.test(zz)) 
+        return [0,0];
+ 
+    const x = parseInt(ax, 10);
+    const y = parseInt(ay, 10);
+    const z = parseInt(zz, 10);
+    if (isNaN(x) || isNaN(y) || isNaN(z) ||
+        x<0 || x>999999 || y<0 || y>9999999 || z<0 || z>60) {
+        console.warn("UTM zone/northing/easting out of bounds or input not numeric");
+        return [0,0];
+    }
     
-   const uref = new UTMRef(x, y, nz, z);
-   const ref = uref.toLatLng();
-   return ( [ref.lng, ref.lat] );
+    const uref = new UTMRef(x, y, nz, z);
+    const ref = uref.toLatLng();
+    return ( [ref.lng, ref.lat] );
  }
 
  
@@ -184,12 +201,12 @@ pol.mapref.parseMGRS = function(browser, prefix, ax, ay)
     let x = parseInt(ax, 10);
     let y = parseInt(ay, 10);
     if (isNaN(x) || x<0 || x>999) {
-      console.log("ERROR: 3-digit X number out of bounds or input not numeric");
-      x = 555;
+      console.warn("MGRS: 3-digit X number out of bounds or input not numeric");
+      x = 499;
     }  
     if (isNaN(y) || y<0 || y>999) {
-      console.log("ERROR: 3-digit Y number out of bounds or input not numeric");
-      y = 555;
+      console.warn("MGRS: 3-digit Y number out of bounds or input not numeric");
+      y = 499;
     }
     let llref = null; 
     
@@ -204,7 +221,7 @@ pol.mapref.parseMGRS = function(browser, prefix, ax, ay)
        const col = pol.mapref.mgrs.e100kLetters[(zone-1)%3].indexOf(prefix[3]) + 1; 
        const row = pol.mapref.mgrs.n100kLetters[(zone-1)%2].indexOf(prefix[4]);
        if (col == 0 || row == -1)
-           console.log("ERROR: Invalid row or column letter in MGRS prefix");
+           console.warn("Invalid row or column letter in MGRS prefix");
        
        const e100kNum = col * 100e3; // e100k in metres
         /* get northing specified by n100k */
@@ -213,7 +230,7 @@ pol.mapref.parseMGRS = function(browser, prefix, ax, ay)
         /* get latitude of (bottom of) band */
        const latBand = (pol.mapref.mgrs.latBands.indexOf(prefix[2])-10)*8;
        if (latBand < -80)
-           console.log("ERROR: Invalid latitude band letter in MGRS prefix");
+           console.warn("Invalid latitude band letter in MGRS prefix");
 
         /* northing of bottom of band, extended to include entirety of bottommost 100km square
          * (100km square boundaries are aligned with 100km UTM northing intervals) */
@@ -227,7 +244,7 @@ pol.mapref.parseMGRS = function(browser, prefix, ax, ay)
        llref = new UTMRef(e100kNum + x * 100,  n2M + n100kNum + y * 100, 'X', zone).toLatLng(); 
     }
     else {
-       console.log("WARNING: invalid MGRS prefix. Using center of map as reference");
+       console.warn("invalid MGRS prefix. Using center of map as reference");
        /* find center of map */
        const center = browser.getCenter();
        const ref = new LatLng(center[1], center[0]);
