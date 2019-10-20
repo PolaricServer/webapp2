@@ -91,7 +91,7 @@ pol.tracking.Notifier = class {
     
         /* Remove notifications older than ttl. Skip if ttl is 0 */
         setInterval( () => {
-            for (i in t.list) {
+            for (const i in t.list) {
                 const x = t.list[i];
                 if (x.ttl <= 0)
                     continue;

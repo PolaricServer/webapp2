@@ -451,6 +451,8 @@ pol.tracking.Tracking = class {
      * Add a trail.
      */
     addTrail(p) {
+        let i=0;
+        
         console.assert(p!=null, "p is null");
         let feature = this.source.getFeatureById(p.ident+'.trail');
         /* If feature exists and redraw flag is false. Just return */
@@ -505,7 +507,7 @@ pol.tracking.Tracking = class {
         feature.setId(p.ident+'.trailpoints');
 
         /* update position */
-        for (i in p.trail.linestring)
+        for (const i in p.trail.linestring)
             feature.getGeometry().appendPoint(
                 new ol.geom.Point( ll2proj(p.trail.linestring[i].pos)));
 
@@ -656,6 +658,8 @@ pol.tracking.Tracking = class {
      * Update using JSON data from Polaric Server backend
      */
     update(ov, srch) {
+        let i = 0;
+        
         if (this.srch && !srch)
             return
         if (ov == null)

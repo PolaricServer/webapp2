@@ -437,14 +437,13 @@ pol.core.MapBrowser = class {
         if (!isNaN(a.baseLayer))
             this.changeBaseLayer(a.baseLayer);
         setOLayers(a.oLayers);
-        console.log("extent="+a.extent);
         if (a.extent && a.extent != null) 
             this.fitExtent(a.extent); 
     
        
         function setOLayers(ol) {
             if (ol && ol != null)
-                for (i in ol)
+                for (const i in ol)
                     if (CONFIG.oLayers[i])
                         CONFIG.oLayers[i].setVisible(ol[i]);
         }

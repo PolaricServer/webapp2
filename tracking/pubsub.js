@@ -58,7 +58,7 @@ pol.tracking.PubSub = class {
             const room = t.rooms[txt1];
         
             if ((!t.suspend) && room != null)
-                for (i in room)
+                for (const i in room)
                     if (room[i].json) room[i].cb( JSON.parse(txt2));
                     else room[i].cb(txt2);
         };

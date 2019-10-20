@@ -42,6 +42,7 @@ pol.tracking.Filters = class {
             filt = defaultFilter;
 
         /* Find index of default selection */
+        var i;
         for (i in filterViews)
             if (filterViews[i].name === filt)
                 break;
@@ -68,7 +69,7 @@ pol.tracking.Filters = class {
             }
         });
     }
-}   
+}    
 
 
 
