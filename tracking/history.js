@@ -262,8 +262,8 @@ pol.tracking.db.History = class extends pol.core.Widget {
         return {
             call: m.stream((item? item: "")),
             fromdate: null, todate: null,
-            fromtime: stream(""),
-            totime: stream("")
+            fromtime: m.stream(""),
+            totime: m.stream("")
         };
     }
     
@@ -279,12 +279,14 @@ pol.tracking.db.History = class extends pol.core.Widget {
         }
         else {
             t.item = JSON.parse(CONFIG.get('tracking.db.hist.item'));
-            t.item.call = m.stream(t.item.call);
-            t.item.fromtime = m.stream(t.item.fromtime);
-            t.item.totime = m.stream(t.item.totime);
+            if (t.item != null) {
+                t.item.call = m.stream(t.item.call);
+                t.item.fromtime = m.stream(t.item.fromtime);
+                t.item.totime = m.stream(t.item.totime);
+            }
         }
         if (t.item==null) 
-            t.item = newItem();
+            t.item = t.newItem();
         
         
         if (t.item.fromdate == null)

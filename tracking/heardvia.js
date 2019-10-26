@@ -259,7 +259,8 @@ pol.tracking.db.HeardVia = class extends pol.core.Widget {
         }
         else {
             t.item = JSON.parse(CONFIG.get('tracking.db.hrd.item'));
-            t.item.call = m.stream(item);
+            if (t.item != null)
+                t.item.call = m.stream(item);
         }
         if (t.item==null)
             t.item = {call:m.stream(''), fromdate:null, todate:null};
