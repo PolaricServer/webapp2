@@ -49,6 +49,8 @@
     CONFIG.history = new pol.tracking.db.History();
     CONFIG.heard = new pol.tracking.db.HeardVia();
     CONFIG.gSettings = new pol.tracking.GlobalSettings(); 
+    CONFIG.ownObj = new pol.tracking.OwnObjects(); 
+    
     
     /* Welcome text */
     if (!mobile && CONFIG.get("welcome_popup") && !CONFIG.get("skip_welcome")) 
@@ -90,10 +92,14 @@
     browser.ctxMenu.addCallback("MAP", (m, ctxt)=> {
         m.add('Show map reference', () => browser.show_MaprefPix( [m.x, m.y] ) );  
         if (srv.auth.sar) {
-	        m.add('Add object', () => editObject(m.x, m.y) );
+            m.add('Add APRS object', () => 
+                { CONFIG.ownObj.activatePopup("ownObjects", [50,70]);   
+                    setTimeout(()=> CONFIG.ownObj.setPosPix([m.x, m.y]), 200);
+                });
             if (srv.hasDb)
                 m.add('Add sign', () => editSign(m.x, m.y) );
         }
+        
         m.add(null);
         m.add('Center point', () =>   
             browser.view.setCenter( browser.map.getCoordinateFromPixel([m.x, m.y])) );
@@ -116,8 +122,11 @@
             { const x = new pol.core.refSearch(); 
                 x.activatePopup("refSearch", [50,70]) });
         if (srv.auth.sar) {                 
-            m.add('Add object', () => editObject(null, null) );
+            m.add('Add APRS object', () => 
+                CONFIG.ownObj.activatePopup("ownObjects", [50,70]));
         }
+        
+        
         m.add('Area List', () => 
             browser.toolbar.arealist.activatePopup("AreaList", [50,70]) );
         m.add('Layer List', () => 
@@ -190,7 +199,8 @@
             m.add('Manage tags..', () => setTags(ctxt.ident) );
             m.add('Reset info', () => resetInfo(ctxt.ident) );
             if (ctxt.point.point.own)
-                m.add('Remove object', () => deleteObject(ctxt.ident) );
+                m.add('Remove object', () => 
+                    CONFIG.ownObj.remove( ctxt.ident.substring(0, ctxt.ident.indexOf('@') ) ) );
         }
         m.add(null);
         if (CONFIG.tracks.isTracked(ctxt.ident))
