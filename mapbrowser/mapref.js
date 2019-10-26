@@ -142,17 +142,19 @@ pol.mapref.MGRSprefix = function(x)
  * @returns {ol.Coordinate}
  */
 pol.mapref.parseDM = function(nd, nm, ed, em)
-{  
-   const yd = parseFloat(nd, 10);
-   const ym = parseFloat(nm);
-   const xd = parseFloat(ed, 10);
-   const xm = parseFloat(em);
-   if (isNaN(yd) || yd<-90 || yd>90 || isNaN(ym) || ym<0 || ym>60 || isNaN(xd) ||
-       isNaN(xm) || xm<0 || xm>60) {
-        console.warn("Degrees/minutes out of bounds or input not numeric");
+{     
+    if (!/^[0-9]{1,2}$/.test(nd) || !/^[0-9]{1,3}$/.test(ed)) 
         return [0,0];
-   }
-   return [xd+xm/60, yd+ym/60];
+    const yd = parseFloat(nd, 10);
+    const ym = parseFloat(nm);
+    const xd = parseFloat(ed, 10);
+    const xm = parseFloat(em);
+    if (isNaN(yd) || yd<-90 || yd>90 || isNaN(ym) || ym<0 || ym>60 || isNaN(xd) ||
+        isNaN(xm) || xm<0 || xm>60) {
+            console.warn("Degrees/minutes out of bounds");
+            return [0,0];
+    }
+    return [xd+xm/60, yd+ym/60];
 }
 
 
@@ -177,11 +179,17 @@ pol.mapref.parseUTM = function(ax, ay, nz, zz)
     const z = parseInt(zz, 10);
     if (isNaN(x) || isNaN(y) || isNaN(z) ||
         x<0 || x>999999 || y<0 || y>9999999 || z<0 || z>60) {
-        console.warn("UTM zone/northing/easting out of bounds or input not numeric");
+        console.warn("UTM zone/northing/easting out of bounds");
         return [0,0];
     }
     
     const uref = new UTMRef(x, y, nz, z);
+ 
+    /* Is this check too strict? */
+    if (nz != getUTMLatitudeZoneLetter(y)) {
+        console.warn("Latitude is outside of given lat zone: "+nz);
+        return [0,0];
+    }
     const ref = uref.toLatLng();
     return ( [ref.lng, ref.lat] );
  }
@@ -198,16 +206,10 @@ pol.mapref.parseUTM = function(ax, ay, nz, zz)
 
 pol.mapref.parseMGRS = function(browser, prefix, ax, ay)
  {   
+    if (!/^[0-9]{3}$/.test(ax) || !/^[0-9]{3}$/.test(ay))
+        return [0,0];
     let x = parseInt(ax, 10);
     let y = parseInt(ay, 10);
-    if (isNaN(x) || x<0 || x>999) {
-      console.warn("MGRS: 3-digit X number out of bounds or input not numeric");
-      x = 499;
-    }  
-    if (isNaN(y) || y<0 || y>999) {
-      console.warn("MGRS: 3-digit Y number out of bounds or input not numeric");
-      y = 499;
-    }
     let llref = null; 
     
     if (prefix && prefix != null && prefix.length == 5) 

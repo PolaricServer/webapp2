@@ -321,9 +321,6 @@ const utmInput = class {
             this.lng("");
             this.lat("");
         }
-        
-        function validPoint(x) 
-            {return x[0]!=0 && x[1]!=0;}
     }
 
     validPoint(x) 

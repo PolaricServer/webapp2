@@ -593,11 +593,13 @@ pol.core.MapBrowser = class {
      * @param {boolean|undefined} showinfo - true if we should show map reference info in a popup as well.
      */
     goto_Pos(ref, showinfo) {
-       this.setCenter(ref);
-       if (showinfo)
-          this.show_Mapref(ref);
-       else
-          this.gui.showImageGeo(ref);
+        if (ref[0]<=0 && ref[1]<=0)
+            return;
+        this.setCenter(ref);
+        if (showinfo)
+            this.show_Mapref(ref);
+        else
+            this.gui.showImageGeo(ref);
     }
 
 } /* class */

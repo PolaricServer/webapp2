@@ -322,3 +322,5 @@ div#iconlist>img:hover
 .dragover {background: #cfc}
 
 .link_id {margin-top: 0.7em; border-top: 1px solid #666; color: #555; font-size: 90%}
+
+div.errmsg {color: red; margin-left: 2em; margin-bottom: 0.8em}
