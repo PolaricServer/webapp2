@@ -24,7 +24,7 @@ pol.tracking.PolaricServer = class extends pol.core.Server {
     
     constructor() {
         super();
-        this.auth = { userid: "", admin: false, sar: false, services: "" }; 
+        this.auth = { userid: "",servercall: "", admin: false, sar: false, services: "" }; 
         this.hasDb = false;
         CONFIG.mb.toolbar.addSection(3);
         CONFIG.mb.toolbar.addIcon(3, "images/locked.png", "toolbar_login", null, "Log in");

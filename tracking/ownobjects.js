@@ -123,7 +123,7 @@ pol.tracking.OwnObjects = class extends pol.core.Widget {
         
         /* Zoom to object's location on map */
         function zoomTo(x) {
-            CONFIG.tracks.goto_Point(x); 
+            CONFIG.tracks.goto_Point(x+"@"+srv.auth.servercall); 
         }
     
         
