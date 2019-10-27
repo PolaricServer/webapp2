@@ -172,18 +172,8 @@ pol.core.Popup = class {
                     pdiv.appendChild(closeimage);
                 
                     /* close click handler */
-                    closeimage.onclick = function(e) {
-                        if (props.vnode)
-                            m.mount(pdiv, null);
-		        if (props.onclose)
-                            props.onclose();
-                        pdiv._pinned = false; 
-                        t.activepopup = pdiv;
-                        t.allowedPopups--;
-                        t.removePopup();
-                        if (props.pin)
-                            props.pin(pdiv._pinned); // Pin callback
-                    }
+                    closeimage.onclick = (e)=> pdiv.close()
+
                 }
             }  }, 300);
         
@@ -200,6 +190,19 @@ pol.core.Popup = class {
             $(pdiv).draggable(
                 { handle: "h1,h2,.handle", delay: 100, opacity: 0.7, 
                     start: props.dragStart, stop: props.dragStop }  );
+            
+        pdiv.close = ()=> {
+            if (props.vnode)
+                m.mount(pdiv, null);
+            if (props.onclose)
+                props.onclose();
+            pdiv._pinned = false; 
+            t.activepopup = pdiv;
+            t.allowedPopups--;
+            t.removePopup();
+            if (props.pin)
+                props.pin(pdiv._pinned); // Pin callback
+        }
         return pdiv;
     }
     

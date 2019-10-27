@@ -53,14 +53,16 @@
     
     
     /* Welcome text */
-    if (!mobile && CONFIG.get("welcome_popup") && !CONFIG.get("skip_welcome")) 
+    if (!mobile && !srv.loggedIn && CONFIG.get("welcome_popup") && !CONFIG.get("skip_welcome") ) 
       setTimeout(()=> {
        let d = browser.gui.showPopup( {
            pixPos: [5,30], 
            draggable: true, 
+           resizable: true,
            pinned: true, 
            onclose: ()=> {CONFIG.store("skip_welcome", true);}
         });
+       setTimeout(()=>d.close(), 30000);
        $.ajax("welcome.html", {success: txt=> {d.innerHTML = txt}} ); 
     },2000);
       
