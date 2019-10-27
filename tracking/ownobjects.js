@@ -32,9 +32,10 @@ pol.tracking.OwnObjects = class extends pol.core.Widget {
         super();
         const t = this;
         const srv = CONFIG.server;
+        let errmsg = "";
         
         t.obj = {
-            ident: m.stream("ggg"), 
+            ident: m.stream(""), 
             pos: [0,0],
             sym: m.stream("c"), 
             symtab: m.stream("/"), 
@@ -43,7 +44,6 @@ pol.tracking.OwnObjects = class extends pol.core.Widget {
         }
         
         t.olist = [];
-        
         t.classname = "tracking.OwnObjects"; 
 
         this.widget = {
@@ -58,9 +58,10 @@ pol.tracking.OwnObjects = class extends pol.core.Widget {
                             m("span", {onclick: apply(zoomTo, x)}, x), nbsp]
                         ), " "]
                     })),
-                    br,
+                    m("div.errmsg", errmsg),
                     m("span.sleftlab", "Object ID: "),   
-                    m(textInput, {id:"objid", value: t.obj.ident, size: 10, maxLength:32, regex: /^.+$/i }),br,   
+                    m(textInput, {id:"objid", value: t.obj.ident, size: 10, maxLength:9, 
+                        regex: /^[a-zA-Z0-9\_\-\.\#]{1,9}$/i }),br,   
                     m("span.sleftlab", "Symbol: "), 
                     m(textInput, {id:"symtab", size: 1, maxLength:1, value: t.obj.symtab, regex: /[\/\\a-zA-Z]/i }),
                     m(textInput, {id:"symbol", size: 1, maxLength:1, value: t.obj.sym, regex: /[a-zA-Z]/i }),
@@ -94,8 +95,6 @@ pol.tracking.OwnObjects = class extends pol.core.Widget {
             }
         };
         
-        setTimeout(() => t.getObjects(), 2000);
-        
         
         /* Handler for when user selects symbol */
         function onSymSelect () {
@@ -116,7 +115,12 @@ pol.tracking.OwnObjects = class extends pol.core.Widget {
                 return;
             srv.POST("aprs/objects", JSON.stringify(t.obj), 
                     ()=> { t.getObjects() }, 
-                    ()=> { console.warn("Couldn't post object: "+t.obj.ident); }
+                    x=> { 
+                        errmsg = x.responseText;
+                        m.redraw();
+                        console.warn("Server: "+errmsg);
+                        setTimeout(()=>{errmsg="";m.redraw();}, 6000);
+                    }
                 ); 
         }
         
@@ -133,6 +137,11 @@ pol.tracking.OwnObjects = class extends pol.core.Widget {
     } /* constructor */
     
     
+    
+    
+    onActivate() {
+        this.getObjects();
+    }
     
     /* Clear form fields */
     clear() {

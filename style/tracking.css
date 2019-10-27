@@ -138,5 +138,5 @@ span#confirm {color: green; font-size: smaller; margin-left: 0.5em}
 
 div#aprsObject div.itemList>span {white-space:nowrap}
 div#aprsObject div.itemList {padding-left: 1em; max-width: 30em}
-div#aprsObject div.itemList {border-bottom: 2px solid #999; padding-bottom: 0.4em; margin-bottom: -0.4em}
+div#aprsObject div.itemList {border-bottom: 2px solid #999; padding-bottom: 0.4em; margin-bottom: 0.4em}
 div#aprsObject div.itemList img {vertical-align: middle} 

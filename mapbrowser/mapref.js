@@ -184,13 +184,14 @@ pol.mapref.parseUTM = function(ax, ay, nz, zz)
     }
     
     const uref = new UTMRef(x, y, nz, z);
- 
+    const ref = uref.toLatLng();
+     
     /* Is this check too strict? */
-    if (nz != getUTMLatitudeZoneLetter(y)) {
-        console.warn("Latitude is outside of given lat zone: "+nz);
+    const lz = getUTMLatitudeZoneLetter(ref.lat)
+    if (nz != lz) {
+        console.warn("Latitude '"+lz+"' is outside of given lat zone: '"+nz+"'");
         return [0,0];
     }
-    const ref = uref.toLatLng();
     return ( [ref.lng, ref.lat] );
  }
 

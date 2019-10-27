@@ -76,11 +76,11 @@ pol.tracking.Notifier = class {
         );
         t.updateNumber(); 
          
-        /* 
-	 * Subscribe to notifications from server using the pubsub service: 
-	 * Related to user (if logged in), general system notifications and 
-	 * (if authorized) related to admin user 
-	 */
+       /* 
+        * Subscribe to notifications from server using the pubsub service: 
+        * Related to user (if logged in), general system notifications and 
+        * (if authorized) related to admin user 
+        */
         t.server.pubsub.subscribe("notify:" + t.server.auth.userid, 
             x => t.add(x) );   
         t.server.pubsub.subscribe("notify:SYSTEM", 
@@ -90,6 +90,7 @@ pol.tracking.Notifier = class {
                 x => t.add(x) );
     
         /* Remove notifications older than ttl. Skip if ttl is 0 */
+        /* TTL is in minutes */
         setInterval( () => {
             for (const i in t.list) {
                 const x = t.list[i];
