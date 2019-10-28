@@ -111,17 +111,24 @@ pol.tracking.OwnObjects = class extends pol.core.Widget {
         
         /* Update object on backend (through REST call */
         function update() {
-            if (t.obj[0]==0 && t.obj[1]==0)
+            if (t.obj.pos[0]==0 && t.obj.pos[1]==0) {
+                error("Invalid position");
                 return;
+            }
             srv.POST("aprs/objects", JSON.stringify(t.obj), 
                     ()=> { t.getObjects() }, 
                     x=> { 
-                        errmsg = x.responseText;
-                        m.redraw();
+                        error(x.responseText);
                         console.warn("Server: "+errmsg);
-                        setTimeout(()=>{errmsg="";m.redraw();}, 6000);
                     }
                 ); 
+        }
+        
+        
+        function error(txt) {
+            errmsg = txt;
+            setTimeout(()=>{errmsg="";m.redraw();}, 6000);
+            m.redraw();
         }
         
         
@@ -142,6 +149,7 @@ pol.tracking.OwnObjects = class extends pol.core.Widget {
     onActivate() {
         this.getObjects();
     }
+    
     
     /* Clear form fields */
     clear() {

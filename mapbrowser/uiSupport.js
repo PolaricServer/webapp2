@@ -328,10 +328,9 @@ const utmInput = class {
         
     onupdate (vn) {
         const x = pol.mapref.parseUTM(this.lng(), this.lat(), this.latZone(), this.lngZone());
-        if (this.validPoint(x)) {
-            vn.attrs.value[0]=x[0]; 
-            vn.attrs.value[1]=x[1];
-        }
+        vn.attrs.value[0]=x[0]; 
+        vn.attrs.value[1]=x[1];
+        
     }
 
     
