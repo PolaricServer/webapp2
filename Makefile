@@ -44,7 +44,7 @@ install: mapbrowser-min.js
 	install -m 644 images/iconpack/*.png $(INSTALL_WEB)/images/iconpack
 	install -m 644 images/drawIcons/*.png $(INSTALL_WEB)/images/drawIcons
 	
-	install -m 644 style/style-min.css $(INSTALL_WEB)/style
+	install -m 644 style/style-min.css style/xstyle.css $(INSTALL_WEB)/style
 	install -m 644 lib/ol.js lib/ol.css $(INSTALL_WEB)/lib
 	install -m 644 lib/jquery.min.js lib/jquery-ui.min.js lib/jquery-ui.min.css \
 			lib/jquery.ui.table.min.js $(INSTALL_WEB)/lib
