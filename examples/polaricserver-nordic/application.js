@@ -145,7 +145,10 @@
         m.add(null);
      
         if (srv.auth.sar) {
-            m.add("SAR mode..", () => sarMode()); 
+            m.add("SAR mode..", () => {
+                const x = new pol.tracking.SarMode();
+                x.activatePopup("sarMode", [50, 70]); 
+            });
             m.add(null);
             m.add("Set/change password..", setPasswd);
         }
@@ -268,11 +271,10 @@
             {ajax: true, simple:true, id: id}, 
             {id: "historypopup", geoPos: browser.pix2LonLat(pix)});
     }
+
     function histList_hout() {}
     function histList_hover() {}
-     
-    function sarMode()
-        { srv.popup('SarMode', 'sarmode', 500, 320); }
+
 
     function setPasswd()
         { srv.popup('Password', 'passwd', 430, 250); }
@@ -286,22 +288,11 @@
     function resetInfo(ident) {
          srv.popup('Station', 'resetinfo'+ '?' + (ident==null ? "" : '&objid='+ident), 360, 180);
     }
-
-    function editObject(x, y) {
-        var coord = browser.pix2LonLat([x, y]);
-        srv.popup('editObject', 'addobject' +
-            (x==null ? "" : '?x=' + coord[0] + '&y='+ coord[1] ), 560, 300);
-    }
     
     function editSign(x, y) {
         var coord = browser.pix2LonLat([x, y]);
         srv.popup('editSign', 'addSign' +
             (x==null ? "" : '?x=' + coord[0] + '&y='+ coord[1] ), 570, 390);
-    }
-    
-    function deleteObject(ident) {
-        srv.popup('delObject', 'deleteobject' + 
-            (ident==null ? "" : '?objid='+ident), 350, 180);
     }
    
     function findItem(x) 
