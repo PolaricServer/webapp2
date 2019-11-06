@@ -1,4 +1,14 @@
-polaric-webapp2 (1.0) RELEASED; urgency=medium
+polaric-webapp2 (1.1) stable; urgency=medium
+
+  * Move to OpenLayers 6.1.0 
+  * Map reference search improvements
+  * Management of own APRS object (use REST API)
+  * Mithril component updates
+  * Various fixes.. 
+
+ -- Øyvind Hanssen <ohanssen@acm.org>  Wed, 06 Nov 2019 22:48:04 +0100
+
+polaric-webapp2 (1.0) stable; urgency=medium
 
   * Initial release. 
 
