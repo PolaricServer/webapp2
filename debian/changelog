@@ -1,3 +1,9 @@
+polaric-webapp2 (1.1.2) stable; urgency=medium
+
+  * Bugfix (serious).  
+
+ -- Øyvind Hanssen <ohanssen@acm.org>  Fri, 08 Nov 2019 21:21:23 +0100
+
 polaric-webapp2 (1.1.1) stable; urgency=medium
 
   * Revert OL to earlier version due to bug.  
