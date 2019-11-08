@@ -36,8 +36,6 @@ pol.tracking.TrackerAlias = class extends pol.core.Widget {
         t.icons = [];
         t.iconpath = CONFIG.get("iconpath");
         t.dfl = CONFIG.get("default_icon");
-        t.ident = m.stream();
-        t.alias = m.stream();
         
         this.aliasWidget = {
             view: function() {
@@ -112,7 +110,7 @@ pol.tracking.TrackerAlias = class extends pol.core.Widget {
     }
         
     setIdent(id) {
-        t.edit.id(id);
+        this.edit.id(id);
         this.iconGrey();
     }
     

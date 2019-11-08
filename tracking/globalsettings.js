@@ -91,9 +91,8 @@ pol.tracking.GlobalSettings = class extends pol.tracking.TrackerAlias {
         this.server.GET("tracker/alias/"+id, "", x => {
             const info = JSON.parse(x);
             if (info.alias!=null)
-                this.edit.alias = info.alias;
+                this.edit.alias(info.alias);
             this.setIcon(this.edit, info.icon);
-            this.edit.id = id;
             m.redraw();
         });
     }
