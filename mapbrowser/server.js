@@ -16,7 +16,23 @@
  You should have received a copy of the GNU Affero General Public License
  along with this program. If not, see <http://www.gnu.org/licenses/>.
 */
- 
+    
+
+
+pol.core.ajax = (type, service, data, success, error) => {
+    return $.ajax( service, {
+        type: type,
+        data: data, 
+        success: success,
+        error: error,  
+        contentType: false,
+        processData: (type!="POST"),
+        crossDomain: true,
+        xhrFields: { withCredentials: false }
+    });
+}
+    
+    
 
 /**
  * Abstract class for server backends. Supports REST style webservices. 
@@ -94,7 +110,7 @@ pol.core.Server = class {
      * @param success: Function( Anything data, String textStatus, jqXHR jqXHR )
      */
     ajax(type, service, data, success, error) {
-        return $.ajax(this.url+service, {
+        return $.ajax(this.url+service,  {
             type: type,
             data: data, 
             success: success,
