@@ -116,7 +116,7 @@ pol.features.Edit = class extends pol.core.Widget {
         
         function propsHandler() {
             let props = new pol.features.Properties(t);
-            props.activatePopup('props_popup', [60, 60], true);
+            props.activatePopup('features.Properties', [60, 60], true);
         }
 
         
@@ -246,7 +246,7 @@ pol.features.Edit = class extends pol.core.Widget {
 
 
 
+pol.widget.setFactory( "features.Edit", {
+        create: () => new pol.features.Edit()
+    }); 
 
-pol.widget.setRestoreFunc("features.Edit", (id, pos) => {
-    CONFIG.featureEdit.activatePopup(id, pos, true);
-}); 

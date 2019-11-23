@@ -294,6 +294,8 @@ function formatTime(d) {
 
 
 
-pol.widget.setRestoreFunc("tracking.db.HeardVia", function(id, pos) {
-    CONFIG.heard.activatePopup(id, pos, true); 
-}); 
+pol.widget.setFactory( "tracking.db.HeardVia", {
+        create: () => new pol.tracking.db.HeardVia()
+    }); 
+
+

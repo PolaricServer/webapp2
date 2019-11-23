@@ -122,7 +122,7 @@ pol.tracking.SarMode = class extends pol.core.Widget {
 }
 
 
-pol.widget.setRestoreFunc("tracking.SarMode", function(id, pos) {
-    const x = new pol.tracking.SarMode();
-    x.activatePopup(id, pos, true); 
-}); 
+pol.widget.setFactory( "tracking.SarMode", {
+        create: () => new pol.tracking.SarMode()
+    }); 
+

@@ -22,8 +22,8 @@
  * aprs.no uses "ws" and "srv" through a proxy. Default is to use a separate port: 8081. 
  * Uncomment the following two lines to use a backend with a proxy. 
  */
-// WSPREFIX("ws");
-// AJAXPREFIX("srv");
+//WSPREFIX("ws");
+//AJAXPREFIX("srv");
 
 
 /* Location of aprsd icons */
@@ -244,6 +244,52 @@ LAYERS ({
     }) 
 ]);
 
+
+/*********************************************************************************
+ * Predefined styles, mainly for vector layers.
+ *
+ * STYLES takes an array of style-definitions each with an identifier and
+ * values for the options in the OpenLayers style class.
+ * See http://openlayers.org/en/latest/apidoc/ol.style.Style.html
+ *
+ * Note that we simplify a bit: we just need to give the values for the options
+ * given to ol.style Stroke, ol.style.Fill and ol.style.Text. We also offer
+ * convenience functions CIRCLE and ICON to define image properties.
+ * 
+ * Maybe styles could be defined in a separate config file?
+ * Maybe styles could be grouped. 
+ *********************************************************************************/
+
+var defaultStyle = 'Red';
+STYLES ([
+   { id: "Red",
+        stroke: {color: 'rgba(200,0,0,1)', width: 1.5},
+	    fill  : 'rgba(255,240,220,0.3)',
+	    text  : {scale: 1.2, fill: '#300', stroke: {color: '#fff', width: 3} },
+	    image : CIRCLE(5, {fill: '#f448'})
+   },
+   { id: "Green + red",
+        stroke: {color: 'rgba(0,100,0,1)', width: 1.5},
+	    fill  : 'rgba(220,255,220,0.3)',
+	    text  : {scale: 1.2, fill: '#300', stroke: {color: '#fff', width: 3} },
+	    image : CIRCLE(5, {fill: '#f448'})
+   },
+   { id: "Blue dashed",
+        stroke: {color: 'rgba(0,80,200,1)', width: 2.3, lineDash: [3,3]},
+	    fill  : 'rgba(200,220,253,0.3)',
+	    text  : {scale: 1.2, fill: '#003', stroke: {color: '#fff', width: 3} },
+	    image : CIRCLE(5, {fill: '#55f8'})
+   },
+   { id: "Blue - No fill",
+        stroke: {color: 'rgba(0,0,200,1)', width: 1.5},
+	    text  : {scale: 1.2, fill: '#003', stroke: {color: '#fff', width: 3} },
+	    image : CIRCLE(5, {fill: '#55f8'})
+   },
+   { id: "Fireicon",
+        text  : {baseline: 'Bottom', scale: 1.2, fill: '#003', stroke: {color: '#fff', width: 3} },
+	    image : ICON("aprsd/icons/car-fire.png", {})
+   },
+]);
 
 
 

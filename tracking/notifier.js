@@ -70,10 +70,7 @@ pol.tracking.Notifier = class {
         CONFIG.mb.toolbar.addDiv(3 ,"toolbar_not", "Nofifications");
         $('#toolbar_not').append('<img src="images/bell.png"></img>');
         $('#toolbar_not').click(
-            () => { 
-                var x = new pol.tracking.NotifyList();
-                x.activatePopup("notifications", [180, 70]) }
-        );
+            () => WIDGET("tracking.NotifyList", [180,70], true));
         t.updateNumber(); 
          
        /* 
@@ -174,9 +171,9 @@ pol.tracking.NotifyList = class extends pol.core.Widget {
                 ]);  
             }
         };
-    
-        setTimeout(
-            pol.tracking.NotifyList.updateScroller, 1000);
+
+    //    setTimeout(
+    //        pol.tracking.NotifyList.updateScroller, 1000);
     
         /* 
          * Select the icon from the type of notification. 
@@ -231,8 +228,10 @@ pol.tracking.NotifyList.updateScroller = function()
    }, 60);
 }
 
-    
-pol.widget.setRestoreFunc("tracking.NotifyList", (id, pos) => {
-    const x = new pol.tracking.NotifyList(); 
-    x.activatePopup(id, pos, true); 
-}); 
+
+
+
+pol.widget.setFactory( "tracking.NotifyList", {
+        create: () => new pol.tracking.NotifyList()
+    }); 
+

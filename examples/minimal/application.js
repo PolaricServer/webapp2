@@ -26,10 +26,10 @@
      *********************************************************/
     
     browser.ctxMenu.addCallback("TOOLBAR", function(m, ctxt) {
-        m.add('Find position', function () 
-            { var x = new pol.core.refSearch(); x.activatePopup("refSearch", [50,70]) });
-        m.add('Area List', function () 
-            { browser.toolbar.arealist.activatePopup("AreaList", [50,70]) });
+        m.add('Find position', ()=> 
+            WIDGET("core.refSearch", [50,70], true)); 
+        m.add('Area List', ()=> 
+            WIDGET("core.AreaList", [50,70], true));
     });
     
 

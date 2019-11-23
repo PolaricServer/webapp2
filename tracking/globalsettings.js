@@ -101,10 +101,7 @@ pol.tracking.GlobalSettings = class extends pol.tracking.TrackerAlias {
 } /* class */
 
 
- 
 
-pol.widget.setRestoreFunc("tracking.GlobalSettings", function(id, pos) {
-    if (!CONFIG.server.loggedIn)
-        return;
-    CONFIG.gSettings.activatePopup(id, pos, true); 
-}); 
+pol.widget.setFactory( "tracking.GlobalSettings", {
+        create: () => new pol.tracking.GlobalSettings()
+    });  

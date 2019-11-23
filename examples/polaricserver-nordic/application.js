@@ -36,20 +36,16 @@
         const mu = new pol.tracking.Tracking(srv);
         const flt = new pol.tracking.Filters(mu);
         CONFIG.tracks = mu;
-        CONFIG.trackers = (srv.loggedIn ? new pol.tracking.db.MyTrackers() : null); 
-            
+        
         if (srv.auth.userid != null) {
             const not = new pol.tracking.Notifier();
             CONFIG.notifier = not; 
         }
+        
     }, 1000); 
    
     CONFIG.labelStyle = new pol.tracking.LabelStyle();
-    CONFIG.layerlist = new pol.layers.List(); 
-    CONFIG.history = new pol.tracking.db.History();
-    CONFIG.heard = new pol.tracking.db.HeardVia();
-    CONFIG.gSettings = new pol.tracking.GlobalSettings(); 
-    CONFIG.ownObj = new pol.tracking.OwnObjects(); 
+
     
     
     /* Welcome text */
@@ -69,11 +65,10 @@
     
     /* FIXME: May put init into Edit class constructor */
     pol.features.init(CONFIG.browser.map);
-    CONFIG.featureEdit = new pol.features.Edit();
     
-    CONFIG.mb.toolbar.addIcon(2, "images/draw.png", "tb_draw", ()=> 
-       { CONFIG.featureEdit.activatePopup("featureEdit", [50, 70]); },
-       null, "Draw tool");
+    CONFIG.mb.toolbar.addIcon(2, "images/draw.png", "tb_draw", 
+        ()=> WIDGET("features.Edit", [50, 70], true), 
+        null, "Draw tool");
     
     
     
@@ -95,13 +90,11 @@
         m.add('Show map reference', () => browser.show_MaprefPix( [m.x, m.y] ) );  
         if (srv.auth.sar) {
             m.add('Add APRS object', () => 
-                { CONFIG.ownObj.activatePopup("ownObjects", [50,70]);   
-                    setTimeout(()=> CONFIG.ownObj.setPosPix([m.x, m.y]), 200);
-                });
+                WIDGET("tracking.OwnObjects", [50,70], true, x=> x.setPosPix([m.x, m.y]))); 
+            
             if (srv.hasDb)
                 m.add('Add sign', () => editSign(m.x, m.y) );
         }
-        
         m.add(null);
         m.add('Center point', () =>   
             browser.view.setCenter( browser.map.getCoordinateFromPixel([m.x, m.y])) );
@@ -109,6 +102,12 @@
             browser.view.setZoom(browser.view.getZoom()+1) );
         m.add('Zoom out', () =>     
             browser.view.setZoom(browser.view.getZoom()-1) );
+        
+        if (srv.auth.admin) {
+            m.add('Set server (own) position', ()=> 
+                WIDGET("tracking.OwnPos", [50,70], true, x=> x.setPosPix([m.x, m.y])));
+        }
+        
     });
 
    
@@ -116,23 +115,18 @@
      * Toolbar menu
      *********************************************************/
    
-    browser.ctxMenu.addCallback("TOOLBAR", (m, ctxt)=> {    
-        m.add('Search items', () => 
-            { const x = new pol.tracking.Search(); 
-                x.activatePopup("trackerSearch", [50,70]) }); 
-        m.add('Find position', () => 
-            { const x = new pol.core.refSearch(); 
-                x.activatePopup("refSearch", [50,70]) });
+    browser.ctxMenu.addCallback("TOOLBAR", (m, ctxt)=> {   
+                
+        m.add('Search items',  () => WIDGET("tracking.Search", [50,70], true));
+        m.add('Find position', () => WIDGET("core.refSearch",  [50,70], true));
+
         if (srv.auth.sar) {                 
             m.add('Add APRS object', () => 
-                CONFIG.ownObj.activatePopup("ownObjects", [50,70]));
+                WIDGET("tracking.OwnObjects", [50,70], true)); 
         }
         
-        
-        m.add('Area List', () => 
-            browser.toolbar.arealist.activatePopup("AreaList", [50,70]) );
-        m.add('Layer List', () => 
-            CONFIG.layerlist.activatePopup("LayerList", [50,70]) );
+        m.add('Area List',  () => WIDGET("core.AreaList", [50,70], true)); 
+        m.add('Layer List', () => WIDGET("layers.List", [50,70], true));
 
         m.add(null);
         if (browser.getPermalink())
@@ -145,10 +139,7 @@
         m.add(null);
      
         if (srv.auth.sar) {
-            m.add("SAR mode..", () => {
-                const x = new pol.tracking.SarMode();
-                x.activatePopup("sarMode", [50, 70]); 
-            });
+            m.add("SAR mode..", () => WIDGET("tracking.SarMode", [50,70], true)); 
             m.add(null);
             m.add("Set/change password..", setPasswd);
         }
@@ -166,24 +157,16 @@
         
         if (srv.loggedIn) {
             if (srv.hasDb) 
-                m.add("My trackers", () =>
-                    { CONFIG.trackers.activatePopup("mytrackers", [50, 70]) }); 
-            m.add("Notification", () =>
-                { const x = new pol.tracking.NotifyList();
-                    x.activatePopup("notifications", [50, 70]) });
+                m.add("My trackers", () => WIDGET("tracking.db.myTrackers", [50, 70], true));
+            m.add("Notification", () => WIDGET("tracking.NotifyList", [50, 70], true));
         }
         
         if (srv.hasDb) {
-            m.add("History...", () =>
-                { CONFIG.history.activatePopup("history", [50, 70]) });
-            m.add("Heard points via..", () => {
-                CONFIG.heard.activatePopup("heard", [50, 70]); 
-            });
+            m.add("History...", () => WIDGET("tracking.db.History", [50,70], true)); 
+            m.add("Heard points via..", () => WIDGET("tracking.db.HeardVia", [50,70], true));
         }
         
-        m.add("Bulletin board", () =>
-            { const x = new pol.tracking.BullBoard();
-                x.activatePopup("bullboard", [50,70]) });
+        m.add("Bulletin board", () => WIDGET("tracking.BullBoard", [50,70], true));
     });
    
    
@@ -194,13 +177,14 @@
    
     browser.ctxMenu.addCallback("POINT", (m, ctxt)=> {
         m.add('Show info', () => srv.infoPopup(ctxt.point, [m.x, m.y]) );
-        m.add('Last movements', () => historyPopup(ctxt.ident, [m.x, m.y]) );
+        m.add('Last movements', () => 
+            WIDGET( "tracking.TrailInfo", [50, 70], false,  x=> x.getTrail(ctxt.ident) ) );
+        
         
         if (srv.auth.sar) { 
-            m.add('Global settings', () => {
-                CONFIG.gSettings.activatePopup("globalsettings", [m.x, m.y]);
-                setTimeout(()=> {CONFIG.gSettings.setIdent(ctxt.ident);}, 1000);
-            });
+            m.add('Global settings', () => 
+                WIDGET("tracking.GlobalSettings", [m.x,m.y], true, x=>x.setIdent(ctxt.ident)));
+
             m.add('Manage tags..', () => setTags(ctxt.ident) );
             m.add('Reset info', () => resetInfo(ctxt.ident) );
             if (ctxt.point.point.own)
@@ -226,22 +210,17 @@
         
         if (srv.auth.sar && srv.hasDb) { 
             m.add('Add to my trackers', () => 
-                {  CONFIG.trackers.activatePopup("mytrackers", [50, 70]); 
-                   setTimeout(()=> CONFIG.trackers.setIdent(ctxt.ident), 500); 
-                }); 
+                WIDGET("tracking.db.myTrackers", [50, 70], true, x=> x.setIdent(ctxt.ident))); 
         }
         if (srv.hasDb) {
-            m.add("Raw APRS packets", () => {
-                rawAprsPackets(ctxt.ident, [m.x, m.y]);
-            } );
-            m.add("History...", () => { 
-                CONFIG.history.activatePopup("history", [50, 70]);       
-                CONFIG.history.setCall(ctxt.ident); 
-            } );
-            m.add("Heard points via..", () => {
-                CONFIG.heard.setCall(ctxt.ident);
-                CONFIG.heard.activatePopup("heard", [50, 70]); 
-            });
+            m.add("Raw APRS packets", () => 
+                rawAprsPackets(ctxt.ident, [m.x, m.y]));
+                
+            m.add("History...", () => 
+                WIDGET("tracking.db.History", [50,70], true, x=>x.setCall(ctxt.ident))); 
+            
+            m.add("Heard points via..", () =>
+                WIDGET("tracking.db.HeardVia", [50,70], true, x=>x.setCall(ctxt.ident)));
         }
     });
    
@@ -252,7 +231,9 @@
      *********************************************************/
     
     browser.ctxMenu.addCallback("SIGN", (m, ctxt)=> {
-        m.add('Show info', () => srv.infoPopup(ctxt.point, [m.x, m.y]) );
+        if (srv.hasDb) {
+            m.add('Show info', () => srv.infoPopup(ctxt.point, [m.x, m.y]) );
+        }
     });
      
     
@@ -263,15 +244,6 @@
      * Helper functions used by menus. 
      */
     
-    function historyPopup(id, pix) {
-        console.assert(id!=null && id != "" && pix != null, "Assertion failed"); 
-        browser.gui.removePopup();
-        browser.gui.remotePopup(
-            srv, "/history", 
-            {ajax: true, simple:true, id: id}, 
-            {id: "historypopup", geoPos: browser.pix2LonLat(pix)});
-    }
-
     function histList_hout() {}
     function histList_hover() {}
 

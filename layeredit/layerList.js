@@ -36,7 +36,7 @@ pol.layers.List = class List extends pol.core.Widget {
         t.addType("dummy", "Select layer type..", new pol.layers.Dummy(this));
         t.addType("wms", "Standard WMS layer", new pol.layers.Wms(this));   
         t.addType("wfs", "Standard WFS layer", new pol.layers.Wfs(this));
-        if (CONFIG.server.hasDb)
+        if (CONFIG.server!=null && CONFIG.server.hasDb)
             t.addType("gpx", "GPX files upload", new pol.layers.Gpx(this));
    
         this.layer = t.typeList["dummy"].obj; 
@@ -214,9 +214,7 @@ pol.layers.List = class List extends pol.core.Widget {
 
 
 
-pol.widget.setRestoreFunc("layers.List", function(id, pos) {
-    if (!CONFIG.layerlist || CONFIG.layerlist == null)
-        CONFIG.layerlist = new pol.layers.List(); 
-    CONFIG.layerlist.activatePopup(id, pos, true); 
-}); 
+pol.widget.setFactory( "layers.List", {
+        create: () => new pol.layers.List()
+    }); 
 

@@ -31,15 +31,15 @@
     
     browser.addContextMenu("MAP");  
     browser.ctxMenu.addCallback("MAP", function(m, ctxt) {
-        m.add('Show map reference', function () 
+        m.add('Show map reference', ()=> 
             { browser.show_MaprefPix( [m.x, m.y] ); });  
      
          m.add(null);
-         m.add('Center point', function()   
+         m.add('Center point', ()=>   
             { browser.view.setCenter( browser.map.getCoordinateFromPixel([m.x, m.y])); } );
-         m.add('Zoom in', function()        
+         m.add('Zoom in', ()=>        
             { browser.view.setZoom(browser.view.getZoom()+1); } );
-         m.add('Zoom out',  function()      
+         m.add('Zoom out', ()=>      
             { browser.view.setZoom(browser.view.getZoom()-1); } );
     });
 
@@ -50,13 +50,12 @@
     
     browser.ctxMenu.addCallback("TOOLBAR", function(m, ctxt) {
 
-        m.add('Find position', function () 
-            { var x = new pol.core.refSearch(); x.activatePopup("refSearch", [50,70]) });
-        m.add('Area List', function () 
-            { browser.toolbar.arealist.activatePopup("AreaList", [50,70]) });
-        m.add('Layer List', function () 
-            { var x = new pol.layers.List(); x.activatePopup("LayerList", [50,70]) });
-        
+        m.add('Find position', ()=> 
+            WIDGET("core.refSearch", [50,70], true));
+        m.add('Area List', ()=> 
+            WIDGET("core.AreaList", [50,70], true));
+        m.add('Layer List', ()=>
+            WIDGET("layers.List", [50,70], true));
     });
     
 

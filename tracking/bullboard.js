@@ -169,9 +169,7 @@ pol.tracking.BullBoard = class extends pol.core.Widget {
 
 
 
+pol.widget.setFactory( "tracking.BullBoard", {
+        create: () => new pol.tracking.BullBoard()
+    }); 
 
-
-pol.widget.setRestoreFunc("tracking.BullBoard", function(id, pos) {
-    var x = new pol.tracking.BullBoard(); 
-    x.activatePopup(id, pos, true); 
-}); 

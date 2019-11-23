@@ -321,7 +321,7 @@ function formatTime(d) {
 
 
 
+pol.widget.setFactory( "tracking.db.History", {
+        create: () => new pol.tracking.db.History()
+    }); 
 
-pol.widget.setRestoreFunc("tracking.db.History", function(id, pos) {
-    CONFIG.history.activatePopup(id, pos, true); 
-}); 

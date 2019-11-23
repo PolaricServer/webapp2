@@ -36,10 +36,9 @@ pol.core.Toolbar = class extends ol.control.Control  {
             element: elem,
             target: options.target
         });
-           
+                   
         this.browser = brs;
         this.lastElem = null; 
-        this.arealist = new pol.core.AreaList();
         this.sections = [];
         this.nextSect = 0;
     } /* constructor */
@@ -71,10 +70,7 @@ pol.core.Toolbar = class extends ol.control.Control  {
  
         /* Layer selection menu */
         pol.core.addHandlerId("tb_layers", true,  
-            (e)=> {
-                const ls = new pol.core.LayerSwitcher();
-                ls.activatePopup("layerswitcher", [e.iconX, e.iconY]);
-            } );
+            (e)=> WIDGET("core.LayerSwitcher", [e.iconX, e.iconY], true));
    
         /* Distance measurement */
         let measure_on = false; 
@@ -101,17 +97,16 @@ pol.core.Toolbar = class extends ol.control.Control  {
         /* Generate menu of predefined areas (defined in mapconfig.js */
         this.browser.ctxMenu.addCallback('AREASELECT', 
             (m)=> {
-                const areas = t.arealist.myAreas; 
-                for (const i in areas) {
-                    const area = areas[i];   
+                let w = getWIDGET("core.AreaList");
+                for (const i in w.myAreas) {
+                    const area = w.myAreas[i];   
                     if (area && area != null)
-                        m.add(area.name, handleSelect(areas, i)); 
+                        m.add(area.name, handleSelect(w.myAreas, i)); 
                 }
       
-                if (areas.length > 0)
+                if (w.myAreas.length > 0)
                     m.add(null);
-                m.add("Edit YOUR areas..", 
-                    ()=>  t.arealist.activatePopup("AreaList", [90,70]) );
+                m.add("Edit YOUR areas..", ()=> WIDGET("core.AreaList", [90,70], true)); 
                 m.add(null);
       
                 for (const i in browser.config.aMaps) {

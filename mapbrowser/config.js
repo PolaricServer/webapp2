@@ -53,6 +53,7 @@ pol.core.Config = class extends ol.Object {
         this.aMaps = new Array(); 
         this.styles = {};
         this.server = null;
+        this.widgets = [];
    
         this.props = {
             projection: "EPSG:900913",
@@ -188,6 +189,9 @@ pol.core.Config = class extends ol.Object {
         console.assert(id != null && value != null, "id="+id+", value="+value);
         this.props[id] = value; 
     }
+    
+
+    
     
 } /* class */
 

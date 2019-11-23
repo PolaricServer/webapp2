@@ -82,13 +82,10 @@ pol.core.refSearch = class refSearch extends pol.core.Widget {
 
 
 
-pol.widget.setRestoreFunc("core.refSearch", (id, pos)=> {
-    const x = new pol.core.refSearch(); 
-    x.activatePopup(id, pos, true); 
-}); 
 
-
-
+pol.widget.setFactory( "core.refSearch", {
+        create: () => new pol.core.refSearch()
+    });
 
 
 

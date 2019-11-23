@@ -24,34 +24,34 @@
 pol.widget =  {};
 
 
-/**
- * Array of subclasses with functions to restore persistent widgets.. 
- */
-pol.widget._restore = {};
 
 /**
  * What widget-instances are actually stored. Maps to class-names (see above).
  */
 pol.widget._stored = {};
 
+/* Active widgets */
+pol.widget._active = {};
+
+pol.widget._factory = {};
+
+
 
 
 
  /**
-  * set restore function.
+  * set factory function.
   * @param {string} id, name of the class. 
-  * @param {function} f, function that restore the widget. Should take a element id and pixPos as arguments. 
+  * @param {function} f, function that instantiate the widget.
   */
-pol.widget.setRestoreFunc = function(id, f) {
-    console.assert(id != null && f != null, "id="+id+", f="+f);
-    pol.widget._restore[id] = f; 
+pol.widget.setFactory = function(id, arg) {
+    pol.widget._factory[id] = arg; 
 }
 
 
 
-
 /**
- * Restore. 
+ * Restore widgets that were saved in local storage as active. 
  */
 pol.widget.restore = function() {
     pol.widget._stored = CONFIG.get("core.widget._stored");
@@ -59,15 +59,52 @@ pol.widget.restore = function() {
         pol.widget._stored = {};
     
     for (const x in pol.widget._stored) {
-        const f = pol.widget._restore[pol.widget._stored[x]];
-        const arg = CONFIG.get("core.widget."+x);
-        if (f != null)
-           f(x, arg);
+        if (pol.widget._stored[x] == null)
+            continue;
+        const fact = pol.widget._factory[x];
+        if (!fact || !fact.create) {
+            console.warn("No factory found for: "+x);
+            return;
+        }
+        const w = fact.create();
+        pol.widget._active[x] = w;
+        const pos = CONFIG.get("core.widget."+x);
+        w.activatePopup(x, pos, true);
+        if (fact.onRestore && fact.onRestore != null)
+            fact.onRestore();
     }
 }
+    
+    
+/**
+ * Get a widget object. Use factory to create it if necessary. 
+ */
+pol.widget.get = function(id) {
+    let x = pol.widget._active[id]; 
+    const fact = pol.widget._factory[id];
+    if (!fact || !fact.create) {
+        console.warn("No factory found for: "+id);
+        return null;
+    }
+    if (!x) 
+        x = pol.widget._active[id]=fact.create();  
+    return x;
+}
 
-
-
+    
+/**
+ * Activate a widget object (in a popup). Use factory to create it if necessary. 
+ */    
+pol.widget.start = function(id, pos, pinned, f) {
+    const x = pol.widget.get(id);
+    if (x==null)
+        return;
+    x.activatePopup(id, pos, pinned);    
+    if (f && f!=null) 
+        setTimeout(()=>f(x), 500);
+}
+    
+    
 
 
 /**
@@ -116,13 +153,11 @@ pol.core.Widget = class {
             
         const t = this; 
         this.pos = pixPos;        
-        if (!pinned)
-            pinned = true;
         t.pinned = pinned;
         
         if (t.onActivate)
             t.onActivate(); 
-            
+        
         return this.popup = browser.gui.showPopup( {
             vnode: this.widget,
             pixPos: pixPos,
@@ -132,7 +167,7 @@ pol.core.Widget = class {
             pinned: t.pinned,
             id: id,
             cclass: "widget",
-            onclose: ()=> t.onclose()
+            onclose: ()=> {unSave(); t.onclose();}
         });
         
      
@@ -157,7 +192,7 @@ pol.core.Widget = class {
             CONFIG.store("core.widget."+id, t.pos, true);
         
             if (!pol.widget._stored[id] || pol.widget._stored[id] == null) {
-                pol.widget._stored[id] = t.classname;
+                pol.widget._stored[id] = true;
                 CONFIG.store("core.widget._stored", pol.widget._stored, true); 
             }
         }
@@ -172,4 +207,22 @@ pol.core.Widget = class {
             }
         }
     }
+    
+    
+    
+    /* Set scrollable table */
+    setScrollTable(topdiv, searchresult) {
+        let ht = $('#map').height() - 
+            ( $(topdiv).height() - $(searchresult).height()) - this.pos[1]- 8 ;
+                        
+        setTimeout( () => {
+            if ($(searchresult).height() < ht) 
+                ht = $(searchresult).height();
+                $(searchresult+' table').table({height: Math.round(ht)}); 
+        }, 200);
+    }
+    
+    
+    
+    
 } /* class */

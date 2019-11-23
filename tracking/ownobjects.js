@@ -165,7 +165,7 @@ pol.tracking.OwnObjects = class extends pol.core.Widget {
     
     /* Set position field from pixel location */
     setPosPix(pix) {
-        const llpos = CONFIG.mb.pix2LonLat(pix)
+        const llpos = CONFIG.mb.pix2LonLat(pix);
         this.obj.pos = llpos;
         m.redraw();
     }
@@ -194,12 +194,7 @@ pol.tracking.OwnObjects = class extends pol.core.Widget {
 } /* class */
 
 
- 
+pol.widget.setFactory( "tracking.OwnObjects", {
+        create: () => new pol.tracking.OwnObjects()
+    });
 
-pol.widget.setRestoreFunc("tracking.OwnObjects", function(id, pos) {
-    if (!CONFIG.server.loggedIn)
-        return;   
-    if (!CONFIG.ownObj || CONFIG.ownObj == null)
-        CONFIG.ownObj = new pol.trackingOwnObjects(); 
-    CONFIG.ownObj.activatePopup(id, pos, true); 
-}); 

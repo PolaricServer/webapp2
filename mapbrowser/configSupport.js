@@ -506,4 +506,5 @@ function CIRCLE(radius, opts) {
 }
 
 
-
+function WIDGET(id,pos,pin,f) { pol.widget.start(id,pos,pin,f); }
+function getWIDGET(id) { return pol.widget.get(id); }

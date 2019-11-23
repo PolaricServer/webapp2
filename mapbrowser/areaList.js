@@ -162,8 +162,6 @@ pol.core.AreaList = class extends pol.core.Widget {
 
 
 
-
-pol.widget.setRestoreFunc("core.AreaList", (id, pos) => {
-    var x = new pol.core.AreaList(); 
-    x.activatePopup(id, pos, true); 
-}); 
+pol.widget.setFactory( "core.AreaList", {
+        create: () => new pol.core.AreaList()
+    }); 

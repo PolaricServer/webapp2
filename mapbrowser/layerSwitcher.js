@@ -149,8 +149,8 @@ pol.core.LayerSwitcher = class extends pol.core.Widget {
 } /* class */
  
  
- pol.widget.setRestoreFunc("pol.core.LayerSwitcher", function(id, pos) {
-    const x = new pol.core.LayerSwitcher(); 
-    x.activatePopup(id, pos, true); 
- }); 
- 
+
+pol.widget.setFactory( "core.LayerSwitcher", {
+        create: () => new pol.core.LayerSwitcher()
+    }); 
+

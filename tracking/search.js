@@ -128,9 +128,7 @@ pol.tracking.Search = class extends pol.core.Widget {
 
 
 
+pol.widget.setFactory( "tracking.Search", {
+        create: () => new pol.tracking.Search()
+    });
  
-
-pol.widget.setRestoreFunc("tracking.Search", function(id, pos) {
-    var x = new pol.tracking.Search(); 
-    x.activatePopup(id, pos, true); 
-}); 

@@ -182,10 +182,8 @@ pol.tracking.db.MyTrackers = class extends pol.tracking.TrackerAlias {
 } /* class */
 
 
- 
 
-pol.widget.setRestoreFunc("tracking.db.MyTrackers", function(id, pos) {
-    if (!CONFIG.server.loggedIn)
-        return;
-    CONFIG.trackers.activatePopup(id, pos, true); 
-}); 
+
+pol.widget.setFactory( "tracking.db.MyTrackers", {
+        create: () => new pol.tracking.db.MyTrackers()
+    }); 
