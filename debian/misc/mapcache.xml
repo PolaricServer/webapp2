@@ -7,22 +7,11 @@
     Set up caches here. Files, sqlite, mbtiles, etc.. 
   ******************************************************* 
   -->
-   <cache name="topo2_sqlite" type="sqlite3">
-     <dbfile>/var/lib/polaric/mapcache/maps_topo2.db</dbfile>
-   </cache>
-  
+
    <cache name="grunnkart_sqlite" type="sqlite3">
      <dbfile>/var/lib/polaric/mapcache/maps_grunnkart.db</dbfile>
    </cache>
 
-   <cache name="overlays_sqlite" type="sqlite3">
-     <dbfile>/var/lib/polaric/mapcache/maps_overlays.db</dbfile>
-   </cache>
-  
-   <cache name="danmark_sqlite" type="sqlite3">
-     <dbfile>/var/lib/polaric/mapcache/maps_danmark.db</dbfile>
-   </cache>
- 
    <!-- 
    **********************************************************************
      Set up sources here.
@@ -30,20 +19,6 @@
      other source types like mapserver mapfiles. 
    ********************************************************************** 
    -->
-   <source name="kv_topo2cache" type="wms">
-     <getmap>
-       <params>
-         <FORMAT>image/png</FORMAT>
-         <LAYERS>topo4</LAYERS>
-       </params>
-     </getmap>
-     
-     <http>
-       <!-- Opencache.statkart.no -->
-       <url>http://opencache.statkart.no/gatekeeper/gk/gk.open?</url>
-     </http>
-   </source>
-   
    
    <source name="kv_grunnkart" type="wms">
      <getmap>
@@ -58,86 +33,6 @@
      </http>
    </source>
    
-   
-   <source name="bw_stedsnavn" type="wms">
-     <getmap>
-       <params>
-         <FORMAT>image/png</FORMAT>
-         <LAYERS>barentswatch_stedsnavn</LAYERS>
-         <TRANSPARENT>true</TRANSPARENT>
-       </params>
-     </getmap>
-     <http>
-       <url>http://opencache.statkart.no/gatekeeper/gk/gk.open?</url>
-     </http>
-   </source>
-   
-   
-   <source name="kv_vegnett" type="wms">
-     <getmap>
-       <params>
-          <FORMAT>image/png</FORMAT>
-          <LAYERS>all</LAYERS>
-          <TRANSPARENT>true</TRANSPARENT>
-       </params>
-     </getmap>
-     <http>
-        <url>http://openwms.statkart.no/skwms1/wms.vegnett?</url>
-     </http>
-   </source>
-
-
-   <source name="kv_dybdedata" type="wms">
-     <getmap>
-       <params>
-          <FORMAT>image/png</FORMAT>
-          <LAYERS>Dybdedata_MS_WMS</LAYERS>
-          <TRANSPARENT>true</TRANSPARENT>
-       </params>
-     </getmap>
-     <http>
-        <url>http://openwms.statkart.no/skwms1/wms.dybdedata?</url>
-     </http>
-   </source>
-   
-   <source name="kv_navigasjon" type="wms">
-     <getmap>
-       <params>
-         <FORMAT>image/png</FORMAT>
-         <LAYERS>1,2,3,4,5,6,7,8,9</LAYERS>
-         <TRANSPARENT>true</TRANSPARENT>
-       </params>
-     </getmap>
-     <http>
-       <url>http://153.44.6.20/arcgis/services/FDV_WMS/MapServer/WmsServer?</url>
-     </http>
-   </source>
-  
-   <source name="ks_danmark" type="wms">
-     <getmap>
-       <params>
-         <FORMAT>image/png</FORMAT>
-         <LAYERS>dtk_skaermkort</LAYERS>
-       </params>
-     </getmap>
-
-     <http>
-        <url>https://kortforsyningen.kms.dk/?servicename=topo_skaermkort&service=WMS&REQUEST=GetMap&login=ohanssen&password=oh67PK&</url>
-     </http>
-   </source>
-
-   <source name="ks_danmark_topo" type="wms">
-     <getmap>
-       <params>
-         <FORMAT>image/png</FORMAT>
-         <LAYERS>topo25_klassisk</LAYERS>
-       </params>
-     </getmap>
-
-     <http>
-        <url>https://kortforsyningen.kms.dk/?servicename=topo25&service=WMS&REQUEST=GetMap&login=ohanssen&password=oh67PK&</url>
-     </http>
-   </source>
  
  
    <!-- 
@@ -194,21 +89,7 @@
       <auto_expire>5184000</auto_expire>
    </tileset>
 
-   <!-- For compatibility with PolaricDroid -->
-   <tileset name="kv_topo2eu">
-      <source>kv_topo2cache</source>
-      <cache>topo2_sqlite</cache>
-      <grid>utm33</grid>
-      <format>mixed</format>
 
-      <metatile>1 1</metatile>
-      <metabuffer>0</metabuffer>
-      <expires>604800</expires>
-      <auto_expire>5184000</auto_expire>
-   </tileset>
- 
-
-   <!-- For compatibility with PolaricDroid --> 
    <tileset name="kv_grunnkart">
      <source>kv_grunnkart</source>
      <cache>grunnkart_sqlite</cache>
@@ -221,81 +102,6 @@
      <auto_expire>5184000</auto_expire>
    </tileset>
  
-   <tileset name="bw_stedsnavn">
-     <source>bw_stedsnavn</source>
-     <cache>overlays_sqlite</cache>
-     <grid>utm33</grid>
-     <format>PNG</format>
-     
-     <metatile>1 1</metatile>
-     <metabuffer>0</metabuffer>
-     <expires>604800</expires>
-     <auto_expire>5184000</auto_expire>
-   </tileset>
-   
-   
-   <tileset name="kv_dybdedata">
-     <source>kv_dybdedata</source>
-     <cache>overlays_sqlite</cache>
-     <grid>utm33</grid>
-     <format>PNG</format>
-   
-     <metatile>6 6</metatile>
-     <metabuffer>0</metabuffer>
-     <expires>604800</expires>
-     <auto_expire>5184000</auto_expire>
-   </tileset>
-
-   
-   <tileset name="kv_navigasjon">
-     <source>kv_navigasjon</source>
-     <cache>overlays_sqlite</cache>
-     <grid>utm33</grid>
-     <format>PNG</format>
-     
-     <metatile>6 6</metatile>
-     <metabuffer>0</metabuffer>
-     <expires>604800</expires>
-     <auto_expire>5184000</auto_expire>
-   </tileset>
-   
-   
-   <tileset name="kv_vegnett">
-     <source>kv_vegnett</source>
-     <cache>overlays_sqlite</cache>
-     <grid>utm33</grid>
-     <format>PNG</format>
-    
-     <metatile>6 6</metatile>
-     <metabuffer>0</metabuffer>
-     <expires>604800</expires>
-     <auto_expire>5184000</auto_expire>
-   </tileset>
- 
-    <tileset name="danmark">
-     <source>ks_danmark</source>
-     <cache>danmark_sqlite</cache>
-     <grid>utm33</grid>
-
-     <format>mixed</format>
-     <metatile>5 5</metatile>
-     <metabuffer>10</metabuffer>
-     <expires>604800</expires>
-     <auto_expire>31536000</auto_expire>
-   </tileset>
-
-   <tileset name="danmark_topo">
-     <source>ks_danmark_topo</source>
-     <cache>danmark_sqlite</cache>
-     <grid>utm33</grid>
-
-     <format>mixed</format>
-     <metatile>5 5</metatile>
-     <metabuffer>10</metabuffer>
-     <expires>604800</expires>
-     <auto_expire>10368000</auto_expire>
-   </tileset>
-
  
  
    <default_format>JPEG</default_format>
