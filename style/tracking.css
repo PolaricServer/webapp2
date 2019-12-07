@@ -39,6 +39,9 @@ div.tracked {
    animation:blinkingLbl 1.7s infinite;
 }
 
+
+
+
 @keyframes blinkingLbl {
  0%   { background: #ccffee}
  48%  { background: #ccffee }
@@ -140,3 +143,5 @@ div#aprsObject div.itemList>span {white-space:nowrap}
 div#aprsObject div.itemList {padding-left: 1em; max-width: 30em}
 div#aprsObject div.itemList {border-bottom: 2px solid #999; padding-bottom: 0.4em; margin-bottom: 0.4em}
 div#aprsObject div.itemList img {vertical-align: middle} 
+
+div#trail>span {display: block; color: #060; margin-left: 0.4em; margin-top: -0.7em; margin-bottom: -0.9em;}
