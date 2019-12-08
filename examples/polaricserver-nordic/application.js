@@ -178,7 +178,7 @@
     browser.ctxMenu.addCallback("POINT", (m, ctxt)=> {
         m.add('Show info', () => srv.infoPopup(ctxt.point, [m.x, m.y]) );
         m.add('Last movements', () => 
-            WIDGET( "tracking.TrailInfo", [50, 70], false,  x=> x.getTrail(ctxt.ident) ) );
+            WIDGET( "tracking.TrailInfo", [50, 70], true,  x=> x.getTrail(ctxt.ident) ) );
         
         
         if (srv.auth.sar) { 
@@ -257,10 +257,16 @@
     function setTags(ident)
         { srv.popup('editTags', 'addtag?objid='+ident, 560, 300); }
 
+        
+    // FIXME: maybe an "are you sure" dialog?     
     function resetInfo(ident) {
-         srv.popup('Station', 'resetinfo'+ '?' + (ident==null ? "" : '&objid='+ident), 360, 180);
+        srv.PUT("/tracker/"+ident+"/reset", null,
+                () => console.log("Reset info for: "+ident),
+                x  => console.log("Reset info failed: "+x)
+            );
     }
-    
+        
+        
     function editSign(x, y) {
         var coord = browser.pix2LonLat([x, y]);
         srv.popup('editSign', 'addSign' +
