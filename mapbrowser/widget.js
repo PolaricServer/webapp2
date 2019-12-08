@@ -64,6 +64,8 @@ pol.widget.restore = function() {
         const fact = pol.widget._factory[x];
         if (!fact || !fact.create) {
             console.warn("No factory found for: "+x);
+            /* Remove it from the list */
+            pol.widget._factory.splice(x,1);
             return;
         }
         const w = fact.create();
@@ -101,7 +103,7 @@ pol.widget.start = function(id, pos, pinned, f) {
         return;
     x.activatePopup(id, pos, pinned);    
     if (f && f!=null) 
-        setTimeout(()=>f(x), 500);
+        setTimeout(()=>f(x), 800);
 }
     
     

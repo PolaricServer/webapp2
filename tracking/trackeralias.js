@@ -112,6 +112,7 @@ pol.tracking.TrackerAlias = class extends pol.core.Widget {
     setIdent(id) {
         this.edit.id(id);
         this.iconGrey();
+        m.redraw();
     }
     
     setIcon(tt, icon) {
