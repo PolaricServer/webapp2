@@ -66,7 +66,7 @@ pol.tracking.GlobalSettings = class extends pol.tracking.TrackerAlias {
             };
             if (data.alias=="")
                 data.alias=null;
-            t.server.PUT("tracker/"+id+"/alias", JSON.stringify(data), 
+            t.server.PUT("item/"+id+"/alias", JSON.stringify(data), 
                 x => {
                     console.log("Updated global settings: "+id);
                     $("#confirm").text("Updated");
@@ -88,7 +88,7 @@ pol.tracking.GlobalSettings = class extends pol.tracking.TrackerAlias {
     
     setIdent(id) {
         super.setIdent(id); 
-        this.server.GET("tracker/"+id+"/alias"+id, "", x => {
+        this.server.GET("item/"+id+"/alias"+id, "", x => {
             const info = JSON.parse(x);
             if (info.alias!=null)
                 this.edit.alias(info.alias);

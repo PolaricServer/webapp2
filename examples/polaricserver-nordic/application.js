@@ -260,7 +260,7 @@
         
     // FIXME: maybe an "are you sure" dialog?     
     function resetInfo(ident) {
-        srv.PUT("/tracker/"+ident+"/reset", null,
+        srv.PUT("/item/"+ident+"/reset", null,
                 () => console.log("Reset info for: "+ident),
                 x  => console.log("Reset info failed: "+x)
             );

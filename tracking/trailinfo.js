@@ -105,7 +105,7 @@ pol.tracking.TrailInfo = class extends pol.core.Widget {
         m.redraw();
         if (!ident || ident==null)
             return;
-        CONFIG.server.GET("tracker/"+ident+"/trail", null,
+        CONFIG.server.GET("item/"+ident+"/trail", null,
             x=> { 
                 this.tlist = JSON.parse(x); 
                 /* 
