@@ -25,6 +25,9 @@
    }
 
    div.ITEM_last {border-bottom: none !important}
+   #infopopup {margin-right: 20px !important; margin-left: -10px !important }
+   .mousepos {visibility: hidden}
+   .ol-scale-line { bottom: 0.4em; }
 }
 
 
@@ -36,6 +39,8 @@
 {
    #toolbar_login {visibility: hidden; width: 0}
    #tb_measure {visibility: hidden; width: 0}
+   #infopopup {min-width: 90% !important}
+
 }
 
 
@@ -45,5 +50,5 @@
   screen and (max-device-height: 500px),
   screen and (max-device-height: 25em) 
 {
-
+    #infopopup {min-width: 23em !important}
 }
