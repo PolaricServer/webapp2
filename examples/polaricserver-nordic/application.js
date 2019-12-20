@@ -157,7 +157,7 @@
         
         if (srv.loggedIn) {
             if (srv.hasDb) 
-                m.add("My trackers", () => WIDGET("tracking.db.myTrackers", [50, 70], true));
+                m.add("My trackers", () => WIDGET("tracking.db.MyTrackers", [50, 70], true));
             m.add("Notification", () => WIDGET("tracking.NotifyList", [50, 70], true));
         }
         
@@ -210,7 +210,7 @@
         
         if (srv.auth.sar && srv.hasDb) { 
             m.add('Add to my trackers', () => 
-                WIDGET("tracking.db.myTrackers", [50, 70], true, x=> x.setIdent(ctxt.ident))); 
+                WIDGET("tracking.db.MyTrackers", [50, 70], true, x=> x.setIdent(ctxt.ident))); 
         }
         if (srv.hasDb) {
             m.add("Raw APRS packets", () => 

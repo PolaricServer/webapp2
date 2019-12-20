@@ -1,3 +1,10 @@
+polaric-webapp2 (1.2) stable; urgency=medium
+
+  * Some more use of REST API
+  * Some fixes.. 
+
+ -- Øyvind Hanssen <ohanssen@acm.org>  Fri, 20 Dec 2019 22:11:16 +0100
+
 polaric-webapp2 (1.1.2) stable; urgency=medium
 
   * Bugfix (serious).  
