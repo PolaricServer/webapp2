@@ -77,18 +77,6 @@
      A tileset defines a source, a cache, a grid and a format, 
    ******************************************************************** 
    -->
-   <tileset name="kv_topo2">
-      <source>kv_topo2cache</source>
-      <cache>topo2_sqlite</cache>
-      <grid>utm33</grid>
-      <format>mixed</format>
-      
-      <metatile>1 1</metatile>
-      <metabuffer>0</metabuffer>
-      <expires>604800</expires>
-      <auto_expire>5184000</auto_expire>
-   </tileset>
-
 
    <tileset name="kv_grunnkart">
      <source>kv_grunnkart</source>
