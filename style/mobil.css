@@ -6,7 +6,6 @@
  * Screen width/height < 500px OR device-width < 25em
  *****************************************************************************/
 
-
 @media 
   screen and (max-device-width: 500px),
   screen and (max-device-width: 25em), 
@@ -25,8 +24,9 @@
    }
 
    div.ITEM_last {border-bottom: none !important}
-   #infopopup {margin-right: 20px !important; margin-left: -10px !important }
-   .mousepos {visibility: hidden}
+   #infopopup {max-width: 92%; margin-right: 5px !important; margin-left: -10px !important }
+
+   .mousepos, .ui-tooltip {visibility: hidden}
    .ol-scale-line { bottom: 0.4em; }
 }
 
@@ -40,7 +40,6 @@
    #toolbar_login {visibility: hidden; width: 0}
    #tb_measure {visibility: hidden; width: 0}
    #infopopup {min-width: 90% !important}
-
 }
 
 
@@ -52,3 +51,52 @@
 {
     #infopopup {min-width: 23em !important}
 }
+
+
+
+
+
+/*****************************************************************************
+ * TABLETS
+ *****************************************************************************/
+
+@media 
+    only screen and (min-width: 768px) and (-webkit-min-device-pixel-ratio: 1.5),
+    only screen and (min-height: 768px) and (-webkit-min-device-pixel-ratio: 1.5)
+
+{
+    
+    div {font-size: 105%}
+    #infopopup {font-size: 1.1em}
+
+    div.POPUPMENU div div {
+      font-size: 1.4em; 
+      line-height: 1.5em;
+      border-bottom: dotted 1px #999; 	
+   }
+   
+   .toolbar {
+       margin-top: 2px; 
+       height:42px; padding-top: 4px; 
+   }
+   .toolbar img {height: 36px; margin-left: 6px }
+   
+   #tb_draw, .ui-tooltip {visibility: hidden; width: 0}
+   .ol-zoom {top: 75px}
+   #filterChoice {margin-top: 2px}
+   div#layerSwitcher {font-size: 130% !important}   
+   div#layerSwitcher input {font-size: 20px !important}
+}
+ 
+
+
+
+
+
+
+
+
+
+
+
+

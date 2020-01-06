@@ -206,14 +206,19 @@ img.popupimg {max-width: 600px}
   min-width: 26em;
 }
 
-div.trblock, label {display: block; overflow: hidden; 
-margin-bottom: 0.07em; max-width: 45em; vertical-align: top}
+div.trblock, label {
+    display: block; overflow: hidden; 
+    margin-bottom: 0.07em; 
+    max-width: 45em; 
+    vertical-align: top;
+    margin-bottom: 0.2em;
+}
+div.trblock {
+    font-size: 90%
+}
 
-div.trblock {margin-bottom: 0.2em}
-div.trblock {margin-bottom: 0.2em}
+
 div#traffic, div#wpsresult {margin-top: 0.4em}
-
-
 
 form.mapref { min-width: 28em; margin-bottom: 0.5em }
 form.mapref hr { border: dotted 1px #888 }
@@ -321,6 +326,6 @@ div#iconlist>img:hover
 .dragdrop img {vertical-align: middle}
 .dragover {background: #cfc}
 
-.link_id {margin-top: 0.7em; border-top: 1px solid #666; color: #555; font-size: 90%}
+.link_id {color: #555; font-size: 90%}
 
 div.errmsg {color: red; margin-left: 2em; margin-bottom: 0.8em}
