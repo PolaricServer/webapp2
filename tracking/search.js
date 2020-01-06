@@ -38,7 +38,7 @@ pol.tracking.Search = class extends pol.core.Widget {
    
         this.widget = {
             view: function() {
-                return m("div", [       
+                return m("div#search", [       
                     m("h1", "Search stations/objects"),
                     m("div#searchform", [
                         m("form", [ 
@@ -109,15 +109,8 @@ pol.tracking.Search = class extends pol.core.Widget {
                 return; 
             let x = document.getElementById('searchresult');
             if (x != null) {
-                let ht = $('#map').height() - 
-                    ( $('#trackerSearch').height() - $('#searchresult').height()) - t.pos[1] - 8 ;     
-            
-                x.innerHTML = info;    
-                setTimeout( () => {
-                    if ($('#searchresult').height() < ht) 
-                        ht = $('#searchresult').height();
-                    $('#searchresult table').table({height: Math.round(ht)}); 
-                }, 200);
+                x.innerHTML = info;                   
+                t.setScrollTable("div#search", "div#searchresult");
             }    
         }
     

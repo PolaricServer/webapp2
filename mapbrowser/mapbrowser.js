@@ -74,6 +74,7 @@ pol.core.MapBrowser = class {
             center: ol.proj.fromLonLat(center, t.config.get('core.projection')), 
             zoom: 2
         });
+
   
         /* OpenLayers map */
         t.map = new ol.Map({
@@ -119,9 +120,9 @@ pol.core.MapBrowser = class {
         });
         
         /* Set up handler for move and zoom. Store new center and scale */
+        t.map.on('movestart', ()=>t.gui.removePopup() );
         t.map.on('moveend', onMove);
         t.map.on('moveend', ()=> t.updatePermalink() );
-        
         
         function onMove() {
             t.config.store('core.center', 

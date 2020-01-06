@@ -220,7 +220,7 @@ pol.core.Widget = class {
         setTimeout( () => {
             if ($(searchresult).height() < ht) 
                 ht = $(searchresult).height();
-                $(searchresult+' table').table({height: Math.round(ht)}); 
+            $(searchresult+' table').table({height: Math.round(ht)}); 
         }, 200);
     }
     
