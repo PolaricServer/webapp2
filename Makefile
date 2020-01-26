@@ -31,6 +31,8 @@ install: mapbrowser-min.js
 	
 	install -d $(INSTALL_WEB)/images $(INSTALL_WEB)/images/16px  $(INSTALL_WEB)/images/32px \
 		$(INSTALL_WEB)/images/iconpack $(INSTALL_WEB)/images/drawIcons \
+		$(INSTALL_WEB)/aprsd $(INSTALL_WEB)/aprsd/icons $(INSTALL_WEB)/aprsd/icons/signs \
+		$(INSTALL_WEB)/aprsd/icons/alt $(INSTALL_WEB)/aprsd/images \
 		$(INSTALL_WEB)/lib $(INSTALL_WEB)/style $(INSTALL_WEB)/sound
 	
 	chown www-data.www-data $(INSTALL_DATA)/mapcache
