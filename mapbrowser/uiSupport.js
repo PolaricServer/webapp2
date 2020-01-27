@@ -19,9 +19,8 @@
  along with this program. If not, see <http://www.gnu.org/licenses/>.
 */
 
-
-
-
+  
+    
 
 /**
  * Autojump between two fields.
@@ -86,7 +85,7 @@ const textInput = {
         var t = this;
  
         return m("input#"+vn.attrs.id, 
-        { type: "text", config: vn.attrs.config, size: vn.attrs.size, maxLength: vn.attrs.maxLength, 
+        { type: "text", list: vn.attrs.list, config: vn.attrs.config, size: vn.attrs.size, maxLength: vn.attrs.maxLength, 
           contentEditable: (vn.attrs.contentEditable ? vn.attrs.contentEditable : true),
                 
             oninput: function(ev) {
