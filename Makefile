@@ -45,6 +45,10 @@ install: mapbrowser-min.js
 	install -m 644 images/32px/*.png $(INSTALL_WEB)/images/32px
 	install -m 644 images/iconpack/*.png $(INSTALL_WEB)/images/iconpack
 	install -m 644 images/drawIcons/*.png $(INSTALL_WEB)/images/drawIcons
+	install -m 644 aprsd/icons/*.png $(INSTALL_WEB)/aprsd/icons
+	install -m 644 aprsd/icons/signs/*.png $(INSTALL_WEB)/aprsd/icons/signs
+	install -m 644 aprsd/icons/alt/*.png $(INSTALL_WEB)/aprsd/icons/alt
+	install -m 644 aprsd/images/*.png $(INSTALL_WEB)/aprsd/images
 	
 	install -m 644 style/style-min.css style/xstyle.css $(INSTALL_WEB)/style
 	install -m 644 lib/ol.js lib/ol.css $(INSTALL_WEB)/lib
