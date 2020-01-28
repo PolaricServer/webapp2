@@ -22,7 +22,7 @@
 
 
 /**
- * Reference search (in a popup window). 
+ * Item search using tags (keywords) and free text. 
  */
 
 pol.tracking.Search = class extends pol.core.Widget {
@@ -32,7 +32,8 @@ pol.tracking.Search = class extends pol.core.Widget {
         super();
         this.classname = "tracking.Search"; 
         this.server = CONFIG.server; 
-        this.tags = "";
+        this.tags = [];
+        this.selected = {};
         const t = this;
         t.search = m.stream("*");
    
@@ -42,7 +43,12 @@ pol.tracking.Search = class extends pol.core.Widget {
                     m("h1", "Search stations/objects"),
                     m("div#searchform", [
                         m("form", [ 
-                            "Keywords (tags): ", br, m("div#tags", m.trust(t.tags)),
+                            "Keywords (tags): ", br, 
+                                m("div#tags", t.tags.filter(x=> prefixSel(x)).map( x=> {
+                                    return m(checkBox, {id: "tag_"+x, onclick: apply(tagToggle, x)}, x)
+                                })),
+                            
+                            
                             "Free text search: ", m(textInput, 
                                 {id: "search", size: 10, maxLength: 40,value: t.search, regex: /^.*$/i}),
                             m("button#searchbutton", 
@@ -52,21 +58,63 @@ pol.tracking.Search = class extends pol.core.Widget {
             }
         };
    
-        getTags(null, null, tagListCallback);
+        getTags();
    
    
+        
+        function apply(f, x) {
+            return () => { return f(x); } 
+        }
+        
         function searchHandler(e) {
             searchItems(t.search(), getTagArgs(), searchItemsCallback)                  
-        };
+        }
+                
+        
+        function tagToggle(x) {
+            if (!t.selected[x])
+                t.selected[x]=true;
+            else
+                delete t.selected[x]; 
+        }
+        
+
+        
+        /* Return true if prefix of x is among selected tags */
+        function prefixSel(x) {
+            const c = x.split('.');
+            if (c.length == 1)
+                return true
+            for (i in t.selected)
+                if (c[0] == i.split('.')[0])
+                    return true;
+            return false;
+        }
 
    
-        /* Get tags from server. Server API (see old code) */
-        function getTags(item, tags, cb) {
-            t.server.GET("/tags", {ajax:true, tags: tags }, cb );
+        /* Get tags from server. Server API */
+        function getTags() {
+            t.server.GET("system/tags", null, 
+                x=> {
+                      t.tags = JSON.parse(x); 
+                      m.redraw();
+                    }
+            );
         }
    
+
    
-        /* Server API (see old code) */ 
+        /* Return tags that user has checked, as a comma separated list */
+        function getTagArgs() {
+            let tags = "";
+            for (i in t.selected)
+                tags = tags + (tags=="" ? "" : ",") + i;
+            return tags;
+        }
+    
+    
+       
+        /* Search using server API. Server returns HTML table (old API) */ 
         function searchItems(filt, tags, cb) {
             t.server.GET("/search", "ajax=true&lang="+
                 (filt!=null && filt != '' ? '&srch='+filt : '') + 
@@ -74,32 +122,6 @@ pol.tracking.Search = class extends pol.core.Widget {
         }
    
    
-        /* Return tags that user has checked, as a comma-separated list */
-        function getTagArgs() {
-            let tags = "";
-            $('div.taglist>input').each( (i,x) => {
-                if (x.checked==true) {
-                    tags = tags + (tags=="" ? "" : ",") + x.id.substring(4);
-                }
-            });
-            return tags;
-        }
-    
-    
-        /* Process tags from server */
-        function tagListCallback(info) {
-            if (info == null)
-                return;
-        
-            t.tags = info;
-            m.redraw();
-        
-            setTimeout(() => {
-                $('div.taglist>input').change( e => {
-                    setTimeout(() => getTags(null, getTagArgs(), tagListCallback), 200 );
-                });}, 300);
-        }
-    
     
         /* Process item-list (html table format) from server */
         /* FIXME: Consider using REST service with result in JSON format, rendered on client instead */

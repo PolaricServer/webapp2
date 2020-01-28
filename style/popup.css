@@ -169,6 +169,8 @@ div#tags {
   padding: 3px
 }
 div#tags input {margin: 0.15em}
+div#tags span {display: block}
+
 
 input[type=text] {background: white; height: 1.6em}
 input[readonly]  {background: #cef; height: 1.6em}
