@@ -123,7 +123,7 @@ const textInput = {
  */
 const checkBox = {
     view: function(vn) {
-        return m("span", {title: vn.attrs.title}, 
+        return m("span.nobr", {title: vn.attrs.title}, 
             m("input#" + vn.attrs.id, 
          {
             onclick: vn.attrs.onclick,
