@@ -120,8 +120,12 @@ tr {height: 12px;}
 
 tr:hover {background: #ff8}
 
-td {color: #111; font-style: italic}
+td {color: #111;}
 td.onserver {color: #050;font-style: normal}
+span#found {color: green; font-style: italic}
+
+#searchresult span.obj {color: green;}
+#searchresult span.alias {background: #fff; border-left: solid red 2px; padding-left: 2px; margin-left: -2px}
 
 .leftlab, .sleftlab, .xsleftlab, label.lleftlab {
   float: left;
