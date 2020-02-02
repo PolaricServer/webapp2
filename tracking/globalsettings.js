@@ -88,7 +88,7 @@ pol.tracking.GlobalSettings = class extends pol.tracking.TrackerAlias {
     
     setIdent(id) {
         super.setIdent(id); 
-        this.server.GET("item/"+id+"/alias"+id, "", x => {
+        this.server.GET("item/"+id+"/alias", "", x => {
             const info = JSON.parse(x);
             if (info.alias!=null)
                 this.edit.alias(info.alias);

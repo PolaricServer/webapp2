@@ -53,9 +53,9 @@ install: mapbrowser-min.js
 	install -m 644 style/style-min.css style/xstyle.css $(INSTALL_WEB)/style
 	install -m 644 lib/ol.js lib/ol.css $(INSTALL_WEB)/lib
 	install -m 644 lib/jquery.min.js lib/jquery-ui.min.js lib/jquery-ui.min.css \
-			lib/jquery.ui.table.min.js $(INSTALL_WEB)/lib
+			lib/jquery.ui.table.min.js lib/jquery.ui.touch-punch.min.js $(INSTALL_WEB)/lib
 	install -m 644 lib/moment.min.js lib/pikaday.min.js lib/pikaday.css $(INSTALL_WEB)/lib
-	install -m 644 lib/mithril.min.js $(INSTALL_WEB)/lib
+	install -m 644 lib/mithril.min.js lib/mithril-stream.js $(INSTALL_WEB)/lib
 	install -m 644 lib/proj4.js $(INSTALL_WEB)/lib
 	
 	install -m 644 sound/*.wav $(INSTALL_WEB)/sound
