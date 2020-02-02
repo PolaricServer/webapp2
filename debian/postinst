@@ -10,6 +10,10 @@ case "$1" in
         a2ensite aprs.conf > /dev/null 2>&1 
         chown www-data:www-data /var/lib/polaric/mapcache
         apache2ctl restart
+        
+        if [[ ! -d "/usr/share/polaric" ]] ; then
+            mkdir /usr/share/polaric
+        ln -s /var/lib/polaric/webapp2/aprsd/icons /usr/share/polaric/icons
     ;;
 
     abort-upgrade|abort-remove|abort-deconfigure)
