@@ -125,6 +125,7 @@ td.onserver {color: #050;font-style: normal}
 span#found {color: green; font-style: italic}
 
 #searchresult span.obj {color: green;}
+#searchresult span.name {color: #00a;}
 #searchresult span.alias {background: #fff; border-left: solid red 2px; padding-left: 2px; margin-left: -2px}
 
 .leftlab, .sleftlab, .xsleftlab, label.lleftlab {

@@ -175,10 +175,12 @@ pol.tracking.Search = class extends pol.core.Widget {
         
         
         function idTitle(x) {
-            const ii = x.ident.indexOf('@'); 
-            if (ii<=0 && x.alias==null)
+            if (x.name==x.ident && x.alias==null)
                 return null;
-            return x.ident + (x.alias==null? "": " | Alias='"+x.alias+"'"); 
+            if (x.alias != null)
+                return x.ident + (x.alias==null? "": " | Alias='"+x.alias+"'"); 
+            else
+                return x.ident;
         }
         
         
@@ -190,17 +192,18 @@ pol.tracking.Search = class extends pol.core.Widget {
                 cl="alias "; 
             if (ii>0)
                 return cl+"obj";
-            else 
+            else if (x.name != x.ident)
+                return cl+"name";
+            else
                 return cl;
         }
         
         
         function formatIdent(x) {
-            const ii = x.ident.indexOf('@'); 
+            if (x.name != x.ident)
+                return x.name;
             if (x.alias != null)
                 return x.alias; 
-            else if (ii>0)
-                return x.ident.substring(0, ii);
             else
                 return x.ident;
         }
