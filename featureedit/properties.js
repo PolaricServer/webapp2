@@ -46,14 +46,40 @@ pol.features.Properties = class extends pol.core.Widget {
         const t = this;
         t.classname = "features.Properties";
         const features =  () => snow.drawSource.getFeatures();
-        t.selected = null;
-        t.drawTool = dt;
+        t.selected = null; /* Feature whose metadata are edited by user */
+        t.drawTool = (dt ? dt : snow.featureEdit);
         t.label = m.stream("");
 
-        this.widget = {
+        
+        /* Show center and radius of circle (Mithril component) */
+        t.circle = {
+            view: function() {
+                return m("div#circleInfo", [
+                    m("span.sleftlab", "Center: "),
+                    (t.center ? m("span.coord", {onclick: apply(gotoPos,t.center)}, formatPos(t.center)) : "-"), br,
+                    m("span.sleftlab", "Radius: "), 
+                    m("span", t.radius ? 
+                        (t.radius < 1000 ? Math.round(t.radius*100)/100+" m" : 
+                        Math.round(t.radius/100)/10+" km") : "-")
+                ]);
+            }
+        }
+        
+        
+        /* Show list of coordinates (Mithril component) */
+        t.coord = {
+            view: function() {
+                return m("div#colist", 
+                    t.colist.map( x=> {
+                        return [m("span.coord", {onclick: apply(gotoPos,x)}, formatPos(x)), ", "]})); 
+            }
+        }
+        
+        /* Main mithril component */
+        t.widget = {
             view: function() {
                 let i=0;
-                return m("div", [       
+                return m("div#features", [       
                     m("h1", "Features/properties"),
                     
                     m("table.features", m("tbody", features().map( x => {
@@ -63,16 +89,16 @@ pol.features.Properties = class extends pol.core.Widget {
                             m("td", x.getGeometry().getType()),
                             m("td", (x.label ? x.label : ""))
                         ])
-                    }))),
-                    
-                    
+                    }))),    
                     hr,
-                    m("span.sleftlab", "Type: "),
-                    m("span", (t.selected==null? "" : t.selected.getGeometry().getType())), 
-                    br,
+
                     m("span.sleftlab", "Label: "),
                     m(textInput, {id:"editLabel", size: 16, maxLength:25, value: t.label, regex: /.*$/i }),
-                    m("button", {onclick: set, title: "Update properties"}, "Update")
+                    m("button", {onclick: set, title: "Update properties"}, "Update"), br,
+                    m("span.sleftlab", "Type: "),
+                    m("span", (t.selected==null? "---" : t.selected.getGeometry().getType())), 
+                    br,
+                    (t.radius ? m(t.circle) : (t.colist ? m(t.coord) : ""))
                 ])
             }
         };
@@ -90,27 +116,66 @@ pol.features.Properties = class extends pol.core.Widget {
         );
 
         CONFIG.mb.map.on("change:view", ()=> setTimeout(()=> changeHandler(), 100) ); 
-                
+        
+        
         /* Apply a function to an argument. Returns a new function */
         function apply(f, id) {return function() { f(id); }};  
         
         
+        /* Zoom and show position on map */
+        function gotoPos(x) {
+            CONFIG.mb.gui.removePopup();
+            CONFIG.mb.goto_Pos(x, false);
+        }
+        
+        /* Format position (longitude, latitude) */
+        function formatPos(p) {
+            return "["+Math.round(p[0]*1000)/1000 + ", " + 
+              Math.round(p[1]*1000)/1000+"]"; 
+        }
+        
+        /* Handler for edit icon in feature list */    
         function edit(i) {
+            /* Convert geometry to LatLong */
             const geom = features()[i].getGeometry().clone(); 
             geom.transform(CONFIG.mb.view.getProjection(), 'EPSG:4326');
+            
+            /* Zoom in to feature and allow user to edit it */
             CONFIG.mb.fitExtent(geom.getExtent());
             CONFIG.mb.view.setZoom(CONFIG.mb.view.getZoom()-1)
             _edit(features()[i]);
-            
         }
         
         
+        /* Edit it - move it into form below feature list */
         function _edit(f) {
             t.selected = f;
             t.label(t.selected.label);
-            m.redraw();
+            showGeom(f);
+            m.redraw(); 
         }
         
+        
+        /* Show geometry of feature */
+        function showGeom(f) {
+            /* Convert geometry to LatLong */
+            const g = f.getGeometry().clone(); 
+            const h = g.clone();
+            g.transform(CONFIG.mb.view.getProjection(), 'EPSG:4326');
+            
+            t.type = g.getType(); 
+            t.center=NaN; t.radius=NaN; t.colist=NaN;
+            
+            if (t.type == "Polygon" || t.type == "LineString") 
+                t.colist = g.getCoordinates()[0];      
+            else if (t.type=="Circle") {
+                t.center=g.getCenter();
+                t.radius=h.getRadius();
+            }
+        }
+        
+        
+        /* Remove feature */
         function remove(i) {
             snow.deleteFeature(features()[i]); 
         }

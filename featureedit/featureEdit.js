@@ -83,8 +83,10 @@ pol.features.Edit = class extends pol.core.Widget {
         });
        
         snow.drawSource.on("changefeature", e=> {
+            console.log("changefeature:", e);
             changeHandler(e.feature, "chg");
         });
+        
         
         snow.addDrawCB( 
             e=> changeHandler(e.feature, "add")
@@ -125,6 +127,7 @@ pol.features.Edit = class extends pol.core.Widget {
 
     onActivate() {
         snow.activate();
+        snow.featureEdit = this; 
     }
     
     onclose() {
