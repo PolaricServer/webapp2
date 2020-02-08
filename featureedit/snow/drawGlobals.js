@@ -118,19 +118,28 @@ snow.cssColors = () => {
 //Default source for drawing.
 snow.drawSource = new VectorSource()
 
-snow.drawLayer = new VectorLayer(
-    { source: snow.drawSource }
-)
+snow.drawLayer = snow.draftLayer = new VectorLayer(
+    { name: "Drawing tool", source: snow.drawSource }
+);
+
 
 
 snow.drawMap = null; 
 
 
 
+snow.changeLayer = function(layer) {
+    const ly = snow.drawLayer; 
+    snow.drawSource = layer.getSource(); 
+    snow.drawLayer = layer; 
+    return ly;
+}
+
+
 snow.init = function(map) {
     snow.drawMap = map;
     snow.drawMap.addLayer(snow.drawLayer)
-
+    
     //handle different upper/lowercase variations
     snow.activateFreedraw.toUpperCase()
     //check for answer, always false if not a YES variation
@@ -141,9 +150,11 @@ snow.init = function(map) {
         { snow.toggleFreehand = false }
 }
 
+
 snow.handleClick = function(e) {
     snow.manualSelect(e.pixel)
 }
+
 
 snow.activate = function() {
     //OnClick handler for selecting features.

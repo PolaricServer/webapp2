@@ -36,10 +36,10 @@ pol.features.init = function(map) {
  *  - Turn off select of features if this tool is not active. DONE. 
  *  - Allow style without fill. Dashed line? Revise colour choices. DONE. 
  * 
- *  - Show properties of feature on click. 
+ *  - Show properties of feature on click. DONE? 
  *  - Context menu
- *  - Allow default drawing layer to be hidden (when tool not active). Show in layer-list. 
- *  - Split this class - DrawableLayer and Editor. 
+ *  - Split this class - DrawableLayer and Editor? 
+ *  - Allow default drawing layer to be hidden (when tool not active). When tool is not active OR show in layer-list? 
  *  - Allow multiple instances of drawable layer. Use layer-editor to create/manage layers. 
  *  - Allow move/copy of features between layers.
  *  - Display label on map if user activates this..  
@@ -117,8 +117,10 @@ pol.features.Edit = class extends pol.core.Widget {
         
         
         function propsHandler() {
-            let props = new pol.features.Properties(t);
-            props.activatePopup('features.Properties', [60, 60], true);
+            if (!t.props) 
+                t.props = new pol.features.Properties(t);
+            if (!t.props.isActive())
+                t.props.activatePopup('features.Properties', [60, 60], true);
         }
 
         
@@ -128,11 +130,17 @@ pol.features.Edit = class extends pol.core.Widget {
     onActivate() {
         snow.activate();
         snow.featureEdit = this; 
+        snow.draftLayer.setVisible(true);
     }
     
     onclose() {
         snow.deselectAll();
         snow.deactivate();
+        snow.removeDraw();
+        snow.removeModify();
+        snow.draftLayer.setVisible(false);
+        if (this.props && this.props.isActive()) 
+            this.props.close();
     }
     
     

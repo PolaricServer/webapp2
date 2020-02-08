@@ -64,8 +64,6 @@ pol.widget.restore = function() {
         const fact = pol.widget._factory[x];
         if (!fact || !fact.create) {
             console.warn("No factory found for: "+x);
-            /* Remove it from the list */
-            pol.widget._factory.splice(x,1);
             return;
         }
         const w = fact.create();
@@ -119,9 +117,15 @@ pol.core.Widget = class {
         this.pos = null;
         this.pinned = true;
         this.classname = null;
+        this.active = false; 
     }
 
 
+ 
+    isActive() 
+        { return this.active; }
+        
+        
  
     /** 
      * Display widget in the given DOM element. 
@@ -132,8 +136,9 @@ pol.core.Widget = class {
         this.delement = w; 
         m.mount(this.delement, this.widget);
         this.delement.addEventListener("unload", this.onclose);
-        if (t.onActivate)
-            t.onActivate(); 
+        this.active = true; 
+        if (this.onActivate)
+            this.onActivate(); 
     }
 
     
@@ -156,11 +161,12 @@ pol.core.Widget = class {
         const t = this; 
         this.pos = pixPos;        
         t.pinned = pinned;
+        t.active = true; 
         
         if (t.onActivate)
             t.onActivate(); 
         
-        return this.popup = browser.gui.showPopup( {
+        this.popup = browser.gui.showPopup( {
             vnode: this.widget,
             pixPos: pixPos,
             draggable: true,
@@ -169,8 +175,11 @@ pol.core.Widget = class {
             pinned: t.pinned,
             id: id,
             cclass: "widget",
-            onclose: ()=> {unSave(); t.onclose();}
+            onclose: ()=> {unSave(); t.active=false; t.onclose();}
         });
+        this.close = ()=> { this.popup.close(); }
+        return this.popup; 
+        
         
      
      

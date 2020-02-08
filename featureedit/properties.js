@@ -205,9 +205,3 @@ pol.features.Properties = class extends pol.core.Widget {
         
     } /* constructor */
 } /* class */
-
-
-    
-pol.widget.setFactory("features.Properties", {
-    create: () => new pol.features.Properties()
-}); 
