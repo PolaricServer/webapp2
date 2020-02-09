@@ -34,6 +34,7 @@ pol.layers.List = class List extends pol.core.Widget {
    
         /* Register types */
         t.addType("dummy", "Select layer type..", new pol.layers.Dummy(this));
+        t.addType("drawing", "Drawing layer", new pol.layers.Drawing(this));
         t.addType("wms", "Standard WMS layer", new pol.layers.Wms(this));   
         t.addType("wfs", "Standard WFS layer", new pol.layers.Wfs(this));
         if (CONFIG.server!=null && CONFIG.server.hasDb)
@@ -67,7 +68,7 @@ pol.layers.List = class List extends pol.core.Widget {
    
    
         /* Get stored layers */
-        this.getMyLayers();
+        this._getMyLayers();
 
    
         /* Apply a function to an argument. Returns a new function */
@@ -109,11 +110,15 @@ pol.layers.List = class List extends pol.core.Widget {
     }
 
     
+    getLayers() {
+        return myLayers; 
+    }
+    
 
     /**
      * Restore layers from local storage and from server.
      */
-    getMyLayers() {
+    _getMyLayers() {
         const t = this;
 	
         /* lrs is a list of name,type pairs */
@@ -162,7 +167,9 @@ pol.layers.List = class List extends pol.core.Widget {
             }    
         }, 800);
         
+        
         return this.myLayerNames = lrs;   
+        
         
         /* 
          * 

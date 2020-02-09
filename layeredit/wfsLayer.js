@@ -70,6 +70,7 @@ pol.layers.Wfs = class extends pol.layers.Edit {
      */
     createLayer(name) 
     {
+        const styleId = $("#wfsStyle").val(); 
         console.log("Create WFS layer: URL="+this.wurl()+", ftype="+this.ftype()+
             ", style="+styleId+", label="+this.wlabel());
     
@@ -81,7 +82,7 @@ pol.layers.Wfs = class extends pol.layers.Edit {
             outputFormat: "text/xml; subtype=gml/3.2.1",
             wfsVersion: "1.1.0"
         });
-    
+        console.log(x);
         x.styleId = styleId;
         x.label = this.wlabel();
         return x;
