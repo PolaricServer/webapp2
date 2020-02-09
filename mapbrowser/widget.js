@@ -61,15 +61,16 @@ pol.widget.restore = function() {
     for (const x in pol.widget._stored) {
         if (pol.widget._stored[x] == null)
             continue;
-        const fact = pol.widget._factory[x];
-        if (!fact || !fact.create) {
-            console.warn("No factory found for: "+x);
-            return;
-        }
-        const w = fact.create();
+        
+        const w = pol.widget.get(x); 
         pol.widget._active[x] = w;
         const pos = CONFIG.get("core.widget."+x);
-        w.activatePopup(x, pos, true);
+        if (w!=null) 
+            w.activatePopup(x, pos, true);
+        
+        const fact = pol.widget._factory[x];
+        if (!fact || !fact.create)
+            return;
         if (fact.onRestore && fact.onRestore != null)
             fact.onRestore();
     }
@@ -103,7 +104,6 @@ pol.widget.start = function(id, pos, pinned, f) {
     if (f && f!=null) 
         setTimeout(()=>f(x), 800);
 }
-    
     
 
 

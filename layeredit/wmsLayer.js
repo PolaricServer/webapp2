@@ -183,7 +183,7 @@ pol.layers.Wms = class extends pol.layers.Edit {
             name: name, 
             source: new ol.source.ImageWMS ({
                ratio:  1,
-               url:    url,
+               url:    this.url(),
                params: {'LAYERS':layers, VERSION: "1.1.1"}
             }) 
         });
@@ -233,11 +233,11 @@ pol.layers.Wms = class extends pol.layers.Edit {
 
 
     /**
-    * Restore a layer from JSON format (see layer2json). 
+    * Restore a layer from JSON format (see layer2obj). 
     */
     obj2layer(lx) {
         if (lx == null) {
-            console.warn("WmsLayer.json2layer: Resulting Layer is null");
+            console.warn("WmsLayer.obj2layer: Resulting Layer is null");
             return null;
         }  
         const x = new ol.layer.Image({

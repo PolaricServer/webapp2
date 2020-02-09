@@ -9,7 +9,7 @@ closure-compiler --language_in ECMASCRIPT6 --js config.js --js server.js --js js
 
 cd ..
 cd layeredit
-closure-compiler --language_in ECMASCRIPT6 --js layerEdit.js --js layerList.js --js wmsLayer.js --js wfsLayer.js --js gpxLayer.js > ../layeredit-min.js
+closure-compiler --language_in ECMASCRIPT6 --js layerEdit.js --js layerList.js --js wmsLayer.js --js wfsLayer.js --js gpxLayer.js --js drawingLayer.js > ../layeredit-min.js
 
 cd ..
 cd tracking

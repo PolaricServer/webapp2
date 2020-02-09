@@ -66,7 +66,6 @@ pol.layers.List = class List extends pol.core.Widget {
             },
         };
    
-   
         /* Get stored layers */
         this._getMyLayers();
 
@@ -111,7 +110,7 @@ pol.layers.List = class List extends pol.core.Widget {
 
     
     getLayers() {
-        return myLayers; 
+        return this.myLayers; 
     }
     
 
@@ -122,15 +121,17 @@ pol.layers.List = class List extends pol.core.Widget {
         const t = this;
 	
         /* lrs is a list of name,type pairs */
-        let lrs = null; // CONFIG.get("layers.list");
+        let lrs = CONFIG.get("layers.list");
         if (lrs == null)
             lrs = [];
         
         /* Go through layers from local storage and add them if valid */
         for (const i in lrs) {
             const editor = this.typeList[lrs[i].type];
+            
             const x = editor.obj.json2layer 
                 ( CONFIG.get("layers.layer."+lrs[i].name.replace(/\s/g, "_" )));
+                
             if (x!= null && editor.obj.allowed()) {
                 t.myLayers.push(x);
                 CONFIG.mb.addConfiguredLayer(x, lrs[i].name);

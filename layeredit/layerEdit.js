@@ -126,7 +126,7 @@ pol.layers.Edit = class {
                 // Save the layer name list. 
                 CONFIG.store("layers.list", list.myLayerNames, true);
                 // Save the layer using the concrete subclass
-                CONFIG.store("layers.layer."+name.replace(/\s/g, "_"), t.layer2json(layer), true);       
+                CONFIG.store("layers.layer."+layer.get("name").replace(/\s/g, "_"), t.layer2json(layer), true);       
             }
         }
    

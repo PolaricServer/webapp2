@@ -79,10 +79,9 @@ pol.layers.Wfs = class extends pol.layers.Edit {
             url: this.wurl(),
             ftype: this.ftype(),
             style: (this.wlabel() != "" ? SETLABEL(styleId, this.wlabel()) : GETSTYLE(styleId)),
-            outputFormat: "text/xml; subtype=gml/3.2.1",
+            outputFormat: "text/xml; subtype=gml/3.1.1",
             wfsVersion: "1.1.0"
         });
-        console.log(x);
         x.styleId = styleId;
         x.label = this.wlabel();
         return x;
@@ -132,7 +131,7 @@ pol.layers.Wfs = class extends pol.layers.Edit {
      */
     obj2layer(lx) {
         if (lx == null) {
-            console.warn("WfsLayer.json2layer: Resulting Layer is null");
+            console.warn("WfsLayer.obj2layer: Resulting Layer is null");
             return null;
         }   
         const x = createLayer_WFS( {
