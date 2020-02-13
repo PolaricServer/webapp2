@@ -72,6 +72,17 @@
     
     
     
+    /* 
+     * Some of the widgets have state that is needed by others so they need to be started. This is slightly 
+     * delayed to allow connection to server to be established first. 
+     */
+    setTimeout(()=> {
+        console.log("Server config: ", CONFIG.server);
+        getWIDGET("core.AreaList");
+        getWIDGET("layers.List");
+    }, 1000);
+    
+    
     
    /* 
     * Set up application-specific context menus. We may define named contexts. The toolbar 
@@ -185,7 +196,8 @@
             m.add('Global settings', () => 
                 WIDGET("tracking.GlobalSettings", [m.x,m.y], true, x=>x.setIdent(ctxt.ident)));
 
-            m.add('Manage tags..', () => setTags(ctxt.ident) );
+            m.add('Manage tags..', () => WIDGET("tracking.Tags", [m.x,m.y], true, x=>x.setIdent(ctxt.ident))); 
+
             m.add('Reset info', () => resetInfo(ctxt.ident) );
             if (ctxt.point.point.own)
                 m.add('Remove object', () => 
