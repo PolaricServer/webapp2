@@ -39,9 +39,9 @@ pol.features.init = function(map) {
  *  - Show properties of feature on click. DONE? 
  *  - Context menu
  *  - Split this class - DrawableLayer and Editor? 
- *  - Allow default drawing layer to be hidden (when tool not active). When tool is not active OR show in layer-list? 
- *  - Allow multiple instances of drawable layer. Use layer-editor to create/manage layers. 
- *  - Allow move/copy of features between layers.
+ *  - Allow default drawing layer to be hidden (when tool not active). When tool is not active OR show in layer-list? DONE. 
+ *  - Allow multiple instances of drawable layer. Use layer-editor to create/manage layers.  IN PROGRESS.
+ *  - Allow move/copy of features between layers. IN PROGRESS.
  *  - Display label on map if user activates this..  
  *  - Allow exporting of layer or selected features as GeoJSON or GPX. 
  *  - Allow sharing of features with other users. 
@@ -102,11 +102,14 @@ pol.features.Edit = class extends pol.core.Widget {
         setTimeout(()=>t.restoreFeatures(), 1000); 
         
         /* 
+         * Handler to be called when feature is changed. 
+         * 
          * Updating of server should happen after a delay since 
          * a series of change events may happens in short period. 
          */ 
         let tmr = null;
         function changeHandler(x, op) {
+            x.layer = snow.drawLayer.get("name");
             if (tmr != null && op == "chg")
                 clearTimeout(tmr);
             tmr = setTimeout(()=> {
@@ -145,35 +148,51 @@ pol.features.Edit = class extends pol.core.Widget {
     
     
     
-    /* Restore features from server */
-    restoreFeatures() {
+    /* 
+     * Restore features from server 
+     * Consider moving this to the drawingLayer class. 
+     * We should also have a removeFeatures method to remove all features in a layer. 
+     */
+    restoreFeatures(lname) {
         const srv = CONFIG.server;
         if (srv != null && srv.loggedIn && srv.hasDb) {
-            srv.getObj("feature", a => {
+            const tag = "feature"+ (lname ? "."+lname : "");
+            srv.getObj(tag, a => {
                 for (const obj of a) 
                     if (obj != null) {
                         let f = this.obj2feature(obj.data);
                         f.index = obj.id;
-                        snow.drawSource.addFeature(f);
+                        if (f.layer && f.layer != "DRAFT") {
+                            getWIDGET("layers.List").getLayer(f.layer).getSource().addFeature(f); 
+                            f.layer = NaN;
+                        }
+                        else 
+                            snow.drawSource.addFeature(f);
                     }
             });
         }
     }
    
    
+   
+   
    /* 
     * Update server. Operations: "add", "chg" (change) and "rm" (remove). 
     * Change is implemented as a remove and put. 
+    * x is feature. op is command: "chg", "rm" or "add". 
     */ 
     doUpdate(x, op) {
         const srv = CONFIG.server; 
         if (srv != null && srv.loggedIn && srv.hasDb) {
             if (op=='chg' || op=="rm")
                 srv.removeObj("feature", x.index);
-            if (op=='add' || op=='chg') 
-                srv.putObj("feature", this.feature2obj(x), i => {x.index = i;} );
+            if (op=='add' || op=='chg') {
+                const tag = "feature" + ((!x.layer || x.layer=="DRAFT") ? "" : "."+x.layer);
+                srv.putObj(tag, this.feature2obj(x), i => {x.index = i;} );
+            }
         }
     }
+        
         
         
     /* Convert feature to object that can be stringified as JSON */
@@ -185,6 +204,7 @@ pol.features.Edit = class extends pol.core.Widget {
         geom.transform(CONFIG.mb.view.getProjection(), 'EPSG:4326');
         
         let obj = {
+            layer: f.layer, // Is this necessary if layername is used in tag for db object
             type: geom.getType(), 
             style: this.style2obj(st),
             label: f.label
@@ -225,6 +245,7 @@ pol.features.Edit = class extends pol.core.Widget {
         feat.setGeometry(geom);
         feat.setStyle(this.obj2style(obj.style));
         feat.label = obj.label;
+        feat.layer = obj.layer;
         return feat;
     }
     

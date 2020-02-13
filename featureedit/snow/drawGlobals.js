@@ -119,7 +119,7 @@ snow.cssColors = () => {
 snow.drawSource = new VectorSource()
 
 snow.drawLayer = snow.draftLayer = new VectorLayer(
-    { name: "Drawing tool", source: snow.drawSource }
+    { name: "DRAFT", source: snow.drawSource }
 );
 
 

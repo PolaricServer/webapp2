@@ -87,6 +87,9 @@ pol.layers.Drawing = class extends pol.layers.Edit {
             return null;
         }  
         const layer = this._createLayer(lx.name);
+        
+        /* Restore features in layer */
+        getWIDGET("features.Edit").restoreFeatures(lx.name);
         return layer;
     }
 

@@ -109,9 +109,22 @@ pol.layers.List = class List extends pol.core.Widget {
     }
 
     
+    
+    getLayer(name) {
+        let x; 
+        for (x of this.myLayers) {
+            if (x.get("name") == name)
+                return x;
+        }
+        return null;
+    }
+    
+    
+    
     getLayers() {
         return this.myLayers; 
     }
+    
     
 
     /**
