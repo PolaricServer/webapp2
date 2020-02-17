@@ -29,22 +29,16 @@ pol.features.init = function(map) {
 
 /*
  * TODO:
- *  - Saving of drawing layer's content. One REST call/database update per feature. DONE.
- *  - Restoring of drawing layer's content. DONE. 
- *  - Allow set/edit of label/properties (metainfo) of selected feature. Use this 
- *    editor or separate window?. DONE (label).
- *  - Turn off select of features if this tool is not active. DONE. 
- *  - Allow style without fill. Dashed line? Revise colour choices. DONE. 
  * 
- *  - Show properties of feature on click. DONE? 
  *  - Context menu
- *  - Split this class - DrawableLayer and Editor? 
- *  - Allow default drawing layer to be hidden (when tool not active). When tool is not active OR show in layer-list? DONE. 
- *  - Allow multiple instances of drawable layer. Use layer-editor to create/manage layers.  IN PROGRESS.
- *  - Allow move/copy of features between layers. IN PROGRESS.
+ *  - Allow multiple instances of drawable layer. Use layer-editor to create/manage layers.  DONE. 
+ *     - Delete features when layer is deleted. 
+ *     - Allow editing on any layer, not only DRAFT layer. 
+ *     - Allow copy of feature between layers. 
+ *     - Don't allow creating/editing drawable layers if not logged in on database capable server. 
  *  - Display label on map if user activates this..  
  *  - Allow exporting of layer or selected features as GeoJSON or GPX. 
- *  - Allow sharing of features with other users. 
+ *  - Allow sharing of layers or features with other users. 
  */
 
 
