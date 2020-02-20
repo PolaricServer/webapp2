@@ -3,7 +3,7 @@
  Map browser based on OpenLayers 5. Tracking. 
  Notifications.  
  
- Copyright (C) 2017-2018 Øyvind Hanssen, LA7ECA, ohanssen@acm.org
+ Copyright (C) 2017-2020 Øyvind Hanssen, LA7ECA, ohanssen@acm.org
  
  This program is free software: you can redistribute it and/or modify
  it under the terms of the GNU Affero General Public License as published 
@@ -117,6 +117,7 @@ pol.tracking.Notifier = class {
      * Add notification. 
      */
     add(not) {
+        console.log(not);
         this.audio.play();
         this.list.unshift(not);
         this.updateNumber();
@@ -152,8 +153,21 @@ pol.tracking.NotifyList = class extends pol.core.Widget {
         this.classname = "tracking.NotifyList"; 
         this.notifier = CONFIG.notifier;  
         var t = this;
+        t.msg = m.stream("");
    
-        this.widget = {
+        t.sendNot = {
+            view: function() {
+                return m("div#sendNot", [
+                    m(textInput,
+                        { id: "notMsg", value: t.msg,
+                            maxLength: 55, regex: /.*/i }), 
+                    m("button", { type: "button", onclick: send }, "Send"),
+                ]);
+            }
+        }
+        
+        
+        t.widget = {
             view: function() {
                 var i=0;
                 return m("div#notifications", [
@@ -164,23 +178,35 @@ pol.tracking.NotifyList = class extends pol.core.Widget {
                             m("td", m("div", [
                                 m("span", {"class":"header"}, [x.from+", "+formatDTG(x.time)]),
                                 m("img", {src:"images/16px/close.png", onclick: apply(removeNot, i++) }),
-                                br, x.text 
+                                br, x.text
                             ] ))
                         ]);
-                    })))
+                    }))),
+                    (CONFIG.server.auth && CONFIG.server.auth.admin ? m(t.sendNot) : "")
                 ]);  
             }
         };
 
-    //    setTimeout(
-    //        pol.tracking.NotifyList.updateScroller, 1000);
-    
+        
+        function send() {
+            const msg = {
+                type: "info",
+                from: "admin",
+                time: new Date(),
+                text: t.msg(),
+                ttl: 120
+            }
+            CONFIG.server.pubsub.put("notify:SYSTEM", msg);
+        }
+        
+        
         /* 
          * Select the icon from the type of notification. 
          * Type can be 'loc', 'check', 'chat', 'mail, 'system', 'error', 'alert' or 'info' (default) 
          */
         function icon(type) {
             if (type==='loc') return 'images/32px/loc.png';
+            else if (type==='share') return 'images/32px/sharing.png'; 
             else if (type==='check') return 'images/32px/check2.png';
             else if (type==='chat') return 'images/32px/chat2.png';
             else if (type==='mail') return 'images/32px/mail.png';        

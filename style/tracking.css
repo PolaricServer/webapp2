@@ -150,3 +150,7 @@ div#trail>span {display: block; color: #060; margin-left: 0.4em; margin-top: -0.
 #itemtags {max-width: 23em;}
 span.box {white-space: nowrap}
 span.box img {vertical-align: bottom; padding-bottom: 0.05em; width: 15px}
+#notifications span.header {display: inline-block; min-width: 10em}
+#sendNot {background: #eba; margin-top: 0.2em; padding: 0.1em}
+#sendNot input {width: 75%}
+#notifications div {min-width: 16em}
