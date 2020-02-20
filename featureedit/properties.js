@@ -2,7 +2,7 @@
  Map browser based on OpenLayers 5. 
  Feature properties editor widget based on snowcode project.
  
- Copyright (C) 2019 Øyvind Hanssen, LA7ECA, ohanssen@acm.org
+ Copyright (C) 2019-2020 Øyvind Hanssen, LA7ECA, ohanssen@acm.org
  
  This program is free software: you can redistribute it and/or modify
  it under the terms of the GNU Affero General Public License as published 

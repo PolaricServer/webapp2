@@ -34,11 +34,13 @@ pol.layers.List = class List extends pol.core.Widget {
    
         /* Register types */
         t.addType("dummy", "Select layer type..", new pol.layers.Dummy(this));
-        t.addType("drawing", "Drawing layer", new pol.layers.Drawing(this));
+        if (CONFIG.server!=null && CONFIG.server.hasDb) {
+            t.addType("drawing", "Drawing layer", new pol.layers.Drawing(this));
+            t.addType("gpx", "GPX files upload", new pol.layers.Gpx(this));
+        }
         t.addType("wms", "Standard WMS layer", new pol.layers.Wms(this));   
         t.addType("wfs", "Standard WFS layer", new pol.layers.Wfs(this));
-        if (CONFIG.server!=null && CONFIG.server.hasDb)
-            t.addType("gpx", "GPX files upload", new pol.layers.Gpx(this));
+
    
         this.layer = t.typeList["dummy"].obj; 
 

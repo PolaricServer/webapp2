@@ -2,7 +2,7 @@
  Map browser based on OpenLayers 5. 
  Feature editor widget (drawing tool) based on snowcode project.
  
- Copyright (C) 2019 Øyvind Hanssen, LA7ECA, ohanssen@acm.org
+ Copyright (C) 2019-2020 Øyvind Hanssen, LA7ECA, ohanssen@acm.org
  
  This program is free software: you can redistribute it and/or modify
  it under the terms of the GNU Affero General Public License as published 
@@ -167,7 +167,18 @@ pol.features.Edit = class extends pol.core.Widget {
         }
     }
    
-   
+    removeFeatures(lname) {
+        console.log("removeFeatures: ",lname);
+        const srv = CONFIG.server; 
+        if (srv != null && srv.loggedIn && srv.hasDb) {
+            const tag = "feature"+ (lname ? "."+lname : "");
+            
+            const ftrs = getWIDGET("layers.List").getLayer(lname).getSource().getFeatures(); 
+            for (const f of ftrs) 
+                if (f.index) 
+                    srv.removeObj(tag, f.index);
+        }
+    }
    
    
    /* 
