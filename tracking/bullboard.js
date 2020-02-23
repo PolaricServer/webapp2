@@ -79,6 +79,7 @@ pol.tracking.BullBoard = class extends pol.core.Widget {
         getGroups();
         getMessages();
         getAnn();
+        updateScreen();
         
     
         t.server.pubsub.subscribe("bullboard", x => {
@@ -91,8 +92,8 @@ pol.tracking.BullBoard = class extends pol.core.Widget {
         /* Re-render and if height extends viewport height, add a scrollbar */
         function updateScreen() {   
             m.redraw();
-            var ht = $('#map').height() - t.pos[1] - 90; 
             setTimeout( () => { 
+                var ht = $('#map').height() - t.pos[1] -80; 
                 if ($('#bullboard .content').parent().is( "#bullboard .scroll" ) ) 
                     $('#bullboard .content').unwrap();
                 
@@ -102,7 +103,7 @@ pol.tracking.BullBoard = class extends pol.core.Widget {
                     $('#bullboard .content').wrap('<div class="scroll"></div>');
                     $('#bullboard .scroll').height(Math.round(ht));
                 }
-            }, 220);
+            }, 500);
         }   
     
 
@@ -110,7 +111,6 @@ pol.tracking.BullBoard = class extends pol.core.Widget {
         function selectGroup(group) {
             selectedGroup = group;
             CONFIG.store('tracking.BullBoard.group', selectedGroup, false);
-            console.log("selectGroup: "+group);
             getMessages();
         }
     

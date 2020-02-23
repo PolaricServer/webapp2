@@ -77,7 +77,8 @@ pol.tracking.TrailInfo = class extends pol.core.Widget {
   
   
         function formatDir(x) {
-            if (x < 22.5) return "N"; 
+            if (x < 0) return "-";
+            else if (x < 22.5) return "N"; 
             else if (x < 67.5) return "NE";
             else if (x < 112.5) return "E";
             else if (x < 157.5) return "SE";

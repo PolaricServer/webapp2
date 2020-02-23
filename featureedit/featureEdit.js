@@ -94,6 +94,8 @@ pol.features.Edit = class extends pol.core.Widget {
         
         /* Features should loaded even if editor is not active */
         setTimeout(()=>t.restoreFeatures(), 1000); 
+        snow.draftLayer.setVisible(false);
+        
         
         /* 
          * Handler to be called when feature is changed. 
