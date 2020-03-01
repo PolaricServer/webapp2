@@ -79,7 +79,7 @@ pol.tracking.db.MyTrackers = class extends pol.tracking.TrackerAlias {
             console.assert(userid && userid!=null, "userid="+userid);
             if (userid == null)
                 return;
-            t.server.GET("users/"+userid+ "/trackers", "", x => { 
+            t.server.GET("trackers/"+userid, "", x => { 
                 t.myTrackers = JSON.parse(x);
                 for (var tt of t.myTrackers) 
                     t.setIcon(tt, tt.icon); 
@@ -108,7 +108,7 @@ pol.tracking.db.MyTrackers = class extends pol.tracking.TrackerAlias {
             if (data.id == null || data.id == "")
                 return; 
             
-            t.server.POST("users/"+t.server.auth.userid+ "/trackers", 
+            t.server.POST("trackers/"+t.server.auth.userid, 
                 JSON.stringify(data), 
                 x => {
                     console.log("Added/updated tracker: "+data.id);
@@ -150,7 +150,7 @@ pol.tracking.db.MyTrackers = class extends pol.tracking.TrackerAlias {
         /* Delete a tracker from the list */
         function remove(i) {
 	      const tr = t.myTrackers[i]; 
-	      t.server.DELETE("users/"+t.server.auth.userid+ "/trackers/"+tr.id, 
+	      t.server.DELETE("trackers/"+t.server.auth.userid+ "/"+tr.id, 
 		  x => {
 		     console.log("Removed tracker: "+tr.id);
 		     t.myTrackers.splice(i, 1);
