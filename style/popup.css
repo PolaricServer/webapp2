@@ -104,10 +104,10 @@ th {
 }
 
 
-table, #searchresult table 
+table, #searchresult table, #userList table
 {border-collapse: collapse;}
 
-.items td, #historypopup td, #searchresult td, #rawAprs td {
+.items td, #historypopup td, #searchresult td, #userList td, #rawAprs td {
   padding-left: 0.5em; 
   padding-right: 0.5em;
   padding-bottom: 0.2em;
@@ -126,7 +126,19 @@ span#found {color: green; font-style: italic}
 
 #searchresult span.obj {color: green;}
 #searchresult span.name {color: #00a;}
-#searchresult span.alias {background: #fff; border-left: solid red 2px; padding-left: 2px; margin-left: -2px}
+
+#searchresult span.alias {
+    background: #fff; border-left: solid red 2px; 
+    padding-left: 2px; margin-left: -2px
+}
+
+#userList td span.removeEdit img { 
+  margin-top: -1px; margin-bottom: -1px
+}
+
+#userList {
+   margin-top: 0.5em;
+}
 
 .leftlab, .sleftlab, .xsleftlab, label.lleftlab {
   float: left;

@@ -152,10 +152,12 @@
         if (srv.auth.sar) {
             m.add("SAR mode..", () => WIDGET("tracking.SarMode", [50,70], true)); 
             m.add(null);
-            m.add("Set/change password..", setPasswd);
-        }
-        if (srv.auth.admin) {
-            m.add("Admin/configuration..", webConfig);
+            if (srv.auth.admin) {
+                m.add("Admin/configuration..", webConfig);
+                m.add("User admin..", () => WIDGET("tracking.Users", [50, 70], true));
+            }
+            else
+                m.add("Set/change password..", setPasswd);
         }
         m.add(null);
         
@@ -201,7 +203,7 @@
             m.add('Reset info', () => resetInfo(ctxt.ident) );
             if (ctxt.point.point.own)
                 m.add('Remove object', () => 
-                    CONFIG.ownObj.remove( ctxt.ident.substring(0, ctxt.ident.indexOf('@') ) ) );
+                    getWIDGET("tracking.OwnObjects").remove( ctxt.ident.substring(0, ctxt.ident.indexOf('@') ) ) );
         }
         m.add(null);
         if (CONFIG.tracks.isTracked(ctxt.ident))
@@ -220,12 +222,12 @@
             m.add('Hide trail', () => CONFIG.tracks.hideTrail(ctxt.ident, true) );
         m.add(null);
         
-        if (srv.auth.sar && srv.hasDb) { 
+        if (srv.auth.sar && srv.hasDb && ctxt.point.point.aprs) { 
             m.add('Add to my trackers', () => 
                 WIDGET("tracking.db.MyTrackers", [50, 70], true, x=> x.setIdent(ctxt.ident))); 
         }
-        if (srv.hasDb) {
-            m.add("Raw APRS packets", () => 
+        if (srv.hasDb && ctxt.point.point.aprs) {
+            m.add("Raw APRS packets", () =>
                 rawAprsPackets(ctxt.ident, [m.x, m.y]));
                 
             m.add("History...", () => 

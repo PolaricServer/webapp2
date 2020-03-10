@@ -13,7 +13,7 @@ closure-compiler --language_in ECMASCRIPT6 --js layerEdit.js --js layerList.js -
 
 cd ..
 cd tracking
-closure-compiler --language_in ECMASCRIPT6 --js tracking.js --js polaricserver.js --js pubsub.js --js mapupdate.js --js search.js --js filters.js --js notifier.js --js bullboard.js --js history.js --js heardvia.js --js labelStyle.js --js trackeralias.js --js globalsettings.js --js mytrackers.js --js ownobjects.js --js ownpos.js --js sarmode.js --js trailinfo.js --js tags.js > ../tracking-min.js
+closure-compiler --language_in ECMASCRIPT6 --js tracking.js --js polaricserver.js --js pubsub.js --js mapupdate.js --js search.js --js filters.js --js notifier.js --js bullboard.js --js history.js --js heardvia.js --js labelStyle.js --js trackeralias.js --js globalsettings.js --js mytrackers.js --js ownobjects.js --js ownpos.js --js sarmode.js --js trailinfo.js --js tags.js  --js users.js > ../tracking-min.js
 
 cd ..
 cd featureedit
