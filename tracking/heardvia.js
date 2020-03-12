@@ -66,15 +66,20 @@ pol.tracking.db.HeardVia = class extends pol.core.Widget {
                     m("h1", "Heard points via"),
                     m(showList),    
                     m("form.hrd", [ 
-                        m("span.sleftlab", "Callsign: "),
-                        m(textInput, {id:"hrd_call", value: t.item.call, size: 10, maxLength:20, 
-                            regex: /^.+$/i }),br,
-                        m("span.sleftlab", "Start: "),
-                        m(Datepick, {id: "hrd_start", value: t.item.fromdate}), br,
-                        m("span.sleftlab", "End: "),
-                        m(Datepick, {id: "hrd_end", value: t.item.todate}), 
-                        m(checkBox, {id: "hrd_open", onclick: hOpen, checked: t.item.open, 
-                            title: "If checked, end-date is today" }, "Open end"), br,
+                        m("div.field", 
+                            m("span.sleftlab", "Callsign: "),
+                            m(textInput, {id:"hrd_call", value: t.item.call, size: 10, maxLength:20, 
+                                regex: /^.+$/i })),
+                        
+                        m("div.field", 
+                            m("span.sleftlab", "Start: "),
+                            m(Datepick, {id: "hrd_start", value: t.item.fromdate})),
+                      
+                        m("div.field", 
+                            m("span.sleftlab", "End: "),
+                            m(Datepick, {id: "hrd_end", value: t.item.todate}), 
+                            m(checkBox, {id: "hrd_open", onclick: hOpen, checked: t.item.open, 
+                                title: "If checked, end-date is today" }, "Open end")), 
                         
                         m("div.hrdbutt", [
                             m("button#hrd_b1", {type: "button", onclick: search}, "Search"),

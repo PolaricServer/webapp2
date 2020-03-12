@@ -1,4 +1,6 @@
 
+button, input {font-size: 90%}
+
 div.POPUP img.popup_pin {
   visibility: hidden;
 }
@@ -146,6 +148,7 @@ span#found {color: green; font-style: italic}
   text-align: right;
   padding-right: 7px;
   color: gray;
+  padding-top: 0.1em;
 }
 
 .sleftlab {
@@ -348,3 +351,9 @@ div#iconlist>img:hover
 .link_id {color: #555; font-size: 90%}
 
 div.errmsg {color: red; margin-left: 2em; margin-bottom: 0.8em}
+
+input {max-height: 1.4em; margin-bottom: 0.1em}
+button {padding: 0.1em 0.6em 0.1em 0.6em; margin-top: 0 }
+select {max-height: 1.8em; font-size: 90%;}
+select option {font-size: 80%}
+.field {display: flex; align-items: center; margin-top: 2px}

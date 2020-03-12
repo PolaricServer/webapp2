@@ -45,17 +45,23 @@ pol.tracking.SarMode = class extends pol.core.Widget {
                 return m("div", [
                     m("h1", "Search and Rescue mode"),
                     m("form.sar", [ 
-                        m("span.sleftlab", "Sar mode: "),
-                        m(checkBox, {id: "sar_on", onclick: toggleSar, checked: t.sarOn}, "activated"), br,
-                        m("span.sleftlab", "Alias/icon: "),
-                        m(checkBox, {id: "sar_hide", onclick: toggleHide, checked: t.hide}, "hidden"), br,
+                        m("div.field", 
+                            m("span.sleftlab", "Sar mode: "),
+                            m(checkBox, {id: "sar_on", onclick: toggleSar, checked: t.sarOn}, "activated")), 
+                        
+                        m("div.field",
+                            m("span.sleftlab", "Alias/icon: "),
+                            m(checkBox, {id: "sar_hide", onclick: toggleHide, checked: t.hide}, "hidden")),
                       
-                        m("span.sleftlab", "Hide prefix: "),
-                        m(textInput, {id:"sar_prefix", value: t.prefix, size: 20, maxLength:40, 
-                            regex: /^[a-zA-Z0-9\-]+$/i }),br,
-                        m("span.sleftlab", "Description: "),
-                        m(textInput, {id:"sar_descr", value: t.descr, size: 20, maxLength:40, 
-                            regex: /^.+$/i }),br,
+                        m("div.field", 
+                            m("span.sleftlab", "Hide prefix: "),
+                            m(textInput, {id:"sar_prefix", value: t.prefix, size: 20, maxLength:40, 
+                                regex: /^[a-zA-Z0-9\-]+$/i })),
+                        
+                        m("div.field", 
+                            m("span.sleftlab", "Description: "),
+                            m(textInput, {id:"sar_descr", value: t.descr, size: 20, maxLength:40, 
+                                regex: /^.+$/i })),
                       
                         m("div.butt", 
                             m("button", { type: "button", onclick: update }, "Update"),

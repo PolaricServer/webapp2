@@ -66,24 +66,27 @@ pol.tracking.Users = class extends pol.core.Widget {
             view: function() {
                 return m("div#userEdit", [       
                     m("h1", "User Management"), 
-                    m("span.xsleftlab", "Ident:"),
-                    m(textInput, { id:"userId", value: t.ident, size: 16, 
-                            maxLength:25, regex: /.*/i }), br,
+                    m("div.field", 
+                        m("span.xsleftlab", "Ident:"),
+                        m(textInput, { id:"userId", value: t.ident, size: 16, 
+                            maxLength:25, regex: /.*/i })),
                          
-                    m("span.xsleftlab", "Name:"),
-                    m(textInput, { id: "name", value: t.name, size: 25,
-                            maxLength: 32, regex: /.*/i }), br,
+                    m("div.field", 
+                        m("span.xsleftlab", "Name:"),
+                        m(textInput, { id: "name", value: t.name, size: 25,
+                            maxLength: 32, regex: /.*/i })),
                          
-                    m("span.xsleftlab", "Passwd:"),
-                    m(textInput, { id: "passwd", value: t.passwd, size: 25,
-                            maxLength: 32, regex: /.*/i }), br,
+                    m("div.field",
+                        m("span.xsleftlab", "Passwd:"),
+                        m(textInput, { id: "passwd", value: t.passwd, size: 25,
+                            maxLength: 32, regex: /.*/i })), 
                          
-                    m("span.xsleftlab", "Access:"),
-                    m(checkBox, {id: "acc_sar", onclick: toggleSar, checked: t.sar, 
-                        title: "SAR (operator level)" }, "SAR"), nbsp, 
-                    m(checkBox, {id: "acc_admin", onclick: toggleAdmin, checked: t.admin, 
-                        title: "Administrator (super user level)" }, "Admin"), br,
-                         
+                    m("div.field", 
+                        m("span.xsleftlab", "Access:"),
+                        m(checkBox, {id: "acc_sar", onclick: toggleSar, checked: t.sar, 
+                            title: "SAR (operator level)" }, "SAR"), nbsp, 
+                        m(checkBox, {id: "acc_admin", onclick: toggleAdmin, checked: t.admin, 
+                            title: "Administrator (super user level)" }, "Admin")), 
                          
                     m("div.butt", [
                         m("button", { type: "button", onclick: update }, "Update"),

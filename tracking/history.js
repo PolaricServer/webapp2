@@ -63,15 +63,20 @@ pol.tracking.db.History = class extends pol.core.Widget {
                     m("h1", "Historical tracks"),
                     m(showList),    
                     m("form.hist", [ 
-                        m("span.sleftlab", "Callsign: "),
-                        m(textInput, {id:"hist_call", value: t.item.call, size: 10, maxLength:20, 
-                            regex: /^.+$/i }),br,
-                        m("span.sleftlab", "Start: "),
-                        m(dateTimeInput, {id: "hist_start", dvalue: t.item.fromdate, tvalue: t.item.fromtime}), br,
-                        m("span.sleftlab", "End: "),
-                        m(dateTimeInput, {id: "hist_end", dvalue: t.item.todate, tvalue: t.item.totime}), 
-                        m(checkBox, {id: "hist_open", onclick: hOpen, checked: t.item.open, 
-                            title: "If checked, end-time is now" }, "Open end"), br,
+                        m("div.field", 
+                            m("span.sleftlab", "Callsign: "),
+                            m(textInput, {id:"hist_call", value: t.item.call, size: 10, maxLength:20, 
+                                regex: /^.+$/i })),
+                      
+                        m("div.field", 
+                            m("span.sleftlab", "Start: "),
+                            m(dateTimeInput, {id: "hist_start", dvalue: t.item.fromdate, tvalue: t.item.fromtime})),
+                      
+                        m("div.field", 
+                            m("span.sleftlab", "End: "),
+                            m(dateTimeInput, {id: "hist_end", dvalue: t.item.todate, tvalue: t.item.totime}), 
+                            m(checkBox, {id: "hist_open", onclick: hOpen, checked: t.item.open, 
+                                title: "If checked, end-time is now" }, "Open end")),
                         
                         m("div.histbutt", [
                             m("button#hist_b1", {type: "button", onclick: search}, "Search"),

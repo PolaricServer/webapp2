@@ -59,32 +59,41 @@ pol.tracking.OwnObjects = class extends pol.core.Widget {
                         ), " "]
                     })),
                     m("div.errmsg", errmsg),
-                    m("span.sleftlab", "Object ID: "),   
-                    m(textInput, {id:"objid", value: t.obj.ident, size: 10, maxLength:9, 
-                        regex: /^[a-zA-Z0-9\_\-\.\#]{1,9}$/i }),br,   
-                    m("span.sleftlab", "Symbol: "), 
-                    m(textInput, {id:"symtab", size: 1, maxLength:1, value: t.obj.symtab, regex: /[\/\\a-zA-Z]/i }),
-                    m(textInput, {id:"symbol", size: 1, maxLength:1, value: t.obj.sym, regex: /[a-zA-Z]/i }),
-                    m(select, {
-                        id: "symSelect", 
-                        onchange: onSymSelect, 
-                        list: [
-                            {label: "Post", val: '/c'},
-                            {label: "Sign", val: '\\m'},
-                            {label: "Cross", val: '\\.'},
-                            {label: "Triangle", val: '\\n'},
-                            {label: "Red Cross", val: '/+'},
-                            {label: "OPS/EOS", val: '/o'},
-                            {label: "Radio Station", val: '/r'}
-                        ]}), br,
+                    
+                    m("div.field",
+                        m("span.sleftlab", "Object ID: "),   
+                        m(textInput, {id:"objid", value: t.obj.ident, size: 10, maxLength:9, 
+                            regex: /^[a-zA-Z0-9\_\-\.\#]{1,9}$/i })) ,   
+                    
+                    m("div.field", 
+                        m("span.sleftlab", "Symbol: "), 
+                        m(textInput, {id:"symtab", size: 1, maxLength:1, value: t.obj.symtab, regex: /[\/\\a-zA-Z]/i }),
+                        m(textInput, {id:"symbol", size: 1, maxLength:1, value: t.obj.sym, regex: /[a-zA-Z]/i }),
+                        m(select, {
+                            id: "symSelect", 
+                            onchange: onSymSelect, 
+                                list: [
+                                    {label: "Post", val: '/c'},
+                                    {label: "Sign", val: '\\m'},
+                                    {label: "Cross", val: '\\.'},
+                                    {label: "Triangle", val: '\\n'},
+                                    {label: "Red Cross", val: '/+'},
+                                    {label: "OPS/EOS", val: '/o'},
+                                    {label: "Radio Station", val: '/r'}
+                                ]})),
                          
-                    m("span.sleftlab", "Description: "), 
-                    m(textInput, {id:"descr", value: t.obj.comment, size: 32, maxLength:64, regex: /^.+$/i }),br,
-                    m("span.sleftlab", "Pos (UTM): "), 
-                    m(utmInput, {value: t.obj.pos}), br,      
-                    m("span.sleftlab", "Settings:"),
-                    m(checkBox, {id:"perm", onclick: toggleTimeless, checked: (t.obj.perm) },
-                        "Timeless (permanent)", br),     
+                    m("div.field", 
+                        m("span.sleftlab", "Description: "), 
+                        m(textInput, {id:"descr", value: t.obj.comment, size: 32, maxLength:64, regex: /^.+$/i })),
+                   
+                    m("div.field", 
+                        m("span.sleftlab", "Pos (UTM): "), 
+                        m(utmInput, {value: t.obj.pos})),
+                         
+                    m("div.field", 
+                        m("span.sleftlab", "Settings:"),
+                        m(checkBox, {id:"perm", onclick: toggleTimeless, checked: (t.obj.perm) },
+                            "Timeless (permanent)" )),     
                          
                     m("div.butt", [
                         m("button", { type: "button", onclick: update }, "Update"),
