@@ -2,7 +2,6 @@
 set -e
 
 
-
 case "$1" in
     configure|reconfigure)
         a2enmod expires > /dev/null 2>&1
@@ -11,8 +10,9 @@ case "$1" in
         chown www-data:www-data /var/lib/polaric/mapcache
         apache2ctl restart
         
-        if [[ ! -d "/usr/share/polaric" ]] ; then
+        if [[ ! -d "/usr/share/polaric" ]]; then
             mkdir /usr/share/polaric
+        fi
         ln -s /var/lib/polaric/webapp2/aprsd/icons /usr/share/polaric/icons
     ;;
 

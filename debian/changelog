@@ -1,8 +1,11 @@
-polaric-webapp2 (1.2+) UNRELEASED; urgency=medium
+polaric-webapp2 (1.3) stable; urgency=medium
 
-  * development 
+  * More use of REST API: Tags, search, user management 
+  * Drawing tool work (layers)
+  * Move icons from aprsd to this package. 
+  * Various fixes..
 
- -- Øyvind Hanssen <ohanssen@acm.org>  Sun, 26 Jan 2020 20:53:51 +0100
+ -- Øyvind Hanssen <ohanssen@acm.org>  Fri, 13 Mar 2020 18:47:23 +0100
 
 polaric-webapp2 (1.2) stable; urgency=medium
 

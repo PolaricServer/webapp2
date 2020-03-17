@@ -568,9 +568,9 @@ pol.core.MapBrowser = class {
      * @param {ol.Coordinate} coord - position to be shown (in latlong projection).
      */
     show_Mapref(coord) {
-        let h = '<span class="sleftlab">UTM:</span>' + pol.mapref.formatUTM(coord) +'<br>' +
-                  '<nobr><span class="sleftlab">Latlong:</span>' + pol.mapref.formatDM(coord) +'<br>'  + 
-                  '</nobr><span class="sleftlab">Loc:</span>' + pol.mapref.formatMaidenhead(coord); 
+        let h = '<div class="field"><span class="sleftlab">UTM:</span>' + pol.mapref.formatUTM(coord) +'</div>' +
+                  '<div class="field"><span class="sleftlab">Latlong:</span>' + pol.mapref.formatDM(coord) +'</div>'  + 
+                  '<div class="field"><span class="sleftlab">Loc:</span>' + pol.mapref.formatMaidenhead(coord)+"</div>"; 
         this.gui.removePopup();       
         this.gui.showPopup( 
             {html: h, geoPos: coord, image: true} );

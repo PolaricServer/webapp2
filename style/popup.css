@@ -348,7 +348,7 @@ div#iconlist>img:hover
 .dragdrop img {vertical-align: middle}
 .dragover {background: #cfc}
 
-.link_id {color: #555; font-size: 90%}
+.link_id {color: #00a;}
 
 div.errmsg {color: red; margin-left: 2em; margin-bottom: 0.8em}
 
@@ -357,3 +357,7 @@ button {padding: 0.1em 0.6em 0.1em 0.6em; margin-top: 0 }
 select {max-height: 1.8em; font-size: 90%;}
 select option {font-size: 80%}
 .field {display: flex; align-items: center; margin-top: 2px}
+.field {line-height: 1.15em}
+.field label {margin-bottom: -2px}
+div#traffic {line-height: 1em; margin-top: 0.6em }
+.field label.leftlab {margin-bottom: 0px}
