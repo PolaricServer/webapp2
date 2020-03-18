@@ -6,8 +6,9 @@ set -e
 case "$1" in
 
     remove|purge)
-       a2dissite aprs.conf > /dev/null 2>&1
-       apache2ctl reload > /dev/null 2>&1 || true
+        a2dissite aprs.conf > /dev/null 2>&1
+        apache2ctl reload > /dev/null 2>&1 || true
+        rm /usr/share/polaric/icons
     ;;
 
     deconfigure|remove|upgrade|failed-upgrade|abort-install|abort-upgrade|disappear)

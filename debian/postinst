@@ -13,7 +13,10 @@ case "$1" in
         if [[ ! -d "/usr/share/polaric" ]]; then
             mkdir /usr/share/polaric
         fi
-        ln -s /var/lib/polaric/webapp2/aprsd/icons /usr/share/polaric/icons
+        if [[ -L "/usr/share/polaric/icons" ]]; then
+            rm /usr/share/polaric/icons
+        fi
+        ln -s /var/lib/polaric/webapp2/aprsd/icons/ /usr/share/polaric/
     ;;
 
     abort-upgrade|abort-remove|abort-deconfigure)

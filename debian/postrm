@@ -6,12 +6,6 @@ case "$1" in
         if [ -d "/var/lib/polaric/mapcache" ]; then
             rm -R /var/lib/polaric/mapcache
         fi
-       
-        if [ "$1" == "purge" ] ; then
-            if [ -e "/etc/polaric-webapp/users" ]; then
-                rm /etc/polaric-webapp/users
-            fi
-        fi
     ;;
 
     upgrade|failed-upgrade|abort-install|abort-upgrade|disappear)
