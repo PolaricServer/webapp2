@@ -213,7 +213,7 @@ pol.core.Widget = class {
             CONFIG.remove("core.widget."+id, t.pos);
         
             if (pol.widget._stored[id] && pol.widget._stored[id] != null) {
-                pol.widget._stored[id] = null;
+                delete pol.widget._stored[id];
                 CONFIG.store("core.widget._stored", pol.widget._stored, true); 
             }
         }

@@ -12,7 +12,7 @@
  * Uncomment to use aprs.no as a backend. 
  * Default is to use the location of the webapp. 
  */
-SERVER("https://aprs.no");
+// SERVER("https://aprs.no");
 
 
 /* 
@@ -22,8 +22,8 @@ SERVER("https://aprs.no");
  * aprs.no uses "ws" and "srv" through a proxy. Default is to use a separate port: 8081. 
  * Uncomment the following two lines to use a backend with a proxy. 
  */
-WSPREFIX("ws");
-AJAXPREFIX("srv");
+// WSPREFIX("ws");
+// AJAXPREFIX("srv");
 
 
 /* Location of aprsd icons */
@@ -245,6 +245,9 @@ LAYERS ({
 ]);
 
 
+
+
+
 /*********************************************************************************
  * Predefined styles, mainly for vector layers.
  *
@@ -262,33 +265,52 @@ LAYERS ({
 
 var defaultStyle = 'Red';
 STYLES ([
-   { id: "Red",
+    { id: "Red",
         stroke: {color: 'rgba(200,0,0,1)', width: 1.5},
 	    fill  : 'rgba(255,240,220,0.3)',
 	    text  : {scale: 1.2, fill: '#300', stroke: {color: '#fff', width: 3} },
 	    image : CIRCLE(5, {fill: '#f448'})
-   },
-   { id: "Green + red",
+    },
+    { id: "Green + red",
         stroke: {color: 'rgba(0,100,0,1)', width: 1.5},
 	    fill  : 'rgba(220,255,220,0.3)',
 	    text  : {scale: 1.2, fill: '#300', stroke: {color: '#fff', width: 3} },
 	    image : CIRCLE(5, {fill: '#f448'})
-   },
-   { id: "Blue dashed",
+    },
+    { id: "Blue dashed",
         stroke: {color: 'rgba(0,80,200,1)', width: 2.3, lineDash: [3,3]},
 	    fill  : 'rgba(200,220,253,0.3)',
 	    text  : {scale: 1.2, fill: '#003', stroke: {color: '#fff', width: 3} },
 	    image : CIRCLE(5, {fill: '#55f8'})
-   },
-   { id: "Blue - No fill",
+    },
+    { id: "Blue - No fill",
         stroke: {color: 'rgba(0,0,200,1)', width: 1.5},
 	    text  : {scale: 1.2, fill: '#003', stroke: {color: '#fff', width: 3} },
 	    image : CIRCLE(5, {fill: '#55f8'})
-   },
-   { id: "Fireicon",
+    },
+    { id: "Fireicon",
         text  : {baseline: 'Bottom', scale: 1.2, fill: '#003', stroke: {color: '#fff', width: 3} },
 	    image : ICON("aprsd/icons/car-fire.png", {})
-   },
+    },
+    
+    /* styles for bicycle wheel model: Circles and labels */
+    { id: "bike25", 
+       stroke: {color: 'rgba(200,0,0,1)', width: 1.4},
+       fill  : 'rgba(255,220, 100, 0.15)',
+       text  : {scale: 1.2, fill: '#003', stroke: {color: '#fff', width: 3}, text: '25%' }
+    },
+    { id: "bike50", 
+       stroke: {color: 'rgba(0,150,10,1)', width: 1.4, lineDash: [3,3]},
+       text  : {scale: 1.2, fill: '#003', stroke: {color: '#fff', width: 3}, text: '50%' }
+    },
+    { id: "bike75", 
+       stroke: {color: 'rgba(0,10,200,1)', width: 1.4, lineDash: [3,3]},
+       text  : {scale: 1.2, fill: '#003', stroke: {color: '#fff', width: 3}, text: '75%' }
+    },
+    { id: "bike95", 
+       stroke: {color: 'rgba(0,0,0,1)', width: 1.1},
+       text  : {scale: 1.2, fill: '#003', stroke: {color: '#fff', width: 3}, text: '95%' }
+    }
 ]);
 
 

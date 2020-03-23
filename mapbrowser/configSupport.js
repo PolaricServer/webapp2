@@ -363,7 +363,7 @@ function createLayer_WFS(opts)
       source: vSource,
       style: opts.style
    });
-   
+   layer.clearOnMove = true;
    // If info-display handler present, register it. 
    if (opts.info)
        layer.displayInfo = opts.info; 

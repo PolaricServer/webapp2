@@ -456,7 +456,8 @@ pol.core.MapBrowser = class {
      * Set/get the resolution of the map. 
      */
     getResolution() {
-       return this.config.get('core.resolution');
+       return this.view.getResolution(); 
+       // this.config.get('core.resolution');
     };
     
     

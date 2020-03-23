@@ -138,11 +138,10 @@ div.butt {padding-left: 2em; border-top: 2px solid #999; margin-top: 0.3em; padd
 
 span#confirm {color: green; font-size: smaller; margin-left: 0.5em}
 
-
-div#aprsObject div.itemList>span {white-space:nowrap}
-div#aprsObject div.itemList {padding-left: 1em; max-width: 30em}
-div#aprsObject div.itemList {border-bottom: 2px solid #999; padding-bottom: 0.4em; margin-bottom: 0.4em}
-div#aprsObject div.itemList img {vertical-align: middle} 
+div.itemList>span {white-space:nowrap}
+div.itemList {padding-left: 1em; max-width: 30em}
+div.itemList {border-bottom: 2px solid #999; padding-bottom: 0.4em; margin-bottom: 0.6em}
+div.itemList img {vertical-align: middle} 
 
 div#trail>span {display: block; color: #060; margin-left: 0.4em; margin-top: -0.7em; margin-bottom: -0.9em;}
 
@@ -156,3 +155,9 @@ span.box img {vertical-align: bottom; padding-bottom: 0.05em; width: 15px}
 #notifications div {min-width: 16em}
 
 .tagList span.box img {vertical-align: middle}
+
+
+div#rings  {background: #cdd; border: 1px dotted; padding: 0.3em; padding-right: 1em; margin-top: 0.3em}
+#rings input {width: 4.3em}
+#rings .km {font-size: 90%; color: #146}
+div#alternatives {border: dotted 2px red; padding: 0.4em; margin-left: 0.4em; color: #257; font-size: 90%; max-width: 11em}

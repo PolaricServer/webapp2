@@ -361,3 +361,4 @@ select option {font-size: 80%}
 .field label {margin-bottom: -2px}
 div#traffic {line-height: 1em; margin-top: 0.6em }
 .field label.leftlab {margin-bottom: 0px}
+.featureInfo {padding-left: 0.1em; padding-right: 0.1em; border: 1px dotted #e30}

@@ -106,6 +106,11 @@
             if (srv.hasDb)
                 m.add('Add sign', () => editSign(m.x, m.y) );
         }
+        
+        /* TEST BICYCLE WHEEL */
+        m.add('Add LKP/IPP with rings', () => 
+            WIDGET("tracking.BikeWheel", [50,70], true, x=> x.setPosPix([m.x, m.y]))); 
+        
         m.add(null);
         m.add('Center point', () =>   
             browser.view.setCenter( browser.map.getCoordinateFromPixel([m.x, m.y])) );

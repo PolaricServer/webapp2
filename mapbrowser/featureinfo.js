@@ -45,12 +45,12 @@ pol.core.FeatureInfo = class {
         
         browser.map.on('movestart', ()=> {
             for (const x of t.layers) {
-                if (x.layer instanceof ol.layer.Vector) 
+                if (x.layer.clearOnMove && x.layer instanceof ol.layer.Vector) 
                     x.layer.getSource().clear(true);
             }
         });
 
-        
+           
         
         /*
          * Show a list of feature names to select from 
@@ -90,9 +90,11 @@ pol.core.FeatureInfo = class {
             info: null,
             /* View */
             view: ()=> {
-                return m("div", [ this.info.map( x=> {    
-                    return [ (x.lbl? m("span.sleftlab", x.lbl+": "):null), 
-                             (x.val == 'undefined' ? null : [x.val, br]) ];
+                return m("div.featureInfo", [ this.info.map( x=> {    
+                    return  [ m("span.field", [ 
+                               (x.lbl? m("span.sleftlab", x.lbl+": "):null), 
+                               (x.val == 'undefined' ? null : x.val)
+                            ])];
                 })])
             },
             /* Controller */
@@ -104,7 +106,12 @@ pol.core.FeatureInfo = class {
         
         
         
-        
+        /* 
+         * Go through all features at a particular pixel position
+         *   pix - position on screen
+         *   func - function to handle a single feature. 
+         *   select - function that selects one feature from a list.
+         */ 
         function forAllFeatures(pix, func, select) {
             let features = []; 
             for (const lr of t.layers) {
@@ -115,9 +122,9 @@ pol.core.FeatureInfo = class {
                     continue;
                 let prev = null;
                 for (const f of feats) {
-                    f.handler = lr.handler;
-                    if (prev != null && f.values_ == prev.values_) 
+                    if (f.hide || (prev != null && f.values_ == prev.values_) ) 
                         continue;
+                    f.handler = lr.handler;
                     features.push(f)
                     prev = f;
                 }
@@ -143,7 +150,7 @@ pol.core.FeatureInfo = class {
     * as a label.
     * 
     * registerRecursive assumes that a layer has an attribute displayInfo
-    * which is the handler function. It also goes recursively traverses
+    * which is the handler function. It also recursively traverses
     * Group layers. 
     */
     registerRecursive(layer) {
@@ -156,6 +163,12 @@ pol.core.FeatureInfo = class {
     }
     
     
+    /*
+     * Register a layer with a handler function. 
+     * The handler function should return an array of objects with two String fields: 
+     *   - lbl - label (optionally)
+     *   - val - value
+     */
     register(layer, func) {
         this.layers.push({layer: layer, handler: func});
     }
