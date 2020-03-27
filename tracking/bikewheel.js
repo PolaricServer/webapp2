@@ -21,8 +21,6 @@
  
 
 
-
-
 /**
  * Reference search (in a popup window). 
  */
@@ -34,7 +32,7 @@ pol.tracking.BikeWheel = class extends pol.core.Widget {
         const t = this;
         const srv = CONFIG.server;
         let errmsg = "";
-        t.label = m.stream("IPP");
+        t.ident = m.stream("IPP");
         t.descr = m.stream("");
         t.pos = [0,0];
         t.p25 = m.stream("");
@@ -58,8 +56,9 @@ pol.tracking.BikeWheel = class extends pol.core.Widget {
                     
                     m("div.itemList", t.olist.map( x=> {
                         return [ m("span", [ 
-                            m("img",  {src: "images/edit-delete.png", onclick: apply((x)=>t.remove(i++), x)}),
-                            m("span", {onclick: apply(zoomTo, x)}, x.label), nbsp]
+                            m("img",  {src: "images/edit-delete.png", onclick: apply(_remove, i)}),
+                            m("img",  {src: "images/edit.png", onclick: apply(edit, i++)}), nbsp,      
+                            m("span", {onclick: apply(zoomTo, x)}, x.ident), nbsp]
                         ), " "]
                     })),     
                     m("div.errmsg", errmsg),    
@@ -67,7 +66,7 @@ pol.tracking.BikeWheel = class extends pol.core.Widget {
                          
                     m("div.field",
                         m("span.sleftlab", "Ident: "),   
-                        m(textInput, {id:"label", value: t.label, size: 10, maxLength:15, 
+                        m(textInput, {id:"label", value: t.ident, size: 10, maxLength:15, 
                             regex: /^[a-zA-Z0-9\_\-\.\#\/]+$/i })) ,   
                          
                     m("div.field", 
@@ -81,13 +80,13 @@ pol.tracking.BikeWheel = class extends pol.core.Widget {
                     m("div.field", 
                         m("span.sleftlab", "Rings: "), 
                         m("div#rings", [
-                            m(textInput, {value: t.p25, size: 5, maxlength: 6, regex: /^[0-9]+(\.[0-9]+)?$/i }),
+                            m(textInput, {id: "p25", value: t.p25, size: 5, maxlength: 6, regex: /^[0-9]+(\.[0-9]+)?$/i }),
                                 m("span.km"," km"), " - 25%", br,
-                            m(textInput, {value: t.p50, size: 5, maxlength: 6, regex: /^[0-9]+(\.[0-9]+)?$/i }),
+                            m(textInput, {id: "p50", value: t.p50, size: 5, maxlength: 6, regex: /^[0-9]+(\.[0-9]+)?$/i }),
                                 m("span.km"," km"), " - 50%", br,
-                            m(textInput, {value: t.p75, size: 5, maxlength: 6, regex: /^[0-9]+(\.[0-9]+)?$/i }),
+                            m(textInput, {id: "p75", value: t.p75, size: 5, maxlength: 6, regex: /^[0-9]+(\.[0-9]+)?$/i }),
                                 m("span.km"," km"), " - 75%", br,
-                            m(textInput, {value: t.p95, size: 5, maxlength: 6, regex: /^[0-9]+(\.[0-9]+)?$/i }),
+                            m(textInput, {id: "p95", value: t.p95, size: 5, maxlength: 6, regex: /^[0-9]+(\.[0-9]+)?$/i }),
                                 m("span.km"," km"), " - 95%", 
                          ]), 
                          m("div#alternatives", [ 
@@ -110,10 +109,12 @@ pol.tracking.BikeWheel = class extends pol.core.Widget {
         
         //Default source for drawing.
         t.src = new VectorSource()
+
     
         const layer = new VectorLayer(
             { name: "BIKEWHEEL", source: t.src }
         );
+
         CONFIG.mb.addLayer(layer);
        
         CONFIG.mb.featureInfo.register(layer, (x)=> {
@@ -123,6 +124,28 @@ pol.tracking.BikeWheel = class extends pol.core.Widget {
            ];
             
         });
+        restoreFeatures();
+        
+        
+        function restoreFeatures() {            
+            if (srv != null && srv.loggedIn) 
+                srv.GET("/sar/ipp/"+srv.auth.userid, null,
+                    (dt)=> {
+                        const list = JSON.parse(dt);
+                        console.log("LIST: ", list);
+                        for (const x of list) {
+                            if (x!= null) {
+                                t.olist.push(x);
+                                draw(x);
+                            }
+                        }
+                    },
+                    
+                    (e)=> {
+                        console.log("Cannot get features: "+e);
+                      }
+                );  
+        }
         
         
         
@@ -180,7 +203,8 @@ pol.tracking.BikeWheel = class extends pol.core.Widget {
         /* 
          * Draw point with rings on map
          */
-        function draw(x) {           
+        function draw(x) {   
+            x.features = [];
             if (x.p25 > 0)
                 x.features.push(addCircle(x.pos, x.p25*1000, getStyle('bike25') )); 
             if (x.p50 > 0)
@@ -189,49 +213,78 @@ pol.tracking.BikeWheel = class extends pol.core.Widget {
                 x.features.push(addCircle(x.pos, x.p75*1000, getStyle('bike75') )); 
             if (x.p95 > 0)
                 x.features.push(addCircle(x.pos, x.p95*1000, getStyle('bike95') )); 
-            x.features.push( addPoint(x.pos, x.label, x.descr) );
-            setTimeout(()=> CONFIG.mb.setCenter(x.pos, 100), 200);
+            x.features.push( addPoint(x.pos, x.ident, x.descr) );   
         }
     
+        function createItem() {
+            return {
+                pos: t.pos, 
+                ident: t.ident(),
+                descr: t.descr(),
+                p25: t.p25()=="" ? 0 : parseFloat(t.p25()),
+                p50: t.p50()=="" ? 0 : parseFloat(t.p50()),
+                p75: t.p75()=="" ? 0 : parseFloat(t.p75()),
+                p95: t.p95()=="" ? 0 : parseFloat(t.p95()),
+            }
+        }
     
+        /*
+         * Add a item (a IPP/LKP with distance rings */
         function add() {
             if (t.pos[0]==0 && t.pos[1]==0) {
                 error("Invalid position");
                 return;
             }
             for (const x of t.olist)
-                if (x.label == t.label()) {
-                    error("Cannot add '"+x.label+"'. Already added");
+                if (x.ident == t.ident()) {
+                    error("Cannot add '"+x.ident+"'. Already added");
                     return;
                 }
-            const item = {
-                pos: t.pos, 
-                label: t.label(),
-                descr: t.descr(),
-                p25: t.p25()=="" ? 0 : parseFloat(t.p25()),
-                p50: t.p50()=="" ? 0 : parseFloat(t.p50()),
-                p75: t.p75()=="" ? 0 : parseFloat(t.p75()),
-                p95: t.p95()=="" ? 0 : parseFloat(t.p95()),
-                features: []
-            }
+            const item = createItem(); 
+            
+            /* Update on server if logged in */
+            if (srv != null && srv.loggedIn) 
+                srv.POST("sar/ipp/"+srv.auth.userid, JSON.stringify(item), 
+                    ()=> { console.log("Posted IPP/LKP: "+item.ident); },
+                    (e)=> { error("Cannot post IPP/LKP: "+e); }
+                );
+        
+            /* Update on client */
             t.olist.push(item);
             draw(item);
+            setTimeout(()=> CONFIG.mb.setCenter(item.pos, 100), 200);
         }
         
         
+        /*
+         * Update a item
+         */
         function update() {
             if (t.pos[0]==0 && t.pos[1]==0) {
                 error("Invalid position");
                 return;
             }
-            /* Remove first the existing features */
-            for (const i in t.olist)
-                if (t.olist[i].label == t.label()) {
-                    t.remove(i);
+
+            /* Remove first the existing features on map*/
+            let i = 0;
+            for (i in t.olist)
+                if (t.olist[i].ident == t.ident()) {
+                    for (const f of t.olist[i].features)
+                        t.src.removeFeature(f);
                     break;
                 }
-            /* Then add */
-            add();
+            
+            const item = createItem();
+            
+            /* Update on server if logged in */
+            if (srv != null && srv.loggedIn) 
+                srv.PUT("sar/ipp/"+srv.auth.userid+"/"+item.ident, JSON.stringify(item), 
+                    ()=> { console.log("Updated IPP/LKP: "+item.ident); },
+                    (e)=> { error("Cannot update IPP/LKP: "+e); }
+                );
+            
+            t.olist[i]=item;
+            draw(item);
         }
         
         
@@ -240,24 +293,47 @@ pol.tracking.BikeWheel = class extends pol.core.Widget {
         }
         
                 
+        /* 
+         * Report error 
+         */
         function error(txt) {
+            console.log(txt);
             errmsg = txt;
             setTimeout(()=>{errmsg="";m.redraw();}, 6000);
             m.redraw();
         }
         
+        
+        /* Move item i to form for editing */
+        function edit(i) {
+            const x = t.olist[i]; 
+            t.ident(x.ident);
+            t.descr(x.descr);
+            t.pos = x.pos; 
+            t.p25(x.p25);
+            t.p50(x.p50);
+            t.p75(x.p75);
+            t.p95(x.p95);
+        }
+    
+    
+        function _remove(i) {
+            t.remove(i);
+        }
+        
+        
         /* Apply a function to an argument. Returns a new function */
         function apply(f, id) {return function() { f(id); }};  
         
         
-        
     } /* constructor */
     
+
     
     
     /* Clear form fields */
     clear() {
-        this.label("IPP");
+        this.ident("IPP");
         this.descr("");
         this.p25("");
         this.p50("");
@@ -279,6 +355,15 @@ pol.tracking.BikeWheel = class extends pol.core.Widget {
         
     /* Remove object on map and on backend server */
     remove(i) {
+        /* Remove on server if logged in */
+        const item = this.olist[i];
+        if (srv != null && srv.loggedIn) 
+            srv.DELETE("sar/ipp/"+srv.auth.userid+"/"+item.ident, 
+                ()=> { console.log("Deleted IPP/LKP: "+item.ident); },
+                (e)=> { error("Cannot delete IPP/LKP: "+e); }
+            );
+        
+        /* Remove features on map */
         for (const f of this.olist[i].features)
             this.src.removeFeature(f);
         this.olist.splice(i,1);
