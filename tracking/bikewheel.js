@@ -129,10 +129,9 @@ pol.tracking.BikeWheel = class extends pol.core.Widget {
         
         function restoreFeatures() {            
             if (srv != null && srv.loggedIn) 
-                srv.GET("/sar/ipp/"+srv.auth.userid, null,
+                srv.GET("/sar/ipp", null,
                     (dt)=> {
                         const list = JSON.parse(dt);
-                        console.log("LIST: ", list);
                         for (const x of list) {
                             if (x!= null) {
                                 t.olist.push(x);
@@ -244,7 +243,7 @@ pol.tracking.BikeWheel = class extends pol.core.Widget {
             
             /* Update on server if logged in */
             if (srv != null && srv.loggedIn) 
-                srv.POST("sar/ipp/"+srv.auth.userid, JSON.stringify(item), 
+                srv.POST("sar/ipp", JSON.stringify(item), 
                     ()=> { console.log("Posted IPP/LKP: "+item.ident); },
                     (e)=> { error("Cannot post IPP/LKP: "+e); }
                 );
@@ -278,7 +277,7 @@ pol.tracking.BikeWheel = class extends pol.core.Widget {
             
             /* Update on server if logged in */
             if (srv != null && srv.loggedIn) 
-                srv.PUT("sar/ipp/"+srv.auth.userid+"/"+item.ident, JSON.stringify(item), 
+                srv.PUT("sar/ipp/"+item.ident, JSON.stringify(item), 
                     ()=> { console.log("Updated IPP/LKP: "+item.ident); },
                     (e)=> { error("Cannot update IPP/LKP: "+e); }
                 );
@@ -358,7 +357,7 @@ pol.tracking.BikeWheel = class extends pol.core.Widget {
         /* Remove on server if logged in */
         const item = this.olist[i];
         if (srv != null && srv.loggedIn) 
-            srv.DELETE("sar/ipp/"+srv.auth.userid+"/"+item.ident, 
+            srv.DELETE("sar/ipp/"+item.ident, 
                 ()=> { console.log("Deleted IPP/LKP: "+item.ident); },
                 (e)=> { error("Cannot delete IPP/LKP: "+e); }
             );
