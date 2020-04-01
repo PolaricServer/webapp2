@@ -37,17 +37,24 @@ pol.layers.Wfs = class extends pol.layers.Edit {
         t.fields = {
             view: function() { 
                 return m("div.spec", [ 
-                    m("span.sleftlab", "WFS URL: "),   
-                    m(textInput, {id:"wfsUrl", size: 40, maxLength:160, value: t.wurl, regex: /^.+$/i }),br,
-                    m("span.sleftlab", "Feat. type: "),
-                    m(textInput, {id:"wfsFtype", size: 40, maxLength:80, value: t.ftype, regex: /^.+$/i }),br,
-                    m("span.sleftlab", "Style: "),
-                    m(select, {id: "wfsStyle", list: Object.keys(CONFIG.styles).map( x => {
+                    m("div.field", 
+                        m("span.sleftlab", "WFS URL: "),   
+                        m(textInput, {id:"wfsUrl", size: 40, maxLength:160, value: t.wurl, regex: /^.+$/i })
+                    ),
+                    m("div.field", 
+                        m("span.sleftlab", "Feat. type: "),
+                        m(textInput, {id:"wfsFtype", size: 40, maxLength:80, value: t.ftype, regex: /^.+$/i })
+                    ),
+                    m("div.field", 
+                        m("span.sleftlab", "Style: "),
+                        m(select, {id: "wfsStyle", list: Object.keys(CONFIG.styles).map( x => {
                             return {label: x, val: x, obj: CONFIG.styles[x]}; 
-                        }) }), br,
-	       
-                    m("span.sleftlab", "Label attr: "),
-                    m(textInput, {id:"wfsLabel", size: 20, maxLength: 60, value: t.wlabel, regex: /^.+$/i }),br
+                        }) })
+                    ),
+                    m("div.field", 
+                        m("span.sleftlab", "Label attr: "),
+                        m(textInput, {id:"wfsLabel", size: 20, maxLength: 60, value: t.wlabel, regex: /^.+$/i })
+                    )
                 ]);
             }
         }  

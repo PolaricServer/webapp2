@@ -57,7 +57,10 @@ pol.tracking.GlobalSettings = class extends pol.tracking.TrackerAlias {
         function update() {
             let icn = $("#iconpick").get(0).value; 
             let icn2 = icn.substr(icn.lastIndexOf("/")+1);
-            let id =  $("#trackerId").val().toUpperCase();
+            let id =  $("#trackerId").val();
+            if (!id.match(/^.+\@.+$/g))
+                id = id.toUpperCase(); 
+            
             if (id == "")
                 return; 
             const data = {

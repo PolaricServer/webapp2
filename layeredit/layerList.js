@@ -54,15 +54,19 @@ pol.layers.List = class List extends pol.core.Widget {
                         return m("tr", [
                             m(removeEdit, {remove: apply(x=>t.removeLayer(x), i), edit: apply(editLayer, i++) }),
                             m("td", {'class': (x.server ? "onserver" : null)}, x.name) ] );
-                    }))), m("div", [ 
-                        m("span.sleftlab", "Type: "), 
-                        m(select, { id: "lType", 
-                            onchange: selectHandler, 
-                            list: Object.keys(t.typeList)
-                                .filter( x=> {return (t.typeList[x].obj.allowed());} )
-                                .map( x=> 
-                                    {return {label: t.typeList[x].label, val: x, obj: t.typeList[x].obj};})
-                        }), 
+                    }))), 
+                    
+                    m("div", [ 
+                        m("div.field", 
+                            m("span.sleftlab", "Type: "), 
+                            m(select, { id: "lType", 
+                                onchange: selectHandler, 
+                                    list: Object.keys(t.typeList)
+                                        .filter( x=> {return (t.typeList[x].obj.allowed());} )
+                                        .map( x=> 
+                                            {return {label: t.typeList[x].label, val: x, obj: t.typeList[x].obj};})
+                            })
+                        ), 
                         m(t.layer.widget) 
                     ] ) ] );
             },
