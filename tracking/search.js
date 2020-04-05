@@ -80,9 +80,6 @@ pol.tracking.Search = class extends pol.core.Widget {
             }
         };
    
-        getTags();
-   
-   
         
         function apply(f, x) {
             return () => { return f(x); } 
@@ -116,7 +113,7 @@ pol.tracking.Search = class extends pol.core.Widget {
             const c = x.split('.');
             if (c.length == 1)
                 return true
-            if (!tagUsed(c[0]))
+            if (!t.tagUsed(t.tags, c[0]))
                 return true; 
             for (i in t.selected)
                 if (c[0] == i.split('.')[0])
@@ -124,25 +121,6 @@ pol.tracking.Search = class extends pol.core.Widget {
             return false;
         }
 
-        function tagUsed(x) {
-            for (i in t.tags)
-                if (x==t.tags[i])
-                    return true;
-            return false; 
-        }
-        
-        
-   
-        /* Get tags from server. Server API */
-        function getTags() {
-            t.server.GET("system/tags", null, 
-                x=> {
-                      t.tags = JSON.parse(x); 
-                      m.redraw();
-                    }
-            );
-        }
-   
 
    
         /* Return tags that user has checked, as a comma separated list */
@@ -171,6 +149,7 @@ pol.tracking.Search = class extends pol.core.Widget {
                     $("span#found").text(t.result.length+" items found"); 
                 }
             );
+            t.getTags();
         }
         
         
@@ -243,11 +222,45 @@ pol.tracking.Search = class extends pol.core.Widget {
         }
     
     } /* constructor */
+            
+            
+    tagUsed(tt, x) {
+        for (i in tt)
+            if (x==tt[i])
+                return true;
+        return false; 
+    }
+        
+        
+   
+    /* Get tags from server. Server API */
+    getTags() {
+        this.server.GET("system/tags", null, 
+            x=> {
+                this.tags = [];
+                const tt = JSON.parse(x); 
+                for (const i in tt) {
+                    if (tt[i].charAt(0)=='-')
+                        continue;
+                    else if (tt[i].charAt(0)=='+') {
+                        if (this.tagUsed(this.tags, tt[i].substring(1)))
+                            continue;
+                        else
+                            this.tags.push(tt[i].substring(1));
+                    }
+                    else
+                        this.tags.push(tt[i]);
+                }
+                m.redraw();
+            }
+        );
+    }
     
     
     /* Deselect all tags when opening window */
     onActivate() {
         this.selected = {};
+        this.getTags();
         m.redraw();
     }
     

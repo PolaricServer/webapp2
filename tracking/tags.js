@@ -39,6 +39,7 @@ pol.tracking.Tags = class extends pol.core.Widget {
         t.tag = m.stream("");
         t.tagsOn = [];
         t.usedTags = [];
+        t.negTags = new Set();
         t.classname = "tracking.Tags"; 
 
         this.widget = {
@@ -48,10 +49,14 @@ pol.tracking.Tags = class extends pol.core.Widget {
                     m("h1", "Tags for "+t.ident()), 
                     
                     m("div.tagList", t.tagsOn.map( x=> {
-                        return [ m("span.box", [ 
-                            m("img",  {src: "images/edit-delete.png", onclick: apply((x)=>t.remove(x), x)}),
-                            m("span", x), nbsp]
-                        ), " "]
+                        if (t.negTags.has(x)) 
+                            return  m("span.disabled", x);
+                        else
+                            return [ m("span.box", [ 
+                                m("img",  {src: "images/edit-delete.png", onclick: apply((x)=>t.remove(x), x)}),
+                                (x.charAt(0)=='-' ? m("span.negtag", x) : 
+                                    (x.charAt(0)=='+' ? m("span.usertag", x.substring(1)) : 
+                                        m("span.systag", x))) ])]
                     })), 
                     m(textInput, {list: "usedTags", value: t.tag}),
                     m("datalist#usedTags", t.usedTags.map( x=> {
@@ -82,6 +87,7 @@ pol.tracking.Tags = class extends pol.core.Widget {
     
     
     remove(x) {
+        x = encodeURIComponent(x);
         this.server.DELETE("item/"+this.ident()+"/tags/"+x,
             ()=> { this.getTags(); m.redraw();  }, 
             (x)=> { console.warn("Couldn't delete object: "+x); })
@@ -111,8 +117,12 @@ pol.tracking.Tags = class extends pol.core.Widget {
         
         this.server.GET("item/"+this.ident()+"/tags", null,
             x=> { 
+                this.negTags.clear();
                 this.tagsOn=JSON.parse(x);
                 this.tagsOn.sort((x,y)=> {return x>y});
+                for (const tt of this.tagsOn)
+                    if (tt.charAt('-'))
+                        this.negTags.add(tt.substring(1));
                 m.redraw() 
             },
             ()=> { console.warn("Couldn't get tag-list for item"); }
