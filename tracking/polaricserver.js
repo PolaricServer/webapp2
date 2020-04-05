@@ -46,7 +46,7 @@ pol.tracking.PolaricServer = class extends pol.core.Server {
      * add area to logged in user. FIXME: Should this be here???
      */  
     putObj(tag, obj, f) { 
-        this.POST("objects/"+this.auth.userid+"/"+tag, 
+        this.POST("objects/"+tag, 
             JSON.stringify(obj), 
             x => { console.log("Added server object for user: "+this.auth.userid); f(x); },
             x => { console.log("ERROR: " + x); } );
@@ -55,14 +55,14 @@ pol.tracking.PolaricServer = class extends pol.core.Server {
 
 
     removeObj(tag, id) {
-        this.DELETE("objects/"+this.auth.userid+"/"+tag+"/"+id, 
+        this.DELETE("objects/"+tag+"/"+id, 
             () => console.log("Removed server object "+id+" for user: "+this.auth.userid) );
     }
 
 
 
     getObj(tag, f) {
-        this.GET("objects/"+this.auth.userid+"/"+tag, "", 
+        this.GET("objects/"+tag, "", 
                 x => f(JSON.parse(x)) );
     }
 
