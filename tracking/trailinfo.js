@@ -62,7 +62,7 @@ pol.tracking.TrailInfo = class extends pol.core.Widget {
                 return m("div#trail", [       
                     m("h1", "Last movements"),
                     m("span", t.callsign),br,
-                    m("div#searchresult")    
+                    m("div#trailresult")    
                 ])
             }
         };
@@ -113,8 +113,8 @@ pol.tracking.TrailInfo = class extends pol.core.Widget {
                  * Mount mithril component for resulting table to #ttable div
                  * make table scrollable. 
                  */
-                m.mount($("div#searchresult").get(0), this.showList);
-                this.setScrollTable("div#trail", "div#searchresult");
+                m.mount($("div#trailresult").get(0), this.showList);
+                this.setScrollTable("div#trail", "div#trailresult");
             },
             ()=> { console.warn("Couldn't get object-list"); }
         )

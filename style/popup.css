@@ -106,10 +106,10 @@ th {
 }
 
 
-table, #searchresult table, #userList table
+table, #searchresult table, #userList table, #trailresult table
 {border-collapse: collapse;}
 
-.items td, #historypopup td, #searchresult td, #userList td, #rawAprs td {
+.items td, #historypopup td, #searchresult td, #userList td, #trailresult td, #rawAprs td {
   padding-left: 0.5em; 
   padding-right: 0.5em;
   padding-bottom: 0.2em;

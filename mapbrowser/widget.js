@@ -69,8 +69,12 @@ pol.widget.restore = function() {
             w.activatePopup(x, pos, true);
         
         const fact = pol.widget._factory[x];
-        if (!fact || !fact.create)
-            return;
+        if (!fact || !fact.create) {
+            CONFIG.remove("core.widget."+x);
+            delete pol.widget._stored[x];
+            CONFIG.store("core.widget._stored", pol.widget._stored, true);
+            continue;
+        }
         if (fact.onRestore && fact.onRestore != null)
             fact.onRestore();
     }
