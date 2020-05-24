@@ -246,6 +246,51 @@ LAYERS ({
 
 
 
+LAYERS ({ 
+    base: false,
+    predicate: AND( SCALE_LT (2000000), IN_EXTENT(Norway) )
+},[  
+    
+    createLayer_WFS({
+        name : "O-kart dekning (UMB)",
+        url  : "http://gis.umb.no/nof/o_kart_wfs",
+        ftype: "okart:o-kart_nof",
+        
+        style: TESTRES( 50, SETLABEL("Blue dashed", "$(id): $(kartnavn)"), GETSTYLE("Red")), 
+        info : FEATUREINFO([
+            {lbl: "id",        val: "$(id)"},
+            {lbl: "Kartnavn",  val: "$(kartnavn)"},
+            {lbl: "Målestokk", val: "$(maalestokk)"},
+            {lbl: "Utgiver",   val: "$(utgiver)"}
+        ])
+    }), 
+      
+    createLayer_WFS({
+        name : "Brannstasjoner (DSB)",
+        url  : "https://ogc.dsb.no/wfs.ashx", 
+        ftype: "layer_183",
+        
+        style: GETSTYLE("Fireicon"),
+        info : FEATUREINFO([
+            {val: "$(brannstasj)"},
+            {val: "$(brannvesen)"},
+            {val: "Type $(stasjonsty)"}
+        ])
+      })
+      
+
+    /* TESTRES, SETLABEL and GETSTYLE return functions that return styles.
+     * TESTRES returns the second argument if resolution is less than 50, and
+     * the third argument if it is greater.
+     *
+     * GETSTYLE just return the named style (see STYLES below).
+     * SETLABEL return the named style and adds text for labels, using named attributes
+     * of each feature. Any $(attr) is replaced with the value of the attribute.
+     * In this example, 'id' is such an attribute.
+     */
+]);
+
+
 
 
 /*********************************************************************************
