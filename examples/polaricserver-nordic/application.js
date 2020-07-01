@@ -15,7 +15,13 @@
     var trident = ua.indexOf('Trident/');
     if (msie > 0 || trident > 0)
        alert("Note that MSIE is not supported. A more recent browser is recommended");
-   
+
+   /*
+    * Read the URL GET parameters
+    */
+   var urlArgs = getParams(window.location.href);
+   if (urlArgs['car'] != null) 
+	CONFIG.store('display.in-car', true);
       
    /* 
     * Instantiate the map browser and try to restore widgets from a previous session. 
@@ -36,6 +42,8 @@
         const mu = new pol.tracking.Tracking(srv);
         const flt = new pol.tracking.Filters(mu);
         CONFIG.tracks = mu;
+	if (urlArgs['track'] != null) 
+        	CONFIG.tracks.setTracked(urlArgs['track']);
         
         if (srv.auth.userid != null) {
             const not = new pol.tracking.Notifier();
@@ -185,7 +193,19 @@
         }
         
         m.add("Bulletin board", () => WIDGET("tracking.BullBoard", [50,70], true));
+
+	if (CONFIG.get('display.in-car') != null) {
+            m.add("Kodi", startKodi);
+            m.add(null);
+            m.add("Exit", chromeExit);
+	}
     });
+
+    /*
+     * Using a Raspberry pi display in a car it can be useful to dim the display
+     */
+    if (CONFIG.get('display.in-car') != null) 
+      	    CONFIG.mb.toolbar.addIcon(3, "images/brightness.ico", null, adjustBacklight, "Change backlight level");
    
    
       
@@ -301,4 +321,27 @@
             {ident: ident}, 
             {id: "rawAprs", geoPos: browser.pix2LonLat(pix)});
     }
+
+/**
+ * Get the URL parameters
+ * source: https://css-tricks.com/snippets/javascript/get-url-variables/
+ * @param  {String} url The URL
+ * @return {Object}     The URL parameters
+ */
+    function getParams(url) {
+	var params = {};
+	var parser = document.createElement('a');
+	parser.href = url;
+	var query = parser.search.substring(1);
+	var vars = query.split('&');
+	for (var i = 0; i < vars.length; i++) {
+		var pair = vars[i].split('=');
+		params[pair[0]] = decodeURIComponent(pair[1]);
+	}
+	return params;
+    };
+
+    function startKodi() { fetch('/cgi-bin/kodi'); }
+    function chromeExit() { fetch('/cgi-bin/exit'); }
+    function adjustBacklight() { fetch('/cgi-bin/backlight'); }
     
