@@ -53,7 +53,8 @@ pol.tracking.db.MyTrackers = class extends pol.tracking.TrackerAlias {
                     m(t.aliasWidget),
                     m("div.butt", [
                         m("button", { type: "button", onclick: add }, "Update"),
-                        m("button", { type: "button", onclick: ()=> {t.clear();} }, "Clear")
+                        m("button", { type: "button", onclick: ()=> {t.clear();} }, "Clear"),
+                        m("button", { type: "button", onclick: ()=> {resetAll();} }, "Reset All"),
                     ])
                 ])
             }
@@ -93,14 +94,28 @@ pol.tracking.db.MyTrackers = class extends pol.tracking.TrackerAlias {
         /* Add a tracker to the list. Update if it already exists */
         function add() {
             let icn = $("#iconpick").get(0).value; 
-            let icn2 = icn.substr(icn.lastIndexOf("/")+1);
-            console.log("id=", t.edit.id());
+
+            updateItem(t.edit.id().toUpperCase(), t.edit.alias(), t.edit.auto, icn);
+        }
             
+            
+            
+        function resetAll() {
+            for (const x of t.myTrackers)
+                updateItem(x.id, "", true, "");
+            
+        }
+        
+            
+        function updateItem(id, alias, auto, icn) {
+            
+            let icn2 = icn.substr(icn.lastIndexOf("/")+1);
+                        
             const data = {
-                id: t.edit.id().toUpperCase(), 
+                id: id, 
                 user: t.server.auth.userid, 
-                alias: t.edit.alias(),
-                icon: (t.edit.auto ? null : icn2)
+                alias: alias,
+                icon: (auto ? null : icn2)
             };
             
             if (data.alias=="") 
@@ -112,8 +127,8 @@ pol.tracking.db.MyTrackers = class extends pol.tracking.TrackerAlias {
                 x => {
                     console.log("Added/updated tracker: "+data.id);
                     removeDup(data.id);
-                    data.auto = t.edit.auto; 
-                    data.icon = (t.edit.auto ? t.icons[t.dfl] : icn);
+                    data.auto = auto; 
+                    data.icon = (auto ? t.icons[t.dfl] : icn);
                     if (x=="OK-ACTIVE")
                         data.active=true;
                     t.myTrackers.push(data);
