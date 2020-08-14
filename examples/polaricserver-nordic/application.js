@@ -193,12 +193,14 @@
         }
         
         m.add("Bulletin board", () => WIDGET("tracking.BullBoard", [50,70], true));
-
-	if (CONFIG.get('display.in-car') != null) {
+        if (srv.loggedIn)
+            m.add('Short messages', () => WIDGET("tracking.Mailbox",[50,70], true));
+        
+        if (CONFIG.get('display.in-car') != null) {
             m.add("Kodi", startKodi);
             m.add(null);
             m.add("Exit", chromeExit);
-	}
+        }
     });
 
     /*

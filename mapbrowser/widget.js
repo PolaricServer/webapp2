@@ -122,9 +122,36 @@ pol.core.Widget = class {
         this.pinned = true;
         this.classname = null;
         this.active = false; 
+        
+        this.rs_running = false; 
+        this.rs_to = null;
+        this.rs_func = null;
+        this.rs_first = true; 
+        this.rs_ro = new ResizeObserver( entries => {
+            for (let entry of entries) {
+                if (this.rs_running && this.rs_to!=null)
+                    clearTimeout(this.rs_to);
+                
+                this.rs_running = true;
+                this.rs_to = setTimeout(()=> {
+                    if (this.rs_first == true) {
+                        this.rs_first = false; 
+                        return; 
+                    }
+                    if (this.rs_func)
+                        this.rs_func();
+                    this.rs_running = false;
+                    this.rs_to = null;
+                },400)
+            }
+        });
+        
     }
 
-
+    resizeObserve(func) {
+        this.rs_ro.observe($("#map").get(0));
+        this.rs_func = func;
+    }
  
     isActive() 
         { return this.active; }
@@ -146,7 +173,9 @@ pol.core.Widget = class {
     }
 
     
-    onclose() { }
+    onclose() { 
+        this.rs_ro.disconnect();
+    }
  
  
     /** 
@@ -180,8 +209,11 @@ pol.core.Widget = class {
             id: id,
             cclass: "widget",
             onclose: ()=> {unSave(); t.active=false; t.onclose();}
-        });
-        this.close = ()=> { this.popup.close(); }
+        });           
+
+        if (this.popup.adjustedPos) 
+            t.pos = this.popup.adjustedPos;
+        t.close = ()=> { this.popup.close(); }
         return this.popup; 
         
         
@@ -237,6 +269,28 @@ pol.core.Widget = class {
         }, 200);
     }
     
+    
+    /* Set scrollable table */
+    setScrollTable2(topdiv, searchresult, footer, scrollBottom) {
+        let elem = $(searchresult);
+        elem.css({"height":"unset"});
+        
+        setTimeout( () => {
+            /* Calculate available space */
+            let ht = $('#map').height() - 
+                ( $(topdiv).height() - elem.height()) - this.pos[1] - 20 ;
+            
+            /* If too little space left, set the height to activate the scroller */
+            if (elem.height() > ht) {
+                const hht = elem.height();
+                elem.css({
+                    "display": "block", "overflow-y":"auto", "overflow-x":"hidden", "height":""+Math.round(ht) 
+                });
+                if (scrollBottom) 
+                    elem.scrollTop(hht);
+            }
+        }, 100);
+    }
     
     
     

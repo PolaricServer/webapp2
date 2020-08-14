@@ -137,7 +137,7 @@ pol.core.Popup = class {
         pdiv.className = 'POPUP' + 
            ((props.cclass && props.cclass != null) ? " "+props.cclass : ""); 
   
-        setTimeout( () => {
+   //     setTimeout( () => {
             if (props.geoPos && props.geoPos != null) {
                 t.geoPos = props.geoPos;
                 props.pixPos = t.mb.map.getPixelFromCoordinate
@@ -175,7 +175,9 @@ pol.core.Popup = class {
                     closeimage.onclick = (e)=> pdiv.close()
 
                 }
-            }  }, 300);
+            }
+        
+        // }, 10);
         
         pdiv.onmousedown = function(e) 
             { e = (e)?e:((event)?event:null); e.stopPropagation(); return null; };
@@ -348,6 +350,7 @@ pol.core.Popup = class {
 
         if (xoffs && yoffs && this.image != null) 
             this.image.style.display = "none";
+        return [x,y];
     }
      
      
@@ -398,7 +401,7 @@ pol.core.Popup = class {
         else
             this.activepopup.style.overflowY = 'visible';
      
-        this.setPosition_(x, y);
+        this.activepopup.adjustedPos = this.setPosition_(x, y);
      
         this.allowedPopups--;
         if (this.onCallback != null)

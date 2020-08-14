@@ -122,7 +122,6 @@ pol.tracking.Notifier = class {
         this.list.unshift(not);
         this.updateNumber();
         CONFIG.store("tracking.Notifications", this.list, true);
-        pol.tracking.NotifyList.updateScroller();
     }
 
 
@@ -133,7 +132,6 @@ pol.tracking.Notifier = class {
         this.list.splice(idx,1);
         this.updateNumber(); 
         CONFIG.store("tracking.Notifications", this.list, true);
-        pol.tracking.NotifyList.updateScroller();
     }
 
 } /* class */
@@ -176,9 +174,9 @@ pol.tracking.NotifyList = class extends pol.core.Widget {
                         return m("tr", [
                             m("td", m("img", {"class":"icon", src:icon(x.type)})),
                             m("td", m("div", [
-                                m("span", {"class":"header"}, [x.from+", "+formatDTG(x.time)]),
+                                m("span.header", [x.from+", "+formatDTG(x.time)]),
                                 m("img", {src:"images/16px/close.png", onclick: apply(removeNot, i++) }),
-                                br, x.text
+                                br, m("span.txt", {title: x.text}, limit(x.text, 32))
                             ] ))
                         ]);
                     }))),
@@ -187,6 +185,11 @@ pol.tracking.NotifyList = class extends pol.core.Widget {
             }
         };
 
+        function limit(x, limit) {
+            return (x.length > limit ? 
+                    x.substring(0, limit - 3) + "..." : x);
+        }
+        
         
         function send() {
             const msg = {
@@ -225,34 +228,17 @@ pol.tracking.NotifyList = class extends pol.core.Widget {
         /* Remove notification from list */
         function removeNot(id) {
             t.notifier.remove(id);
-        }    
+        }            
+        
+        function addScroll(moveend) {
+            t.setScrollTable2("div#notifications", "div#notifications tbody", "div#sendNot", moveend); 
+        }
+        t.resizeObserve( ()=>addScroll() );
+        addScroll();
         
     } /* constructor */
 
 } /* class */
-
-
-
-pol.tracking.NotifyList.updateScroller = function() 
-{     
-   const x =  document.getElementById('notifications');
-   if (x==null)
-      return;
-   const pos = x.getBoundingClientRect();
-   let ht = $('#map').height() - pos.top - 70;
-
-   setTimeout( () => {
-       if ($('#notifications table').parent().is( "#notifications .scroll" ) ) 
-           $('#notifications table').unwrap();
-  
-       if ($('#notifications table').height() < ht)
-           ht = $('#notifications table').height();
-       else {
-           $('#notifications table').wrap('<div class="scroll"></div>');
-           $('#notifications .scroll').height(Math.round(ht)-10).width($('#notifications table').width()+40);
-       }
-   }, 60);
-}
 
 
 
