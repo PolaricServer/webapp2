@@ -32,20 +32,6 @@
   *        Scrollbar
   */
 
-        
- 
-// FIXME: Move to a another source file? 
-function formatDTG(date) {
-    const mths = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul',
-                  'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
-
-    const ltime = new Date(date);
-    const mth = mths[ltime.getMonth()]; 
-    const day = ltime.getDate();
-    const hour = ltime.getHours();
-    const min = ltime.getMinutes();
-    return day + ' ' +mth + ' ' + hour+":"+(min<=9 ? '0': '') + min; 
-}
 
 
 /**
@@ -172,7 +158,9 @@ pol.tracking.NotifyList = class extends pol.core.Widget {
                     m("h1", "My Notifications"),
                     m("table", m("tbody", (t.notifier ? t.notifier.list : []).map( x => {
                         return m("tr", [
-                            m("td", m("img", {"class":"icon", src:icon(x.type)})),
+                            m("td", m("img", {onclick: (x.type==='chat' 
+                                ?  ()=> WIDGET("tracking.Mailbox",[50,70], true) : null), 
+                                "class":"icon", src:icon(x.type)})),
                             m("td", m("div", [
                                 m("span.header", [x.from+", "+formatDTG(x.time)]),
                                 m("img", {src:"images/16px/close.png", onclick: apply(removeNot, i++) }),

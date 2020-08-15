@@ -76,7 +76,10 @@ pol.tracking.PolaricServer = class extends pol.core.Server {
 
 
     
-
+    /* 
+     * FIXME: Change to icons on toolbar could be handler-function? 
+     * FIXME: What is done here is also done in getting Websocket messages.... 
+     */
     loginStatus() {
         this.GET("authStatus", "", 
             x => { 
@@ -111,6 +114,7 @@ pol.tracking.PolaricServer = class extends pol.core.Server {
 
     /** 
      * Get info about point from server and show in popup.  
+     * FIXME: Move this somewhere else? 
      */
     infoPopup(p, pixel) {
         console.assert(p!=null, "Assertion failed");

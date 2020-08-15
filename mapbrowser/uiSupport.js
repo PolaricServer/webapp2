@@ -484,6 +484,21 @@ function dragdrop(element, onchange) {
 }
 
 
+   
+ 
+// FIXME: Move to a another source file? 
+function formatDTG(date) {
+    const mths = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul',
+                  'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+
+    const ltime = new Date(date);
+    const mth = mths[ltime.getMonth()]; 
+    const day = ltime.getDate();
+    const hour = ltime.getHours();
+    const min = ltime.getMinutes();
+    return day + ' ' +mth + ' ' + hour+":"+(min<=9 ? '0': '') + min; 
+}
+
 
 
  

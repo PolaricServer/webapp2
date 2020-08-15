@@ -211,7 +211,7 @@ pol.core.Widget = class {
             onclose: ()=> {unSave(); t.active=false; t.onclose();}
         });           
 
-        if (this.popup.adjustedPos) 
+        if (this.popup && this.popup != null && this.popup.adjustedPos) 
             t.pos = this.popup.adjustedPos;
         t.close = ()=> { this.popup.close(); }
         return this.popup; 
