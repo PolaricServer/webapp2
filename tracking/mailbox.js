@@ -87,6 +87,10 @@ pol.tracking.Mailbox = class extends pol.core.Widget {
                                  src: (x.outgoing ? 'images/32px/chatt.png':'images/32px/chatf.png')})),
                             m("td", m("div", [
                                 m("span", {"class":"header"}, [formatDTG(x.time)+": ", x.from + " > "+ x.to]),
+                                (x.status==0 || !x.outgoing ? "" 
+                                 : m("img", {class: "status", title: x.stinfo, src: (x.status == 1 
+                                     ? "images/16px/ok.png" 
+                                     : "images/16px/warn.png")})),  
                                 br, m("span.txt", x.text)
                             ] ))
                         ]);            
@@ -110,8 +114,27 @@ pol.tracking.Mailbox = class extends pol.core.Widget {
                 m.redraw();
                 addScroll(true); 
             }
-        );               
+        );   
+        t.server.pubsub.subscribe("msgstatus:" + t.server.auth.userid, 
+            x => { 
+                setStatus(x);
+                m.redraw();
+            }
+        );             
         t.resizeObserve( ()=>addScroll(true) );
+        
+        
+        
+        function setStatus(st) {
+            console.log("Message status (msgid="+st.msgId+", status="+st.status+"): "+st.info);
+            for (const i in t.msglist)
+                if (t.msglist[i].msgId == st.msgId) {
+                    t.msglist[i].status = st.status;
+                    t.msglist[i].stinfo = st.info;
+                    break;
+                }
+        }
+        
         
         function addScroll(moveend) {
             t.setScrollTable2("div#mailbox", "div#msglist tbody", "div#sendMsg", moveend); 
