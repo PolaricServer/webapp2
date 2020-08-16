@@ -101,7 +101,7 @@ div.own   { background: #ccffcc; color: #0000cc }
 #bullboard {width: 48.5em}
 #bullboard .scroll {overflow-y: auto; overflow-x: hidden; margin-right: -5px}
 
-
+span#hamop {margin-left: 1em; font-size: 85%; margin-top: 5px; color: green}
 .datepick input {width: 7em; }
 
 #hist_call, #hist_start_date, #hist_end_date, #hrd_call, #hrd_start, #hrd_end {width: 7em}

@@ -34,6 +34,7 @@ pol.tracking.Users = class extends pol.core.Widget {
         t.users = [];
         t.ident = m.stream("");
         t.name = m.stream("");
+        t.callsign = m.stream("");
         t.passwd = m.stream("");
         t.sar = false; 
         t.admin = false;
@@ -44,14 +45,13 @@ pol.tracking.Users = class extends pol.core.Widget {
             view: function() {
                 var i=0;
                 return m("table", 
-                    //     m("thead", m("tr", 
-                    //        [ m("th"), m("th", "Ident"), m("th", "Name"), m("th", "Last used") ])),
                         m("tbody", t.users.map(x => {
                             return m("tr", [
                                 m("td",
                                     m(removeEdit, {remove: apply(remove,i), edit: apply(edit, i++)})),
                                 m("td", x.ident),   
-                                m("td", (x.admin? "A": (x.sar? "S" : ""))), 
+                                m("td", (x.admin? "A": (x.sar? "S" : "")) + 
+                                    (x.callsign!=null && x.callsign.length > 1 ? "H":"") ), 
                                 m("td", formatTime(x.lastused)),
                                 m("td", x.name ),
 
@@ -70,6 +70,11 @@ pol.tracking.Users = class extends pol.core.Widget {
                         m("span.xsleftlab", "Ident:"),
                         m(textInput, { id:"userId", value: t.ident, size: 16, 
                             maxLength:25, regex: /.*/i })),
+                    
+                    m("div.field", 
+                        m("span.xsleftlab", {title: "HAM radio (APRS) callsign"}, "Callsign:"),
+                        m(textInput, { id: "callsign", value: t.callsign, size: 16,
+                            maxLength: 32, regex: /[A-Z0-9\-]*/i })),
                          
                     m("div.field", 
                         m("span.xsleftlab", "Name:"),
@@ -86,12 +91,14 @@ pol.tracking.Users = class extends pol.core.Widget {
                         m(checkBox, {id: "acc_sar", onclick: toggleSar, checked: t.sar, 
                             title: "SAR (operator level)" }, "SAR"), nbsp, 
                         m(checkBox, {id: "acc_admin", onclick: toggleAdmin, checked: t.admin, 
-                            title: "Administrator (super user level)" }, "Admin")), 
+                            title: "Administrator (super user level)" }, "Admin"), nbsp,  
+                        m("span#hamop", 
+                          (t.callsign() != null && t.callsign().length > 1  ? "(HAM radio op)" : ""))),
                          
                     m("div.butt", [
                         m("button", { type: "button", onclick: update }, "Update"),
                         m("button", { type: "button", onclick: add }, "Add"),
-                        m("button", { type: "button", onclick: ()=> {t.clear();} }, "Clear")
+                        m("button", { type: "button", onclick: ()=> {t.clear();} }, "Clear"),
                     ]),
                     
                     m("div#userList"),
@@ -121,6 +128,7 @@ pol.tracking.Users = class extends pol.core.Widget {
             const data = {
                 ident: t.ident(),
                 name: t.name(),
+                callsign: (t.callsign()=="" || t.callsign()==" " ? "" : t.callsign().toUpperCase()),
                 passwd: (t.passwd()=="" || t.passwd()==" " ? null : t.passwd()),
                 sar: t.sar,
                 admin: t.admin
@@ -146,7 +154,8 @@ pol.tracking.Users = class extends pol.core.Widget {
         function update() {
             const data = {
                 name: t.name(),
-                passwd: (t.passwd()=="" || t.passwd()==" " ? null : t.passwd()),
+                passwd: (t.passwd()=="" || t.passwd()==" " ? "" : t.passwd()),
+                callsign: (t.callsign()=="" || t.callsign()==" " ? null : t.callsign().toUpperCase()),
                 sar: t.sar,
                 admin: t.admin
             };
@@ -156,6 +165,7 @@ pol.tracking.Users = class extends pol.core.Widget {
                     for (i in t.users)
                         if (t.users[i].ident==t.ident()) {
                             t.users[i].name = data.name; 
+                            t.users[i].callsign = data.callsign;
                             t.users[i].sar = data.sar;
                             t.users[i].admin = data.admin;
                             break;
@@ -187,6 +197,7 @@ pol.tracking.Users = class extends pol.core.Widget {
             const u = t.users[i]; 
             t.ident(u.ident);
             t.name(u.name);
+            t.callsign(u.callsign);
             t.passwd("");
             t.sar = u.sar;
             t.admin = u.admin;
