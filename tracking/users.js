@@ -154,8 +154,8 @@ pol.tracking.Users = class extends pol.core.Widget {
         function update() {
             const data = {
                 name: t.name(),
-                passwd: (t.passwd()=="" || t.passwd()==" " ? "" : t.passwd()),
-                callsign: (t.callsign()=="" || t.callsign()==" " ? null : t.callsign().toUpperCase()),
+                passwd: (t.passwd()=="" || t.passwd()==" " ? null : t.passwd()),
+                callsign: (t.callsign()=="" || t.callsign()==" " ? "" : t.callsign().toUpperCase()),
                 sar: t.sar,
                 admin: t.admin
             };
