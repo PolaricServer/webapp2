@@ -205,7 +205,9 @@ pol.core.Widget = class {
             draggable: true,
             dragStop: dragStop,
             pin: pinCb,
-            pinned: t.pinned,
+            pinned: true,
+            /* FIXME: pinned means different things here and in the widget class 
+             */
             id: id,
             cclass: "widget",
             onclose: ()=> {unSave(); t.active=false; t.onclose();}

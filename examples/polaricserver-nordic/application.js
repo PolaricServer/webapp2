@@ -54,21 +54,6 @@
    
     CONFIG.labelStyle = new pol.tracking.LabelStyle();
 
-    
-    
-    /* Welcome text */
-    if (!mobile && !srv.loggedIn && CONFIG.get("welcome_popup") && !CONFIG.get("skip_welcome") ) 
-      setTimeout(()=> {
-       let d = browser.gui.showPopup( {
-           pixPos: [5,30], 
-           draggable: true, 
-           resizable: true,
-           pinned: true, 
-           onclose: ()=> {CONFIG.store("skip_welcome", true);}
-        });
-       setTimeout(()=>d.close(), 30000);
-       $.ajax("welcome.html", {success: txt=> {d.innerHTML = txt}} ); 
-    },2000);
       
     
     /* FIXME: May put init into Edit class constructor */
@@ -140,7 +125,12 @@
      *********************************************************/
    
     browser.ctxMenu.addCallback("TOOLBAR", (m, ctxt)=> {   
-                
+         
+        if (!srv.loggedIn)       
+        m.add('Om karttjenesten...', ()=> 
+            WIDGET("core.DocReader", [50, 70], false,  
+                x=> x.setContent("Velkommen til NRRL karttjenesten", "welcome.html") ) );
+        
         m.add('Search items',  () => WIDGET("tracking.Search", [50,70], true));
         m.add('Find position', () => WIDGET("core.refSearch",  [50,70], true));
 

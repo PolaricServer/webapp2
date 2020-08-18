@@ -137,7 +137,7 @@ pol.core.Popup = class {
         pdiv.className = 'POPUP' + 
            ((props.cclass && props.cclass != null) ? " "+props.cclass : ""); 
   
-   //     setTimeout( () => {
+
             if (props.geoPos && props.geoPos != null) {
                 t.geoPos = props.geoPos;
                 props.pixPos = t.mb.map.getPixelFromCoordinate
@@ -166,18 +166,18 @@ pol.core.Popup = class {
                 
                 
                     /* Close icon */
-                    const closeimage = document.createElement('img');
-                    closeimage.className = "popup_close";
-                    closeimage.src = "images/16px/close.png";
-                    pdiv.appendChild(closeimage);
+                    setTimeout( ()=> {
+                        const closeimage = document.createElement('img');
+                        closeimage.className = "popup_close";
+                        closeimage.src = "images/16px/close.png";
+                        pdiv.appendChild(closeimage);
                 
-                    /* close click handler */
-                    closeimage.onclick = (e)=> pdiv.close()
-
+                        /* close click handler */
+                        closeimage.onclick = (e)=> pdiv.close()
+                    }, 200);
                 }
             }
-        
-        // }, 10);
+
         
         pdiv.onmousedown = function(e) 
             { e = (e)?e:((event)?event:null); e.stopPropagation(); return null; };
