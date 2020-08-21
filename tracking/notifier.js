@@ -219,7 +219,7 @@ pol.tracking.NotifyList = class extends pol.core.Widget {
         }            
         
         function addScroll(moveend) {
-            t.setScrollTable2("div#notifications", "div#notifications tbody", "div#sendNot", moveend); 
+            t.setScroll("div#notifications", "div#notifications tbody", moveend); 
         }
         t.resizeObserve( ()=>addScroll() );
         addScroll();

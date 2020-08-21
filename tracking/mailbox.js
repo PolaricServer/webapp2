@@ -36,25 +36,42 @@ pol.tracking.Mailbox = class extends pol.core.Widget {
         t.recipient = m.stream("");
         t.msg = m.stream("");
         t.msglist = [];
-   
+        t.users = [];
+        t.uvisible = false;
+        
+        /* List of available (logged-in) users */
+        t.showUsers = {
+            view: function() {
+                return m("div#recipients", t.users.map( x=> {
+                    return m("span", {onclick: ()=>{t.recipient(x);}}, x);
+                }))
+            }
+        }
+        
+        /* Form for writing a message */
         t.sendMsg = {
             view: function() {
                 return m("div#sendMsg", [
                 
-                    m("span.xsleftlab", "To:"),
-                    m(textInput, 
-                        { id: "recipient", value: t.recipient,
-                            maxLength: 40, regex: /.*/i }), br, 
-                    m("span.xsleftlab", "Message:"),
-                    m(textInput,
-                        { id: "msg", value: t.msg,
-                            maxLength: 66, regex: /.*/i }), 
-                    m("button", { type: "button", onclick: send }, "Send"),
+                    m("div.field", 
+                        m("span.xsleftlab", "To:"),
+                        m(textInput, 
+                            { id: "recipient", value: t.recipient,
+                                maxLength: 40, regex: /.*/i }), 
+                            m("img#ulist", {src:"images/participant.png", 
+                                title:"Show logged on users (on/off)", onclick:()=>toggleUsers()})),
+                    
+                    m("div.field", 
+                        m("span.xsleftlab", "Message:"),
+                        m(textInput,
+                            { id: "msg", value: t.msg,
+                                maxLength: 66, regex: /.*/i }), 
+                        m("button", { type: "button", onclick: send }, "Send"))
                 ]);
             }
         }
         
-        
+        /* Main widget */
         t.widget = {
             view: function() {
                 var i=0;
@@ -75,15 +92,16 @@ pol.tracking.Mailbox = class extends pol.core.Widget {
                             ] ))
                         ]);            
                     })))),
+                    m(t.showUsers),
                     (CONFIG.server.auth ? m(t.sendMsg) : "")
                 ]);  
             }
         };
 
         
-        getMsgs();
         setInterval(getMsgs, 1200000);
        
+        
        /* 
         * Subscribe to notifications from server using the pubsub service: 
         * Related to user (if logged in). 
@@ -103,6 +121,34 @@ pol.tracking.Mailbox = class extends pol.core.Widget {
         );             
         t.resizeObserve( ()=>addScroll(true) );
         
+        setInterval(()=>getUsers(), 180000);
+        
+        
+        function toggleUsers() {
+            getUsers();
+            if (t.uvisible) {
+                t.uvisible=false;
+                $('div#recipients').css('display','none');
+            }
+            else {
+                t.uvisible=true;
+                $('div#recipients').css('display','block');
+            }
+            addScroll(true); 
+        }
+        
+        
+        function getUsers() {
+            const userid = t.server.auth.userid;
+            console.assert(userid && userid!=null, "userid="+userid);
+            if (userid == null)
+                return;
+            
+            t.server.GET("loginusers", "", x => { 
+                t.users = JSON.parse(x);
+                m.redraw();
+            } );
+        }
         
         
         function setStatus(st) {
@@ -117,8 +163,10 @@ pol.tracking.Mailbox = class extends pol.core.Widget {
         
         
         function addScroll(moveend) {
-            t.setScrollTable2("div#mailbox", "div#msglist tbody", "div#sendMsg", moveend); 
+            t.setScroll("div#mailbox", "div#msglist tbody", moveend); 
         }
+        
+        
         
         /* Get list of messages from server */
         function getMsgs() {

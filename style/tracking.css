@@ -178,3 +178,7 @@ div#rings  {background: #cdd; border: 1px dotted; padding: 0.3em; padding-right:
 #rings input {width: 4.3em}
 #rings .km {font-size: 90%; color: #146}
 div#alternatives {border: dotted 2px red; padding: 0.4em; margin-left: 0.4em; color: #257; font-size: 90%; max-width: 11em}
+
+div#recipients {display: none; padding: 0.3em; background: #cdd; border: dotted 1px}
+div#recipients span {font-size: 90%; margin-right: 0.5em; padding: 2px 4px 1px 4px; border: 1px dotted; background: #fee}
+img#ulist {margin-left: 0.5em;}

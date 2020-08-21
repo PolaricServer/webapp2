@@ -259,7 +259,10 @@ pol.core.Widget = class {
     
     
     
-    /* Set scrollable table */
+    /* 
+     * Set scrollable table 
+     * FIXME: We may not need this anymore (see setScroll below) 
+     */
     setScrollTable(topdiv, searchresult) {
         let ht = $('#map').height() - 
             ( $(topdiv).height() - $(searchresult).height()) - this.pos[1]- 8 ;
@@ -272,8 +275,8 @@ pol.core.Widget = class {
     }
     
     
-    /* Set scrollable table */
-    setScrollTable2(topdiv, searchresult, footer, scrollBottom) {
+    /* Set scrollable element (typically a div or table) */
+    setScroll(topdiv, searchresult, scrollBottom) {
         let elem = $(searchresult);
         elem.css({"height":"unset"});
         
