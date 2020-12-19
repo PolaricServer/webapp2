@@ -43,7 +43,7 @@ pol.tracking.Mailbox = class extends pol.core.Widget {
         t.showUsers = {
             view: function() {
                 return m("div#recipients", t.users.map( x=> {
-                    return m("span", {onclick: ()=>{t.recipient(x);}}, x);
+                    return m("span", {onclick: ()=>{t.recipient(x);}}, x, " ");
                 }))
             }
         }
@@ -79,18 +79,26 @@ pol.tracking.Mailbox = class extends pol.core.Widget {
                     m("h1", "My Short Messages"),
                     m("div#msglist", 
                     m("table", m("tbody", t.msglist.map( x => {
-                        return m("tr", [
-                            m("td", m("img", {"class":(x.outgoing ? "ticon" : "icon"), 
-                                 src: (x.outgoing ? 'images/32px/chatt.png':'images/32px/chatf.png')})),
-                            m("td", m("div", [
-                                m("span", {"class":"header"}, [formatDTG(x.time)+": ", x.from + " > "+ x.to]),
-                                (x.status==0 || !x.outgoing ? "" 
-                                 : m("img", {class: "status", title: x.stinfo, src: (x.status == 1 
-                                     ? "images/16px/ok.png" 
-                                     : "images/16px/warn.png")})),  
-                                br, m("span.txt", x.text)
-                            ] ))
-                        ]);            
+                        return m("tr", 
+                            {oncontextmenu: (e)=> msgMenu(e, x) }, [
+                                m("td", m("img", {"class":(x.outgoing ? "ticon" : "icon"), 
+                                    src: (x.outgoing ? 'images/32px/chatt.png':'images/32px/chatf.png')})),
+                                m("td", m("div", [
+                                    m("span", {"class":"header"}, [ formatDTG(x.time)+": ", 
+                                        ( x.outgoing ? x.from 
+                                            : m("span.fromaddr", {onclick: ()=> {t.recipient(x.from);}}, x.from)), 
+                                        nbsp, m("img", {src:"images/16px/dE.png"}), nbsp, //  > ", 
+                                        ( !x.outgoing ? x.to 
+                                            : m("span.fromaddr", {onclick: ()=> {t.recipient(x.to);}}, x.to)) ]),
+                                  
+                                    (x.status==0 || !x.outgoing ? "" 
+                                    : m("img", {class: "status", title: x.stinfo, src: (x.status == 1 
+                                        ? "images/16px/ok.png" 
+                                        : "images/16px/warn.png")})),  
+                                    br, m("span.txt", x.text)
+                                ] ))
+                            ] 
+                        );            
                     })))),
                     m(t.showUsers),
                     (CONFIG.server.auth ? m(t.sendMsg) : "")
@@ -98,7 +106,7 @@ pol.tracking.Mailbox = class extends pol.core.Widget {
             }
         };
 
-        
+        getMsgs();
         setInterval(getMsgs, 1200000);
        
         
@@ -122,6 +130,19 @@ pol.tracking.Mailbox = class extends pol.core.Widget {
         t.resizeObserve( ()=>addScroll(true) );
         
         setInterval(()=>getUsers(), 180000);
+        
+        
+        
+        function msgMenu(e, x) {
+            console.log(x.msgId);
+            CONFIG.mb.ctxMenu.showOnPos(
+              { name: "MESSAGES", 
+                msg: x }, [e.clientX, e.clientY]);
+            
+            e.cancelBubble = true;
+            return false;
+        }
+        
         
         
         function toggleUsers() {
@@ -210,13 +231,46 @@ pol.tracking.Mailbox = class extends pol.core.Widget {
         function apply(f, id) {return function() { f(id); }};     
         
     } /* constructor */
+    
+    
+    /* Remove message from list */
+    remove(id) {
+        this.server.DELETE("mailbox/"+id,
+            x => {
+                console.log("Remove message: "+id);
+                for (i in this.msglist)
+                    if (this.msglist[i].msgId == id) 
+                        this.msglist.splice(i,1);
+                m.redraw();
+            },
+            x => {
+                console.log("Remove message -> "+x.status+": "+x.statusText +
+                    " ("+x.responseText+")");
+            }  
+        );
+    }
+    
+    /* Reply to message (fill in recipient field) */
+    reply(msg) {
+        if (msg.outgoing)
+            this.recipient(msg.to); 
+        else
+            this.recipient(msg.from);
+        m.redraw();
+    }
 
 } /* class */
 
 
+/* Context menu */
+setTimeout( ()=> {
+        CONFIG.browser.ctxMenu.addCallback("MESSAGES", (m, ctxt)=> {
+            m.add('Reply',  () => getWIDGET("tracking.Mailbox").reply(ctxt.msg) );
+            m.add('Remove', () => getWIDGET("tracking.Mailbox").remove(ctxt.msg.msgId) );
+        }); 
+    }, 2000 );
 
-
-
+        
 pol.widget.setFactory( "tracking.Mailbox", {
         create: () => new pol.tracking.Mailbox()
     }); 
