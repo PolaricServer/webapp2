@@ -63,6 +63,7 @@ pol.tracking.PubSub = class {
                     else room[i].cb(txt2);
         };
    
+        
         /** Socket close handler. Retry connection. */
         t.websocket.onclose = function(evt) {
             t.retry++;

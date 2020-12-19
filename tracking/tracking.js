@@ -351,7 +351,8 @@ pol.tracking.Tracking = class {
             CONFIG.mb.ctxMenu.showOnPos(
               { name: "POINT", 
                 point: f,
-                ident: ident}, [e.clientX, e.clientY]); }
+                ident: ident}, [e.clientX, e.clientY]); 
+        }
     
         return lbl;
     }

@@ -2,7 +2,7 @@ Source: polaric-webapp2
 Section: hamradio
 Priority: optional
 Maintainer: Øyvind Hanssen <ohanssen@acm.org>
-Build-Depends:  debhelper (>=10)
+Build-Depends: cleancss, debhelper (>=10)
 Standards-Version: 3.9.8
 Homepage: http://aprs.no/polaricserver
 
