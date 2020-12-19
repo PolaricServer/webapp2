@@ -122,6 +122,7 @@ pol.core.Widget = class {
         this.pinned = true;
         this.classname = null;
         this.active = false; 
+        this._allowPopup = true;
         
         this.rs_running = false; 
         this.rs_to = null;
@@ -156,7 +157,9 @@ pol.core.Widget = class {
     isActive() 
         { return this.active; }
         
-        
+    allowPopup(allow) {
+        this._allowPopup = allow;
+    }
  
     /** 
      * Display widget in the given DOM element. 
@@ -187,7 +190,8 @@ pol.core.Widget = class {
     {
         console.assert(id != null && pixPos != null 
             && pixPos[0] >= 0 && pixPos[1] >= 0, "id="+id+", pixPos="+pixPos);
-        
+        if (!this._allowPopup)
+            return null;
         if (pixPos == null)
             pixPos = [20, 20];
             
