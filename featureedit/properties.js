@@ -89,19 +89,22 @@ pol.features.Properties = class extends pol.core.Widget {
                     }))),    
                     hr,
                     
-                    m("span#tolayer", [
+                    m("span.field", [
                         m("span.sleftlab", "To layer: "),
                         m(t.layers, {id:"tolayer"}), 
-                        m("button", {onclick: move, title: "Move features to layer"}, "Move"), br,     
+                        m("button", {onclick: move, title: "Move features to layer"}, "Move")   
                     ]),
                     
-                    m("span.sleftlab", "Label: "),
-                    m(textInput, {id:"editLabel", size: 16, maxLength:25, value: t.label, regex: /.*$/i }),
-                    m("button", {onclick: set, title: "Update properties"}, "Update"), br,
-                         
-                    m("span.sleftlab", "Type: "),
-                    m("span", (t.selected==null? "---" : t.selected.getGeometry().getType())), 
-                    br,
+                    m("span.field", [
+                        m("span.sleftlab", "Label: "),
+                        m(textInput, {id:"editLabel", size: 16, maxLength:25, value: t.label, regex: /.*$/i }),
+                        m("button", {onclick: set, title: "Update properties"}, "Update")
+                    ]),
+                    
+                    m("span.field", [
+                        m("span.sleftlab", "Type: "),
+                        m("span", (t.selected==null? "---" : t.selected.getGeometry().getType()))
+                    ]),
                     (t.radius ? m(t.circle) : (t.colist ? m(t.coord) : ""))
                 ])
             },  
