@@ -51,7 +51,7 @@ SCALE     ( 20000 );
 /* If set to true, a popup window will appear when application is started, 
  * showing the content in 'welcome.html'. 
  */
-WELCOME(false);
+WELCOME(true);
 
 
 /*

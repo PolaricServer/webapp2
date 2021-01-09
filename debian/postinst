@@ -1,12 +1,14 @@
 #!/bin/bash
-set -ex
+set -e
 
 
 case "$1" in
     configure|reconfigure)
         a2enmod expires > /dev/null 2>&1
         a2enmod deflate > /dev/null 2>&1
-        a2ensite aprs.conf > /dev/null 2>&1 
+        if [[ ! -f "/etc/apache2/sites-enabled/aprs.conf" ]]; then
+            a2ensite aprs.conf > /dev/null 2>&1 
+        fi
         chown www-data:www-data /var/lib/polaric/mapcache
         apache2ctl restart
         

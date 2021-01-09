@@ -1,8 +1,10 @@
-polaric-webapp2 (1.4+) UNRELEASED; urgency=medium
+polaric-webapp2 (1.5) stable; urgency=medium
 
-  * Development 
+  * Short messages, APRS messages
+  * Signs editing
+  * Various fixes..
 
- -- Øyvind Hanssen <ohanssen@acm.org>  Sun, 23 Aug 2020 19:54:27 +0200
+ -- Oyvind Hanssen <ohanssen@acm.org>  Sat, 09 Jan 2021 22:04:13 +0100
 
 polaric-webapp2 (1.4) stable; urgency=medium
 

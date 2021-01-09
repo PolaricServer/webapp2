@@ -1,6 +1,7 @@
    /* 
     * This is an example of how an application can be constructed using polaric components.  
     * Se also config.js for configuration of the application. 
+    * Version 1.5
     */
    
     /* 
@@ -42,7 +43,7 @@
         const mu = new pol.tracking.Tracking(srv);
         const flt = new pol.tracking.Filters(mu);
         CONFIG.tracks = mu;
-	if (urlArgs['track'] != null) 
+        if (urlArgs['track'] != null) 
         	CONFIG.tracks.setTracked(urlArgs['track']);
         
         if (srv.auth.userid != null) {
@@ -97,10 +98,11 @@
                 WIDGET("tracking.OwnObjects", [50,70], true, x=> x.setPosPix([m.x, m.y]))); 
             
             if (srv.hasDb)
-                m.add('Add sign', () => editSign(m.x, m.y) );
+                m.add('Add sign', () => 
+                    WIDGET("tracking.db.Signs", [50,70], true, x=> x.setPosPix([m.x, m.y])));
         }
         
-        /* TEST BICYCLE WHEEL */
+        /* BICYCLE WHEEL */
         m.add('Add LKP/IPP with rings', () => 
             WIDGET("tracking.BikeWheel", [50,70], true, x=> x.setPosPix([m.x, m.y]))); 
         
@@ -178,6 +180,7 @@
         }
         
         if (srv.hasDb) {
+            m.add("Signs...", () => WIDGET("tracking.db.Signs", [50,70], true));
             m.add("History...", () => WIDGET("tracking.db.History", [50,70], true)); 
             m.add("Heard points via..", () => WIDGET("tracking.db.HeardVia", [50,70], true));
         }
@@ -264,6 +267,10 @@
     browser.ctxMenu.addCallback("SIGN", (m, ctxt)=> {
         if (srv.hasDb) {
             m.add('Show info', () => srv.infoPopup(ctxt.point, [m.x, m.y]) );
+            if (srv.auth.sar && /__db/.test(ctxt.ident) ) {
+                m.add('Edit object', () => WIDGET('tracking.db.Signs', [50,70], true, x=> x.edit(ctxt.ident))); 
+                m.add('Delete object', () => getWIDGET('tracking.db.Signs').remove( ctxt.ident )); 
+            }
         }
     });
      
@@ -296,13 +303,7 @@
                 x  => console.log("Reset info failed: "+x)
             );
     }
-        
-        
-    function editSign(x, y) {
-        var coord = browser.pix2LonLat([x, y]);
-        srv.popup('editSign', 'addSign' +
-            (x==null ? "" : '?x=' + coord[0] + '&y='+ coord[1] ), 570, 390);
-    }
+
    
     function findItem(x) 
         { CONFIG.tracks.goto_Point(x); }
