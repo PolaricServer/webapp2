@@ -220,9 +220,9 @@ pol.core.Popup = class {
      */
     imagePopup(title, href, props) 
     {
-        const d =  this.showPopup(props);
-        d.innerHTML = '<h1 class="popupimg">'+title+'</h1>' +
+        props.html = '<h1 class="popupimg">'+title+'</h1>' +
                       '<img class="popupimg" src="'+href.substring(2)+'"/>';
+        const d =  this.showPopup(props);
         return d;
     }
     
@@ -401,7 +401,11 @@ pol.core.Popup = class {
         else
             this.activepopup.style.overflowY = 'visible';
      
-        this.activepopup.adjustedPos = this.setPosition_(x, y);
+        /* Hack to set the popup position even if it takes some time to load its content */
+        setTimeout( ()=> {if (this.activepopup != null) this.activepopup.adjustedPos = this.setPosition_(x, y);}, 300);
+        setTimeout( ()=> {if (this.activepopup != null) this.activepopup.adjustedPos = this.setPosition_(x, y);}, 2000);
+        
+     
      
         this.allowedPopups--;
         if (this.onCallback != null)
