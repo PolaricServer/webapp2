@@ -2,7 +2,7 @@ polaric-webapp2 (1.5.1) stable; urgency=medium
 
   * Fix popup bug..
 
- -- Oyvind Hanssen <oivindh@la7eca>  Wed, 13 Jan 2021 20:28:03 +0100
+ -- Oyvind Hanssen <ohanssen@acm.org>  Wed, 13 Jan 2021 20:28:03 +0100
 
 polaric-webapp2 (1.5) stable; urgency=medium
 
