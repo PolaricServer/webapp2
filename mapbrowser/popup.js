@@ -361,6 +361,7 @@ pol.core.Popup = class {
      */
     popup_(elem, x, y, img)
     {
+        var t = this;
         if (this.allowedPopups <= 0)
             return;
      
@@ -402,14 +403,24 @@ pol.core.Popup = class {
             this.activepopup.style.overflowY = 'visible';
      
         /* Hack to set the popup position even if it takes some time to load its content */
-        setTimeout( ()=> {if (this.activepopup != null) this.activepopup.adjustedPos = this.setPosition_(x, y);}, 300);
-        setTimeout( ()=> {if (this.activepopup != null) this.activepopup.adjustedPos = this.setPosition_(x, y);}, 2000);
-        
-     
+        setAdjustedPos(x,y); 
+        setTimeout( ()=> { setAdjustedPos(x,y) }, 300);
+        setTimeout( ()=> { setAdjustedPos(x,y) }, 2000);
+
      
         this.allowedPopups--;
         if (this.onCallback != null)
             this.onCallback(); 
+        
+        
+        function setAdjustedPos(x,y) {
+            if (t.activepopup != null) 
+                t.activepopup.adjustedPos = t.setPosition_(x, y);
+        }
     }
 
 } /* class */
+
+
+
+
