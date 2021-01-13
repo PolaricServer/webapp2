@@ -283,13 +283,15 @@ pol.tracking.Tracking = class {
         if (p.label != null) 
             feature.alias = p.label.id;
         feature.point = p;
-
+        
         /* Update style (icon) */
         const style = new ol.style.Style({
             image:
                 new ol.style.Icon( ({
                     anchor: [0.5, 0.5],
-                    src: this.iconpath + p.icon
+                    src: this.iconpath + p.icon, 
+                    opacity: ((p.label != null && p.label.style.includes("lstill")) 
+                        ? 0.8 : 1)
                 }))
         });
         feature.setStyle(style);
