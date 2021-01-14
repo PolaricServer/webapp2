@@ -40,6 +40,7 @@ pol.tracking.Tracking = class {
         const t = this;
 
         t.filter = null;
+        t.tag = null;
         t.ready = false;
         t.server = srv;
         t.srch = false; 
@@ -82,6 +83,8 @@ pol.tracking.Tracking = class {
 
         t.source = this.layer.getSource();;
 
+        const urlParams = new URLSearchParams(window.location.search);
+        t.tag = urlParams.get('tag');
 
         /*
          * Define the 'MAP' context as the default context used when right-clicking on the map.
@@ -140,7 +143,7 @@ pol.tracking.Tracking = class {
 
             /* Subscribe to updates from server */
             if (t.filter != null)
-                t.producer.subscribe(t.filter, x => t.update(x) );
+                t.producer.subscribe(t.filter, x => t.update(x), t.tag );
         }
 
 
@@ -167,7 +170,7 @@ pol.tracking.Tracking = class {
             else {
                 /* Re-subscribe */
                 t.layer.setVisible(true);
-                t.producer.subscribe(t.filter, x => t.update(x) );
+                t.producer.subscribe(t.filter, x => t.update(x), t.tag );
             }
         }
 
@@ -244,7 +247,7 @@ pol.tracking.Tracking = class {
         this.filter = flt;
         if (this.ready) {
             this.clear();
-            this.producer.subscribe(this.filter, x => this.update(x) );
+            this.producer.subscribe(this.filter, x => this.update(x), this.tag );
         }
     }
 
@@ -635,7 +638,7 @@ pol.tracking.Tracking = class {
             this.clear();
         if (this.srch && !on) {
             this.clear();
-            this.producer.subscribe(this.filter, x => this.update(x) );
+            this.producer.subscribe(this.filter, x => this.update(x), this.tag );
         }
         this.srch = on;
     }
@@ -644,7 +647,7 @@ pol.tracking.Tracking = class {
     setTracked(ident) {
         this.tracked = ident; 
         this.clear();
-        this.producer.subscribe(this.filter, x => this.update(x) );
+        this.producer.subscribe(this.filter, x => this.update(x), this.tag );
         CONFIG.store("tracking.tracked", (ident==null? "null" : ident));
     }
     
