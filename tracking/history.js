@@ -82,6 +82,11 @@ pol.tracking.db.History = class extends pol.core.Widget {
                             m("button#hist_b1", {type: "button", onclick: search}, "Search"),
                             m("button#hist_b2", {type: "button", 
                                 title: "Add search to list", onclick: add}, "Add"),
+                            
+                            m("button#hist_b5", {type: "button", 
+                                title: "Get from My Trackers", onclick: getMT}, "Get MT"),
+                            m("button#hist_b6", {type: "button", 
+                                title: "Clear all", onclick: clear}, "Clear"),
                             m("button#hist_b3", {type: "button", 
                                 title: "Show all trails in list", onclick: showAll}, "Show all"),
                             m("button#hist_b4", {type: "button", 
@@ -243,6 +248,36 @@ pol.tracking.db.History = class extends pol.core.Widget {
             saveList();
         }
     
+    
+        function getMT() {
+            const userid = CONFIG.server.auth.userid;
+            console.assert(userid && userid!=null, "userid="+userid);
+            if (userid == null)
+                return;
+            CONFIG.server.GET("trackers", "", x => { 
+                let mtr = JSON.parse(x);
+                for (var tt of mtr) { 
+                   let tr = {
+                       call: tt.id, 
+                       fromdate: t.item.fromdate,
+                       fromtime: t.item.fromtime(),
+                       todate: t.item.todate,
+                       totime: t.item.totime()
+                   };
+                   t.list.push(tr);
+                }
+                saveList();
+                m.redraw();
+            } );
+            
+        }
+        
+        function clear() {
+            t.item.call("");
+            t.list = []; 
+            CONFIG.store('tracking.db.hist.item', JSON.stringify(t.item), false);
+            saveList();
+        }
     
         /* Save list to local storage */
         function saveList() { 
