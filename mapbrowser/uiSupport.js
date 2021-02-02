@@ -442,8 +442,8 @@ const latLngInputDec = class {
 const removeEdit = {
     view: vn => {
         return m("span.removeEdit", [ 
-            m("img", {src:"images/edit-delete.png", onclick: vn.attrs.remove }), 
-            m("img", {src:"images/edit.png", onclick: vn.attrs.edit }),
+            m("img", {src:"images/edit-delete.png", title: "Delete", onclick: vn.attrs.remove }), 
+            m("img", {src:"images/edit.png", title: "Edit", onclick: vn.attrs.edit }),
         ]);    
     }
 }

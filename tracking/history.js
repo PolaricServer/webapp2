@@ -45,11 +45,15 @@ pol.tracking.db.History = class extends pol.core.Widget {
                 var i=0;
                 return m("div.histt", m("table", t.list.map( x => {
                     return m("tr", 
-                        m("td", 
-                            m(removeEdit, {remove: apply(deleteItem, i), edit: apply(editItem, i)})),
-                        m("td", {onclick:apply(showItem, i++)}, x.call), 
-                        m("td", x.fromdate+"/"+x.fromtime),
-                        m("td", x.todate+"/"+x.totime)
+                        m("td", [ 
+                            m(removeEdit, {remove: apply(deleteItem, i), edit: apply(editItem, i)}), nbsp,
+                            m("span.removeEdit", 
+                              m("img", {src: "images/time.png", title: "Set time (from form)", onclick: apply(setTime, i)})) ]
+                        ),
+                             
+                        m("td", {onclick:apply(showItem, i++)}, x.call),         
+                        m("td", x.fromdate+" / "+x.fromtime),
+                        m("td", x.todate+" / "+x.totime)
                     );
                 })))
             }
@@ -149,6 +153,22 @@ pol.tracking.db.History = class extends pol.core.Widget {
             showTrail(t.list[i]);
         }
     
+    
+        function setTime(i) {
+            let x = t.list[i];
+            x.totime = t.item.totime();
+            x.fromtime = t.item.fromtime();
+            x.fromdate = $('#hist_start_date').val();
+            
+            if (t.item.open) {
+                x.totime = '-';
+                x.todate = '-';
+            }
+            else 
+                x.todate   = $('#hist_end_date').val();
+            saveList();
+            m.redraw();
+        }
     
         /* Perform search for editable item - button handler */   
         function search() {
