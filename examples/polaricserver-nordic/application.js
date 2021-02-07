@@ -118,6 +118,8 @@
             m.add('Set server (own) position', ()=> 
                 WIDGET("tracking.OwnPos", [50,70], true, x=> x.setPosPix([m.x, m.y])));
         }
+        m.add('Map view info', () => 
+            WIDGET("core.MapInfo", [50,70], true ));
         
     });
 
@@ -221,6 +223,8 @@
             m.add('Manage tags..', () => WIDGET("tracking.Tags", [m.x,m.y], true, x=>x.setIdent(ctxt.ident))); 
 
             m.add('Reset info', () => resetInfo(ctxt.ident) );
+            m.add('Change trail color', () => chColor(ctxt.ident) );
+            
             if (ctxt.point.point.own)
                 m.add('Remove object', () => 
                     getWIDGET("tracking.OwnObjects").remove( ctxt.ident.substring(0, ctxt.ident.indexOf('@') ) ) );
@@ -304,9 +308,17 @@
             );
     }
 
+    function chColor(ident) {
+        srv.PUT("/item/"+ident+"/chcolor", null,
+                () => console.log("Change trail color for: "+ident),
+                x  => console.log("Change trail color failed: "+x)
+            );
+    }
+    
    
     function findItem(x) 
         { CONFIG.tracks.goto_Point(x); }
+     
      
     function rawAprsPackets(ident, pix) { 
         browser.gui.remotePopup(
@@ -315,6 +327,16 @@
             {id: "rawAprs", geoPos: browser.pix2LonLat(pix)});
     }
 
+    
+    
+    function getMapInfo() {
+        var x = browser.getBaseLayer();
+        console.log(x.values_.name);
+        console.log("Resolution: ", browser.getResolution());
+        console.log(x.projection.defaultTileGrid_.resolutions_);
+    }
+    
+    
 /**
  * Get the URL parameters
  * source: https://css-tricks.com/snippets/javascript/get-url-variables/

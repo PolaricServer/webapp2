@@ -15,7 +15,7 @@ closure_compiler () {
 #
 
 D=mapbrowser
-closure_compiler --language_in ECMASCRIPT_2015 --js $D/config.js --js $D/server.js --js $D/jscoord.js --js $D/mapref.js --js $D/mapbrowser.js --js $D/widget.js --js $D/featureinfo.js --js $D/uiSupport.js --js $D/popup.js --js $D/popupmenu.js --js $D/measure.js --js $D/toolbar.js --js $D/areaList.js --js $D/mousepos.js --js $D/layerSwitcher.js --js $D/refSearch.js --js $D/configSupport.js --js $D/docreader.js > mapbrowser-min.js
+closure_compiler --language_in ECMASCRIPT_2015 --js $D/config.js --js $D/server.js --js $D/jscoord.js --js $D/mapref.js --js $D/mapbrowser.js --js $D/widget.js --js $D/featureinfo.js --js $D/uiSupport.js --js $D/popup.js --js $D/popupmenu.js --js $D/measure.js --js $D/toolbar.js --js $D/areaList.js --js $D/mousepos.js --js $D/layerSwitcher.js --js $D/refSearch.js --js $D/configSupport.js --js $D/docreader.js $D/mapInfo.js > mapbrowser-min.js
 
 D=layeredit
 closure_compiler --language_in ECMASCRIPT_2015 --js $D/layerEdit.js --js $D/layerList.js --js $D/wmsLayer.js --js $D/wfsLayer.js --js $D/gpxLayer.js --js $D/drawingLayer.js > layeredit-min.js

@@ -9,7 +9,11 @@ case "$1" in
         if [[ ! -f "/etc/apache2/sites-enabled/aprs.conf" ]]; then
             a2ensite aprs.conf > /dev/null 2>&1 
         fi
-        chown www-data:www-data /var/lib/polaric/mapcache
+        chown www-data:polaric /var/lib/polaric/mapcache
+        chmod 775 /var/lib/polaric/mapcache
+        chown www-data:polaric /var/lib/polaric/mapcache/*.db
+        chmod 664 /var/lib/polaric/mapcache/*.db
+        
         apache2ctl restart
         
         if [[ ! -d "/usr/share/polaric" ]]; then

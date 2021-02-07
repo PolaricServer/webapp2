@@ -134,6 +134,7 @@ function TILEGRID_WMTS(proj, start, end, prefix, siz, origin) {
           name: (opt.name ? opt.name : "noname"), 
           preload: 2,
           opacity: (opt.opacity ? opt.opacity : 1),
+          max_res: opt.seed_max_res,
           
           source: new ol.source.TileWMS({
               url: (opt.url? opt.url : host + "/mapcache/wms?"),

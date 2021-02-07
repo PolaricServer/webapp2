@@ -12,9 +12,16 @@
 INSTALL_CONFIG = $(DESTDIR)/etc/polaric-webapp2
    INSTALL_WEB = $(DESTDIR)/var/lib/polaric/webapp2
  INSTALL_DATA  = $(DESTDIR)/var/lib/polaric
-   
+ 
+# Even if we don't require polaric-aprsd to be installed, 
+# we expect it to be in most cases. We may install script
+# to be run by the aprsd. 
 
-
+INSTALL_CONFIG = $(DESTDIR)/etc/polaric-aprsd
+INSTALL_SCPLUG = $(INSTALL_CONFIG)/script-conf.d
+ INSTALL_SCDIR = $(INSTALL_CONFIG)/scripts
+ 
+ 
 ##################################################
 ##  things below should not be changed
 ##
@@ -28,6 +35,12 @@ install: mapbrowser-min.js
 	install -d $(INSTALL_BIN)
 	install -d $(INSTALL_DATA)
 	install -d $(INSTALL_DATA)/mapcache
+	
+	install -d $(INSTALL_CONFIG)
+	install -d $(INSTALL_SCPLUG)
+	install -d $(INSTALL_SCDIR)
+	install -m 755 scripts/seed.sh $(INSTALL_SCDIR)
+	install -m 644 scripts/webapp.conf $(INSTALL_SCPLUG)
 	
 	install -d $(INSTALL_WEB)/images $(INSTALL_WEB)/images/16px  $(INSTALL_WEB)/images/32px \
 		$(INSTALL_WEB)/images/iconpack $(INSTALL_WEB)/images/drawIcons \

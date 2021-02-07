@@ -90,7 +90,7 @@ const KV_grid = new ol.tilegrid.TileGrid({
 
 const KV_grid_UTM = new ol.tilegrid.TileGrid({
         extent: [-2500000, 3500000, 3045984, 9045984],
-        resolutions: [21664, 10832, 5416, 2708, 1354, 677, 338.5, 169.25, 84.625, 42.3125, 21.15625, 10.5781255, 5.2890625, 2.64453125, 1.322265625]
+        resolutions: [1354, 677, 338.5, 169.25, 84.625, 42.3125, 21.15625, 10.5781255, 5.2890625, 2.64453125, 1.322265625, 0.6611328]
     });
 
 
@@ -174,7 +174,8 @@ LAYERS({
         opacity: 0.65,
         layers: "kv_grunnkart",
         tilegrid: KV_grid_UTM,
-        attributions: KV_ATTR
+        attributions: KV_ATTR, 
+        seed_max_res: 30
     })
 ]);
        
