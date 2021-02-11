@@ -188,23 +188,24 @@ pol.features.Edit = class extends pol.core.Widget {
     * Change is implemented as a remove and put. 
     * x is feature. op is command: "chg", "rm" or "add". 
     */ 
-    doUpdate(x, op) {
+    doUpdate(x, op, fromlayer) {
         const srv = CONFIG.server; 
         if (srv != null && srv.loggedIn && srv.hasDb) {
+            
+            const fromtag = "feature" + (!fromlayer ? "" : "."+fromlayer);
+            const totag = "feature" + ((!x.layer || x.layer=="DRAFT") ? "" : "."+x.layer);
+            
             if (op=='chg' || op=="rm")
-                srv.removeObj("feature", x.index);
-            if (op=='add' || op=='chg') {
-                const tag = "feature" + ((!x.layer || x.layer=="DRAFT") ? "" : "."+x.layer);
-                srv.putObj(tag, this.feature2obj(x), i => {x.index = i;} );
-            }
+                srv.removeObj(fromtag, x.index);
+            if (op=='add' || op=='chg') 
+                srv.putObj(totag, this.feature2obj(x), i => {x.index = i;} );
         }
     }
-        
+
         
         
     /* Convert feature to object that can be stringified as JSON */
     feature2obj(f) {
-        
         /* First: transform to latlong projection! */
         let geom = f.getGeometry().clone();
         let st = (f.originalStyle ? f.originalStyle : f.getStyle()); 

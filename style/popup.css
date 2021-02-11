@@ -261,7 +261,6 @@ form.mapref hr { border: dotted 1px #888 }
 
 #editArea {margin: 0.25em}
 
-#layerEdit {min-width: 32em}
 #layerEdit table {margin-left: 5.7em; margin-bottom: 0.4em}
 #layerEdit>div, #trackerEdit>div {padding-top: 0.8em; border-top: 2px solid #999}
 

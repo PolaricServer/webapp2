@@ -143,7 +143,7 @@ div.igroup {display: inline-block; margin-top: 0.5em; margin-right: 0.5em}
 
 
 div#colist {
-    max-width: 26em; 
+    max-width: 31em; 
     margin-left: 0.3em; margin-right: 0.3em; margin-top: 0.8em; margin-bottom: 0.6em; 
     border: dotted 1px #999; padding: 0.2em; padding-left: 0.4em; background: #e0e5dc; 
     font-size: 0.9em;
@@ -156,3 +156,27 @@ div#circleInfo {
 }
 
 span.coord:hover {background: #ffc}
+
+
+table.lfeatures, table.features {
+    vertical-align: top; 
+    display: inline-block;
+}
+
+table.lfeatures caption {
+    font-size: 80%; 
+    text-align: left; 
+    color: #666; 
+    padding-left: 3px
+}
+
+table.lfeatures {margin-left: 1em}
+
+table.lfeatures td {
+    border: 1px solid #aaa; 
+    padding-left: 3px; 
+    padding-right: 3px;
+    line-height: 1.1em; 
+    background: #fec;
+    color: #060;
+    font-size: 90%;

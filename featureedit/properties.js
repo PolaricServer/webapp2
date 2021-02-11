@@ -65,9 +65,9 @@ pol.features.Properties = class extends pol.core.Widget {
         
         t.layers = {    
             view: function(vn) {
-                return m("select#"+vn.attrs.id, t.layerList.getLayers()
+                return m("select#"+vn.attrs.id, {onchange: ()=>t.changeHandler} , t.layerList.getLayers()
                     .filter( x => x.get("drawing") )
-                    .map( x => m("option", {value: x.get("name")}, x.get("name")) ));
+                    .map( x => m("option", {value: x.get("name") }, x.get("name")) ));
             }
         }
         
@@ -87,24 +87,37 @@ pol.features.Properties = class extends pol.core.Widget {
                             m("td", (x.label ? x.label : ""))
                         ])
                     }))),    
+                    
+                    ( selectedLayer() != null && selectedLayer().getSource().getFeatures().length > 0 ? 
+                        m("table.lfeatures", [
+                          m("caption", "Layer features:"),
+                          m("tbody", selectedLayer().getSource().getFeatures().map( x => {
+                            return m("tr", 
+                                m("td", (x.label ? x.label : "(no label)"))
+                            )
+                        }))] ) : ""),    
+                    
                     hr,
-                    
+                                        
                     m("span.field", [
-                        m("span.sleftlab", "To layer: "),
-                        m(t.layers, {id:"tolayer"}), 
-                        m("button", {onclick: move, title: "Move features to layer"}, "Move")   
+                        m("span.sleftlab", "Type: "),
+                        m("span", (t.selected==null? "---" : t.selected.getGeometry().getType()))
                     ]),
-                    
+                                        
                     m("span.field", [
                         m("span.sleftlab", "Label: "),
                         m(textInput, {id:"editLabel", size: 16, maxLength:25, value: t.label, regex: /.*$/i }),
                         m("button", {onclick: set, title: "Update properties"}, "Update")
                     ]),
                     
-                    m("span.field", [
-                        m("span.sleftlab", "Type: "),
-                        m("span", (t.selected==null? "---" : t.selected.getGeometry().getType()))
-                    ]),
+                    (!t.layerList.isEmpty() ? 
+                        m("span.field", [
+                            m("span.sleftlab", "Layer: "),
+                            m(t.layers, {id:"tolayer"}), 
+                            m("button", {onclick: move, title: "Move feature to layer"}, "Move to"),
+                            m("button", {onclick: getFrom, title: "Get features from layer for editing"}, "Get from"),
+                        ]) : ""),
+
                     (t.radius ? m(t.circle) : (t.colist ? m(t.coord) : ""))
                 ])
             },  
@@ -114,6 +127,7 @@ pol.features.Properties = class extends pol.core.Widget {
         
         
         m.redraw();
+        setTimeout(changeHandler, 3300);
         snow.drawSource.on("changefeature", changeHandler);
         
         $(document).on("selectfeature", ()=> {
@@ -201,6 +215,8 @@ pol.features.Properties = class extends pol.core.Widget {
         
         /* Remove feature */
         function remove(i) {
+            if (confirm("Remove - are you sure?") == false)
+                return;
             snow.deleteFeature(features()[i]); 
         }
         
@@ -212,32 +228,59 @@ pol.features.Properties = class extends pol.core.Widget {
         }
         
         
-        /* Move the selected feature to the selected target layer */
-        function move() {
+        function selectedLayer() {
             const name = $("select#tolayer").val();
             let x = null;
             for (x of t.layerList.getLayers())
-                if (x.get("name") == name) {
-                    if (t.selected == null)
-                        console.warn("No feature selected"); 
-                    else if (snow.drawLayer == x)
-                        console.warn("Source and target layers is the same")
-                    else {
-                        /* Move the feature */
-                        x.getSource().addFeature(t.selected);
-                        snow.deleteFeature(t.selected);
-                        t.selected.layer = x.get("name");
-                        console.log("Moved feature '"+t.selected.label+"'");
-                        const s = t.selected;
-                        setTimeout(()=>t.editor.doUpdate(s, "add"), 1200);
-                        t.selected = null;
-                        t.colist = NaN; 
-                        t.radius = NaN;
-                    }
-                }
+                if (x.get("name") == name) 
+                        return x;
+            return null;
         }
         
         
+        
+        /* Move the selected feature to the selected target layer */
+        function move() {
+            const x = selectedLayer();
+            if (t.selected == null) 
+                console.warn("No feature selected");
+            else if (x == null)
+                console.warn("No target layer selected"); 
+            else if (snow.drawLayer == x)
+                console.warn("Source and target layers is the same")
+            else {
+                /* Move the feature */
+                x.getSource().addFeature(t.selected);
+                snow.deleteFeature(t.selected);
+                t.selected.layer = x.get("name");
+                const s = t.selected;
+                setTimeout(()=>t.editor.doUpdate(s, "chg"), 1200);
+                t.selected = null;
+                t.colist = NaN; 
+                t.radius = NaN;
+            }
+        }
+        
+        
+        /* Get features from selected target layer */
+        function getFrom() {
+            const x = selectedLayer(); 
+            if (x == null)
+                console.warn("No target layer selected"); 
+            else if (snow.drawLayer == x)
+                console.warn("Source and target layers is the same")
+            else {
+                /* Move the features */
+                x.getSource().forEachFeature(
+                    (f) => {
+                        snow.drawSource.addFeature(f);
+                        x.getSource().removeFeature(f);
+                        f.layer = "DRAFT";
+                        setTimeout(()=>t.editor.doUpdate(f, "chg", x.get("name")), 1200);
+                        console.log("Moved feature '"+f.label+"' from '"+f.layer+"'");
+                    });
+            }           
+        }
         
         
         /* FIXME: Move this to a proper place. 
@@ -251,6 +294,7 @@ pol.features.Properties = class extends pol.core.Widget {
         
         
         function changeHandler() {
+            console.log("CHANGE HANDLER");
             m.redraw()
         }
 

@@ -132,7 +132,11 @@ pol.layers.List = class List extends pol.core.Widget {
     }
     
     
-
+    isEmpty() {
+        return this.myLayers.length == 0;
+    }
+    
+    
     /**
      * Restore layers from local storage and from server.
      */
@@ -212,6 +216,8 @@ pol.layers.List = class List extends pol.core.Widget {
      * Remove layer from list 
      */
     removeLayer(id) {
+        if (confirm("Remove - are you sure?") == false)
+                return;
         console.assert(id >= 0 && id < this.myLayers.length, "id="+id+", length="+this.myLayers.length);
         /* If server available and logged in, delete on server as well */
         const srv = CONFIG.server; 

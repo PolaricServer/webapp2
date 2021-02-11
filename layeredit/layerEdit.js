@@ -44,14 +44,14 @@ pol.layers.Edit = class {
                     m("div.field", 
                         m("span.sleftlab", "Visibility: "),
                             m(checkBox, {id:"vis.extent", onclick: filterExtent, checked: (t.filt.ext != null), 
-                                title: "Check to make layer visible only if if overlaps this extent" }, 
+                                title: "Check to make layer visible only if it overlaps this extent" }, 
                                 "Map extent", nbsp, nbsp),
                         m(checkBox, {id:"vis.zoom", onclick: filterZoom, checked: (t.filt.zoom != null),
                             title: "Check to make layer visible only from this zoom level" },
                             "Zoom level+", nbsp, nbsp),
                         m(checkBox, {id:"vis.proj", onclick: filterProj, checked: (t.filt.proj != null), 
                             title: "Check to make layer visible only with this base map projection" },
-                            "Base projection")
+                            "Base proj.")
                      ),
                      
                     m(t.fields),
