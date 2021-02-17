@@ -101,8 +101,6 @@ pol.core.MapInfo = class extends pol.core.Widget {
         }
         
         function res_limit() {
-            console.log(browser.getBaseLayer());
-            console.log( browser.getResolution(),  browser.getBaseLayer().values_.max_res);
             return browser.getBaseLayer().values_.max_res;
         }
         

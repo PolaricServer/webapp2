@@ -30,7 +30,10 @@ pol.core.FeatureInfo = class {
         const t = this;
         
        /*
-        * Click handler
+        * Click handler. 
+        * For each feature found on pos: 
+        *   pop up a infoWidget if only one
+        *   pop up a listWidget if more than one, to let user select. 
         */  
         browser.map.on("click", e => {
             forAllFeatures(e.pixel, 
@@ -38,7 +41,7 @@ pol.core.FeatureInfo = class {
                 list => {
                     listWidget.popup(e, list);
                     return -1;
-                })
+                });
         });
         
    
@@ -77,7 +80,9 @@ pol.core.FeatureInfo = class {
             popup: (e, x)=> {
                 this.list = x;
                 this.ev = e;
+                CONFIG.mb.gui.removePopup();
                 browser.gui.showPopup( {vnode: listWidget, geoPos: browser.pix2LonLat(e.pixel)} );
+                e.stopPropagation();
             }
         }
         
@@ -89,7 +94,7 @@ pol.core.FeatureInfo = class {
             /* Model */
             info: null,
             /* View */
-            view: ()=> {
+            view: (vn)=> {
                 return m("div.featureInfo", [ this.info.map( x=> {    
                     return  [ m("span.field", [ 
                                (x.lbl? m("span.sleftlab", x.lbl+": "):null), 
@@ -97,10 +102,16 @@ pol.core.FeatureInfo = class {
                             ])];
                 })])
             },
-            /* Controller */
+            
+            /* Controller.
+             * x is the feature, where we have added a handler function. 
+             * this.info is a list of attributes (label, value) describing the feature  
+             */
             popup: (e, x)=> {
                 this.info = x.handler(x);
+                CONFIG.mb.gui.removePopup();
                 browser.gui.showPopup( {vnode: infoWidget, geoPos: browser.pix2LonLat(e.pixel)} );
+                e.stopPropagation();
             }
         }
         
@@ -150,7 +161,7 @@ pol.core.FeatureInfo = class {
     * as a label.
     * 
     * registerRecursive assumes that a layer has an attribute displayInfo
-    * which is the handler function. It also recursively traverses
+    * which is the handler function. If not, it is ignored. It also recursively traverses
     * Group layers. 
     */
     registerRecursive(layer) {

@@ -59,6 +59,11 @@ pol.layers.Drawing = class extends pol.layers.Edit {
             { name: name, source: src }
         );
         l.set("drawing", true, true);
+        
+        /* Add a handler function to present info about a feature */
+        l.displayInfo = function(f) {
+                return [{val: f.label}]; 
+            }; 
         return l;
     }
     

@@ -85,15 +85,14 @@ pol.tracking.db.History = class extends pol.core.Widget {
                         m("div.histbutt", [
                             m("button#hist_b1", {type: "button", onclick: search}, "Search"),
                             m("button#hist_b2", {type: "button", 
-                                title: "Add search to list", onclick: add}, "Add"),
-                            
-                            m("button#hist_b5", {type: "button", 
-                                title: "Get from My Trackers", onclick: getMT}, "Get MT"),
-                            m("button#hist_b6", {type: "button", 
                                 title: "Clear all", onclick: clear}, "Clear"),
                             m("button#hist_b3", {type: "button", 
-                                title: "Show all trails in list", onclick: showAll}, "Show all"),
+                                title: "Add search to list", onclick: add}, "Add"), 
                             m("button#hist_b4", {type: "button", 
+                                title: "Get from My Trackers", onclick: getMT}, "Get MT"),
+                            m("button#hist_b5", {type: "button", 
+                                title: "Show all trails in list", onclick: showAll}, "Show all"),
+                            m("button#hist_b6", {type: "button", 
                                 title: "Export to GPX file", onclick: exportGpx}, "Export"),
                             m("button#hist_back", {type: "button",  
                                 title: "Return to realtime tracking", onclick: goBack}, "Back")
