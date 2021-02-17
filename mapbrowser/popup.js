@@ -2,7 +2,7 @@
   Map browser based on OpenLayers 5. 
   Popup windows
   
-  Copyright (C) 2017-2019 Øyvind Hanssen, LA7ECA, ohanssen@acm.org
+  Copyright (C) 2017-2021 Øyvind Hanssen, LA7ECA, ohanssen@acm.org
   
   This program is free software: you can redistribute it and/or modify
   it under the terms of the GNU Affero General Public License as published 
@@ -36,30 +36,23 @@ pol.core.Popup = class {
         this.mb            = mb;
         this.onDiv         = document.getElementById("map"); 
         this.activepopup   = null;
-        this.psubdiv       = null;
         this.allowedPopups = 1; 
         this.onCallback    = null; 
         this.offCallback   = null;
-        this.geoPos        = false;
         this.image         = null;
         const t = this;
     
-        this.mb.view.on('change:center', onChangeCenter);
+       // this.mb.view.on('change:center', onChangeCenter);
         this.mb.map.on('click', onClick);
         this.mb.map.on('change:view', onChangeView);
        
-        function onChangeCenter() {
-           if (t.geoPos && t.geoPos != null) t.setPositionGeo(t.geoPos); 
-        }
-    
+        
         function onClick() {
            t.removePopup(); 
         }
        
         function onChangeView() {
            t.removePopup();
-           t.mb.view.on('change:center', onChangeCenter);
-           // FIXME: Unregister handler on previous view? 
         }
     } /* constructor */
     
@@ -79,7 +72,6 @@ pol.core.Popup = class {
         this.activepopup.style.display = "none" ;
         this.activepopup.parentNode.removeChild(this.activepopup);
         this.activepopup = null;
-        this.geoPos = null;
     }
 
 
@@ -115,16 +107,19 @@ pol.core.Popup = class {
      * @param {string|undefined} props.id - unique identifier (used as id of element).
      * @param {function|undefined} props.onclose - handler to be called when window closes. 
      * 
+     * @returns div element or null
+     * 
      */
     showPopup(props) 
     {
         const t = this;
         let x, y; 
+        if (t.activepopup != null && t.allowedPopups <= 1)
+            return null;
         if (props.id && props.id != null && document.getElementById(props.id) != null) {
             $('#'+props.id).effect('bounce');
             return null;
         }
-        
         let pdiv = ((props.elem && props.elem!=null)  
             ? props.elem : document.createElement('div'));
         if (props.html)
@@ -138,47 +133,52 @@ pol.core.Popup = class {
            ((props.cclass && props.cclass != null) ? " "+props.cclass : ""); 
   
 
-            if (props.geoPos && props.geoPos != null) {
-                t.geoPos = props.geoPos;
-                props.pixPos = t.mb.map.getPixelFromCoordinate
-                    (ol.proj.fromLonLat(props.geoPos, t.mb.view.getProjection()));
-            }      
-            else
-                t.geoPos = null;
-       
-            if (props.pixPos && props.pixPos != null)
-                { x = props.pixPos[0]; y=props.pixPos[1]; }
-            t.popup_(pdiv, x, y, props.image);
+        if (props.geoPos && props.geoPos != null) {
+            props.pixPos = t.mb.map.getPixelFromCoordinate
+                (ol.proj.fromLonLat(props.geoPos, t.mb.view.getProjection()));
+        }      
     
-            if (props.label)
-                t.allowedPopups++;
-           
-
-            if (props.draggable) {
-                if (props.pinned) 
-                    pdiv._pinned = true;
+        if (props.pixPos && props.pixPos != null)
+            { x = props.pixPos[0]; y=props.pixPos[1]; }
+        t.popup_(pdiv, x, y, props.image);
+    
+        if (props.label)
+            t.allowedPopups++;
+                  
+        if (props.draggable && props.pinned) {
+            /* 
+             * If we activate a pinned and draggable popup we allow more popups to be 
+             * created and we add a close icon.
+             */ 
+            pdiv._pinned = true;
+            t.allowedPopups++;
+            t.activepopup = null;
+            if (props.pin)
+                props.pin(pdiv._pinned); // Call pin callback
                 
-                if (pdiv._pinned) { 
-                    t.allowedPopups++;
-                    t.activepopup = null;
-                    if (props.pin)
-                        props.pin(pdiv._pinned); // Pin callback
+            /* Close icon */
+            setTimeout( ()=> {
+                const closeimage = document.createElement('img');
+                closeimage.className = "popup_close";
+                closeimage.src = "images/16px/close.png";
+                pdiv.appendChild(closeimage);
                 
-                
-                    /* Close icon */
-                    setTimeout( ()=> {
-                        const closeimage = document.createElement('img');
-                        closeimage.className = "popup_close";
-                        closeimage.src = "images/16px/close.png";
-                        pdiv.appendChild(closeimage);
-                
-                        /* close click handler */
-                        closeimage.onclick = (e)=> pdiv.close()
-                    }, 200);
-                }
-            }
-
+                /* close click handler */
+                closeimage.onclick = (e)=> pdiv.close()
+            }, 200);
+        }
         
+        /* Drag and resize setup */
+        if (props.resizable) 
+            $(pdiv).resizable();
+        if (props.draggable) 
+            $(pdiv).draggable(
+                { handle: "h1,h2,.handle", delay: 100, opacity: 0.7, 
+                    start: props.dragStart, stop: props.dragStop }  );
+        
+        /*
+         * Mouse event handlers 
+         */
         pdiv.onmousedown = function(e) 
             { e = (e)?e:((event)?event:null); e.stopPropagation(); return null; };
         pdiv.onmouseup = function(e) 
@@ -186,13 +186,8 @@ pol.core.Popup = class {
         pdiv.onclick = function(e)   
             { e = (e)?e:((event)?event:null); e.stopPropagation(); return null; }; 
        
-        if (props.resizable) 
-            $(pdiv).resizable();
-        if (props.draggable) 
-            $(pdiv).draggable(
-                { handle: "h1,h2,.handle", delay: 100, opacity: 0.7, 
-                    start: props.dragStart, stop: props.dragStop }  );
-            
+        
+        /* Close handler */
         pdiv.close = ()=> {
             if (props.vnode)
                 m.mount(pdiv, null);
@@ -211,6 +206,8 @@ pol.core.Popup = class {
         }
         return pdiv;
     }
+    
+    
     
     
     /**
@@ -268,7 +265,6 @@ pol.core.Popup = class {
      */
     showImageGeo(geoPos) {
         setTimeout( () => {
-            this.geoPos = geoPos;
             var pixPos = this.mb.map.getPixelFromCoordinate
                 (ol.proj.fromLonLat(geoPos, this.mb.view.getProjection()));
             this.popup_(null, pixPos[0], pixPos[1], true);
@@ -285,7 +281,7 @@ pol.core.Popup = class {
         if (this.activepopup && this.activepopup != null) {
             var pixPos = this.mb.map.getPixelFromCoordinate
                 (ol.proj.fromLonLat(geoPos, this.mb.view.getProjection()));
-            this.setPosition_(pixPos[0], pixPos[1]);
+            this.setPosition_(this.activepopup, this.image, pixPos[0], pixPos[1]);
         }
     }
 
@@ -297,7 +293,7 @@ pol.core.Popup = class {
      */
     setPositionPix(pixPos) {
         if (this.activepopup && this.activepopup != null)
-            this.setPosition_(pixPos[0], pixPos[1]);
+            this.setPosition_(this.activepopup, this.image, pixPos[0], pixPos[1]);
     }
 
 
@@ -307,15 +303,15 @@ pol.core.Popup = class {
      * @private
      */
 
-    setPosition_(x, y)
+    setPosition_(pdiv, img, x, y)
     {   
         let xoff=0;
         let yoff=0;
         let xoffs = false, yoffs = false;
         
-        if (this.image != null) {
-            this.image.style.left= -9+'px';
-            this.image.style.top= -9+'px';
+        if (img != null) {
+            img.style.left= -9+'px';
+            img.style.top= -9+'px';
         } 
         else {
            if (x<0) x=0;
@@ -327,29 +323,29 @@ pol.core.Popup = class {
          * position of the window. It may be easier to just move the map, but
          * sometimes it is desirable not to.. 
          */
-        xoff = x + 4 + this.psubdiv.clientWidth - this.onDiv.clientWidth;
+        xoff = x + 20 + pdiv.clientWidth - this.onDiv.clientWidth;
         if (xoff > 0) {
             xoffs = true;
             x -= xoff;
             if (x < 1) x=1;
-            if (this.image!=null)
-                this.image.style.left = (xoff-9)+'px';
+            if (img!=null)
+                img.style.left = (xoff-9)+'px';
         }
 
-        yoff = y + 4 + this.psubdiv.clientHeight - this.onDiv.clientHeight;
+        yoff = y + 20 + pdiv.clientHeight - this.onDiv.clientHeight;
         if (yoff > 0) {
             yoffs = true;
             y -= yoff;
             if (y < 1) y=1;
-            if (this.image!=null)
-                this.image.style.top =(yoff-9)+'px';
+            if (img!=null)
+                img.style.top =(yoff-9)+'px';
         }
-      
-        this.activepopup.style.left = x-3+"px";
-        this.activepopup.style.top  = y-3+"px";
+        
+        pdiv.style.left = x+"px";
+        pdiv.style.top  = y+"px";
 
-        if (xoffs && yoffs && this.image != null) 
-            this.image.style.display = "none";
+        if (xoffs && yoffs && img != null) 
+            img.style.display = "none";
         return [x,y];
     }
      
@@ -368,7 +364,7 @@ pol.core.Popup = class {
         if (elem == null) 
             elem = document.createElement('div');
      
-        this.psubdiv = this.activepopup = elem;  
+        this.activepopup = elem;  
         if (img != null && img) {
             this.image = document.createElement('img');
             this.activepopup.appendChild(this.image);
@@ -403,9 +399,11 @@ pol.core.Popup = class {
             this.activepopup.style.overflowY = 'visible';
      
         /* Hack to set the popup position even if it takes some time to load its content */
-        setAdjustedPos(x,y); 
-        setTimeout( ()=> { setAdjustedPos(x,y) }, 300);
-        setTimeout( ()=> { setAdjustedPos(x,y) }, 2000);
+        const pd = t.activepopup; 
+        const pimg = t.image;
+        setAdjustedPos(pd, pimg, x,y); 
+        setTimeout( ()=> { setAdjustedPos(pd, pimg, x,y) }, 300);
+        setTimeout( ()=> { setAdjustedPos(pd, pimg, x,y) }, 2000);
 
      
         this.allowedPopups--;
@@ -413,9 +411,9 @@ pol.core.Popup = class {
             this.onCallback(); 
         
         
-        function setAdjustedPos(x,y) {
-            if (t.activepopup != null) 
-                t.activepopup.adjustedPos = t.setPosition_(x, y);
+        function setAdjustedPos(pd, pimg, x,y) {
+            if (pd != null) 
+                pd.adjustedPos = t.setPosition_(pd, pimg, x, y);
         }
     }
 
