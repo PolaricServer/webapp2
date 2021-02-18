@@ -95,11 +95,14 @@ pol.layers.List = class List extends pol.core.Widget {
         /* Move map layer name to editable textInput */
         function editLayer(idx) {
             console.assert(idx >= 0 && idx <t.myLayers.length, "idx="+idx);
+            const name = t.myLayerNames[idx].name;
             const type = t.myLayerNames[idx].type;
-            $("#lType").val(type).trigger("change");
-            t.typeList[type].obj.edit(t.myLayers[idx]);   
-            t.removeLayer(idx);
+            t.layer = t.typeList[type].obj;
+            t.typeList[type].obj.edit(t.myLayers[idx]);
+            $("#lType").val(type).trigger("change");   
+            t.layer.lName(name);
             m.redraw();
+            t.removeLayer(idx, true);
         }
    
     } /* constructor */
@@ -215,8 +218,8 @@ pol.layers.List = class List extends pol.core.Widget {
     /**
      * Remove layer from list 
      */
-    removeLayer(id) {
-        if (confirm("Remove - are you sure?") == false)
+    removeLayer(id, noconfirm) {
+        if (!noconfirm && noconfirm!=true && confirm("Remove - are you sure?") == false)
                 return;
         console.assert(id >= 0 && id < this.myLayers.length, "id="+id+", length="+this.myLayers.length);
         /* If server available and logged in, delete on server as well */

@@ -124,7 +124,7 @@ pol.core.Toolbar = class extends ol.control.Control  {
     }
 
 
-    /**
+    /*
      * Set map object. Called from superclass. 
      */
     setMap(map) {

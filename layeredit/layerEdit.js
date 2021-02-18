@@ -59,7 +59,7 @@ pol.layers.Edit = class {
                         m("button#addButton", 
                           { disabled: !t.enabled(), type: "button", onclick: add, 
                             title: "Add layer to list"}, "Add" ),
-                        m("button", { type: "reset", onclick: ()=>t.reset(), title: "Clear input fields"}, "Reset" )
+                        m("button", { type: "reset", onclick: ()=>t.reset(), title: "Clear input fields"}, "Clear" )
                     ])
                 ]);
             }
@@ -178,8 +178,7 @@ pol.layers.Edit = class {
      * To be extended in subclass. 
      */
     edit(layer) {
-        this.lName( layer.get("name")); 
-        
+        this.lName(layer.get("name"));
         this.filt = layer.filt;
         if (this.filt == null) 
             this.filt = {ext:null, zoom:null, proj:null};

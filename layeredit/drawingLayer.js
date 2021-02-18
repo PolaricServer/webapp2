@@ -36,6 +36,7 @@ pol.layers.Drawing = class extends pol.layers.Edit {
                 return m("span");
             }
         }          
+
     
     } /* constructor */
 
@@ -59,7 +60,9 @@ pol.layers.Drawing = class extends pol.layers.Edit {
             { name: name, source: src }
         );
         l.set("drawing", true, true);
-        
+         
+        CONFIG.mb.map.on("change:view", ()=> {getWIDGET("features.Edit").restoreFeatures(name)});
+         
         /* Add a handler function to present info about a feature */
         l.displayInfo = function(f) {
                 return [{val: f.label}]; 
