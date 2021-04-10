@@ -36,6 +36,7 @@ pol.tracking.Users = class extends pol.core.Widget {
         t.name = m.stream("");
         t.callsign = m.stream("");
         t.passwd = m.stream("");
+        t.trackers = m.stream("");
         t.sar = false; 
         t.admin = false;
         
@@ -87,6 +88,11 @@ pol.tracking.Users = class extends pol.core.Widget {
                             maxLength: 32, regex: /.*/i })), 
                          
                     m("div.field", 
+                        m("span.xsleftlab", {title: "Allowed trackers (regex) for this user"}, "Trackers:"),
+                        m(textInput, { id: "trackers", value: t.trackers, size: 25,
+                            maxLength: 32, regex: /.*/i }), nbsp, "(regex)" ),
+                         
+                    m("div.field", 
                         m("span.xsleftlab", "Access:"),
                         m(checkBox, {id: "acc_sar", onclick: toggleSar, checked: t.sar, 
                             title: "SAR (operator level)" }, "SAR"), nbsp, 
@@ -130,6 +136,7 @@ pol.tracking.Users = class extends pol.core.Widget {
                 name: t.name(),
                 callsign: (t.callsign()=="" || t.callsign()==" " ? "" : t.callsign().toUpperCase()),
                 passwd: (t.passwd()=="" || t.passwd()==" " ? null : t.passwd()),
+                allowTracker: (t.trackers()=="" || t.trackers()==" " ? null : t.trackers()),
                 sar: t.sar,
                 admin: t.admin
             };
@@ -156,6 +163,7 @@ pol.tracking.Users = class extends pol.core.Widget {
                 name: t.name(),
                 passwd: (t.passwd()=="" || t.passwd()==" " ? null : t.passwd()),
                 callsign: (t.callsign()=="" || t.callsign()==" " ? "" : t.callsign().toUpperCase()),
+                allowTracker: (t.trackers()=="" || t.trackers()==" " ? null : t.trackers()),
                 sar: t.sar,
                 admin: t.admin
             };
@@ -166,6 +174,7 @@ pol.tracking.Users = class extends pol.core.Widget {
                         if (t.users[i].ident==t.ident()) {
                             t.users[i].name = data.name; 
                             t.users[i].callsign = data.callsign;
+                            t.users[i].trackers = data.allowTracker;
                             t.users[i].sar = data.sar;
                             t.users[i].admin = data.admin;
                             break;
@@ -199,6 +208,7 @@ pol.tracking.Users = class extends pol.core.Widget {
             t.name(u.name);
             t.callsign(u.callsign);
             t.passwd("");
+            t.trackers(u.allowTracker);
             t.sar = u.sar;
             t.admin = u.admin;
             m.redraw();
@@ -214,7 +224,7 @@ pol.tracking.Users = class extends pol.core.Widget {
                 return "";
             const d = new Date(dt);
             return "" +
-                d.getDate()+ " "+months[d.getMonth()]+ " " +
+                d.getDate()+ " "+months[d.getMonth()]+ " " + d.getFullYear()+" "+
                 (d.getHours()<10 ? "0" : "") + d.getHours() + ":" +
                 (d.getMinutes()<10 ? "0" : "") + d.getMinutes();
         }
@@ -227,6 +237,7 @@ pol.tracking.Users = class extends pol.core.Widget {
         this.ident("");
         this.name("");
         this.passwd("");
+        this.trackers("");
         this.sar = false; 
         this.admin = false;
         m.redraw();
