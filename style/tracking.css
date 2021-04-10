@@ -102,11 +102,14 @@ div.own   { background: #ccffcc; color: #0000cc }
 #bullboard .content>table>tr  {background: #eed; border: 2px solid #778; vertical-align: top; font-size: 1.1em}
 #bullboard .content>table>tr>td {padding: 0.2em 0.2em 0.1em 0.3em}
 #bullboard .content>table>tr>td {border-right: 2px solid #778; }
-#bullboard table table td {padding: 0; min-width: 42em; }
+#bullboard table table td {padding: 0; min-width: 45em; max-width: 46em; }
 #bullboard td.time {min-width: 3.7em;text-align: right; font-size: 0.8em; color: #065; border-left: 1px dotted #666}
 #bullboard .selected {font-weight: bold; color: #700; text-decoration: underline}
-#bullboard {width: 48.5em}
+//#bullboard {width: 48.5em}
+#bullboard .content {margin: .4em;}
 #bullboard .scroll {overflow-y: auto; overflow-x: hidden; margin-right: -5px}
+.bgroups {margin-bottom: 1.3em; margin-left: 0.4em; color: #008 }
+.bgroups>span:hover {background: yellow; text-decoration: underline; }
 
 span#hamop {margin-left: 1em; font-size: 85%; margin-top: 5px; color: green}
 .datepick input {width: 7em; }
