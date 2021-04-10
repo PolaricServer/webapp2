@@ -35,8 +35,7 @@ pol.tracking.BullBoard = class extends pol.core.Widget {
         var groups = [];
         var messages = [];
         var announcements = [];
-        var selectedGroup = 'APRS'; // FIXME: Save in sessionStorage
-
+        var selectedGroup = 'Announcements';
    
         /* Render a bulletin group */
         var showGroup = {
@@ -57,18 +56,18 @@ pol.tracking.BullBoard = class extends pol.core.Widget {
                 return m("div#bullboard", [
                     m("h1", "APRS Bulletin Board"),
                     m("div.content", [
-                    m("h4", "Groups:"),
+                    m("h4", "Bulletin group:"),
+                    m("div.bgroups", 
                     groups.map( x => {
                         return [m("span", 
                             {"class": (x==selectedGroup ? 'selected' :''), onclick:apply(selectGroup, x)}, 
                             x ), " " ];
-                    }),
-                    m("h4", "Bulletins ("+selectedGroup+"):"),
-                    m(showGroup, {msgs: messages}),
-               
-                    m("h4", "Announcements:"),
-                    m(showGroup, {msgs: announcements}) ])
-                ]);  
+                    })),
+                    ( selectedGroup!="Announcements"  
+                        ? m(showGroup, {msgs: messages}) 
+                        : m(showGroup, {msgs: announcements}) 
+                    )
+                ])]);  
             }
         };
 
@@ -111,7 +110,10 @@ pol.tracking.BullBoard = class extends pol.core.Widget {
         function selectGroup(group) {
             selectedGroup = group;
             CONFIG.store('tracking.BullBoard.group', selectedGroup, false);
-            getMessages();
+            if (group=='Announcements')
+                getAnn(); 
+            else
+                getMessages();
         }
     
     
@@ -120,6 +122,7 @@ pol.tracking.BullBoard = class extends pol.core.Widget {
             t.server.GET("/bullboard/groups", "", x => { 
                 groups = JSON.parse(x);
                 groups.unshift('APRS');
+                groups.unshift('Announcements');
                 m.redraw();
             } );
         }
@@ -139,6 +142,7 @@ pol.tracking.BullBoard = class extends pol.core.Widget {
         function getAnn() {
             t.server.GET("/bullboard/_A_/messages", "", x => { 
                 announcements = JSON.parse(x);      
+                console.log("ANN: ", x);
                 updateScreen();
             } );
         }    
