@@ -97,19 +97,27 @@ div.own   { background: #ccffcc; color: #0000cc }
 #mailbox span.fromaddr {color: #049;}     
 #mailbox span.fromaddr:hover {font-weight: bold }
 
-
+#bullboard div {max-width: 52em}
 #bullboard h4 {margin-bottom: 0.3em; margin-top: 0.6em}
 #bullboard .content>table>tr  {background: #eed; border: 2px solid #778; vertical-align: top; font-size: 1.1em}
 #bullboard .content>table>tr>td {padding: 0.2em 0.2em 0.1em 0.3em}
 #bullboard .content>table>tr>td {border-right: 2px solid #778; }
 #bullboard table table td {padding: 0; min-width: 45em; max-width: 46em; }
-#bullboard td.time {min-width: 3.7em;text-align: right; font-size: 0.8em; color: #065; border-left: 1px dotted #666}
+#bullboard td.time {min-width: 4em;text-align: right; font-size: 0.8em; color: #065; border-left: 1px dotted #666}
 #bullboard .selected {font-weight: bold; color: #700; text-decoration: underline}
-//#bullboard {width: 48.5em}
-#bullboard .content {margin: .4em;}
+#bullboard .content {margin: .4em; margin-right: 1em}
 #bullboard .scroll {overflow-y: auto; overflow-x: hidden; margin-right: -5px}
 .bgroups {margin-bottom: 1.3em; margin-left: 0.4em; color: #008 }
 .bgroups>span:hover {background: yellow; text-decoration: underline; }
+.mybulls div {background: #eed; padding-top: 0.3em; padding-bottom: 0.3em; margin-bottom: 0.3em; border: dotted 1px}
+.newmsg {color: #822}
+div.bgroups input {height: 1.1em; width: 3em}
+
+span.mline {margin-left: 0.6em; display: block}
+span.mline input {height: 1.2em}
+span.mline span:first-child {font-size: smaller; color: blue; margin-right: 0.5em; border: 1px solid; padding: 4px 1px 0px 1px}
+span.mline span:last-child {margin-left: 0.5em; font-size: 1.3em; color: #833; }
+
 
 span#hamop {margin-left: 1em; font-size: 85%; margin-top: 5px; color: green}
 .datepick input {width: 7em; }

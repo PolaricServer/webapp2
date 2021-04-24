@@ -24,7 +24,7 @@ pol.tracking.PolaricServer = class extends pol.core.Server {
     
     constructor() {
         super();
-        this.auth = { userid: "",servercall: "", admin: false, sar: false, services: "" }; 
+        this.auth = { userid: "", callsign: "", servercall: "", admin: false, sar: false, services: "" }; 
         this.hasDb = false;
         
         /* Add items to toolbar */
