@@ -78,14 +78,16 @@ const nbsp = m.trust("&nbsp;");
  * @param {number} maxlength - max length of field.
  * @param {boolean} contentEditable - true if field can be edited by user. 
  * @param {regex} regex - Regular expression that defines what input is valid. 
+ * @param {boolean} passwd - optional. true if password
  */
 const textInput = {
  
     view: function(vn) {
         var t = this;
+        var type = (!vn.attrs.passwd || vn.attrs.passwd==false ? "text" : "password");
  
         return m("input#"+vn.attrs.id, 
-        { type: "text", list: vn.attrs.list, config: vn.attrs.config, size: vn.attrs.size, maxLength: vn.attrs.maxLength, 
+        { type: type, list: vn.attrs.list, config: vn.attrs.config, size: vn.attrs.size, maxLength: vn.attrs.maxLength, 
           contentEditable: (vn.attrs.contentEditable ? vn.attrs.contentEditable : true),
                 
             oninput: function(ev) {
