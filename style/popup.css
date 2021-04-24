@@ -196,6 +196,7 @@ div#tags span {display: block}
 
 
 input[type=text] {background: white; height: 1.6em}
+input[type=password] {background: white; height: 1.6em}
 input[readonly]  {background: #cef; height: 1.6em}
 input[disabled]  {background: #ccc}
 input.valid      {background: #dfd}
