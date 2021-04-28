@@ -45,9 +45,13 @@ pol.tracking.BullBoard = class extends pol.core.Widget {
         var showGroup = {
             view: function(vn) {
                 return m("table", vn.attrs.msgs.map( x => {
-                    return m("tr", [ m("td", x.sender), m("td", m("table", x.bulls.map( y => {
-                        if (y!=null) return m("tr", 
-                            [m("td"+(newMsg(y)? ".newmsg" : ""), y.text), m("td.time", formatAge(y.time))] );
+                    return m("tr"+(oldSender(x) ? ".oldmsg" : ""), [ m("td", x.sender), m("td", m("table", x.bulls.map( y => {
+                        if (y!=null) 
+                            return m("tr"+(oldMsg(y) ? ".oldmsg" : ""), 
+                              [ m("td" + ( newMsg(y) ? ".newmsg" : 
+                                    ( oldMsg(y) ? ".oldmsg" : "" ) ), 
+                                y.text), m("td.time", formatAge(y.time)) ] 
+                            );
                     })))]);
                 }));
             }
@@ -135,6 +139,25 @@ pol.tracking.BullBoard = class extends pol.core.Widget {
             var diff = now - ltime;
             var min = Math.floor(diff/1000/60);
             return (min <= 15);
+        }
+        /* Return true if message is older than 24 hours */
+        function oldMsg(msg) {
+            var ltime = new Date(msg.time);
+            var now = new Date(); 
+            var diff = now - ltime;
+            var min = Math.floor(diff/1000/60);
+            if (group() == '_A_')
+                return (min > 2880)
+            else
+                return (min > 1440);
+        }
+        /* Return true if messages from sender is older thatn 24 hours */
+        function oldSender(s) {
+            var old = true; 
+            for (var x of s.bulls)
+                if (x != null && !oldMsg(x))
+                    old = false; 
+            return old;
         }
         
         

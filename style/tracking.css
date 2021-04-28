@@ -111,6 +111,7 @@ div.own   { background: #ccffcc; color: #0000cc }
 .bgroups>span:hover {background: yellow; text-decoration: underline; }
 .mybulls div {background: #eed; padding-top: 0.3em; padding-bottom: 0.3em; margin-bottom: 0.3em; border: dotted 1px}
 .newmsg {color: #822}
+.oldmsg td {color: #555}
 div.bgroups input {height: 1.1em; width: 3em}
 
 span.mline {margin-left: 0.6em; display: block}
