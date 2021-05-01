@@ -4,7 +4,7 @@
  * Feel free to modify it to meet your needs. 
  * See examples aprs.no.config.js for more examples... 
  * 
- * (c) 2017-2019 LA7ECA, Ø. Hanssen
+ * (c) 2017-2021 LA7ECA, Ø. Hanssen
  *************************************************************/
 
 /* 
@@ -12,7 +12,7 @@
  * Uncomment to use aprs.no as a backend. 
  * Default is to use the location of the webapp. 
  */
-// SERVER("https://aprs.no");
+# SERVER("https://aprs.no");
 
 
 /* 
@@ -22,8 +22,8 @@
  * aprs.no uses "ws" and "srv" through a proxy. Default is to use a separate port: 8081. 
  * Uncomment the following two lines to use a backend with a proxy. 
  */
-// WSPREFIX("ws");
-// AJAXPREFIX("srv");
+# WSPREFIX("ws");
+# AJAXPREFIX("srv");
 
 
 /* Location of aprsd icons */
@@ -383,7 +383,7 @@ VIEWS ([
    { name: 'agrog',     title: 'Agder/Rogaland',  extent: [4.508,57.965,9.311,59.645]},
    { name: 'tele',      title: 'Telemark',        extent: [ 7.4777, 58.7404, 10.2363, 59.5893] },
    { name: 'hardanger', title: 'Hardangervidda/Buskerud', extent: [ 6.4033, 59.3222, 12.0772, 61.0049] },
-   { name: 'oslofj',    title: 'Østfold/Vestfold',extent: [ 7.8612, 58.8272, 13.3971, 60.4553] },
+   { name: 'oslofj',    title: 'Østfold/Vestfold (Viken)',extent: [ 7.8612, 58.8272, 13.3971, 60.4553] },
    { name: 'osloaker',  title: 'Oslo/Akershus',   extent: [ 9.3833, 59.3858, 12.161,  60.1985] },
    { name: 'hedopp',    title: 'Hedmark/Oppland', extent: [ 8.2261, 59.8479, 13.9201, 61.4599] },
    { name: 'default',   title: 'Default',         extent: [ -16.0421, 56.929, 43.2233, 67.989], hidden: true }
