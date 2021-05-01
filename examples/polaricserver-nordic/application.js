@@ -145,8 +145,7 @@
         
         m.add('Area List',  () => WIDGET("core.AreaList", [50,70], true)); 
         m.add('Layer List', () => WIDGET("layers.List", [50,70], true));
-
-        m.add(null);
+        
         if (browser.getPermalink())
             m.add("Permalink OFF", () => browser.setPermalink(false)); 
         else
@@ -163,13 +162,12 @@
                 m.add("Admin/configuration..", webConfig);
                 m.add("User admin..", () => WIDGET("tracking.Users", [50, 70], true));
             }
-            else
-                m.add("Set/change password..", setPasswd);
         }
         m.add(null);
-        
-        if (srv.loggedIn)
+        if (srv.loggedIn) {
             m.add('Log out', () => srv.logout() );
+            m.add("Set/change password..", () => WIDGET("tracking.Passwd", [50,70], true));
+        }
         else
             m.add('Log in', () => srv.login() );
         m.add(null);
