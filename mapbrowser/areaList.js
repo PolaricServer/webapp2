@@ -40,8 +40,12 @@ pol.core.AreaList = class extends pol.core.Widget {
                     m("h1", "My map areas"),  
                     m("table.mapAreas", m("tbody", t.myAreas.map( x => {
                         return m("tr", [
-                            m("td", m(removeEdit, 
-                                { remove: apply(removeArea, i), edit: apply(editArea, i) })),
+                            m("td", [
+                                m(removeEdit, { remove: apply(removeArea, i), edit: apply(editArea, i) }),
+                                (sharable(i) ? 
+                                    m("img", {src:"images/16px/user.png", title:"Sharing", onclick: apply(sharing, i)} )
+                                    : "") 
+                                ]),     
                             m("td", 
                                 {onclick: apply(gotoExtent, i++), 'class': (x.server ? "onserver" : null) }, 
                                  x.name)
@@ -88,7 +92,22 @@ pol.core.AreaList = class extends pol.core.Widget {
         /* Apply a function to an argument. Returns a new function */
         function apply(f, id) {return function() { f(id); }};  
    
-   
+        
+        function sharable(i) {
+            return !t.myAreas[i].readonly;
+        }
+        
+        function sharing(i) {
+            var obj = t.myAreas[i]; 
+            if (!t.share) 
+                t.share= new pol.tracking.db.Sharing();
+            if (!t.share.isActive()) {
+                t.share.activatePopup('tracking.db.Sharing', [50, 70], true);
+                t.share.setIdent(obj.index, obj.name, "Area", null)
+            }
+        }
+        
+        
         function removeDup(name) {
             for (const i in t.myAreas)
                 if (t.myAreas[i].name == name) {

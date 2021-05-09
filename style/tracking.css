@@ -174,8 +174,10 @@ div.itemList img {vertical-align: middle}
 
 div#trail>span {display: block; color: #060; margin-left: 0.4em; margin-top: -0.7em; margin-bottom: -0.9em;}
 
-#itemtags input {margin-top: 0.8em}
-#itemtags {max-width: 23em;}
+#itemtags input, #sharing input {margin-top: 0.8em}
+#itemtags, #sharing {max-width: 24em;}
+#sharing input {max-width: 9em}
+span#ro {color: green; font-size: smaller}
 span.box {white-space: nowrap}
 span.box img {vertical-align: bottom; padding-bottom: 0.05em; width: 15px}
 
@@ -183,13 +185,15 @@ span.box img {vertical-align: bottom; padding-bottom: 0.05em; width: 15px}
 .tagList span.box img {vertical-align: middle}
 .tagList {display: flex; flex-wrap: wrap}
 
-.negtag, .disabled, .usertag, .systag {
+.negtag, .disabled, .usertag, .systag, .ulistitem, .ulistro {
     background: white; border: dotted 1px #777; padding: 2px; padding-bottom: 0;  border-radius: 4px;
 }
 
-span.negtag   {background: #cef; color: #009}
-span.disabled {color: grey; text-decoration: line-through; padding-top: 0}
-span.usertag  {background: #fe9;}
+span.negtag    {background: #cef; color: #009}
+span.usertag   {background: #fe9;}
+span.ulistitem {background: #dfd;}
+span.ulistro   {background: #ff9;}
+span.disabled  {color: grey; text-decoration: line-through; padding-top: 0}
 span.box, span.disabled {margin-right: 0.6em; margin-bottom: 2px}
 
 
@@ -224,3 +228,9 @@ img#ulist {margin-left: 0.5em;}
 
 #signsList {margin-top: 0.4em }
 #signsList td {padding: 3px}
+
+span#objname {
+    display: block; border: 1px dotted blue; background: #eec;
+    padding-left: 0.2em; margin-bottom: 0.6em; font-size: 0.95em
+}
+   

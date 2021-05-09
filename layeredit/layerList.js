@@ -53,6 +53,9 @@ pol.layers.List = class List extends pol.core.Widget {
                     m("table.mapLayers", m("tbody", t.myLayerNames.map( x => {
                         return m("tr", [
                             m(removeEdit, {remove: apply(x=>t.removeLayer(x), i), edit: apply(editLayer, i++) }),
+                            (sharable(i) ? 
+                                m("img", {src:"images/16px/user.png", title:"Sharing", onclick: apply(sharing, i)} )
+                                : ""),
                             m("td", {'class': (x.server ? "onserver" : null)}, x.name) ] );
                     }))), 
                     
@@ -75,12 +78,24 @@ pol.layers.List = class List extends pol.core.Widget {
         /* Get stored layers */
         this._getMyLayers();
 
+        function sharable(i) {
+            return !t.myLayerNames[i-1].readonly;
+        }
    
         /* Apply a function to an argument. Returns a new function */
         function apply(f, id) {return function() {f(id); }};  
       
 	
-   
+        function sharing(i) {
+            var obj = t.myLayerNames[i-1];
+            if (!t.share) 
+                t.share= new pol.tracking.db.Sharing();
+            if (!t.share.isActive()) {
+                t.share.activatePopup('tracking.db.Sharing', [50, 70], true);
+                t.share.setIdent(obj.index, obj.name, "Layer", obj.type)
+            }
+        }
+        
         /* Handler for select element. Select a type. */
         function selectHandler(e) {
             const tid = $("#lType").val();
@@ -98,11 +113,13 @@ pol.layers.List = class List extends pol.core.Widget {
             const name = t.myLayerNames[idx].name;
             const type = t.myLayerNames[idx].type;
             t.layer = t.typeList[type].obj;
-            t.typeList[type].obj.edit(t.myLayers[idx]);
+            t.layer.index = t.myLayerNames[idx].index;
+            t.layer.readonly = t.myLayerNames[idx].readonly;
+            t.layer.origName = name;
+            t.layer.edit(t.myLayers[idx]);
             $("#lType").val(type).trigger("change");   
             t.layer.lName(name);
             m.redraw();
-            t.removeLayer(idx, true);
         }
    
     } /* constructor */
@@ -185,7 +202,7 @@ pol.layers.List = class List extends pol.core.Widget {
                             const wr = obj.data;
                             const x = this.typeList[wr.type].obj.obj2layer(wr.data);        
                             removeDup(wr.name);
-                            lrs.push({name:wr.name, type:wr.type, server:true, index: obj.id});
+                            lrs.push({name:wr.name, type:wr.type, server:true, readonly:obj.readOnly, index: obj.id});
                             t.myLayers.push(x);
                             CONFIG.mb.addConfiguredLayer(x, wr.name);
                         }

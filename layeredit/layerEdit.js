@@ -57,8 +57,12 @@ pol.layers.Edit = class {
                     m(t.fields),
                     m("div.buttons", [
                         m("button#addButton", 
-                          { disabled: !t.enabled(), type: "button", onclick: add, 
+                          { disabled: !t.enabled() || !addMode(), type: "button", onclick: add, 
                             title: "Add layer to list"}, "Add" ),
+                        m("button#updateButton", 
+                          { disabled: !t.enabled() || addMode() || t.readonly, type: "button", onclick: update, 
+                            title: "Update layer"}, "Update" ),
+                      
                         m("button", { type: "reset", onclick: ()=>t.reset(), title: "Clear input fields"}, "Clear" )
                     ])
                 ]);
@@ -72,6 +76,11 @@ pol.layers.Edit = class {
             view: function() { return null; }
         }
    
+   
+        function addMode() {
+            return t.origName != t.lName() && t.lName().length > 0; 
+        }
+        
 
         /* Handler for checkbox. Extent filter on/off */
         function filterExtent() {
@@ -95,14 +104,47 @@ pol.layers.Edit = class {
         }
    
         
+        function update() 
+        {
+            const layer = t.createLayer(t.lName());
+            if (layer==null)
+                return false; 
+            
+            layer.predicate = t.createFilter(t.filt);
+            layer.filt = {ext:t.filt.ext, zoom:t.filt.zoom, proj:t.filt.proj};
+            
+            /* IF server available and logged in, update on server as well */
+            const srv = CONFIG.server; 
+            if (srv && srv != null && srv.loggedIn) {
+                const obj = {type: t.typeid, name: t.lName(), data: t.layer2obj(layer)}; 
+                srv.updateObj("layer", t.index, obj, i => { 
+                    layer.server = true;
+                    _update();
+                    m.redraw();
+                });
+            } else 
+                update();
+            
+            return false;
+            
+            function _update() {     
+                // Save the layer using the concrete subclass
+                CONFIG.store("layers.layer."+layer.get("name").replace(/\s/g, "_"), t.layer2json(layer), true);
+            }
+        
+        }
+   
    
         /** 
          * Add a map layer to list 
          */
         function add() 
         {  
+            if (_hasLayer(t.lName())) {
+                alert("ERROR: Layer name already used: "+t.lName());
+                return;
+            }
             const layer = t.createLayer(t.lName());
-
             if (layer==null)
                 return false; 
             
@@ -123,6 +165,16 @@ pol.layers.Edit = class {
             else
                 _add(); 
             return false; 
+            
+            
+            function _hasLayer(name) {
+                for (const x of list.myLayerNames) {
+                    if (name==x.name)
+                        return true;
+                }
+                return false; 
+            }
+            
             
             function _add() {
                 CONFIG.mb.addConfiguredLayer(layer, t.lName(), true);
