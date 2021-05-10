@@ -51,6 +51,14 @@
             CONFIG.notifier = not; 
         }
         
+        /* Get updates when sharing of objects are changed */ 
+        srv.pubsub.subscribe("sharing", x => {
+            console.log("Change to object sharing");
+            getWIDGET("layers.List").getMyLayers();
+            getWIDGET("core.AreaList").getMyAreas();
+        });
+        
+        
     }, 1000); 
    
     CONFIG.labelStyle = new pol.tracking.LabelStyle();

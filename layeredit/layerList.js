@@ -76,7 +76,7 @@ pol.layers.List = class List extends pol.core.Widget {
         };
    
         /* Get stored layers */
-        this._getMyLayers();
+        this.getMyLayers();
 
         function sharable(i) {
             return !t.myLayerNames[i-1].readonly;
@@ -90,10 +90,10 @@ pol.layers.List = class List extends pol.core.Widget {
             var obj = t.myLayerNames[i-1];
             if (!t.share) 
                 t.share= new pol.tracking.db.Sharing();
-            if (!t.share.isActive()) {
+            if (!t.share.isActive()) 
                 t.share.activatePopup('tracking.db.Sharing', [50, 70], true);
-                t.share.setIdent(obj.index, obj.name, "Layer", obj.type)
-            }
+            t.share.setIdent(obj.index, obj.name, "Layer", obj.type)
+            
         }
         
         /* Handler for select element. Select a type. */
@@ -157,12 +157,22 @@ pol.layers.List = class List extends pol.core.Widget {
     }
     
     
+    _clearMyLayers() {
+        for (const x of this.myLayers) {
+            CONFIG.mb.removeConfiguredLayer(x)
+        }
+        this.myLayers=[];
+        this.myLayerNames=[];
+    }
+    
+    
     /**
      * Restore layers from local storage and from server.
      */
-    _getMyLayers() {
+    getMyLayers() {
         const t = this;
-	
+        t._clearMyLayers();
+        
         /* lrs is a list of name,type pairs */
         let lrs = CONFIG.get("layers.list");
         if (lrs == null)

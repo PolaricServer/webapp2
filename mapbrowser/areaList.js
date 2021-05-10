@@ -59,34 +59,8 @@ pol.core.AreaList = class extends pol.core.Widget {
         }
    
    
-        /* Get stored areas */
-        t.myAreas = CONFIG.get("core.AreaList");
-        if (t.myAreas == null)
-            t.myAreas = [];
-    
-        for (const x of t.myAreas) {
-            x.server = false; 
-            x.index = -1; 
-        }
-	
-        /* Get areas stored on server (if logged on) */
-        setTimeout( () => {
-            const srv = CONFIG.server; 
-            if (srv != null && srv.loggedIn && srv.hasDb) {
-                srv.getObj("area", a => {
-                    for (const obj of a) 
-                        if (obj != null) {
-                            const x = obj.data;
-                            x.index = obj.id;
-                            removeDup(x.name);
-                            x.server = true;
-                            t.myAreas.push(x);  
-                        }
-                    m.redraw();
-                });
-            }    
-        }, 1500);
-
+        t.getMyAreas(); 
+   
    
    
         /* Apply a function to an argument. Returns a new function */
@@ -101,20 +75,10 @@ pol.core.AreaList = class extends pol.core.Widget {
             var obj = t.myAreas[i]; 
             if (!t.share) 
                 t.share= new pol.tracking.db.Sharing();
-            if (!t.share.isActive()) {
+            if (!t.share.isActive()) 
                 t.share.activatePopup('tracking.db.Sharing', [50, 70], true);
-                t.share.setIdent(obj.index, obj.name, "Area", null)
-            }
-        }
-        
-        
-        function removeDup(name) {
-            for (const i in t.myAreas)
-                if (t.myAreas[i].name == name) {
-                    /* Remove duplicate entries. Is this right? */
-                    t.myAreas.splice(i, 1);
-                    return;
-                }
+            t.share.setIdent(obj.index, obj.name, "Area", null)
+            
         }
    
    
@@ -176,6 +140,57 @@ pol.core.AreaList = class extends pol.core.Widget {
         }
    
     } /* constructor */
+    
+    
+    
+    getMyAreas() 
+    {
+        const t = this;
+        t.myAreas = []; 
+        /* Get stored areas */
+        t.myAreas = CONFIG.get("core.AreaList");
+        if (t.myAreas == null)
+            t.myAreas = [];
+    
+        for (const x of t.myAreas) {
+            x.server = false; 
+            x.index = -1; 
+        }
+	
+        /* Get areas stored on server (if logged on) */
+        setTimeout( () => {
+            const srv = CONFIG.server; 
+            if (srv != null && srv.loggedIn && srv.hasDb) {
+                srv.getObj("area", a => {
+                    for (const obj of a) 
+                        if (obj != null) {
+                            const x = obj.data;
+                            x.index = obj.id;
+                            removeDup(x.name);
+                            x.server = true;
+                            t.myAreas.push(x);  
+                        }
+                    m.redraw();
+                });
+            }    
+        }, 1500);
+        
+        function removeDup(name) {
+            for (const i in t.myAreas)
+                if (t.myAreas[i].name == name) {
+                    var x = t.myAreas[i]; 
+                    if (x.server)
+                        x.name += "_";
+                    else
+                        t.myAreas.splice(i, 1);
+                    return;
+                }
+        }
+    }
+    
+    
+
+    
 } /* class */
 
 

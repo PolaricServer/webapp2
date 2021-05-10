@@ -26,6 +26,7 @@ pol.tracking.PolaricServer = class extends pol.core.Server {
         super();
         this.auth = { userid: "", callsign: "", servercall: "", admin: false, sar: false, services: "" }; 
         this.hasDb = false;
+        const t = this;
         
         /* Add items to toolbar */
         CONFIG.mb.toolbar.addSection(3);
@@ -39,6 +40,7 @@ pol.tracking.PolaricServer = class extends pol.core.Server {
             if (this.auth.userid != "")
                 this.loginStatus();
         }, 360000);
+                
     }
 
 
