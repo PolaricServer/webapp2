@@ -329,28 +329,36 @@ function createLayer_GPX(opts)
 
 function createLayer_WFS(opts) 
 {
-   if (!opts.outputFormat)
+   if (opts.newVersion==true) {
+        opts.outputFormat = "text/xml; subtype=gml/3.2.1";
+        opts.wfsVersion = "2.0.0";
+   }
+   else {
         opts.outputFormat = "text/xml; subtype=gml/3.1.1";
-   if (!opts.wfsVersion)
         opts.wfsVersion = "1.1.0";
+   }
    if (opts.cql)
        opts.cql = "&cql_filter="+opts.cql; 
    else 
        opts.cql = "";
         
    const vSource = new ol.source.Vector({
-     format: new ol.format.WFS(),  
+     format: new ol.format.WFS({ 
+         gmlFormat: ( opts.newVersion==true ? new ol.format.GML32() : new ol.format.GML3()),
+         version:   ( opts.newVersion==true ? "2.0.0" : "1.1.0")
+    }
+     ),  
 
         
      url: function(extent) {
-        let srs = CONFIG.mb.view.getProjection().getCode();
-        if (!srs)
-            srs=opts.srs;
+        let srs=opts.srs;
+        if (!opts.srs)
+            srs= CONFIG.mb.view.getProjection().getCode();
             
         return opts.url +'?service=WFS&' +
            'version='+opts.wfsVersion+'&request=GetFeature&typename='+opts.ftype+'&' +
            'outputFormat='+opts.outputFormat+'&srsname='+srs+'&' +
-           'bbox=' + extent.join(',')+opts.cql;
+           'bbox=' + extent.join(',')+","+srs+opts.cql;
      },
 
      strategy: ol.loadingstrategy.bbox
@@ -358,6 +366,7 @@ function createLayer_WFS(opts)
    
    vSource.ftype = opts.ftype;
    vSource.oformat = opts.oformat;
+   vSource.baseurl = opts.url;
    
    const layer = new ol.layer.Vector({
       name: opts.name,
@@ -408,6 +417,7 @@ function STYLES( st ) {
 	      x.image = x.image;
     
        CONFIG.styles[ident] = new ol.style.Style(x);   
+       CONFIG.styles[ident].tag = x.tag;
    }
 }
 

@@ -32,7 +32,7 @@ pol.layers.Wfs = class extends pol.layers.Edit {
         t.wurl = m.stream("");
         t.ftype = m.stream("");
         t.wlabel = m.stream("");
-        
+        t.version = false;
         
         t.fields = {
             view: function() { 
@@ -47,17 +47,29 @@ pol.layers.Wfs = class extends pol.layers.Edit {
                     ),
                     m("div.field", 
                         m("span.sleftlab", "Style: "),
-                        m(select, {id: "wfsStyle", list: Object.keys(CONFIG.styles).map( x => {
+                        m(select, {id: "wfsStyle", list: Object.keys(CONFIG.getStyles("wfs")).map( x => {
                             return {label: x, val: x, obj: CONFIG.styles[x]}; 
                         }) })
                     ),
                     m("div.field", 
-                        m("span.sleftlab", "Label attr: "),
+                        m("span.sleftlab", 
+                          {title: "Label text. Use $(attr) to include feature attributes"}, 
+                          "Label: "),
                         m(textInput, {id:"wfsLabel", size: 20, maxLength: 60, value: t.wlabel, regex: /^.+$/i })
-                    )
+                    ),
+                    m("div.field", 
+                        m("span.sleftlab", "Std version: "),
+                        m(checkBox, {id:"stdver", onclick: setVer, checked: t.version, 
+                            title: "Check to use old standards version (wfs 1.1.0 / gml 3.1.1)" },
+                            "Use old version"))
                 ]);
             }
         }  
+        
+        function setVer() {
+            t.version = !t.version;
+            console.log("t.version=",t.version);
+        }
       
     } /* constructor */
 
@@ -86,11 +98,11 @@ pol.layers.Wfs = class extends pol.layers.Edit {
             url: this.wurl(),
             ftype: this.ftype(),
             style: (this.wlabel() != "" ? SETLABEL(styleId, this.wlabel()) : GETSTYLE(styleId)),
-            outputFormat: "text/xml; subtype=gml/3.1.1",
-            wfsVersion: "1.1.0"
+            newVersion: !this.version
         });
         x.styleId = styleId;
         x.label = this.wlabel();
+        x.version = this.version;
         return x;
     }
 
@@ -101,9 +113,10 @@ pol.layers.Wfs = class extends pol.layers.Edit {
      */
     edit(layer) {
         super.edit(layer);
-        this.wurl(layer.getSource().url);
+        this.wurl(layer.getSource().baseurl);
         this.ftype(layer.getSource().ftype);
         this.wlabel(layer.label);
+        this.version = layer.version;
         $("#wfsStyle").val(layer.styleId).trigger("change");
     }
 
@@ -113,6 +126,7 @@ pol.layers.Wfs = class extends pol.layers.Edit {
         this.wurl("");
         this.ftype("");
         this.wlabel("");
+        this.version = false;
     }
     
     
@@ -122,19 +136,22 @@ pol.layers.Wfs = class extends pol.layers.Edit {
     layer2obj(layer) { 
         const lx = {
             filter:  layer.filt,
-            url:     layer.getSource().url,
+            url:     layer.getSource().baseurl,
             ftype:   layer.getSource().ftype,
             oformat: layer.getSource().oformat,
             styleId: layer.styleId,
-            label:   layer.label 
+            label:   layer.label, 
+            verison: layer.version
         };
+        console.log("layer.source", layer.getSource());
+        console.log("layer2obj", lx);
         return lx;
     }
 
       
       
     /**
-     * Restore a layer (see also layer2json). 
+     * Restore a layer (see also layer2obj). 
      */
     obj2layer(lx) {
         if (lx == null) {
@@ -145,12 +162,14 @@ pol.layers.Wfs = class extends pol.layers.Edit {
             url:   lx.url,
             ftype: lx.ftype,
             style: (lx.label && lx.label!=null ? SETLABEL(lx.styleId, lx.label) : GETSTYLE(lx.styleId)),
-            outputFormat: lx.oformat
+            outputFormat: lx.oformat,
+            newVersion: !lx.version
         });
         x.predicate = this.createFilter(lx.filter);
         x.filt = lx.filter;
         x.styleId = lx.styleId;
         x.label = lx.label;
+        x.version = lx.version;
         return x;
     }
       

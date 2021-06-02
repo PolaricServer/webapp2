@@ -62,6 +62,18 @@ pol.core.Config = class extends ol.Object {
     }
 
 
+    
+    getStyles(tag) {
+        let st = {};
+        for (const k in this.styles) {
+            if (typeof this.styles[k].tag != "undefined" && this.styles[k].tag.test(tag))
+                st[k] = this.styles[k];
+        }
+        return st;
+    }
+    
+    
+    
 
     /**  
      * Get array of configured base layers. 
