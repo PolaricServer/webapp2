@@ -175,7 +175,11 @@ pol.features.Edit = class extends pol.core.Widget {
         if (srv != null && srv.loggedIn && srv.hasDb) {
             const tag = "feature"+ (lname ? "."+lname : "");
             
-            const ftrs = getWIDGET("layers.List").getLayer(lname).getSource().getFeatures(); 
+            const lr = getWIDGET("layers.List").getLayer(lname); 
+            if (lr==null)
+                return;
+            const ftrs = lrs.getSource().getFeatures(); 
+            console.log(ftrs);
             for (const f of ftrs) 
                 if (f.index) 
                     srv.removeObj(tag, f.index);

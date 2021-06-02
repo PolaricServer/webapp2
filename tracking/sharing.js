@@ -23,8 +23,19 @@
 
 
 /**
- * Reference search (in a popup window). 
+ *  
  */
+
+var shareWidget = null;
+function getShareWidget() {
+    if (shareWidget == null) 
+        shareWidget = new pol.tracking.db.Sharing();
+    if (!shareWidget.isActive()) 
+        shareWidget.activatePopup('tracking.db.Sharing', [50, 70], true);
+    return shareWidget;
+}
+
+
 
 pol.tracking.db.Sharing = class extends pol.core.Widget {  
 
@@ -100,8 +111,10 @@ pol.tracking.db.Sharing = class extends pol.core.Widget {
             );
              
             /* If drawing layer add sharing to features as well */
-            if (t.tag=="Layer" && t.type=="drawing") {
-                const tag = encodeURIComponent("feature."+t.name);
+            if (t.tag=="layer" && (t.type=="drawing" || t.type=="gpx")) {
+                const tag = encodeURIComponent(
+                    (t.type=="gpx" ? "gpx.": "feature.") + t.name
+                );
                 t.server.POST("objects/"+tag+"/_ALL_/share", JSON.stringify(arg),
                     ()=> {},
                     (x)=> { console.warn("Couldn't add user: "+x); }
@@ -132,11 +145,13 @@ pol.tracking.db.Sharing = class extends pol.core.Widget {
             (x)=> { console.warn("Couldn't delete object: ", x.statusText); })
                     
         /* For drawing-layers remove sharings of features as well */
-        if (this.tag=="Layer" && this.type=="drawing") {
-            const tag = encodeURIComponent("feature."+this.name);
+        if (this.tag=="layer" && (this.type=="drawing" || this.type=="gpx")) {
+            const tag = encodeURIComponent(
+                (this.type=="gpx" ? "gpx.": "feature.") + this.name
+            );
             this.server.DELETE("objects/"+tag+"/_ALL_/share/"+uid,
-                ()=> {},
-                (x)=> { console.warn("Couldn't add user: "+x); }
+                x=> { if (x>0) console.log(x+" features removed"); },
+                x=> { console.warn("Couldn't remove user: "+x); }
             );
         }
     }

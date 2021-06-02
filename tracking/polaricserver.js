@@ -66,14 +66,20 @@ pol.tracking.PolaricServer = class extends pol.core.Server {
     updateObj(tag, ident, obj, f) { 
         this.PUT("objects/"+tag+"/"+ident, 
             JSON.stringify(obj), 
-            x => { console.log("Updated server object "+ident+" for user: "+this.auth.userid); f(x); },
+            x => { console.log("Updated server object "+ident+" for user "+this.auth.userid); f(x); },
             x => { console.log("ERROR: " + x); } );
     }
 
 
-    removeObj(tag, id) {
+    removeObj(tag, id, f) {
         this.DELETE("objects/"+tag+"/"+id, 
-            () => console.log("Removed server object "+id+" for user: "+this.auth.userid) );
+            x => {
+                console.log("Server object "+id+" for user "+this.auth.userid+": "+x+" objects removed");
+                if (typeof f == 'function') f(x);
+            },
+            x => { console.log("ERROR: " + x); }
+            
+        );
     }
 
 

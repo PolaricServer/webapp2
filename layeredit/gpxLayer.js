@@ -2,7 +2,7 @@
  Map browser based on OpenLayers 5. Layer editor. 
  GPX file layer. 
  
- Copyright (C) 2018 Øyvind Hanssen, LA7ECA, ohanssen@acm.org
+ Copyright (C) 2018-2021 Øyvind Hanssen, LA7ECA, ohanssen@acm.org
  
  This program is free software: you can redistribute it and/or modify
  it under the terms of the GNU Affero General Public License as published 
@@ -20,8 +20,6 @@
 
 
  
-// FIXME: Move this function to uisupport.js ? 
-
 
 
 /**
@@ -35,7 +33,7 @@ pol.layers.Gpx = class extends pol.layers.Edit {
         this.files = [];
         const t = this;
         t.gpxLab = m.stream("");
-      
+       
         this.fields = {
             view: ()=> { 
                 return m("div.spec", [ 
@@ -46,7 +44,7 @@ pol.layers.Gpx = class extends pol.layers.Edit {
                     (t.files.length > 1 ? "" : "Drop files here...") ]), br, 
                          
                     m("span.sleftlab", "Style: "),
-                    m(select, {id: "gpxStyle", list: Object.keys(CONFIG.styles).map( x => {
+                    m(select, {id: "gpxStyle", list: Object.keys(CONFIG.getStyles("gpx")).map( x => {
                             return {label: x, val: x, obj: CONFIG.styles[x]}; 
                         }) }), br,
 	       
@@ -66,58 +64,70 @@ pol.layers.Gpx = class extends pol.layers.Edit {
     
         /* Handler for when files are dropped */
         function dropFile(e) {
-            let formData = new FormData();
+            
             let i = 0;
             let names = []; 
+
             for (const f of e.files) {
-	        let type = f.type;
+                
+                /* Check the type of the file and add it to the list of names*/
+                let type = f.type;
                 if (type == "" && f.name.substr(f.name.lastIndexOf(".")+1) == "gpx")
                     type = "application/gpx+xml";
-		
-                if (type == "application/gpx+xml" || type == "application/x-gpx+xml") {
-                    formData.append("file" + i++, f);
+                if (type == "application/gpx+xml" || type == "application/x-gpx+xml") 
                     names.push(f.name);
-                }
-                else
+                else {
                     alert("ERROR: Unsupported format: '"+type+"'");
-            }
-            if (i>0)
-                CONFIG.server.POST("/files/gpx", formData,
-                    x => {
-                        let res = JSON.parse(x);
-                        i=0;
-                        for (const id of res) {
-                            t.files.push( {id: id, name: names[i], used: false} );
-                            console.log("File '"+names[i++]+"' uploaded ok: "+id); 
+                    continue;
+                }
+                
+                /* Now, read the content of the file and send it to the server */
+                let reader = new FileReader();
+                reader.readAsText(f);
+                reader.onload = (ev) => {
+                    CONFIG.server.POST("/objects/"+t.subTag(), ev.target.result, 
+                        x => { 
+                            t.files.push( {id: x, name: f.name, used: false} );
+                            console.log("File '"+f.name+"' uploaded ok: "+x); 
                             m.redraw();
-                        }
-                    },
-                    x => alert("File upload error")
-            );
+                        },
+                        x => alert("File upload error")
+                    );
+                };
+            }
         }
+        
+        
+        
         
         
         /* Cleanup when widget is terminated */
         function cleanup() {
             for (const f of t.files)
-                if (!f.used)
-                    CONFIG.server.DELETE("/files/gpx/"+f.id, null, null)
+                if (!f.used) 
+                    CONFIG.server.DELETE("/objects/"+t.subTag()+"/"+f.id, null, null);
+                
             t.files = [];
         }
     
     } /* constructor */
     
 
+    subTag(name) {
+        return encodeURIComponent("gpx."+ (typeof name === 'undefined' ? this.lName() : name));
+    }
+    
     
     allowed() 
         { return CONFIG.server.loggedIn; }
         
 
     /**
-     * Return true if add button can be enabled 
+     * Return true if add and update button can be enabled 
      */
     enabled() {
-        return  $("#editLayer").attr("ok") &&
+        return  ($("#editLayer").attr("ok")==null || $("#editLayer").attr("ok")) &&
+                this.lName().length > 0 &&
                 this.files.length > 0;
     }
       
@@ -126,24 +136,22 @@ pol.layers.Gpx = class extends pol.layers.Edit {
     /**
      * Create a layer. 
      */
-    createLayer(name) {
+    createLayer(name, old) {
         const styleId = $("#gpxStyle").val();
-        console.log("Create GPX layer: style="+styleId+", label="+this.gpxLab);
-        const x = this._createLayer(name, styleId, this.gpxLab, this.files);
-        this.files = []; 
-        m.redraw(); 
+        console.log("Create GPX layer: style="+styleId+", label="+this.gpxLab());
+        const x = this._createLayer(name, null, styleId, this.gpxLab(), this.files);
         return x; 
     }  
     
     
     
     // FIXME: Do similar for other layer classes
-    _createLayer(name, styleId, label, files) {
+    _createLayer(name, filt, styleId, label, files) {
         
         let sublayers = [];
         for (const f of files) {
             const sl = createLayer_GPX( {
-                url: "/files/gpx/"+f.id, 
+                url: "/objects/"+this.subTag(name)+"/"+f.id, 
                 style: (label && label!=null ? SETLABEL(styleId, label) : GETSTYLE(styleId))
             });
             sublayers.push(sl);
@@ -154,21 +162,25 @@ pol.layers.Gpx = class extends pol.layers.Edit {
         x.styleId = styleId;
         x.label = label;
         x.files = files.slice(0);
-        x.filt = null;
+        x.filt = filt;
+        x.predicate = this.createFilter(filt);
         return x;
     }
 
     
-    removeLayer(layer) { 
+    removeLayer(layer, onserver) { 
         const t = this;
+        
+        /* Delete files on server or mark them as not used */
         for (const f of layer.files) {
             const x = inEditor(f);
-            if (x==null)
-                CONFIG.server.DELETE("/files/gpx/"+f.id, null, null)
+            if (x==null && onserver)
+                CONFIG.server.DELETE("/objects/"+this.subTag()+"/"+f.id, null, null)
             else
-                x.used = false; 
+                if (x !=null) x.used = false; 
         }
         
+        /* Return true if the file x is in the editor list of files */
         function inEditor(x) {
             for (const f of t.files)
                 if (x.id==f.id)
@@ -186,9 +198,9 @@ pol.layers.Gpx = class extends pol.layers.Edit {
         super.edit(layer);
         $("#gpxStyle").val(layer.styleId).trigger("change");
         this.gpxLab(layer.label);
-        this.files = layer.files.splice(0); 
+        this.files = layer.files.slice(0).splice(0); 
         for (let x of this.files)
-            x.used = false; 
+            x.used = true; 
         m.redraw();
     }
 
@@ -199,8 +211,8 @@ pol.layers.Gpx = class extends pol.layers.Edit {
      */   
     layer2obj(layer) { 
         let lx = {
-            // FIXME: What about name? 
             name: layer.name,
+            filt: layer.filt,
             styleId: layer.styleId,
             label: layer.label,
             files: layer.files
@@ -220,7 +232,7 @@ pol.layers.Gpx = class extends pol.layers.Edit {
         }   
         if (!lx.files)
             lx.files = [];
-        return this._createLayer(lx.name, lx.styleId, lx.label, lx.files);
+        return this._createLayer(lx.name, lx.filt, lx.styleId, lx.label, lx.files);
     }
       
 } /* class */

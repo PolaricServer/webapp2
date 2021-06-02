@@ -1,7 +1,7 @@
 /*
  Map browser based on OpenLayers 5. Layer editor.
  
- Copyright (C) 2017-2018 Øyvind Hanssen, LA7ECA, ohanssen@acm.org
+ Copyright (C) 2017-2021 Øyvind Hanssen, LA7ECA, ohanssen@acm.org
  
  This program is free software: you can redistribute it and/or modify
  it under the terms of the GNU Affero General Public License as published 
@@ -87,14 +87,11 @@ pol.layers.List = class List extends pol.core.Widget {
       
 	
         function sharing(i) {
-            var obj = t.myLayerNames[i-1];
-            if (!t.share) 
-                t.share= new pol.tracking.db.Sharing();
-            if (!t.share.isActive()) 
-                t.share.activatePopup('tracking.db.Sharing', [50, 70], true);
-            t.share.setIdent(obj.index, obj.name, "Layer", obj.type)
-            
+            const obj = t.myLayerNames[i-1]; 
+            const w = getShareWidget(); 
+            w.setIdent(obj.index, obj.name, "layer", obj.type)
         }
+        
         
         /* Handler for select element. Select a type. */
         function selectHandler(e) {
@@ -210,6 +207,7 @@ pol.layers.List = class List extends pol.core.Widget {
                     for (const obj of a) 
                         if (obj != null) {
                             const wr = obj.data;
+                            wr.data.name = wr.name;
                             const x = this.typeList[wr.type].obj.obj2layer(wr.data);        
                             removeDup(wr.name);
                             lrs.push({name:wr.name, type:wr.type, server:true, readonly:obj.readOnly, index: obj.id});
@@ -249,12 +247,20 @@ pol.layers.List = class List extends pol.core.Widget {
         if (!noconfirm && noconfirm!=true && confirm("Remove - are you sure?") == false)
                 return;
         console.assert(id >= 0 && id < this.myLayers.length, "id="+id+", length="+this.myLayers.length);
-        /* If server available and logged in, delete on server as well */
         const srv = CONFIG.server; 
-        if (srv && srv != null && srv.loggedIn && srv.hasDb && this.myLayerNames[id].index >= 0)
-            srv.removeObj("layer", this.myLayerNames[id].index);
-        const lr = this.myLayers[id];     
-        this.typeList[this.myLayerNames[id].type].obj.removeLayer(lr); 
+        const lr = this.myLayers[id];
+        const typespecific = this.typeList[this.myLayerNames[id].type].obj
+        
+        /* If server available and logged in, delete on server as well */
+        if (srv && srv != null && srv.loggedIn && srv.hasDb && this.myLayerNames[id].index >= 0) {
+            srv.removeObj("layer", this.myLayerNames[id].index, 
+                /* n is number of objects actually deleted from database. 0 if there are 
+                 * still users that have links to it */
+                n => typespecific.removeLayer(lr, n>0)
+            );
+        }
+        else
+            typespecific.removeLayer(lr, false);
         this._removeLayer(id, lr);
     }       
         

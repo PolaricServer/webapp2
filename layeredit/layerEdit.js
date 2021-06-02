@@ -1,7 +1,7 @@
 /*
  Map browser based on OpenLayers 5. Layer editor.
  
- Copyright (C) 2017 Øyvind Hanssen, LA7ECA, ohanssen@acm.org
+ Copyright (C) 2017-2021 Øyvind Hanssen, LA7ECA, ohanssen@acm.org
  
  This program is free software: you can redistribute it and/or modify
  it under the terms of the GNU Affero General Public License as published 
@@ -105,8 +105,14 @@ pol.layers.Edit = class {
    
         
         function update() 
-        {
-            const layer = t.createLayer(t.lName());
+        {               
+            const layerIdx = getLayerIdx(t.lName());
+            if (layerIdx == -1) {
+                alert("ERROR: Unknown layer: "+t.lName());
+                return;
+            }
+
+            const layer = t.createLayer(t.lName(), list.myLayers[layerIdx]);
             if (layer==null)
                 return false; 
             
@@ -123,11 +129,15 @@ pol.layers.Edit = class {
                     m.redraw();
                 });
             } else 
-                update();
+                _update();
             
             return false;
             
             function _update() {     
+                CONFIG.mb.removeConfiguredLayer(list.myLayers[layerIdx]);
+                CONFIG.mb.addConfiguredLayer(layer, t.lName());
+                list.myLayers[layerIdx] = layer; 
+                
                 // Save the layer using the concrete subclass
                 CONFIG.store("layers.layer."+layer.get("name").replace(/\s/g, "_"), t.layer2json(layer), true);
             }
@@ -168,11 +178,7 @@ pol.layers.Edit = class {
             
             
             function _hasLayer(name) {
-                for (const x of list.myLayerNames) {
-                    if (name==x.name)
-                        return true;
-                }
-                return false; 
+               return getLayerIdx(name) != -1; 
             }
             
             
@@ -187,6 +193,16 @@ pol.layers.Edit = class {
                 CONFIG.store("layers.layer."+layer.get("name").replace(/\s/g, "_"), t.layer2json(layer), true);       
             }
         }
+   
+   
+        function getLayerIdx(name) {
+            for (const i in list.myLayerNames) {
+                if (name==list.myLayerNames[i].name)
+                    return i;
+            }
+            return -1; 
+        }
+        
    
     } /* constructor */
 
@@ -234,6 +250,7 @@ pol.layers.Edit = class {
         this.filt = layer.filt;
         if (this.filt == null) 
             this.filt = {ext:null, zoom:null, proj:null};
+
         $("#vis.extent").prop("checked", (this.filt.ext != null)).trigger("change");
         $("#vis.zoom").prop("checked", (this.filt.zoom != null)).trigger("change");
         $("#vis.proj").prop("checked", (this.filt.proj != null)).trigger("change");
@@ -255,7 +272,7 @@ pol.layers.Edit = class {
      * Remove info specific to layer-type. 
      * To be redefined in subclass 
      */
-    removeLayer(layer) { }
+    removeLayer(layer, onserver) { }
         
         
     /**

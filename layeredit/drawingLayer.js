@@ -54,8 +54,11 @@ pol.layers.Drawing = class extends pol.layers.Edit {
     /**
      * Create a OL layer. 
      */
-    _createLayer(name) {
-        const src = new VectorSource();
+    _createLayer(name, filt, old) {
+        let src = new VectorSource();
+        if (old != null)
+            src = old.getSource();
+        
         const l = new VectorLayer(
             { name: name, source: src }
         );
@@ -67,16 +70,18 @@ pol.layers.Drawing = class extends pol.layers.Edit {
         l.displayInfo = function(f) {
                 return [{val: f.label}]; 
             }; 
+        l.filt = filt;
+        l.predicate = this.createFilter(filt);
         return l;
     }
     
-    createLayer(name) {
-        return this._createLayer(name);
+    createLayer(name, old) {
+        return this._createLayer(name, null, old);
     }
     
     
     
-    removeLayer(layer) {
+    removeLayer(layer, onserver) {
         getWIDGET("features.Edit").removeFeatures(layer.get("name"));
     }
     
@@ -86,7 +91,7 @@ pol.layers.Drawing = class extends pol.layers.Edit {
      * Stringify settings for a layer to JSON format. 
      */
     layer2obj(layer) { 
-        const lx = { name: layer.get("name") };
+        const lx = { name: layer.get("name"), filt: layer.filt };
         return lx;
     }
 
@@ -100,7 +105,8 @@ pol.layers.Drawing = class extends pol.layers.Edit {
             console.warn("DrawingLayer.obj2layer: Resulting Layer is null");
             return null;
         }  
-        const layer = this._createLayer(lx.name);
+        const layer = this._createLayer(lx.name, lx.filt);
+        
         
         /* Restore features in layer */
         getWIDGET("features.Edit").restoreFeatures(lx.name);

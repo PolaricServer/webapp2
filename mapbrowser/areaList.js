@@ -53,7 +53,7 @@ pol.core.AreaList = class extends pol.core.Widget {
                     }))),
                     m(textInput, {id:"editArea", value: t.currName, size: 16, maxLength:25, 
                         regex: /^[^\<\>\'\"]+$/i }),
-                    m("button", {onclick: add, title: "Add area to list"}, "Add")
+                    m("button", {onclick: add, disabled: !canAdd(), title: "Add area to list"}, "Add")
                 ])
             }
         }
@@ -72,15 +72,21 @@ pol.core.AreaList = class extends pol.core.Widget {
         }
         
         function sharing(i) {
-            var obj = t.myAreas[i]; 
-            if (!t.share) 
-                t.share= new pol.tracking.db.Sharing();
-            if (!t.share.isActive()) 
-                t.share.activatePopup('tracking.db.Sharing', [50, 70], true);
-            t.share.setIdent(obj.index, obj.name, "Area", null)
-            
+            const obj = t.myAreas[i]; 
+            const w = getShareWidget(); 
+            w.setIdent(obj.index, obj.name, "Area", null)
         }
    
+        function canAdd() {
+            if (t.currName() == "")
+                return false;
+            for (const x of t.myAreas) {
+                if (t.currName() == x.name)
+                    return false; 
+            }
+            return true;
+        }
+        
    
         /* Remove area from list */
         function removeArea(id) {
@@ -97,7 +103,6 @@ pol.core.AreaList = class extends pol.core.Widget {
         function editArea(id) {
             gotoExtent(id);
             t.currName(t.myAreas[id].name);
-            removeArea(id);
             m.redraw();
         }
    
