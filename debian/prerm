@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 set -e
 
 #DEBHELPER#
@@ -8,10 +8,13 @@ case "$1" in
     remove|purge)
         a2dissite aprs.conf > /dev/null 2>&1
         apache2ctl reload > /dev/null 2>&1 || true
-        rm /usr/share/polaric/icons
+
+        if [[ -L "/usr/share/polaric/icons" ]]; then
+            rm /usr/share/polaric/icons
+        fi
     ;;
 
-    deconfigure|remove|upgrade|failed-upgrade|abort-install|abort-upgrade|disappear)
+    deconfigure|upgrade|failed-upgrade|abort-install|abort-upgrade|disappear)
         # Nothing to do here
     ;;
 

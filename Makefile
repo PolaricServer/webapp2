@@ -17,9 +17,9 @@ INSTALL_CONFIG = $(DESTDIR)/etc/polaric-webapp2
 # we expect it to be in most cases. We may install script
 # to be run by the aprsd. 
 
-INSTALL_CONFIG = $(DESTDIR)/etc/polaric-aprsd
-INSTALL_SCPLUG = $(INSTALL_CONFIG)/script-conf.d
- INSTALL_SCDIR = $(INSTALL_CONFIG)/scripts
+INSTALL_DCONFIG = $(DESTDIR)/etc/polaric-aprsd
+INSTALL_SCPLUG  = $(INSTALL_DCONFIG)/script-conf.d
+ INSTALL_SCDIR  = $(INSTALL_DCONFIG)/scripts
  
  
 ##################################################
@@ -36,7 +36,7 @@ install: mapbrowser-min.js
 	install -d $(INSTALL_DATA)
 	install -d $(INSTALL_DATA)/mapcache
 	
-	install -d $(INSTALL_CONFIG)
+	install -d $(INSTALL_DCONFIG)
 	install -d $(INSTALL_SCPLUG)
 	install -d $(INSTALL_SCDIR)
 	install -m 755 scripts/seed.sh $(INSTALL_SCDIR)
