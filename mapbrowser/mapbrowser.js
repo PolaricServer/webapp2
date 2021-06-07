@@ -74,8 +74,11 @@ pol.core.MapBrowser = class {
             center: ol.proj.fromLonLat(center, t.config.get('core.projection')), 
             zoom: 2
         });
+        /* Workaround issue with OL */
+        if (t.config.get('core.projection')=='EPSG:900913')
+            setTimeout(()=>
+                t.view.setCenter(ol.proj.fromLonLat(center, t.config.get('core.projection'))), 200);
 
-  
         /* OpenLayers map */
         t.map = new ol.Map({
             target: targ,
@@ -125,6 +128,7 @@ pol.core.MapBrowser = class {
         t.map.on('moveend', ()=> t.updatePermalink() );
         
         function onMove() {
+            t.config.store("core.projection", t.view.getProjection().getCode());
             t.config.store('core.center', 
                 ol.proj.toLonLat(t.view.getCenter(), t.view.getProjection()), true); 
             t.config.store('core.resolution', t.view.getResolution(), true);
