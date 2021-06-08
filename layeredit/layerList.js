@@ -51,11 +51,15 @@ pol.layers.List = class List extends pol.core.Widget {
                 return m("div#layerEdit", [       
                     m("h1", "My map layers"),  
                     m("table.mapLayers", m("tbody", t.myLayerNames.map( x => {
-                        return m("tr", [
-                            m(removeEdit, {remove: apply(x=>t.removeLayer(x), i), edit: apply(editLayer, i++) }),
-                            (sharable(i) ? 
-                                m("img", {src:"images/16px/user.png", title:"Sharing", onclick: apply(sharing, i)} )
+                        i++;
+                        return m("tr", [ m("td", 
+                            (removable(i-1) ? 
+                                m(removeEdit, {remove: apply(x=>t.removeLayer(x), i-1), edit: apply(editLayer, i-1) })
                                 : ""),
+                            (sharable(i-1) ? 
+                                m("img", {src:"images/16px/user.png", title:"Sharing", onclick: apply(sharing, i-1)} )
+                                : "") 
+                            ),
                             m("td", {'class': (x.server ? "onserver" : null)}, x.name) ] );
                     }))), 
                     
@@ -79,15 +83,18 @@ pol.layers.List = class List extends pol.core.Widget {
         this.getMyLayers();
 
         function sharable(i) {
-            return !t.myLayerNames[i-1].readonly;
+            return !t.myLayerNames[i].readonly;
         }
-   
+        function removable(i) {
+            return !t.myLayerNames[i].noremove;
+        }
+        
         /* Apply a function to an argument. Returns a new function */
         function apply(f, id) {return function() {f(id); }};  
       
 	
         function sharing(i) {
-            const obj = t.myLayerNames[i-1]; 
+            const obj = t.myLayerNames[i]; 
             const w = getShareWidget(); 
             w.setIdent(obj.index, obj.name, "layer", obj.type)
         }
@@ -178,11 +185,10 @@ pol.layers.List = class List extends pol.core.Widget {
         /* Go through layers from local storage and add them if valid */
         for (const i in lrs) {
             const editor = this.typeList[lrs[i].type];
-            
-            const x = editor.obj.json2layer 
-                ( CONFIG.get("layers.layer."+lrs[i].name.replace(/\s/g, "_" )));
-                
-            if (x!= null && editor.obj.allowed()) {
+            const jsx = CONFIG.get("layers.layer."+lrs[i].name.replace(/\s/g, "_" ));
+           
+            if (jsx != null && editor.obj.allowed()) { 
+                const x = editor.obj.json2layer(jsx);
                 t.myLayers.push(x);
                 CONFIG.mb.addConfiguredLayer(x, lrs[i].name);
             }
@@ -210,7 +216,10 @@ pol.layers.List = class List extends pol.core.Widget {
                             wr.data.name = wr.name;
                             const x = this.typeList[wr.type].obj.obj2layer(wr.data);        
                             removeDup(wr.name);
-                            lrs.push({name:wr.name, type:wr.type, server:true, readonly:obj.readOnly, index: obj.id});
+                            lrs.push({
+                                name:wr.name, type:wr.type, server:true, readonly:obj.readOnly, 
+                                noremove: obj.noRemove, index: obj.id
+                            });
                             t.myLayers.push(x);
                             CONFIG.mb.addConfiguredLayer(x, wr.name);
                         }
@@ -267,15 +276,15 @@ pol.layers.List = class List extends pol.core.Widget {
         
     /* Remove layer from list and local storage */
     _removeLayer(id, lr) {
-        if (!lr)
+        if (lr == null)
             lr = this.myLayers[id];
         if (this.myLayerNames[id].id)
             CONFIG.remove("layers.layer."+this.myLayerNames[id].id.replace(/\s/g, "_" ));
         this.myLayers.splice(id,1);
         this.myLayerNames.splice(id,1);
         CONFIG.store("layers.list", this.myLayerNames, true);
-        CONFIG.mb.removeConfiguredLayer(lr);
-        
+        if (lr != null)
+            CONFIG.mb.removeConfiguredLayer(lr);
     }
     
         

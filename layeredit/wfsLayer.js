@@ -143,8 +143,6 @@ pol.layers.Wfs = class extends pol.layers.Edit {
             label:   layer.label, 
             verison: layer.version
         };
-        console.log("layer.source", layer.getSource());
-        console.log("layer2obj", lx);
         return lx;
     }
 
@@ -155,7 +153,7 @@ pol.layers.Wfs = class extends pol.layers.Edit {
      */
     obj2layer(lx) {
         if (lx == null) {
-            console.warn("WfsLayer.obj2layer: Resulting Layer is null");
+            console.warn("WfsLayer.obj2layer: Layer to be restored is null");
             return null;
         }   
         const x = createLayer_WFS( {

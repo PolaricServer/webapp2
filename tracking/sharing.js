@@ -124,6 +124,8 @@ pol.tracking.db.Sharing = class extends pol.core.Widget {
         
         
         function isUser(u) {
+            if (u == "#ALL")
+                return true;
             for (const x of t.userList) {
                 if (x==u)
                     return true;

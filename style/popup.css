@@ -218,11 +218,12 @@ h1, #layerSwitcher h2 {
   margin-bottom: 0.8em;
 }
 
-#layerSwitcher h2{ padding: 0.2em 0.8em 0.2em 0.5em; margin-bottom: 0.4em;}
+#layerSwitcher h2{ padding: 0.2em 0.8em 0.2em 0.5em; margin-bottom: 0.3em;}
 
-#layerSwitcher {line-height: 1.6em}
-#layerSwitcher h2:last-of-type {margin-top: 0.2em}
-#layerSwitcher form {margin-left: 0.4em}
+#layerSwitcher {line-height: 1.2em;}
+#layerSwitcher h2 {line-height: 1.4em;}
+#layerSwitcher h2:last-of-type {margin-top: 0.4em}
+#layerSwitcher form {margin-left: 0.3em}
 
 
 img.popupimg {max-width: 600px}
@@ -263,7 +264,10 @@ form.mapref hr { border: dotted 1px #888 }
 #editArea {margin: 0.25em}
 
 #layerEdit table {margin-left: 5.7em; margin-bottom: 0.4em}
+#layerEdit table tr {border: 1px dotted #822}
+#layerEdit table td { padding-bottom: 0; display: inline-block; height: 1.4em;}
 #layerEdit>div, #trackerEdit>div {padding-top: 0.8em; border-top: 2px solid #999}
+#layerEdit table td:first-child {width: 48px}
 
 #layerEdit div.spec {
    border: 1px dotted #bbb; 
