@@ -111,8 +111,8 @@ pol.core.AreaList = class extends pol.core.Widget {
         function add() {
             console.log("ADD AREA");
             const ext = CONFIG.mb.getExtent();
-            const area = {name: t.currName(), extent: ext};
-            area.baseLayer = CONFIG.mb.baseLayerIdx;
+            const area = {name: t.currName(), extent: ext};  
+            area.baseLayer = CONFIG.mb.getBaseLayer().get("name");
             area.oLayers = getOLayers();
             t.myAreas.push(area);
             CONFIG.store("core.AreaList", t.myAreas, true);

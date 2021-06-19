@@ -236,7 +236,7 @@ pol.core.MapBrowser = class {
             ol.proj.fromLonLat(x, this.map.getView().getProjection()));
     }
     
-    
+ 
  
     /**
      * Select base layer. 
@@ -245,7 +245,6 @@ pol.core.MapBrowser = class {
      */
     changeBaseLayer(idx) {
         console.assert(idx >= 0 && idx <= this.config.baseLayers.length, "idx="+idx);
-    
         const ls = this.config.baseLayers[idx];
         if ( !ls || ls==null)
             return;
@@ -439,13 +438,31 @@ pol.core.MapBrowser = class {
      * @param {Object} a object with extent, baseLayer and oLayers (overlays) attributes 
      */
     gotoExtent(a) {
-        if (!isNaN(a.baseLayer))
-            this.changeBaseLayer(a.baseLayer);
+        const t = this;
+        let bl = a.baseLayer;
+        let idx = 0;
+        if (typeof bl == "string")
+            idx = getIndex(bl); 
+        else
+            idx = bl;
+    
+        if (!isNaN(idx)) 
+            this.changeBaseLayer(idx);
+        
         setOLayers(a.oLayers);
         if (a.extent && a.extent != null) 
             this.fitExtent(a.extent); 
     
        
+        function getIndex(x) {
+            const lrs = CONFIG.baseLayers;
+            for (i in lrs) 
+                if (x == lrs[i].get("name"))
+                    return i;
+            return 0;
+        }
+        
+        
         function setOLayers(ol) {
             if (ol && ol != null)
                 for (const i in CONFIG.oLayers)
