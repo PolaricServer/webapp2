@@ -109,6 +109,7 @@ pol.core.AreaList = class extends pol.core.Widget {
    
         /* Add map extent to list */
         function add() {
+            console.log("ADD AREA");
             const ext = CONFIG.mb.getExtent();
             const area = {name: t.currName(), extent: ext};
             area.baseLayer = CONFIG.mb.baseLayerIdx;
@@ -130,9 +131,9 @@ pol.core.AreaList = class extends pol.core.Widget {
       
         /* Return selected overlay layers */
         function getOLayers() {
-            const ol = new Array();
-            for (const x of CONFIG.oLayers)
-                ol.push(x.getVisible())
+            const ol = {};
+            for (const x of CONFIG.oLayers) 
+                ol[x.get("name")] = x.getVisible(); 
             return ol;
         }
     

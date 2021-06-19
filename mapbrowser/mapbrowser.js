@@ -448,10 +448,10 @@ pol.core.MapBrowser = class {
        
         function setOLayers(ol) {
             if (ol && ol != null)
-                for (const i in ol)
-                    if (CONFIG.oLayers[i])
-                        CONFIG.oLayers[i].setVisible(ol[i]);
+                for (const i in CONFIG.oLayers)
+                    CONFIG.oLayers[i].setVisible( ol[CONFIG.oLayers[i].get("name")] );
         }
+        
     }
     
     
