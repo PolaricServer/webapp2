@@ -224,7 +224,9 @@ pol.tracking.db.Signs = class extends pol.core.Widget {
     
     
     
-    remove (ii) {
+    remove (ii, noconfirm) {
+        if (!noconfirm && noconfirm!=true && confirm("Remove - are you sure?") == false)
+                return;
         var i = this.getIdent(ii);
         if (this.isActive()) {
             for (const ix in this.mySigns) 
