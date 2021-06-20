@@ -97,17 +97,7 @@ pol.core.MousePos = class extends ol.control.Control {
   
         /* Handler for change of map zoom-level. Compute scale and show it */
         function onMapMove(e) {
-            let scale = CONFIG.mb.getScale(); 
-
-            if (scale >= 1000)
-                scale = Math.round(scale / 100) * 100;
-            if (scale >= 10000)
-                scale = Math.round(scale / 1000) * 1000;
-            if (scale >= 100000)
-                scale = Math.round(scale / 10000) * 10000;
-            else
-                scale = Math.round(scale);
-   
+            let scale = CONFIG.mb.getScaleRounded(); 
             if (scale >= 1000000) {
                 scale = Math.round(scale / 100000) * 100000; 
                 scale = scale / 1000000;

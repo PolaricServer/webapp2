@@ -181,7 +181,7 @@ pol.tracking.db.Sharing = class extends pol.core.Widget {
     }
             
     onActivate() {
-        this.getShares();
+        setTimeout(this.getShares, 1000);
     }
     
 } /* class */

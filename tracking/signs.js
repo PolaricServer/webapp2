@@ -226,21 +226,28 @@ pol.tracking.db.Signs = class extends pol.core.Widget {
     
     remove (ii) {
         var i = this.getIdent(ii);
-        for (const ix in this.mySigns) 
-            if (this.mySigns[ix].id == i) 
-                this._remove(ix);
+        if (this.isActive()) {
+            for (const ix in this.mySigns) 
+                if (this.mySigns[ix].id == i) 
+                    this._remove(ix, true);
+        }
+        else
+            this._remove(i, false);
     }
     
     
     
     /* Remove object */
-    _remove(i) {
+    _remove(i, index) {
         if (i==null)
             return;
-        this.server.DELETE("signs/"+this.mySigns[i].id, x => {
-            console.log("Removed sign: "+this.mySigns[i].id);
-            this.mySigns.splice(i, 1);
-            m.redraw();
+        const ident = (index ? this.mySigns[i].id : i);
+        this.server.DELETE("signs/"+ident, x => {
+            console.log("Removed sign: "+ident);
+            if (index) { 
+                this.mySigns.splice(i, 1);
+                m.redraw();
+            }
         } );
     }
         
@@ -331,6 +338,7 @@ pol.tracking.db.Signs = class extends pol.core.Widget {
     setPosPix(pix) {
         const llpos = CONFIG.mb.pix2LonLat(pix);
         this.clearFields();
+        this.scale(""+CONFIG.mb.getScaleRounded());
         this.pos = llpos;
         m.redraw();
     }

@@ -500,6 +500,19 @@ pol.core.MapBrowser = class {
              this.view.getProjection(), res, center) * mpu * this.dpm;
     }
     
+    getScaleRounded() {
+        let scale = this.getScale(); 
+        if (scale >= 1000)
+            scale = Math.round(scale / 100) * 100;
+        if (scale >= 10000)
+            scale = Math.round(scale / 1000) * 1000;
+        if (scale >= 100000)
+            scale = Math.round(scale / 10000) * 10000;
+        else
+            scale = Math.round(scale);
+        return scale; 
+    }
+    
     
     
     getProjection() {

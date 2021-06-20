@@ -90,12 +90,13 @@ pol.core.AreaList = class extends pol.core.Widget {
    
         /* Remove area from list */
         function removeArea(id) {
-            // If server available and logged in, delete on server as well
+            // If server available and logged in, delete on server
             const srv = CONFIG.server; 
+            t.myAreas.splice(id, 1);
             if (srv && srv != null && srv.loggedIn && srv.hasDb && t.myAreas[id].index >= 0) 
                 srv.removeObj("area", t.myAreas[id].index);
-            t.myAreas.splice(id, 1);
-            CONFIG.store("core.AreaList", t.myAreas, true);
+            else
+                CONFIG.store("core.AreaList", t.myAreas, true);
         }
    
    
@@ -109,13 +110,11 @@ pol.core.AreaList = class extends pol.core.Widget {
    
         /* Add map extent to list */
         function add() {
-            console.log("ADD AREA");
             const ext = CONFIG.mb.getExtent();
             const area = {name: t.currName(), extent: ext};  
             area.baseLayer = CONFIG.mb.getBaseLayer().get("name");
             area.oLayers = getOLayers();
             t.myAreas.push(area);
-            CONFIG.store("core.AreaList", t.myAreas, true);
 
             /* IF server available and logged in, store on server as well */
             const srv = CONFIG.server; 
@@ -125,6 +124,8 @@ pol.core.AreaList = class extends pol.core.Widget {
                     area.server = true;
                     m.redraw();
                 });
+            else
+                CONFIG.store("core.AreaList", t.myAreas, true);
         }
    
     
@@ -167,6 +168,7 @@ pol.core.AreaList = class extends pol.core.Widget {
         setTimeout( () => {
             const srv = CONFIG.server; 
             if (srv != null && srv.loggedIn && srv.hasDb) {
+                t.myAreas = []; 
                 srv.getObj("area", a => {
                     for (const obj of a) 
                         if (obj != null) {
