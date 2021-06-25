@@ -178,8 +178,7 @@ pol.features.Edit = class extends pol.core.Widget {
             const lr = getWIDGET("layers.List").getLayer(lname); 
             if (lr==null)
                 return;
-            const ftrs = lrs.getSource().getFeatures(); 
-            console.log(ftrs);
+            const ftrs = lr.getSource().getFeatures(); 
             for (const f of ftrs) 
                 if (f.index) 
                     srv.removeObj(tag, f.index);

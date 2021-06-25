@@ -112,7 +112,7 @@ pol.layers.Edit = class {
                 return;
             }
 
-            const layer = t.createLayer(t.lName(), list.myLayers[layerIdx]);
+            const layer = t.createLayer(t.lName(), t.list.myLayers[layerIdx]);
             if (layer==null)
                 return false; 
             
@@ -134,9 +134,9 @@ pol.layers.Edit = class {
             return false;
             
             function _update() {     
-                CONFIG.mb.removeConfiguredLayer(list.myLayers[layerIdx]);
+                CONFIG.mb.removeConfiguredLayer(t.list.myLayers[layerIdx]);
                 CONFIG.mb.addConfiguredLayer(layer, t.lName());
-                list.myLayers[layerIdx] = layer; 
+                t.list.myLayers[layerIdx] = layer; 
                 
                 // Save the layer using the concrete subclass
                 CONFIG.store("layers.layer."+layer.get("name").replace(/\s/g, "_"), t.layer2json(layer), true);
@@ -149,7 +149,7 @@ pol.layers.Edit = class {
          * Add a map layer to list 
          */
         function add() 
-        {  
+        { 
             if (_hasLayer(t.lName())) {
                 alert("ERROR: Layer name already used: "+t.lName());
                 return;
@@ -160,7 +160,7 @@ pol.layers.Edit = class {
             
             layer.predicate = t.createFilter(t.filt);
             layer.filt = {ext:t.filt.ext, zoom:t.filt.zoom, proj:t.filt.proj}; 
-            
+                        
             /* IF server available and logged in, store on server as well */
             const srv = CONFIG.server; 
             if (srv && srv != null && srv.loggedIn) {
@@ -168,12 +168,12 @@ pol.layers.Edit = class {
                 srv.putObj("layer", obj, i => { 
                     layer.index = JSON.parse(i);
                     layer.server = true;
-                    m.redraw();
-                    _add();
                 });
+                _add(false);
+                m.redraw();
             }
             else
-                _add(); 
+                _add(true); 
             return false; 
             
             
@@ -182,13 +182,14 @@ pol.layers.Edit = class {
             }
             
             
-            function _add() {
+            function _add(store) {
                 CONFIG.mb.addConfiguredLayer(layer, t.lName(), true);
-                list.myLayerNames.push( {name: t.lName(), type: t.typeid, server: layer.server, index: layer.index} );
-                list.myLayers.push( layer );
-
+                t.list.myLayerNames.push( {name: t.lName(), type: t.typeid, server: layer.server, index: layer.index} );
+                t.list.myLayers.push( layer );
+                if (!store)
+                    return;
                 // Save the layer name list. 
-                CONFIG.store("layers.list", list.myLayerNames, true);
+                CONFIG.store("layers.list", t.list.myLayerNames, true);
                 // Save the layer using the concrete subclass
                 CONFIG.store("layers.layer."+layer.get("name").replace(/\s/g, "_"), t.layer2json(layer), true);       
             }
@@ -196,8 +197,8 @@ pol.layers.Edit = class {
    
    
         function getLayerIdx(name) {
-            for (const i in list.myLayerNames) {
-                if (name==list.myLayerNames[i].name)
+            for (const i in t.list.myLayerNames) {
+                if (name==t.list.myLayerNames[i].name)
                     return i;
             }
             return -1; 

@@ -56,7 +56,7 @@ pol.layers.Gpx = class extends pol.layers.Edit {
             oncreate: ()=> 
                 setTimeout( ()=> { dragdrop( $(".dragdrop").get(0), dropFile); }, 1000), 
             
-            onremove: ()=> cleanup()
+            onremove: ()=> t.cleanup()
         }  
     
 
@@ -67,15 +67,23 @@ pol.layers.Gpx = class extends pol.layers.Edit {
             
             let i = 0;
             let names = []; 
-
+            
+            if (t.lName() == "") {
+                alert("Cannot drop file. Need to enter name of layer first");
+                return; 
+            }
             for (const f of e.files) {
-                
+                let gjson = false; 
                 /* Check the type of the file and add it to the list of names*/
                 let type = f.type;
                 if (type == "" && f.name.substr(f.name.lastIndexOf(".")+1) == "gpx")
                     type = "application/gpx+xml";
                 if (type == "application/gpx+xml" || type == "application/x-gpx+xml") 
                     names.push(f.name);
+                else if (type=="application/json") {
+                    gjson = true; 
+                    names.push(f.name);
+                }
                 else {
                     alert("ERROR: Unsupported format: '"+type+"'");
                     continue;
@@ -85,9 +93,9 @@ pol.layers.Gpx = class extends pol.layers.Edit {
                 let reader = new FileReader();
                 reader.readAsText(f);
                 reader.onload = (ev) => {
-                    CONFIG.server.POST("/objects/"+t.subTag(), ev.target.result, 
+                    CONFIG.server.POST("/objects/"+t.subTag(t.lName(), gjson), ev.target.result, 
                         x => { 
-                            t.files.push( {id: x, name: f.name, used: false} );
+                            t.files.push( {id: x, name: f.name, gjson: gjson, used: false} );
                             console.log("File '"+f.name+"' uploaded ok: "+x); 
                             m.redraw();
                         },
@@ -97,24 +105,27 @@ pol.layers.Gpx = class extends pol.layers.Edit {
             }
         }
         
-        
-        
-        
-        
-        /* Cleanup when widget is terminated */
-        function cleanup() {
-            for (const f of t.files)
-                if (!f.used) 
-                    CONFIG.server.DELETE("/objects/"+t.subTag()+"/"+f.id, null, null);
-                
-            t.files = [];
-        }
-    
     } /* constructor */
-    
+            
+        
+        
+    cleanup() {
+        for (const f of this.files)
+            if (!f.used) 
+                CONFIG.server.DELETE("/objects/"+this.subTag()+"/"+f.id, null, null);
+                
+        this.files = [];
+    }
+        
 
+    reset() {
+        super.reset(); 
+        this.cleanup();
+    }
+    
+    
     subTag(name) {
-        return encodeURIComponent("gpx."+ (typeof name === 'undefined' ? this.lName() : name));
+        return encodeURIComponent("gpx."+ (typeof name === 'undefined' ? this.lName().trim() : name));
     }
     
     
@@ -138,7 +149,7 @@ pol.layers.Gpx = class extends pol.layers.Edit {
      */
     createLayer(name, old) {
         const styleId = $("#gpxStyle").val();
-        console.log("Create GPX layer: style="+styleId+", label="+this.gpxLab());
+        console.log("Create GPX/GeoJSON layer: style="+styleId+", label="+this.gpxLab());
         const x = this._createLayer(name, null, styleId, this.gpxLab(), this.files);
         return x; 
     }  
@@ -152,7 +163,8 @@ pol.layers.Gpx = class extends pol.layers.Edit {
         for (const f of files) {
             const sl = createLayer_GPX( {
                 url: "/objects/"+this.subTag(name)+"/"+f.id, 
-                style: (label && label!=null ? SETLABEL(styleId, label) : GETSTYLE(styleId))
+                style: (label && label!=null ? SETLABEL(styleId, label) : GETSTYLE(styleId)), 
+                gjson: f.gjson
             });
             sublayers.push(sl);
             f.used = true;
@@ -175,7 +187,7 @@ pol.layers.Gpx = class extends pol.layers.Edit {
         for (const f of layer.files) {
             const x = inEditor(f);
             if (x==null && onserver)
-                CONFIG.server.DELETE("/objects/"+this.subTag()+"/"+f.id, null, null)
+                CONFIG.server.DELETE("/objects/"+this.subTag(this.lName())+"/"+f.id, null, null)
             else
                 if (x !=null) x.used = false; 
         }

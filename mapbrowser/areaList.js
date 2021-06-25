@@ -89,14 +89,16 @@ pol.core.AreaList = class extends pol.core.Widget {
         
    
         /* Remove area from list */
-        function removeArea(id) {
+        function removeArea(id, noconfirm) {
+            if (!noconfirm && noconfirm!=true && confirm("Remove - are you sure?") == false)
+                return;
             // If server available and logged in, delete on server
             const srv = CONFIG.server; 
-            t.myAreas.splice(id, 1);
             if (srv && srv != null && srv.loggedIn && srv.hasDb && t.myAreas[id].index >= 0) 
                 srv.removeObj("area", t.myAreas[id].index);
             else
                 CONFIG.store("core.AreaList", t.myAreas, true);
+            t.myAreas.splice(id, 1);
         }
    
    

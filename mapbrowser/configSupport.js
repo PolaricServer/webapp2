@@ -285,7 +285,7 @@ function NOT(x)
 function createLayer_GPX(opts)
 {
     const gSource = new ol.source.Vector({
-        format: new ol.format.GPX(),  
+        format: (opts.gjson==true ? new ol.format.GeoJSON() : new ol.format.GPX()),  
             
         loader: (extent, resolution, projection) => {
             CONFIG.server.GET(opts.url, null, 
@@ -294,7 +294,7 @@ function createLayer_GPX(opts)
                     gSource.addFeatures(ff);
                 },
                 resp => {
-                    console.warn("Get GPX object: "+resp);
+                    console.warn("Get GPX/JSON object: "+resp);
                     gSource.removeLoadedExtent(extent);
                 } 
             );

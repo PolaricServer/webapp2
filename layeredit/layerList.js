@@ -30,13 +30,14 @@ pol.layers.List = class List extends pol.core.Widget {
         this.myLayers = [];     // Just the layer. Not to be saved directly. 
         this.myLayerNames = []; // Just the name and the type
         this.typeList = {};
+        this.suspendGet = false; 
         const t = this;
    
         /* Register types */
         t.addType("dummy", "Select layer type..", new pol.layers.Dummy(this));
         if (CONFIG.server!=null && CONFIG.server.hasDb) {
             t.addType("drawing", "Drawing layer", new pol.layers.Drawing(this));
-            t.addType("gpx", "GPX files upload", new pol.layers.Gpx(this));
+            t.addType("gpx", "GPX/GeoJSON files upload", new pol.layers.Gpx(this));
         }
         t.addType("wms", "Standard WMS layer", new pol.layers.Wms(this));   
         t.addType("wfs", "Standard WFS layer", new pol.layers.Wfs(this));
@@ -129,6 +130,12 @@ pol.layers.List = class List extends pol.core.Widget {
     } /* constructor */
 
     
+    suspend() {
+        const t = this;
+        t.suspendGet = true; 
+        setTimeout(()=>{t.suspendGet=false;}, 2000);
+    }
+    
     
     /**
      * Add a type with a Layer editor.
@@ -171,44 +178,50 @@ pol.layers.List = class List extends pol.core.Widget {
     
     
     /**
-     * Restore layers from local storage and from server.
+     * Restore layers from local storage or from server.
      */
     getMyLayers() {
         const t = this;
-        t._clearMyLayers();
-        
+        if (t.suspendGet)
+            return;
+                   
         /* lrs is a list of name,type pairs */
-        let lrs = CONFIG.get("layers.list");
-        if (lrs == null)
-            lrs = [];
+        let lrs = []; 
         
-        /* Go through layers from local storage and add them if valid */
-        for (const i in lrs) {
-            const editor = this.typeList[lrs[i].type];
-            const jsx = CONFIG.get("layers.layer."+lrs[i].name.replace(/\s/g, "_" ));
+        if (srv == null || !srv.loggedIn || !srv.hasDb) {
+            t._clearMyLayers();
+            lrs = CONFIG.get("layers.list");
+            if (lrs == null)
+                lrs = [];
+            
+            /* Go through layers from local storage and add them if valid */
+            for (const i in lrs) {
+                const editor = this.typeList[lrs[i].type];
+                const jsx = CONFIG.get("layers.layer."+lrs[i].name.replace(/\s/g, "_" ));
            
-            if (jsx != null && editor.obj.allowed()) { 
-                const x = editor.obj.json2layer(jsx);
-                t.myLayers.push(x);
-                CONFIG.mb.addConfiguredLayer(x, lrs[i].name);
+                if (jsx != null && editor.obj.allowed()) { 
+                    const x = editor.obj.json2layer(jsx);
+                    t.myLayers.push(x);
+                    CONFIG.mb.addConfiguredLayer(x, lrs[i].name);
+                }
+                else 
+                    lrs.splice(i, 1);
             }
-            else 
-                lrs.splice(i, 1);
-        }
-        CONFIG.store("layers.list", lrs, true);
+            CONFIG.store("layers.list", lrs, true);
 
-        for (const x of lrs) {
-            x.server = false; 
-            x.index = -1; 
+            for (const x of lrs) {
+                x.server = false; 
+                x.index = -1; 
+            }
         }
-        
-        /* 
-        * If logged in, get layers stored on server.
-        * Duplicates from local storage are removed.
-        */
-        setTimeout( () => {
-            const srv = CONFIG.server; 
-            if (srv != null && srv.loggedIn && srv.hasDb) {
+        else {
+            /* 
+            * If logged in, get layers stored on server.
+            * Duplicates from local storage are removed.
+            */
+            setTimeout( () => {
+                const srv = CONFIG.server; 
+                t._clearMyLayers(); 
                 srv.getObj("layer", a => {
                     for (const obj of a) 
                         if (obj != null) {
@@ -222,13 +235,12 @@ pol.layers.List = class List extends pol.core.Widget {
                             });
                             t.myLayers.push(x);
                             CONFIG.mb.addConfiguredLayer(x, wr.name);
+                            this.myLayerNames = lrs;
                         }
                     m.redraw();
                 });
-            }    
-        }, 800);
-        
-        
+            }, 200);
+        }
         return this.myLayerNames = lrs;   
         
         
@@ -259,30 +271,36 @@ pol.layers.List = class List extends pol.core.Widget {
         const srv = CONFIG.server; 
         const lr = this.myLayers[id];
         const typespecific = this.typeList[this.myLayerNames[id].type].obj
+        this.suspend();
         
         /* If server available and logged in, delete on server as well */
         if (srv && srv != null && srv.loggedIn && srv.hasDb && this.myLayerNames[id].index >= 0) {
             srv.removeObj("layer", this.myLayerNames[id].index, 
                 /* n is number of objects actually deleted from database. 0 if there are 
                  * still users that have links to it */
-                n => typespecific.removeLayer(lr, n>0)
+                n => {
+                    this._removeLayer(id, lr, false);
+                    typespecific.removeLayer(lr, n>0);
+                }
             );
         }
-        else
+        else {       
+            this._removeLayer(id, lr, true);
             typespecific.removeLayer(lr, false);
-        this._removeLayer(id, lr);
+        }
     }       
         
         
     /* Remove layer from list and local storage */
-    _removeLayer(id, lr) {
+    _removeLayer(id, lr, store) {
         if (lr == null)
             lr = this.myLayers[id];
-        if (this.myLayerNames[id].id)
+        if (store && this.myLayerNames[id].id)
             CONFIG.remove("layers.layer."+this.myLayerNames[id].id.replace(/\s/g, "_" ));
         this.myLayers.splice(id,1);
         this.myLayerNames.splice(id,1);
-        CONFIG.store("layers.list", this.myLayerNames, true);
+        if (store)
+            CONFIG.store("layers.list", this.myLayerNames, true);
         if (lr != null)
             CONFIG.mb.removeConfiguredLayer(lr);
     }

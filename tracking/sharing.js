@@ -46,7 +46,7 @@ pol.tracking.db.Sharing = class extends pol.core.Widget {
         let errmsg = "";
         
         t.server = CONFIG.server;
-        t.ident = 430;
+        t.ident = 0;
         t.name = "";
         t.tag = "TAG";
         t.user = m.stream("");
@@ -81,7 +81,7 @@ pol.tracking.db.Sharing = class extends pol.core.Widget {
         
         
 
-        this.server.GET("usernames", null,
+        srv.GET("usernames", null,
             x=> { 
                 t.userList=JSON.parse(x);
                 t.userList.sort((x,y)=> {return x > y});
@@ -90,8 +90,7 @@ pol.tracking.db.Sharing = class extends pol.core.Widget {
             ()=> { console.warn("Couldn't get user list"); }
         );
             
-        t.getShares();
-        
+    
             
         function toggleRo() {
             t.readonly = !t.readonly; 
@@ -110,11 +109,12 @@ pol.tracking.db.Sharing = class extends pol.core.Widget {
                 (x)=> { console.warn("Couldn't add user: "+x); }
             );
              
-            /* If drawing layer add sharing to features as well */
+            /* Add sharing to features/sublayers as well */
             if (t.tag=="layer" && (t.type=="drawing" || t.type=="gpx")) {
                 const tag = encodeURIComponent(
-                    (t.type=="gpx" ? "gpx.": "feature.") + t.name
+                    (t.type=="gpx" ? "gpx." : "feature.") + t.name
                 );
+
                 t.server.POST("objects/"+tag+"/_ALL_/share", JSON.stringify(arg),
                     ()=> {},
                     (x)=> { console.warn("Couldn't add user: "+x); }
@@ -142,7 +142,7 @@ pol.tracking.db.Sharing = class extends pol.core.Widget {
     
     
     remove(uid) {
-        this.server.DELETE("objects/"+this.tag+"/"+this.ident+"/share/"+uid,
+        CONFIG.server.DELETE("objects/"+this.tag+"/"+this.ident+"/share/"+uid,
             ()=>  { this.getShares(); }, 
             (x)=> { console.warn("Couldn't delete object: ", x.statusText); })
                     
@@ -151,7 +151,7 @@ pol.tracking.db.Sharing = class extends pol.core.Widget {
             const tag = encodeURIComponent(
                 (this.type=="gpx" ? "gpx.": "feature.") + this.name
             );
-            this.server.DELETE("objects/"+tag+"/_ALL_/share/"+uid,
+            CONFIG.server.DELETE("objects/"+tag+"/_ALL_/share/"+uid,
                 x=> { if (x>0) console.log(x+" features removed"); },
                 x=> { console.warn("Couldn't remove user: "+x); }
             );
@@ -164,13 +164,15 @@ pol.tracking.db.Sharing = class extends pol.core.Widget {
         this.name = name;
         this.tag = tag;
         this.type = type;
+        console.log("setIdent", this.ident, this.tag, this.type);
         this.getShares();
     }
     
     
     /* Get list of shares from backend server */
     getShares() {
-        this.server.GET("objects/"+this.tag+"/"+this.ident+"/share", null,
+        console.log("this.tag/ident: ", this.tag, this.ident);
+        CONFIG.server.GET("objects/"+this.tag+"/"+this.ident+"/share", null,
             x=> { 
                 this.shareList=JSON.parse(x);
                 this.shareList.sort((x,y)=> {return x.userid > y.userid});
@@ -181,7 +183,7 @@ pol.tracking.db.Sharing = class extends pol.core.Widget {
     }
             
     onActivate() {
-        setTimeout(this.getShares, 1000);
+       // setTimeout(this.getShares, 1000);
     }
     
 } /* class */
