@@ -56,8 +56,15 @@
             console.log("Change to object sharing");
             getWIDGET("layers.List").getMyLayers();
             getWIDGET("core.AreaList").getMyAreas();
+            getWIDGET("tracking.db.Sharing").getShares();
         });
-        
+        srv.pubsub.subscribe("object", x => {
+            console.log("Change to object:", x);
+            if (x=="area")
+                getWIDGET("core.AreaList").getMyAreas();
+            else if (x=="layer")
+                getWIDGET("layers.List").getMyLayers();
+        });
         
     }, 1000); 
    
