@@ -324,7 +324,7 @@ button::-moz-focus-inner {
  100% { background:linear-gradient(#eee,#ccc,#aaa) }
 }
 
-img.marker {margin-top: -9px; margin-left: -9px; border: 10px #FF00 solid; border-radius: 20px; background: #ff57}
+img.marker {margin-top: -11px; margin-left: -11px; border: 10px #FF00 solid; border-radius: 20px; background: #ff57}
 
 #iconpick>img { 
     padding: 1px; margin: 1px; 

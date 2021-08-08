@@ -42,12 +42,15 @@ pol.features.Properties = class extends pol.core.Widget {
         t.circle = {
             view: function() {
                 return m("div#circleInfo", [
-                    m("span.sleftlab", "Center: "),
-                    (t.center ? m("span.coord", {onclick: apply(gotoPos,t.center)}, formatPos(t.center)) : "-"), br,
-                    m("span.sleftlab", "Radius: "), 
-                    m("span", t.radius ? 
-                        (t.radius < 1000 ? Math.round(t.radius*100)/100+" m" : 
-                        Math.round(t.radius/100)/10+" km") : "-")
+                    m("span.field", [
+                        m("span.sleftlab", "Center: "),
+                        (t.center ? m("span.coord", {onclick: apply(gotoPos,t.center)}, formatPos(t.center)) : "-") ]),
+                         
+                    m("span.field", [
+                        m("span.sleftlab", "Radius: "), 
+                        m("span", t.radius ? 
+                            (t.radius < 1000 ? Math.round(t.radius*100)/100+" m" : 
+                            Math.round(t.radius/100)/10+" km") : "-") ])
                 ]);
             }
         }
@@ -204,8 +207,11 @@ pol.features.Properties = class extends pol.core.Widget {
             t.type = g.getType(); 
             t.center=NaN; t.radius=NaN; t.colist=NaN;
             
-            if (t.type == "Polygon" || t.type == "LineString") 
-                t.colist = g.getCoordinates()[0];      
+            if (t.type == "Polygon" || t.type == "LineString") { 
+                t.colist = g.getCoordinates();    
+                if (t.colist.length == 1)
+                    t.colist = t.colist[0];
+            }
             else if (t.type=="Circle") {
                 t.center=g.getCenter();
                 t.radius=h.getRadius();
