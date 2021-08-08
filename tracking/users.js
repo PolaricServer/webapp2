@@ -39,6 +39,7 @@ pol.tracking.Users = class extends pol.core.Widget {
         t.trackers = m.stream("");
         t.sar = false; 
         t.admin = false;
+        t.suspend = false; 
         
         
         /* List of users (table) */
@@ -51,7 +52,10 @@ pol.tracking.Users = class extends pol.core.Widget {
                                 m("td",
                                     m(removeEdit, {remove: apply(remove,i), edit: apply(edit, i++)})),
                                 m("td", x.ident),   
-                                m("td", (x.admin? "A": (x.sar? "S" : "")) + 
+                                     
+                                m("td", 
+                                    (x.suspend? "U" : "") + 
+                                    (x.admin? "A": (x.sar? "S" : "")) + 
                                     (x.callsign!=null && x.callsign.length > 1 ? "H":"") ), 
                                 m("td", formatTime(x.lastused)),
                                 m("td", x.name ),
@@ -98,6 +102,9 @@ pol.tracking.Users = class extends pol.core.Widget {
                             title: "SAR (operator level)" }, "SAR"), nbsp, 
                         m(checkBox, {id: "acc_admin", onclick: toggleAdmin, checked: t.admin, 
                             title: "Administrator (super user level)" }, "Admin"), nbsp,  
+                        m(checkBox, {id: "acc_susp", onclick: toggleSuspend, checked: t.suspend, 
+                            title: "User access is suspended (no login)" }, "Suspend (U)"), nbsp,
+                      
                         m("span#hamop", 
                           (t.callsign() != null && t.callsign().length > 1  ? "(HAM radio op)" : ""))),
                          
@@ -128,7 +135,12 @@ pol.tracking.Users = class extends pol.core.Widget {
             t.admin = (t.admin ? false : true);
         }
  
- 
+        
+        function toggleSuspend() {
+            t.suspend = (t.suspend ? false : true);
+        }
+        
+        
         /* Add a user (on server) */
         function add() {
             const data = {
@@ -138,7 +150,8 @@ pol.tracking.Users = class extends pol.core.Widget {
                 passwd: (t.passwd()=="" || t.passwd()==" " ? null : t.passwd()),
                 allowTracker: (t.trackers()=="" || t.trackers()==" " ? null : t.trackers()),
                 sar: t.sar,
-                admin: t.admin
+                admin: t.admin, 
+                suspend: t.suspend
             };
             t.server.POST("users", JSON.stringify(data), 
                 x => {
@@ -165,7 +178,8 @@ pol.tracking.Users = class extends pol.core.Widget {
                 callsign: (t.callsign()=="" || t.callsign()==" " ? "" : t.callsign().toUpperCase()),
                 allowTracker: (t.trackers()=="" || t.trackers()==" " ? null : t.trackers()),
                 sar: t.sar,
-                admin: t.admin
+                admin: t.admin, 
+                suspend: t.suspend
             };
 
             t.server.PUT("users/"+t.ident(), JSON.stringify(data), 
@@ -174,9 +188,10 @@ pol.tracking.Users = class extends pol.core.Widget {
                         if (t.users[i].ident==t.ident()) {
                             t.users[i].name = data.name; 
                             t.users[i].callsign = data.callsign;
-                            t.users[i].trackers = data.allowTracker;
+                            t.users[i].allowTracker = data.allowTracker;
                             t.users[i].sar = data.sar;
                             t.users[i].admin = data.admin;
+                            t.users[i].suspend = data.suspend;
                             break;
                         }
                     t.mountList();
@@ -211,6 +226,7 @@ pol.tracking.Users = class extends pol.core.Widget {
             t.trackers(u.allowTracker);
             t.sar = u.sar;
             t.admin = u.admin;
+            t.suspend = u.suspend;
             m.redraw();
         }
     
@@ -240,6 +256,7 @@ pol.tracking.Users = class extends pol.core.Widget {
         this.trackers("");
         this.sar = false; 
         this.admin = false;
+        this.suspend = false;
         m.redraw();
     }
     
