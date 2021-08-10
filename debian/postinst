@@ -13,6 +13,11 @@ case "$1" in
         fi
         ln -s /var/lib/polaric/webapp2/aprsd/icons/ /usr/share/polaric/
         
+        a2enmod expires > /dev/null 2>&1
+        a2enmod deflate > /dev/null 2>&1
+        if [[ ! -f "/etc/apache2/sites-enabled/aprs.conf" ]]; then
+            a2ensite aprs.conf > /dev/null 2>&1 
+        fi
         apache2ctl restart
     ;;
 

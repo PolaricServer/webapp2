@@ -1,0 +1,25 @@
+#!/bin/bash
+set -e
+
+
+case "$1" in
+    install|upgrade)
+        if [[ ! -d "/var/lib/polaric/mapcache" ]]; then
+            mkdir /var/lib/polaric/mapcache
+        fi
+        
+        chown www-data:polaric /var/lib/polaric/mapcache
+        chmod 775 /var/lib/polaric/mapcache
+        if ls /var/lib/polaric/mapcache/*.db > /dev/null 2>%1; then
+            chown www-data:polaric /var/lib/polaric/mapcache/*.db
+            chmod 664 /var/lib/polaric/mapcache/*.db
+        fi
+    ;;
+
+    *)
+        echo "$0 called with unknown argument \`$1'" >&2
+        exit 1
+    ;;
+esac
+
+#DEBHELPER#
