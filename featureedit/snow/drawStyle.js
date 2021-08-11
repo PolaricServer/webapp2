@@ -28,16 +28,22 @@ snow.setStyleDashed = function(on)
         st = snow.getStyle(hexBlack)
     else
         st = st.clone();
-    
-    let nstroke = new Stroke( {
-        color: st.getStroke().getColor(),
-        width: (on? 2.1 : 2.5),
-        lineDash: (on? [3.5, 4] : [0,0])
-    });
-    st.setStroke(nstroke);
+    st.getStroke().setLineDash(on? [3.5, 4] : [0,0]);
     snow.currentStyle = st;
 }
 
+
+
+snow.setStyleThin = function(on)
+{
+    let st = snow.currentStyle
+    if (st==null)
+        st = snow.getStyle(hexBlack)
+    else
+        st = st.clone();
+    st.getStroke().setWidth((on? 1.1 : 2.1));
+    snow.currentStyle = st;
+}
 
 
 snow.setStyleFilled = function(on)
@@ -64,7 +70,7 @@ snow.getStyle = function(colorVal)
         stroke: new Stroke(
         {
             color: colorVal,
-            width: 2.3
+            width: 2.1
         }),
         fill: new Fill(
             { color: colorVal + hexOpacity }),

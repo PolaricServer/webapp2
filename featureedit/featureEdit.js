@@ -27,19 +27,6 @@ pol.features.init = function(map) {
     snow.init(map);
 }
 
-/*
- * TODO:
- * 
- *  - Context menu
- *  - Allow multiple instances of drawable layer. Use layer-editor to create/manage layers.  DONE. 
- *     - Delete features when layer is deleted. 
- *     - Allow editing on any layer, not only DRAFT layer. 
- *     - Allow copy of feature between layers. 
- *     - Don't allow creating/editing drawable layers if not logged in on database capable server. 
- *  - Display label on map if user activates this..  
- *  - Allow exporting of layer or selected features as GeoJSON or GPX. 
- *  - Allow sharing of layers or features with other users. 
- */
 
 
 pol.features.Edit = class extends pol.core.Widget {

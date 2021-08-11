@@ -16,7 +16,7 @@ var color4 = "#ffff00"
 //default color: green, default hex: #01b301
 var color5 = "#01b301"
 //default color: blue, default hex: #20b0f0
-var color6 = "#20b0f0"
+var color6 = "#05a0d0"
 //default color: purple, default hex: #a300a3
 var color7 = "#a300a3"
 

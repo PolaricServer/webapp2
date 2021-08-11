@@ -199,11 +199,4 @@ span.welcome {
 .removeEdit {margin-right: 0.2em}
 
 .selected {background: #fca}
-table.features {margin-left: 1em}
 
-table.features td { 
-    border: 1px dotted #888; 
-    padding-left: 0.3em; 
-    padding-right: 0.2em; 
-    padding-bottom: 0px;
-}

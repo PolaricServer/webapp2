@@ -267,9 +267,24 @@ snow.straight_click = function()
 }//End straight_click()
  
  
- 
+snow.thinstyle = false;  
 snow.dashedstyle = false; 
 snow.filledstyle = true;
+
+snow.thinstyle_click = function()
+{
+    if (snow.thinstyle == true) {
+        snow.thinstyle = false; 
+        $("#thinstyle").removeClass("selectedFunction")
+    }
+    else {
+        snow.thinstyle = true
+        $("#thinstyle").addClass("selectedFunction")
+    }
+    snow.setStyleThin(snow.thinstyle);
+    snow.updateStyle();
+    snow.refreshDraw();
+}
 
         
 snow.dashedstyle_click = function()

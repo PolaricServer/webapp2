@@ -104,6 +104,12 @@ snow.drawTools =
                 [                    
                     m("img", 
                     {
+                        "src":"images/drawIcons/line_thin.png", 
+                        "id":"thinstyle", "class":"drawIcon", 
+                        onclick: snow.thinstyle_click
+                    }),
+                    m("img", 
+                    {
                         "src":"images/drawIcons/line_dashed.png", 
                         "id":"dashedstyle", "class":"drawIcon", 
                         onclick: snow.dashedstyle_click

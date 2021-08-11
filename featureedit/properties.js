@@ -82,11 +82,13 @@ pol.features.Properties = class extends pol.core.Widget {
                 return m("div#features", [       
                     m("h1", "Features/properties"),
                     
-                    m("table.features", m("tbody", features().map( x => {
+                    m("table.features", 
+                      m("caption", "Editor features:"),
+                      m("tbody", features().map( x => {
                         return m("tr", {class: (x==t.selected ? "selected" : "")}, [
                             m("td", m(removeEdit, 
                                 { remove: apply(remove, i), edit: apply(edit, i++) })),
-                            m("td", x.getGeometry().getType()),
+                            m("td", shortType(x.getGeometry().getType())),
                             m("td", (x.label ? x.label : ""))
                         ])
                     }))),    
@@ -149,6 +151,16 @@ pol.features.Properties = class extends pol.core.Widget {
         
         /* Apply a function to an argument. Returns a new function */
         function apply(f, id) {return function() { f(id); }};  
+        
+        function shortType(x) {
+            if (x=="LineString")
+                return "(LStr)";
+            else if (x=="Circle")
+                return "(Circ)";
+            else if (x=="Polygon")
+                return "(Poly)";
+            else return x;
+        }
         
         
         function checkHide() {

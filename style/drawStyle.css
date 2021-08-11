@@ -163,20 +163,27 @@ table.lfeatures, table.features {
     display: inline-block;
 }
 
-table.lfeatures caption {
+table.lfeatures caption, table.features caption {
     font-size: 80%; 
     text-align: left; 
-    color: #666; 
-    padding-left: 3px
+    color: #533; 
+    padding-left: 3px; padding-top: 1px;height: 1.25em; 
+    margin-top: -0.2em
 }
 
 table.lfeatures {margin-left: 1em}
-
+table.features td {
+    border: 1px dotted #333;
+    line-height: 1.05em;
+    padding-right: 3px;
+    font-size: 90%;
+}
+table.features img {height: 13px}
 table.lfeatures td {
     border: 1px solid #aaa; 
     padding-left: 3px; 
     padding-right: 3px;
-    line-height: 1.1em; 
+    line-height: 1.15em; 
     background: #fec;
     color: #060;
     font-size: 90%;
