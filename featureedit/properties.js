@@ -59,9 +59,12 @@ pol.features.Properties = class extends pol.core.Widget {
         /* Show list of coordinates (Mithril component) */
         t.coord = {
             view: function() {
-                return m("div#colist", 
-                    t.colist.map( x=> {
-                        return [m("span.coord", {onclick: apply(gotoPos,x)}, formatPos(x)), ", "]})); 
+                if (t.colist.length < 50) 
+                    return m("div#colist", 
+                        t.colist.map( x=> {
+                            return [m("span.coord", {onclick: apply(gotoPos,x)}, formatPos(x)), ", "]}));
+                else
+                    return m("div#colist", "(more than 50 points)");
             }
         }
 
@@ -235,10 +238,17 @@ pol.features.Properties = class extends pol.core.Widget {
         function remove(i) {
             if (confirm("Remove - are you sure?") == false)
                 return;
+            if (t.selected == features()[i])
+                clear(); 
             snow.deleteFeature(features()[i]); 
         }
         
         
+        function clear() {
+            t.selected=null;
+            t.label("");
+            t.colist = null;
+        }
         
         function set() {
             t.selected.label = t.label();
