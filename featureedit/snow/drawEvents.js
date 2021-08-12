@@ -113,31 +113,31 @@ snow.colorOption_click = function(e)
     switch( snow.drawingColor )
     {
         case "selectRed":
-            snow.setStyleColor(hexRed)  
+            snow.setStyleColor(hexColor[1])  
             break
     
         case "selectOrange":
-            snow.setStyleColor(hexOrange) 
+            snow.setStyleColor(hexColor[2]) 
             break
                 
         case "selectYellow":
-            snow.setStyleColor(hexYellow)
+            snow.setStyleColor(hexColor[3])
             break 
                         
         case "selectGreen":
-            snow.setStyleColor(hexGreen)
+            snow.setStyleColor(hexColor[4])
             break
             
         case "selectBlue":
-            snow.setStyleColor(hexBlue)
+            snow.setStyleColor(hexColor[5])
             break
             
         case "selectPurple":
-            snow.setStyleColor(hexPurple)
+            snow.setStyleColor(hexColor[6])
             break
         
         default:
-            snow.setStyleColor(hexBlack)
+            snow.setStyleColor(hexColor[0])
     }//End of switch
     
     //Changes the color of all selected features.

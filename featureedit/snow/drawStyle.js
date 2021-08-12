@@ -6,21 +6,24 @@
 //Sets the current style to the selected color.
 snow.setStyleColor = function(colorVal)
 {
-//    snow.currentStyle = snow.getStyle(colorVal)
-
     let st = snow.currentStyle
     if (st==null)
-        st = snow.getStyle(colorVal)
+        st = snow.getStyle(colorVal.fill)
     else
         st = st.clone();
-    st.getStroke().setColor(colorVal)
+    
+    st.getStroke().setColor(colorVal.fill);
+    if (colorVal.stroke != null) 
+        st.getStroke().setColor(colorVal.stroke);
     if (st.getFill())
-        st.getFill().setColor(colorVal + hexOpacity )
-    st.getText().getFill().setColor(colorVal);
+        st.getFill().setColor(colorVal.fill + hexOpacity );
+    st.getText().getFill().setColor(colorVal.fill)
+    ;
     snow.currentStyle = st;
 }
 
 
+// Set the current style with dashed line
 snow.setStyleDashed = function(on)
 {
     let st = snow.currentStyle
@@ -33,7 +36,7 @@ snow.setStyleDashed = function(on)
 }
 
 
-
+// Set the current style with thinner line
 snow.setStyleThin = function(on)
 {
     let st = snow.currentStyle
@@ -44,6 +47,7 @@ snow.setStyleThin = function(on)
     st.getStroke().setWidth((on? 1.1 : 2.1));
     snow.currentStyle = st;
 }
+
 
 
 snow.setStyleFilled = function(on)
@@ -87,7 +91,7 @@ snow.getStyle = function(colorVal)
 
 
 //Initial color settings.
-snow.setStyleColor(hexBlack)
+snow.setStyleColor(hexColor[0])
 
 
 //Style for selecting features.

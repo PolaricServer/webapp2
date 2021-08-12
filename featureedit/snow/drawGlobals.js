@@ -59,10 +59,10 @@ snow.drawType = "Polygon"
 //test to figure out of config options given by user is a valid hex value
 snow.testHex = function(color)
 {
-    if( !color )
+    if( !color || color==null )
         { return false }
     //regex of hex with 3 or 6 letters
-    else if ( color.search(/^#([0-9a-f]{3}|[0-9a-f]{6})$/i) == 0 )
+    else if ( color.fill.search(/^#([0-9a-f]{3}|[0-9a-f]{6})$/i) == 0 )
         { return true }
     else
         { return false }
@@ -70,34 +70,21 @@ snow.testHex = function(color)
 
 //Global opacity declaration.
 const hexOpacity = "20"
-//Global color declarations.
-var hexBlack = "#1f1f1f"
-if( snow.testHex(color1) )
-    { hexBlack = color1 }
+   
+var hexColor = [ 
+    {fill:"#1f1f1f", stroke: null},
+    {fill:"#e60000", stroke: null}, 
+    {fill:"#ff9a28", stroke: null}, 
+    {fill:"#ffff00", stroke: null}, 
+    {fill:"#01b301", stroke: null}, 
+    {fill:"#33ccff", stroke: null},
+    {fill:"#a300a3", stroke: null} 
+];
 
-var hexRed = "#e60000"
-if( snow.testHex(color2) )
-    { hexRed = color2 }
-    
-var hexOrange = "#ff9a28"
-if( snow.testHex(color3) )
-    { hexOrange = color3 }
-
-var hexYellow = "#ffff00"
-if( snow.testHex(color4) )
-    { hexYellow = color4 }
-
-var hexGreen = "#01b301"
-if( snow.testHex(color5) )
-    { hexGreen = color5 }
-
-var hexBlue = "#33ccff"
-if( snow.testHex(color6) )
-    { hexBlue = color6 }
-
-var hexPurple = "#a300a3"
-if( snow.testHex(color7) )
-    { hexPurple = color7 }
+for (let i=0; i<7; i++) {
+    if (snow.testHex(snow.color[i]))
+        hexColor[i] = snow.color[i];
+}
 
 const hexSelectStroke = "#0569ff"
 const hexSelectFill = "#9ebbff"
@@ -105,13 +92,13 @@ const hexSelectFill = "#9ebbff"
 //Sets the color of the colorselectors. 
 //Represents the colors of the hex variables used to draw.
 snow.cssColors = () => {
-    $('#selectBlack').css('background-color', hexBlack)
-    $('#selectRed').css('background-color', hexRed)
-    $('#selectOrange').css('background-color', hexOrange)
-    $('#selectYellow').css('background-color', hexYellow)
-    $('#selectGreen').css('background-color', hexGreen)
-    $('#selectBlue').css('background-color', hexBlue)
-    $('#selectPurple').css('background-color', hexPurple)
+    $('#selectBlack').css('background-color',  hexColor[0].fill)
+    $('#selectRed').css('background-color',    hexColor[1].fill)
+    $('#selectOrange').css('background-color', hexColor[2].fill)
+    $('#selectYellow').css('background-color', hexColor[3].fill)
+    $('#selectGreen').css('background-color',  hexColor[4].fill)
+    $('#selectBlue').css('background-color',   hexColor[5].fill)
+    $('#selectPurple').css('background-color', hexColor[6].fill)
 } //End cssColors
 
 
