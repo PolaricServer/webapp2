@@ -162,6 +162,8 @@ pol.features.Properties = class extends pol.core.Widget {
                 return "(Circ)";
             else if (x=="Polygon")
                 return "(Poly)";
+            else if (x=="Point")
+                return "(Point)";
             else return x;
         }
         
@@ -197,8 +199,13 @@ pol.features.Properties = class extends pol.core.Widget {
             geom.transform(CONFIG.mb.view.getProjection(), 'EPSG:4326');
             
             /* Zoom in to feature and allow user to edit it */
-            CONFIG.mb.fitExtent(geom.getExtent());
-            CONFIG.mb.view.setZoom(CONFIG.mb.view.getZoom()-1)
+            if (geom.getType() == "Point") {
+                CONFIG.mb.setCenter(geom.getCoordinates(), 5);
+            }
+            else {
+                CONFIG.mb.fitExtent(geom.getExtent());
+                CONFIG.mb.view.setZoom(CONFIG.mb.view.getZoom()-1)
+            }
             _edit(features()[i]);
         }
         

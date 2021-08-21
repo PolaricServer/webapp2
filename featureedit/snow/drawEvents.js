@@ -337,15 +337,13 @@ snow.manualSelect = function(pixel)
         let fType = f.getGeometry().getType()
         //If type = Point it's an icon.
         if( fType == 'Point' && !snow.toggleDraw )
-        {
             snow.selectIcons(f)
-        }
+
         //If type is a Polygon, Circle or LineString it's a drawn object/feature.
         else if ( fType == 'Circle' || fType == 'Polygon' 
             || fType == 'LineString' )
-        {
             snow.selectMarkedArea(f)
-        }
+        
     }) //End map.forEachFeatureAtPixel()
 
     //Deselects all features when clicking somewhere without a feature.
@@ -420,8 +418,8 @@ snow.selectIcons = function(f)
     if( !snow.droppingIcon )
     { 
         // DO SELECT STUFF FOR ICONS HERE
-        // TODO: Write out information about Icon
-        console.log("Icon")
+        snow.lastSelected = f;
+        $(document).trigger("selectfeature");
     } 
     else 
         snow.droppingIcon = false

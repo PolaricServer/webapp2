@@ -2,13 +2,16 @@
  * SAll rights reserved. See LICENSE for more detail.  
  */
  
-#drawBox, #iconBox
-{
-    padding: 8px;
-    max-width: 25vw;
-    max-height: 80vh;
-}
 
+#icontools {
+    margin-top: 0.5em;
+    margin-bottom: 0.5em;
+    padding: 3px;
+    padding-bottom: 0;
+    max-width: 17.9vw;
+    background: #ccc;
+    border: 1px dotted #666;
+}
 .drawIcon
 {
     width: 35px;

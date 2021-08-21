@@ -20,6 +20,16 @@ snow.imageLoc = "images/iconpack/"
 snow.iconStyle = null
 snow.thisID = null
 
+snow.getIconStyle = function(imgsrc) {
+    return new Icon( {
+        anchor: [0.5, 38],
+        anchorXUnits: 'fraction',
+        anchorYUnits: 'pixels',
+        src: imgsrc
+    })
+}
+
+
 
 //OnClick hanlder for icon select.
 snow.markerIcons_click = function(e)
@@ -31,43 +41,50 @@ snow.markerIcons_click = function(e)
     snow.thisID=null 
     return null 
   }
+  
   snow.thisID = e.target.id
   $('#'+snow.thisID).addClass('selectedIcon')
-  let imgsrc = $('#'+thisID).attr("src")
-
+  let imgsrc = $('#'+snow.thisID).attr("src")
+  let imglbl = snow.thisID.split("-", 2)[1];
+  console.log("IMGLBL", snow.thisID, imglbl);
+  
+  
   //Generates a style with the selected icon to be placed.
-  let iconStyle = new Style(
-  {
-    image: new Icon(
-    ({
-      anchor: [0.5, 38],
-      anchorXUnits: 'fraction',
-      anchorYUnits: 'pixels',
-      src: imgsrc
-    }))
-  })
+  let iconStyle = new Style( {
+      image: snow.getIconStyle(imgsrc)
+  });
  
   //Enables Point drawing.
-  let draw = new Draw(
+  let iconDraw = new Draw (
   {
     source: snow.drawSource,
     type: 'Point',
     name: 'POINT NAME TEST' //TODO: Add description?
   })
-  snow.drawMap.addInteraction(draw)
+  
+  snow.drawMap.addInteraction(iconDraw)
   droppingIcon = true
-    
+  
+  
   //When the point is drawn, gives it the icon style and disables drawing.
-  draw.on('drawend', function (e)
+  iconDraw.on('drawend', function (e)
   { 
     e.feature.setStyle(iconStyle)
-    addNewChange(e.feature)
-    if( !continuousIconDropping )
+    e.feature.label = imglbl;
+    console.log("label: ", imglbl);
+    snow.addNewChange(e.feature)
+    if( !snow.continuousIconDropping )
     { 
-      drawMap.removeInteraction(draw)
+      snow.drawMap.removeInteraction(iconDraw)
       //Removes the selected icon class and ID after placement.
       $('#'+snow.thisID).removeClass('selectedIcon')
       snow.thisID = null
     }
   })
+  
+  for (f of snow.drawCB)
+        iconDraw.on('drawend', f);
+  
+  
 }//End of markerIcons_click
+

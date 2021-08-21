@@ -36,14 +36,29 @@ pol.features.Edit = class extends pol.core.Widget {
         this.classname = "features.Edit";
         const t = this;
         let tool = snow.drawTools;
+        let icontool = snow.iconTools;
         let timer = null;
         
         this.widget = {
             view: function() {
                 setTimeout(snow.cssColors, 500)
-                return m("div", [       
+                return m("div", [    
                     m("h1", "Feature draw tool"),
-                    m(tool), 
+                    m("label", 
+                        {"class":"non-interactive"}, 
+                        ["Feature type: ", m.trust("&nbsp;")]),
+                        m("select", { 
+                            id: "gSelect", 
+                            onchange: ()=> {selectType($("#gSelect").val());}
+                        }, [
+                            m("option", {value: "optPolygon"}, 'Polygon'),
+                            m("option", {value: "optLine"}, 'Line String'),
+                            m("option", {value: "optCircle"}, 'Circle'),
+                            m("option", {value: "optPoint"}, 'Point (icon)')
+                        ]
+                    ),     
+                         
+                    m("div#toolbox"), 
                     m("div.link_id", {onclick: propsHandler}, "Feature properties...")
                 ])
             }
@@ -70,7 +85,10 @@ pol.features.Edit = class extends pol.core.Widget {
         
         
         snow.addDrawCB( 
-            e=> changeHandler(e.feature, "add")
+            e=> {
+                console.log("add feature: ", e);
+                changeHandler(e.feature, "add");
+            }
         );
         
         /* 
@@ -82,6 +100,9 @@ pol.features.Edit = class extends pol.core.Widget {
         /* Features should loaded even if editor is not active */
         setTimeout(()=>t.restoreFeatures(), 1000); 
         snow.draftLayer.setVisible(false);
+        
+        setTimeout(
+            ()=> m.mount($("#toolbox")[0], tool), 1000);
         
         
         /* 
@@ -108,6 +129,29 @@ pol.features.Edit = class extends pol.core.Widget {
             if (!t.props.isActive())
                 t.props.activatePopup('features.Properties', [60, 60], true);
         }
+        
+        
+        //OnClick handler for selecting geometry type.
+        function selectType(selectedId)
+        {
+            if (snow.drawType != "Point" && selectedId == "optPoint")
+                m.mount($("#toolbox")[0], icontool)
+            else
+                m.mount($("#toolbox")[0], tool)
+                
+            //Checks geometry type and refreshes draw.
+            if ( selectedId == "optPolygon" )
+                snow.drawType = "Polygon"
+            else if ( selectedId == "optLine" )
+                snow.drawType = "LineString"
+            else if ( selectedId == "optCircle")
+                snow.drawType = "Circle"
+            else if ( selectedId == "optPoint")
+                snow.drawType = "Point"
+            else //error happened selecting type.
+                console.log("Unexpected error while selecting geometry type")
+            snow.refreshDraw()
+        } //End setCurrentType_click()   
 
         
     } /* constructor */
@@ -196,25 +240,22 @@ pol.features.Edit = class extends pol.core.Widget {
         
     /* Convert feature to object that can be stringified as JSON */
     feature2obj(f) {
+        console.log(f);
         /* First: transform to latlong projection! */
         let geom = f.getGeometry().clone();
         let st = (f.originalStyle ? f.originalStyle : f.getStyle()); 
         geom.transform(CONFIG.mb.view.getProjection(), 'EPSG:4326');
-        
         let obj = {
             layer: f.layer, // Is this necessary if layername is used in tag for db object
             type: geom.getType(), 
-            style: this.style2obj(st),
+            style: this.style2obj(st, geom.getType()),
             label: f.label
         };
-        if ( obj.type == "Circle" )  {
-            obj.center = geom.getCenter(), 
-            obj.radius = geom.getRadius()
+        if ( obj.type == "Circle")  {
+            obj.center = geom.getCenter(); 
+            obj.radius = geom.getRadius();
         }
-        else if (obj.type == "Polygon") {
-            obj.coord = geom.getCoordinates();
-        }
-        else if (obj.type == "LineString") {           
+        else if (obj.type == "Polygon" || obj.type=="LineString" || obj.type=="Point") {
             obj.coord = geom.getCoordinates();
         }
         else
@@ -227,6 +268,7 @@ pol.features.Edit = class extends pol.core.Widget {
     /* Convert object to feature (see also feature2obj) */
     obj2feature(obj) {
         let geom = null;
+        let feat = new ol.Feature();
         if ( obj.type == "Circle" )  {
             geom = new ol.geom.Circle(obj.center, obj.radius);
         }
@@ -236,12 +278,16 @@ pol.features.Edit = class extends pol.core.Widget {
         else if (obj.type == "LineString") {
             geom = new ol.geom.LineString(obj.coord);
         }
-        else
+        else if (obj.type == "Point") {
+            geom = new ol.geom.Point(obj.coord);
+        }
+        else {
             console.error("Unknown geom type: "+obj.type);
-        let feat = new ol.Feature();
+            return feat;
+        }
         geom.transform('EPSG:4326', CONFIG.mb.view.getProjection());
         feat.setGeometry(geom);
-        feat.setStyle(this.obj2style(obj.style));
+        feat.setStyle(this.obj2style(obj.style, obj.type));
         feat.label = obj.label;
         feat.layer = obj.layer;
         return feat;
@@ -249,24 +295,35 @@ pol.features.Edit = class extends pol.core.Widget {
     
     
     /* Convert style to object that can be stringified as JSON */
-    style2obj(st) {
-        let obj = {
-            stroke: { 
-                color:st.getStroke().getColor(), 
-                width:st.getStroke().getWidth(),
-                lineDash: st.getStroke().getLineDash()
-            }, 
-            fill: (st.getFill() ? {color: st.getFill().getColor()} : null)
-        };
-        return obj;
+    style2obj(st, type) {
+        if (type=="Point") {
+            return {
+                image: st.getImage().getSrc()
+            }
+        }
+        else
+            return {
+                stroke: { 
+                    color:st.getStroke().getColor(), 
+                    width:st.getStroke().getWidth(),
+                    lineDash: st.getStroke().getLineDash()
+                }, 
+                fill: (st.getFill() ? {color: st.getFill().getColor()} : null)
+            };
+        
     }
     
     
     /* Convert object to style (se also style2obj */
-    obj2style(obj) {
+    obj2style(obj, type) {
         let st = snow.getStyle(); 
-        st.setStroke(new ol.style.Stroke(obj.stroke)),
-        st.setFill(obj.fill==null ? null : new ol.style.Fill(obj.fill)); 
+        if (type=="Point") {
+            st.setImage(snow.getIconStyle(obj.image)); 
+        }
+        else {
+            st.setStroke(new ol.style.Stroke(obj.stroke)),
+            st.setFill(obj.fill==null ? null : new ol.style.Fill(obj.fill)); 
+        }
         return st;
     }
     

@@ -59,20 +59,6 @@ snow.drawTools =
             
             m("div",
             [   
-                m("label", 
-                {"class":"non-interactive"}, 
-                ["Feature type: ", m.trust("&nbsp;")]),
-                m("select",
-                { 
-                    id: "gSelect", 
-                    onchange: ()=> {snow.setCurrentType($("#gSelect").val());}
-                },
-                [
-                    m("option", {value: "optPolygon"}, 'Polygon'),
-                    m("option", {value: "optLine"}, 'Line String'),
-                    m("option", {value: "optCircle"}, 'Circle')
-                ]),
-            
                 m("div", [
                 m("div.igroup", [
                 m("label", 
