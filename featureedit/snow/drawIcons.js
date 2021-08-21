@@ -34,10 +34,12 @@ snow.getIconStyle = function(imgsrc) {
 //OnClick hanlder for icon select.
 snow.markerIcons_click = function(e)
 {
+  console.log("SNOW.DRAW", snow.draw);
   snow.drawMap.removeInteraction(snow.draw)
   $('#'+snow.thisID).removeClass('selectedIcon')
+  console.log("snow.thisID", snow.thisID, "e.target.id", e.target.id);
   if( snow.thisID == e.target.id )
-  { 
+  {  
     snow.thisID=null 
     return null 
   }
@@ -46,7 +48,6 @@ snow.markerIcons_click = function(e)
   $('#'+snow.thisID).addClass('selectedIcon')
   let imgsrc = $('#'+snow.thisID).attr("src")
   let imglbl = snow.thisID.split("-", 2)[1];
-  console.log("IMGLBL", snow.thisID, imglbl);
   
   
   //Generates a style with the selected icon to be placed.
@@ -55,27 +56,26 @@ snow.markerIcons_click = function(e)
   });
  
   //Enables Point drawing.
-  let iconDraw = new Draw (
+  snow.draw = new Draw (
   {
     source: snow.drawSource,
     type: 'Point',
-    name: 'POINT NAME TEST' //TODO: Add description?
+    name: 'POINT' 
   })
   
-  snow.drawMap.addInteraction(iconDraw)
+  snow.drawMap.addInteraction(snow.draw)
   droppingIcon = true
   
   
   //When the point is drawn, gives it the icon style and disables drawing.
-  iconDraw.on('drawend', function (e)
+  snow.draw.on('drawend', function (e)
   { 
     e.feature.setStyle(iconStyle)
     e.feature.label = imglbl;
-    console.log("label: ", imglbl);
     snow.addNewChange(e.feature)
     if( !snow.continuousIconDropping )
     { 
-      snow.drawMap.removeInteraction(iconDraw)
+      snow.drawMap.removeInteraction(snow.draw)
       //Removes the selected icon class and ID after placement.
       $('#'+snow.thisID).removeClass('selectedIcon')
       snow.thisID = null
@@ -83,7 +83,7 @@ snow.markerIcons_click = function(e)
   })
   
   for (f of snow.drawCB)
-        iconDraw.on('drawend', f);
+        snow.draw.on('drawend', f);
   
   
 }//End of markerIcons_click

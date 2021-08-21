@@ -114,7 +114,7 @@ pol.features.Properties = class extends pol.core.Widget {
                                         
                     m("span.field", [
                         m("span.sleftlab", "Label: "),
-                        m(textInput, {id:"editLabel", size: 16, maxLength:25, value: t.label, regex: /.*$/i }),
+                        m(textInput, {id:"editLabel", size: 19, maxLength:25, value: t.label, regex: /.*$/i }),
                         m("button", {onclick: set, title: "Update properties"}, "Update")
                     ]),
                     

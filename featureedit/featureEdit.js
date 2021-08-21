@@ -239,7 +239,6 @@ pol.features.Edit = class extends pol.core.Widget {
         
     /* Convert feature to object that can be stringified as JSON */
     feature2obj(f) {
-        console.log(f);
         /* First: transform to latlong projection! */
         let geom = f.getGeometry().clone();
         let st = (f.originalStyle ? f.originalStyle : f.getStyle()); 

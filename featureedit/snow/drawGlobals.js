@@ -27,7 +27,7 @@ const gpxFormat = ol.format.GPX
 var snow = snow || {};
 
 
-snow.draw = false; 
+snow.draw = null; 
 snow.snap = false;
 snow.drawSelect = false;
 snow.feature = false;

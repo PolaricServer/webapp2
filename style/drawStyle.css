@@ -189,5 +189,6 @@ table.lfeatures td {
     line-height: 1.15em; 
     background: #fec;
     color: #060;
-    font-size: 90%;
+    font-size: 90%;  
+    min-width: 8em;
 }
