@@ -35,8 +35,8 @@ pol.features.Edit = class extends pol.core.Widget {
         super();
         this.classname = "features.Edit";
         const t = this;
-        let tool = snow.drawTools;
-        let icontool = snow.iconTools;
+        this.tool = snow.drawTools;
+        this.icontool = snow.iconTools;
         let timer = null;
         
         this.widget = {
@@ -101,10 +101,7 @@ pol.features.Edit = class extends pol.core.Widget {
         setTimeout(()=>t.restoreFeatures(), 1000); 
         snow.draftLayer.setVisible(false);
         
-        setTimeout(
-            ()=> m.mount($("#toolbox")[0], tool), 1000);
-        
-        
+      
         /* 
          * Handler to be called when feature is changed. 
          * 
@@ -135,9 +132,9 @@ pol.features.Edit = class extends pol.core.Widget {
         function selectType(selectedId)
         {
             if (snow.drawType != "Point" && selectedId == "optPoint")
-                m.mount($("#toolbox")[0], icontool)
+                m.mount($("#toolbox")[0], t.icontool)
             else
-                m.mount($("#toolbox")[0], tool)
+                m.mount($("#toolbox")[0], t.tool)
                 
             //Checks geometry type and refreshes draw.
             if ( selectedId == "optPolygon" )
@@ -161,6 +158,8 @@ pol.features.Edit = class extends pol.core.Widget {
         snow.activate();
         snow.featureEdit = this; 
         snow.draftLayer.setVisible(true);
+        setTimeout(
+            ()=> m.mount($("#toolbox")[0], this.tool), 100);
     }
     
     onclose() {
