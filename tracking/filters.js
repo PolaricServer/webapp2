@@ -29,7 +29,7 @@ pol.tracking.Filters = class {
     constructor(tr) { 
         var tbar = CONFIG.mb.toolbar;
         var t = this;
-        var filterViews = CONFIG.get("tracking.filters");
+        t.filterViews = [];
         t.tracker = tr; 
          
         tbar.addIcon(1, "images/filter.png", "tb_filter", null, "Filter selector");
@@ -37,38 +37,47 @@ pol.tracking.Filters = class {
         CONFIG.mb.ctxMenu.addMenuId('tb_filter', 'FILTERSELECT', true);
    
         /* Set default or saved filter selection */   
-        var filt = CONFIG.mb.config.get('tracking.selectedfilt');
-        if (filt == null) 
-            filt = defaultFilter;
+        t.filt = CONFIG.mb.config.get('tracking.selectedfilt');
 
-        /* Find index of default selection */
-        var i;
-        for (i in filterViews)
-            if (filterViews[i].name === filt)
-                break;
-
-        $("#filterChoice").html(filterViews[i].title);
-        t.tracker.setFilter(filterViews[i].name);
-
-
-
+        
         /* Add callback to generate filter-menu */
         CONFIG.mb.ctxMenu.addCallback('FILTERSELECT', m => {
-            for (i in filterViews) {
-                if (!filterViews[i].restricted || tr.server.loggedIn)   
-                    m.add(filterViews[i].title, handleSelect(i));
+            for (const i in t.filterViews) {
+                m.add(t.filterViews[i][1], handleSelect(i));
             }
        
             /* Generate handler function for menu items */
             function handleSelect(i) {
                 return function() {
-                    $("#filterChoice").html(filterViews[i].title);
-                    t.tracker.setFilter(filterViews[i].name);
-                    CONFIG.store('tracking.selectedfilt', filterViews[i].name, true);
+                    $("#filterChoice").html(t.filterViews[i][1]);
+                    t.tracker.setFilter(t.filterViews[i][0]);
+                    CONFIG.store('tracking.selectedfilt', t.filterViews[i][0], true);
                 } 
             }
         });
+        
+        t.getFilters();
+    }    
+
+            
+    /* Get list of filter profiles from server */
+    getFilters() {
+        CONFIG.server.GET("filters", "", x => { 
+            this.filterViews = JSON.parse(x);   
+            
+            /* Find index of default selection */
+            var i=0;
+            for (var j in this.filterViews)
+                if (this.filterViews[j][0] === this.filt)
+                    { i=j; break; }
+            if (i >= this.filterViews.length)
+                i = 0;
+            $("#filterChoice").html(this.filterViews[i][1]);
+            this.tracker.setFilter(this.filterViews[i][0]);
+        
+        } );
     }
+
 }    
 
 
@@ -78,5 +87,5 @@ pol.tracking.Filters = class {
  */
 
 function FILTERS(x) {
-    CONFIG.set("tracking.filters", x);
+    console.info("FILTERS in config file is now ignored");
 }
