@@ -12,7 +12,7 @@
  * Uncomment to use aprs.no as a backend. 
  * Default is to use the location of the webapp. 
  */
-//SERVER("https://aprs.no");
+// SERVER("https://aprs.no");
 
 
 /* 
@@ -22,8 +22,8 @@
  * aprs.no uses "ws" and "srv" through a proxy. Default is to use a separate port: 8081. 
  * Uncomment the following two lines to use a backend with a proxy. 
  */
-//WSPREFIX("ws");
-//AJAXPREFIX("srv");
+// WSPREFIX("ws");
+// AJAXPREFIX("srv");
 
 
 /* Location of aprsd icons */
@@ -388,20 +388,3 @@ VIEWS ([
 ]);
 
 
-
-/****************************************************************************************
- * Menu of predefined tracking filters
- * The actual filters are defined by aprsd in
- * /etc/polaric-aprsd/view.profiles. The name attribute refers to a profile-name.
- * For non-public profiles, add attribute: restricted: 'true'
- ****************************************************************************************/
-
-var defaultFilter = 'track';
-FILTERS ([
-   { name: 'alle',      title: 'All APRS (HAM)' },
-   { name: 'track',     title: 'Tracking' },
-   { name: 'infra',     title: 'APRS infrastructure'},
-   { name: 'ainfra',    title: 'APRS aktiv Infrastr'},
-   { name: 'moving',    title: 'APRS Moving'},
-   { name: 'all_radio', title: 'APRS radio only' },
-]);

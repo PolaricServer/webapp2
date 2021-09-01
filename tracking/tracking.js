@@ -102,7 +102,8 @@ pol.tracking.Tracking = class {
                 if (pts.length > 0) 
                     /* Just one point */
                     return { 
-                        name: (pol.tracking.isSign(pts[0]) ? "SIGN" : "POINT"), 
+                        sarAuth: pts[0].point.sarAuth,
+                        name:  (pol.tracking.isSign(pts[0]) ? "SIGN" : "POINT"), 
                         ident: pts[0].getId(),
                         point: pts[0]
                     };
@@ -203,6 +204,7 @@ pol.tracking.Tracking = class {
             if (cmenu) {
                 CONFIG.mb.gui.removePopup();
                 CONFIG.mb.ctxMenu.showOnPos( { 
+                    sarAuth: x.point.sarAuth,
                     name: (pol.tracking.isSign(x) ? "SIGN" : "POINT"), 
                     point: x,
                     ident: x.getId()
@@ -356,6 +358,7 @@ pol.tracking.Tracking = class {
             CONFIG.mb.ctxMenu.showOnPos(
               { name: "POINT", 
                 point: f,
+                sarAuth: f.point.sarAuth,
                 ident: ident}, [e.clientX, e.clientY]); 
         }
     

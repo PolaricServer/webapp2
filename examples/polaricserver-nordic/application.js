@@ -223,13 +223,13 @@
      * Point menu
      *********************************************************/
    
-    browser.ctxMenu.addCallback("POINT", (m, ctxt)=> {
+    browser.ctxMenu.addCallback("POINT", (m, ctxt)=> { 
         m.add('Show info', () => srv.infoPopup(ctxt.point, [m.x, m.y]) );
         m.add('Last movements', () => 
             WIDGET( "tracking.TrailInfo", [50, 70], true,  x=> x.getTrail(ctxt.ident) ) );
         
         
-        if (srv.auth.sar) { 
+        if (ctxt.sarAuth) { 
             m.add('Global settings', () => 
                 WIDGET("tracking.GlobalSettings", [m.x,m.y], true, x=>x.setIdent(ctxt.ident)));
 
