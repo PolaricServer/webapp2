@@ -234,3 +234,13 @@ span#objname {
     padding-left: 0.2em; margin-bottom: 0.6em; font-size: 0.95em
 }
    
+
+select#group {width: 9em; height: 1.9em}
+
+span#selGroup {
+    margin-left: 0.6em; color: #050; 
+    font-style:italic; font-size: 90%; 
+    background: white;
+    border: red 1px dotted; 
+    padding: 1px
+}

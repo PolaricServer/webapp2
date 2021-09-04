@@ -36,7 +36,9 @@ pol.tracking.Users = class extends pol.core.Widget {
         t.name = m.stream("");
         t.callsign = m.stream("");
         t.passwd = m.stream("");
-        t.trackers = m.stream("");
+        t.group = "DEFAULT";
+        t.selGroup = "";
+        t.groupList = [];
         t.sar = false; 
         t.admin = false;
         t.suspend = false; 
@@ -55,8 +57,9 @@ pol.tracking.Users = class extends pol.core.Widget {
                                      
                                 m("td", 
                                     (x.suspend? "U" : "") + 
-                                    (x.admin? "A": (x.sar? "S" : "")) + 
+                                    (x.admin? "A": "") + 
                                     (x.callsign!=null && x.callsign.length > 1 ? "H":"") ), 
+                                m("td", x.group ),
                                 m("td", formatTime(x.lastused)),
                                 m("td", x.name ),
 
@@ -66,6 +69,13 @@ pol.tracking.Users = class extends pol.core.Widget {
             }
         }
         
+        
+        t.groups = {    
+            view: function() {
+                return m("select#group", {onchange: selectHandler }, t.groupList
+                    .map( x => m("option", {value: x.ident }, x.ident) ));
+            }
+        }
         
         this.widget = {
             view: function() {
@@ -92,14 +102,11 @@ pol.tracking.Users = class extends pol.core.Widget {
                             maxLength: 32, regex: /.*/i })), 
                          
                     m("div.field", 
-                        m("span.xsleftlab", {title: "Allowed trackers (regex) for this user"}, "Trackers:"),
-                        m(textInput, { id: "trackers", value: t.trackers, size: 25,
-                            maxLength: 32, regex: /.*/i }), nbsp, "(regex)" ),
-                         
+                        m("span.xsleftlab", {title: "Group"}, "Group:"),
+                        m(t.groups), m("span#selGroup", ""+t.selGroup) ),
+
                     m("div.field", 
                         m("span.xsleftlab", "Access:"),
-                        m(checkBox, {id: "acc_sar", onclick: toggleSar, checked: t.sar, 
-                            title: "SAR (operator level)" }, "SAR"), nbsp, 
                         m(checkBox, {id: "acc_admin", onclick: toggleAdmin, checked: t.admin, 
                             title: "Administrator (super user level)" }, "Admin"), nbsp,  
                         m(checkBox, {id: "acc_susp", onclick: toggleSuspend, checked: t.suspend, 
@@ -119,7 +126,8 @@ pol.tracking.Users = class extends pol.core.Widget {
             }
         };
         
- 
+        getGroups();
+        setTimeout( selectHandler, 2000);
         
         /* Apply a function to an argument. Returns a new function */
         function apply(f, id) {return function() { f(id); }};  
@@ -141,6 +149,23 @@ pol.tracking.Users = class extends pol.core.Widget {
         }
         
         
+        function getGroups() {
+            t.server.GET("groups", "", x => { 
+                t.groupList = JSON.parse(x);    
+            } );
+        }
+        
+        
+        function selectHandler() {
+            t.group = $("select#group").val();
+            for (const x of t.groupList)
+                if (x.ident==t.group)
+                    t.selGroup = x.name;
+            m.redraw();
+        }
+        
+        
+        
         /* Add a user (on server) */
         function add() {
             const data = {
@@ -148,8 +173,7 @@ pol.tracking.Users = class extends pol.core.Widget {
                 name: t.name(),
                 callsign: (t.callsign()=="" || t.callsign()==" " ? "" : t.callsign().toUpperCase()),
                 passwd: (t.passwd()=="" || t.passwd()==" " ? null : t.passwd()),
-                allowTracker: (t.trackers()=="" || t.trackers()==" " ? null : t.trackers()),
-                sar: t.sar,
+                group: t.group,
                 admin: t.admin, 
                 suspend: t.suspend
             };
@@ -176,8 +200,7 @@ pol.tracking.Users = class extends pol.core.Widget {
                 name: t.name(),
                 passwd: (t.passwd()=="" || t.passwd()==" " ? null : t.passwd()),
                 callsign: (t.callsign()=="" || t.callsign()==" " ? "" : t.callsign().toUpperCase()),
-                allowTracker: (t.trackers()=="" || t.trackers()==" " ? null : t.trackers()),
-                sar: t.sar,
+                group: t.group,
                 admin: t.admin, 
                 suspend: t.suspend
             };
@@ -188,8 +211,7 @@ pol.tracking.Users = class extends pol.core.Widget {
                         if (t.users[i].ident==t.ident()) {
                             t.users[i].name = data.name; 
                             t.users[i].callsign = data.callsign;
-                            t.users[i].allowTracker = data.allowTracker;
-                            t.users[i].sar = data.sar;
+                            t.users[i].group = data.group;
                             t.users[i].admin = data.admin;
                             t.users[i].suspend = data.suspend;
                             break;
@@ -223,11 +245,11 @@ pol.tracking.Users = class extends pol.core.Widget {
             t.name(u.name);
             t.callsign(u.callsign);
             t.passwd("");
-            t.trackers(u.allowTracker);
-            t.sar = u.sar;
+            t.group = u.group;
             t.admin = u.admin;
             t.suspend = u.suspend;
-            m.redraw();
+            $("select#group").val(t.group).trigger("change");
+            selectHandler();
         }
     
         
@@ -253,8 +275,7 @@ pol.tracking.Users = class extends pol.core.Widget {
         this.ident("");
         this.name("");
         this.passwd("");
-        this.trackers("");
-        this.sar = false; 
+        this.group = "";
         this.admin = false;
         this.suspend = false;
         m.redraw();
