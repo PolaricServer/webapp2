@@ -41,7 +41,9 @@ pol.core.AreaList = class extends pol.core.Widget {
                     m("table.mapAreas", m("tbody", t.myAreas.map( x => {
                         return m("tr", [
                             m("td", [
-                                m(removeEdit, { remove: apply(removeArea, i), edit: apply(editArea, i) }),
+                                (removable(i) ?
+                                    m(removeEdit, { remove: apply(removeArea, i), edit: apply(editArea, i) })
+                                    : ""),
                                 (sharable(i) ? 
                                     m("img", {src:"images/16px/user.png", title:"Sharing", onclick: apply(sharing, i)} )
                                     : "") 
@@ -69,6 +71,10 @@ pol.core.AreaList = class extends pol.core.Widget {
         
         function sharable(i) {
             return !t.myAreas[i].readonly;
+        }
+
+        function removable(i) {
+            return !t.myAreas[i].noremove;
         }
         
         function sharing(i) {
@@ -178,6 +184,8 @@ pol.core.AreaList = class extends pol.core.Widget {
                             x.index = obj.id;
                             removeDup(x.name);
                             x.server = true;
+                            x.readonly = obj.readOnly; 
+                            x.noremove = obj.noRemove;
                             t.myAreas.push(x);  
                         }
                     m.redraw();

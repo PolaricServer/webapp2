@@ -52,6 +52,7 @@ pol.tracking.db.Sharing = class extends pol.core.Widget {
         t.user = m.stream("");
         t.shareList = [];
         t.userList = [];
+        t.groupList = [];
         t.readonly = true; 
         t.classname = "tracking.db.Sharing"; 
         
@@ -85,11 +86,24 @@ pol.tracking.db.Sharing = class extends pol.core.Widget {
             x=> { 
                 t.userList=JSON.parse(x);
                 t.userList.sort((x,y)=> {return x > y});
+                t.userList.push("#ALL");
+                getGroups(); 
                 m.redraw() 
             },
             ()=> { console.warn("Couldn't get user list"); }
         );
-            
+
+        function getGroups() {
+            t.server.GET("groups", "", x => { 
+                t.groupList = JSON.parse(x);    
+                t.groupList.sort((x,y)=> {return x > y});
+                console.log("groupList", t.groupList);
+                for (const xx of t.groupList) 
+                    t.userList.push('@'+xx.ident);
+            },
+            ()=> { console.warn("Couldn't get group list"); }
+            );
+        }
     
             
         function toggleRo() {
@@ -124,8 +138,6 @@ pol.tracking.db.Sharing = class extends pol.core.Widget {
         
         
         function isUser(u) {
-            if (u == "#ALL")
-                return true;
             for (const x of t.userList) {
                 if (x==u)
                     return true;
