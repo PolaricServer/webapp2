@@ -202,7 +202,7 @@ snow.getAreal = function(f)
         //Converts the circle to a polygon so that we can calculate. 
         //the area with the correct values, regardless of EPSG projection.
         const area = Sphere.getArea(PolygonGeom.fromCircle(geom))
-        output = getMetrics("1", area)
+        output = "a = "+getMetrics("1", area)+"<br> r = "+getMetrics("2", geom.getRadius())
     }
     else if ( geomType == "LineString" )
     {
