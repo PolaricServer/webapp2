@@ -188,7 +188,7 @@ pol.layers.List = class List extends pol.core.Widget {
         /* lrs is a list of name,type pairs */
         let lrs = []; 
         
-        if (srv == null || !srv.loggedIn || !srv.hasDb) {
+        if (srv == null || !srv.hasDb) {
             t._clearMyLayers();
             lrs = CONFIG.get("layers.list");
             if (lrs == null)

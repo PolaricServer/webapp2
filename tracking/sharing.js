@@ -154,6 +154,7 @@ pol.tracking.db.Sharing = class extends pol.core.Widget {
     
     
     remove(uid) {
+        uid = encodeURIComponent(uid);
         CONFIG.server.DELETE("objects/"+this.tag+"/"+this.ident+"/share/"+uid,
             ()=>  { this.getShares(); }, 
             (x)=> { console.warn("Couldn't delete object: ", x.statusText); })
@@ -184,7 +185,7 @@ pol.tracking.db.Sharing = class extends pol.core.Widget {
     /* Get list of shares from backend server */
     getShares() {
         console.log("this.tag/ident: ", this.tag, this.ident);
-        CONFIG.server.GET("objects/"+this.tag+"/"+this.ident+"/share", null,
+        CONFIG.server.GET(encodeURI("objects/"+this.tag+"/"+this.ident+"/share"), null,
             x=> { 
                 this.shareList=JSON.parse(x);
                 this.shareList.sort((x,y)=> {return x.userid > y.userid});
