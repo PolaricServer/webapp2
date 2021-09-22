@@ -1,3 +1,16 @@
+polaric-webapp2 (1.7) stable; urgency=medium
+
+  * Sharing of objects (layers, areas) between users and with groups.
+  * Move to OpenLayers 6.5
+  * Draw tool improvements and fixes..
+  * User management updates (groups)
+  * Support per item authorisation. 
+  * Wfs layer fixes, Allow WFS version 2.0.0. 
+  * Gpx layer fixes. Support GeoJSON as well..
+  * Various fixes..
+
+ -- Oyvind Hanssen <ohanssen@acm.org>  Mon, 20 Sep 2021 21:27:49 +0200
+
 polaric-webapp2 (1.6.2) stable; urgency=medium
 
   * Fix installation issues
