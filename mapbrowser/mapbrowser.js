@@ -632,10 +632,12 @@ pol.core.MapBrowser = class {
         if (ref[0]<=0 && ref[1]<=0)
             return;
         this.setCenter(ref);
-        if (showinfo)
-            this.show_Mapref(ref);
-        else
-            this.gui.showImageGeo(ref);
+        setTimeout( ()=> {
+            if (showinfo)
+                this.show_Mapref(ref);
+            else
+                this.gui.showImageGeo(ref);
+        }, 200);
     }
 
 } /* class */

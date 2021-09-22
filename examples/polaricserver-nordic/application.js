@@ -259,7 +259,7 @@
             m.add('Hide trail', () => CONFIG.tracks.hideTrail(ctxt.ident, true) );
         m.add(null);
         
-        if (srv.auth.sar && srv.hasDb && ctxt.point.point.aprs) { 
+        if (srv.sarAuth && srv.hasDb && ctxt.point.point.aprs) { 
             m.add('Add to my trackers', () => 
                 WIDGET("tracking.db.MyTrackers", [50, 70], true, x=> x.setIdent(ctxt.ident))); 
         }

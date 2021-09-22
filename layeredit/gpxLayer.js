@@ -67,7 +67,6 @@ pol.layers.Gpx = class extends pol.layers.Edit {
             
             let i = 0;
             let names = []; 
-            
             if (t.lName() == "") {
                 alert("Cannot drop file. Need to enter name of layer first");
                 return; 
