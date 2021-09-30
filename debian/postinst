@@ -18,7 +18,9 @@ case "$1" in
         if [[ ! -f "/etc/apache2/sites-enabled/aprs.conf" ]]; then
             a2ensite aprs.conf > /dev/null 2>&1 
         fi
-        apache2ctl restart
+        if [ ! "$DOCKER_BUILD" = true ]; then
+            apache2ctl restart
+        fi
     ;;
 
     abort-upgrade|abort-remove|abort-deconfigure)

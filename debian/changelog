@@ -1,3 +1,15 @@
+polaric-webapp2 (1.7.2) stable; urgency=medium
+
+  * Small fix to better support Docker installation. 
+
+ -- Oyvind Hanssen <ohanssen@acm.org>  Thu, 30 Sep 2021 23:13:54 +0200
+
+polaric-webapp2 (1.7.1) stable; urgency=medium
+
+  * Small fix in installation script.
+
+ -- Oyvind Hanssen <ohanssen@acm.org>  Sat, 25 Sep 2021 17:22:18 +0200
+
 polaric-webapp2 (1.7) stable; urgency=medium
 
   * Sharing of objects (layers, areas) between users and with groups.

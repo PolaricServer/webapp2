@@ -4,6 +4,9 @@ set -e
 
 case "$1" in
     install|upgrade)
+        if [[ ! -d "/var/lib/polaric" ]]; then
+            mkdir /var/lib/polaric
+        fi
         if [[ ! -d "/var/lib/polaric/mapcache" ]]; then
             mkdir /var/lib/polaric/mapcache
         fi
