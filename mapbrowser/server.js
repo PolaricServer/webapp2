@@ -58,7 +58,8 @@ pol.core.Server = class {
                 host += "localhost";
             host +=":8081"
         }
-            
+        if (! /.+\:\/\//.test(host) )
+            host = "http://"+host;
         if (host.charAt(host.length) != '/')
             host += '/';
     

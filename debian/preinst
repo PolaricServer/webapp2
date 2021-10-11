@@ -10,7 +10,13 @@ case "$1" in
         if [[ ! -d "/var/lib/polaric/mapcache" ]]; then
             mkdir /var/lib/polaric/mapcache
         fi
-        addgroup polaric
+          
+        if ! id polaric > /dev/null 2>&1 ; then
+            adduser --quiet --system --home /var/lib/polaric --no-create-home \
+                --group --disabled-password --shell /bin/false \
+                polaric
+            usermod -G dialout polaric
+        fi
         chown www-data:polaric /var/lib/polaric/mapcache
         chmod 775 /var/lib/polaric/mapcache
         if ls /var/lib/polaric/mapcache/*.db > /dev/null 2>%1; then
