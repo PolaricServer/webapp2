@@ -55,6 +55,12 @@ function ll2proj(p)
 function proj2ll(p)
  { return ol.proj.transform(p, CONFIG.mb.view.getProjection(), 'EPSG:4326'); }
 
+function DEFAULT_FILTER(group, filter) { 
+    if (group == null)
+        CONFIG.set("default_filter", filter);
+    else
+        CONFIG.set("default_filter."+group, filter); 
+}
  
  
 var TRUE = function() { return true; }

@@ -29,6 +29,9 @@ pol.tracking.Filters = class {
     constructor(tr) { 
         var tbar = CONFIG.mb.toolbar;
         var t = this;
+        var group = CONFIG.server.auth.groupid;
+        if (group == null || group == "")
+            group = "NOLOGIN";
         t.filterViews = [];
         t.tracker = tr; 
          
@@ -37,8 +40,11 @@ pol.tracking.Filters = class {
         CONFIG.mb.ctxMenu.addMenuId('tb_filter', 'FILTERSELECT', true);
    
         /* Set default or saved filter selection */   
-        t.filt = CONFIG.mb.config.get('tracking.selectedfilt');
-
+        t.filt = CONFIG.mb.config.get('tracking.selectedfilt.' + group);
+        if (t.filt == null || t.filt == "")
+            t.filt = CONFIG.get('default_filter.' + group);
+        if (t.filt == null || t.filt == "")
+            t.filt = CONFIG.get('default_filter');
         
         /* Add callback to generate filter-menu */
         CONFIG.mb.ctxMenu.addCallback('FILTERSELECT', m => {
@@ -51,7 +57,7 @@ pol.tracking.Filters = class {
                 return function() {
                     $("#filterChoice").html(t.filterViews[i][1]);
                     t.tracker.setFilter(t.filterViews[i][0]);
-                    CONFIG.store('tracking.selectedfilt', t.filterViews[i][0], true);
+                    CONFIG.store('tracking.selectedfilt.'+group, t.filterViews[i][0], true);
                 } 
             }
         });
@@ -72,6 +78,7 @@ pol.tracking.Filters = class {
                     { i=j; break; }
             if (i >= this.filterViews.length)
                 i = 0;
+            
             $("#filterChoice").html(this.filterViews[i][1]);
             this.tracker.setFilter(this.filterViews[i][0]);
         
