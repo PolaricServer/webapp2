@@ -213,23 +213,78 @@ pol.tracking.db.History = class extends pol.core.Widget {
             CONFIG.server.GET("/hist/"+x.call+"/trail"+qstring, "", 
                 x => {
                     $('#hist_back').addClass('searchMode');
-		    t.searchmode = true;
+                    t.searchmode = true;
                     CONFIG.tracks.searchMode(true);
+                    console.log("TRAIL: ", JSON.parse(x));
                     CONFIG.tracks.update(JSON.parse(x), true);
                 });
         }
     
-        
-        /* Export as GPX file - button handler */
+    
         function exportGpx() {
-            let parms = 'ntracks=' + t.list.length;
-            for (i=0; i < t.list.length; i++)
-                parms += '&station' + i + '=' + t.list[i].call + '&tfrom' + i + '=' + t.list[i].fromdate+"/" + 
-                    t.list[i].fromtime + '&tto' + i + '=' +  t.list[i].todate + "/" + t.list[i].totime;
- 
-            document.getElementById("downloadframe").src = CONFIG.server.url + '/gpx?' + parms; 
+            let trails = [];
+            let result = 
+            '<gpx creator="Polaric Webapp2" version="1.7.3" \n'+ 
+            '  xsi:schemaLocation="http://www.topografix.com/GPX/1/1 http://www.topografix.com/GPX/1/1/gpx.xsd" \n' +
+            '  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://www.topografix.com/GPX/1/1" > \n' +
+            '<metadata> \n'+
+            '   <name>Polaric Server Tracks</name> \n'+
+            '   <time>'+new Date().toISOString()+'</time> \n' +
+            '</metadata> \n';
+            
+            for (const x of t.list) 
+                trails.push( 
+                    gpxTrail(x).then((res) => { result += res; })
+                );
+            Promise.allSettled(trails)
+                .then( ()=> {
+                    result += "\n</gpx>";
+                
+                    const url = window.URL.createObjectURL(new Blob([result]));
+                    const a = document.createElement('a');
+                    a.style.display = 'none';
+                    a.href = url;
+                    a.download = 'trails.gpx';
+                    document.body.appendChild(a);
+                    a.click();
+                    window.URL.revokeObjectURL(url);
+                });
         }
-   
+
+    
+        /* Generate gpx trail for a given item */
+        function gpxTrail(x) {
+            return new Promise((resolve, reject) => {
+                var qstring = "?tfrom="+x.fromdate+"/"+x.fromtime+"&tto="+x.todate+"/"+x.totime;
+                CONFIG.server.GET("/hist/"+x.call+"/trail"+qstring, "", 
+                    x => {
+                        const data = JSON.parse(x).points[0];
+                        if (data.trail == null) {
+                            resolve("");
+                            return;
+                        }
+                        let result = '<trk>'
+                        result += '<name>'+data.ident+'</name>\n';
+                        result += '<trkseg>\n';
+                        result += data.trail.linestring.reduce((accum, pt) => {
+                            let seg = '<trkpt lat="'+roundDeg(pt.pos[1]) + '" lon="'+roundDeg(pt.pos[0]) + '">';
+                            seg += '<time>'+pt.time+'</time>';
+                            seg += '</trkpt>\n';
+                            return accum + seg;
+                        }, '');
+                        result += '</trkseg></trk>\n';
+                        resolve(result);
+                    },
+                    ()=> {reject()}
+                );
+            });
+        }
+    
+            
+        function roundDeg(d) {
+            return Math.round(d*100000) / 100000;
+        }
+    
    
    
         /* Get search parameters. Save them to localstorage as well */   
