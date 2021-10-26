@@ -144,12 +144,7 @@
      *********************************************************/
    
     browser.ctxMenu.addCallback("TOOLBAR", (m, ctxt)=> {   
-         
-        if (!srv.loggedIn)       
-        m.add('Om karttjenesten...', ()=> 
-            WIDGET("core.DocReader", [50, 70], false,  
-                x=> x.setContent("Velkommen til NRRL karttjenesten", "welcome.html") ) );
-        
+
         m.add('Search items',  () => WIDGET("tracking.Search", [50,70], true));
         m.add('Find position', () => WIDGET("core.refSearch",  [50,70], true));
 
@@ -171,7 +166,7 @@
         m.add(null);
      
         if (srv.auth.sar) {
-            m.add("SAR mode..", () => WIDGET("tracking.SarMode", [50,70], true)); 
+            m.add("SAR mode..", () => WIDGET("tracking.SarMode", [50,70], false)); 
             m.add(null);
             if (srv.auth.admin) {
                 m.add("Admin/configuration..", webConfig);
@@ -191,7 +186,7 @@
         if (srv.loggedIn) {
             if (srv.hasDb) 
                 m.add("My trackers", () => WIDGET("tracking.db.MyTrackers", [50, 70], true));
-            m.add("Notification", () => WIDGET("tracking.NotifyList", [50, 70], true));
+            m.add("Notification", () => WIDGET("tracking.NotifyList", [50, 70], false));
         }
         
         if (srv.hasDb) {
@@ -226,14 +221,14 @@
     browser.ctxMenu.addCallback("POINT", (m, ctxt)=> { 
         m.add('Show info', () => srv.infoPopup(ctxt.point, [m.x, m.y]) );
         m.add('Last movements', () => 
-            WIDGET( "tracking.TrailInfo", [50, 70], true,  x=> x.getTrail(ctxt.ident) ) );
+            WIDGET( "tracking.TrailInfo", [50, 70], false,  x=> x.getTrail(ctxt.ident) ) );
         
         
         if (ctxt.sarAuth) { 
             m.add('Global settings', () => 
-                WIDGET("tracking.GlobalSettings", [m.x,m.y], true, x=>x.setIdent(ctxt.ident)));
+                WIDGET("tracking.GlobalSettings", [m.x,m.y], false, x=>x.setIdent(ctxt.ident)));
 
-            m.add('Manage tags..', () => WIDGET("tracking.Tags", [m.x,m.y], true, x=>x.setIdent(ctxt.ident))); 
+            m.add('Manage tags..', () => WIDGET("tracking.Tags", [m.x,m.y], false, x=>x.setIdent(ctxt.ident))); 
 
             m.add('Reset info', () => resetInfo(ctxt.ident) );
             m.add('Change trail color', () => chColor(ctxt.ident) );
@@ -264,9 +259,10 @@
                 WIDGET("tracking.db.MyTrackers", [50, 70], true, x=> x.setIdent(ctxt.ident))); 
         }
         if (srv.hasDb && ctxt.point.point.aprs) {
-            m.add("Raw APRS packets", () =>
-                rawAprsPackets(ctxt.ident, [m.x, m.y]));
-                
+
+            m.add('Raw APRS packets', () => 
+                WIDGET( "tracking.AprsPackets", [50, 70], false,  x=> x.getPackets(ctxt.ident) ) );
+                        
             m.add("History...", () => 
                 WIDGET("tracking.db.History", [50,70], true, x=>x.setCall(ctxt.ident))); 
             
@@ -332,14 +328,6 @@
     function findItem(x) 
         { CONFIG.tracks.goto_Point(x); }
      
-     
-    function rawAprsPackets(ident, pix) { 
-        browser.gui.remotePopup(
-            srv, "/rawAprsPackets", 
-            {ident: ident}, 
-            {id: "rawAprs", geoPos: browser.pix2LonLat(pix)});
-    }
-
     
     
     function getMapInfo() {
@@ -350,23 +338,23 @@
     }
     
     
-/**
- * Get the URL parameters
- * source: https://css-tricks.com/snippets/javascript/get-url-variables/
- * @param  {String} url The URL
- * @return {Object}     The URL parameters
- */
+    /**
+     * Get the URL parameters
+     * source: https://css-tricks.com/snippets/javascript/get-url-variables/
+     * @param  {String} url The URL
+     * @return {Object}     The URL parameters
+     */
     function getParams(url) {
-	var params = {};
-	var parser = document.createElement('a');
-	parser.href = url;
-	var query = parser.search.substring(1);
-	var vars = query.split('&');
-	for (var i = 0; i < vars.length; i++) {
-		var pair = vars[i].split('=');
-		params[pair[0]] = decodeURIComponent(pair[1]);
-	}
-	return params;
+        var params = {};
+        var parser = document.createElement('a');
+        parser.href = url;
+        var query = parser.search.substring(1);
+        var vars = query.split('&');
+        for (var i = 0; i < vars.length; i++) {
+            var pair = vars[i].split('=');
+            params[pair[0]] = decodeURIComponent(pair[1]);
+        }
+        return params;
     };
 
     function startKodi() { fetch('/cgi-bin/kodi'); }

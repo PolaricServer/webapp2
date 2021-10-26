@@ -523,5 +523,6 @@ function CIRCLE(radius, opts) {
 }
 
 
-function WIDGET(id,pos,pin,f) { pol.widget.start(id,pos,pin,f); }
+function WIDGET(id,pos,save,f) { pol.widget.start(id,pos,true,save,f); }
+function POPUP(id,pos,f) { pol.widget.start(id,pos,false,false,f); }
 function getWIDGET(id) { return pol.widget.get(id); }

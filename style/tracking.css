@@ -172,7 +172,9 @@ div.itemList {padding-left: 1em; max-width: 30em}
 div.itemList {border-bottom: 2px solid #999; padding-bottom: 0.4em; margin-bottom: 0.6em}
 div.itemList img {vertical-align: middle} 
 
-div#trail>span {display: block; color: #060; margin-left: 0.4em; margin-top: -0.7em; margin-bottom: -0.9em;}
+div#trail>span, div#rawpackets>span {
+    display: block; color: #060; margin-left: 0.4em; margin-top: -0.7em; margin-bottom: -0.9em;
+}
 
 #itemtags input, #sharing input {margin-top: 0.8em}
 #itemtags, #sharing {max-width: 24em;}

@@ -100,13 +100,13 @@ pol.widget.get = function(id) {
 /**
  * Activate a widget object (in a popup). Use factory to create it if necessary. 
  */    
-pol.widget.start = function(id, pos, pinned, f) {
+pol.widget.start = function(id, pos, pinned, saved, f) {
     const x = pol.widget.get(id);
     if (x==null)
         return;
-    x.activatePopup(id, pos, pinned);    
+    x.activatePopup(id, pos, pinned, saved);    
     if (f && f!=null) 
-        setTimeout(()=>f(x), 800);
+        setTimeout(()=>f(x), 200);
 }
     
 
@@ -119,7 +119,7 @@ pol.core.Widget = class {
     
     constructor() {
         this.pos = null;
-        this.pinned = true;
+        this.saved = true;
         this.classname = null;
         this.active = false; 
         this._allowPopup = true;
@@ -186,7 +186,7 @@ pol.core.Widget = class {
      * @param {string} id - Identifier to be used for the DOM element
      * @param pixPos - Where on screen to put it.
      */
-    activatePopup(id, pixPos, pinned) 
+    activatePopup(id, pixPos, pinned, saved) 
     {
         console.assert(id != null && pixPos != null 
             && pixPos[0] >= 0 && pixPos[1] >= 0, "id="+id+", pixPos="+pixPos);
@@ -197,7 +197,7 @@ pol.core.Widget = class {
             
         const t = this; 
         this.pos = pixPos;        
-        t.pinned = pinned;
+        t.saved = saved;
         t.active = true; 
         
         if (t.onActivate)
@@ -208,10 +208,8 @@ pol.core.Widget = class {
             pixPos: pixPos,
             draggable: true,
             dragStop: dragStop,
-            pin: pinCb,
-            pinned: true,
-            /* FIXME: pinned means different things here and in the widget class 
-             */
+            pin: saveCb,
+            pinned: pinned,
             id: id,
             cclass: "widget",
             onclose: ()=> {unSave(); t.active=false; t.onclose();}
@@ -225,8 +223,9 @@ pol.core.Widget = class {
         
      
      
-        function pinCb(p) {
-            t.pinned = p;
+        function saveCb(p) {
+            if (!t.saved) 
+                return;
             if (p) 
                 save();
             else
@@ -236,7 +235,7 @@ pol.core.Widget = class {
      
         function dragStop( event, ui ) {
             t.pos = [ui.position.left, ui.position.top];
-            if (t.pinned)
+            if (t.saved)
                 save();
         }
      
