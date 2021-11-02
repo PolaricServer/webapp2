@@ -246,3 +246,7 @@ span#selGroup {
     border: red 1px dotted; 
     padding: 1px
 }
+
+
+div.traffic { margin-top: 0.4em; }
+div.traffic div.trblock {vertical-align: bottom; display: inline-block; margin-bottom: -2px }

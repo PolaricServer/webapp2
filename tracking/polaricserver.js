@@ -146,14 +146,7 @@ pol.tracking.PolaricServer = class extends pol.core.Server {
                 });
         }
         else 
-            browser.gui.remotePopup(
-                /* FIXME: This is a call to the old polaric-aprsd webservice that return a HTML fragment.
-                 * In the future we may define a REST service that returns a JSON object that is
-                 * rendered by the client
-                 */
-                this, "station",
-                {ajax: true, simple:true, id: p.getId()},
-                {id: "infopopup", geoPos: browser.pix2LonLat(pixel)});
+            POPUP("tracking.PointInfo", pixel, x=>x.getItem(p.point.ident))
     }      
      
 } /* class */

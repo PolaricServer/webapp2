@@ -106,7 +106,7 @@ pol.widget.start = function(id, pos, pinned, saved, f) {
         return;
     x.activatePopup(id, pos, pinned, saved);    
     if (f && f!=null) 
-        setTimeout(()=>f(x), 200);
+        setTimeout(()=>f(x), 300);
 }
     
 
