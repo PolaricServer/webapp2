@@ -47,7 +47,7 @@ pol.tracking.PubSub = class {
             t.retry = 0;
             setInterval(function() {
                 t.websocket.send("****"); // Keepalive 
-            }, 360000);
+            }, 120000);
         };
   
         /** Incoming message on socket */
@@ -56,7 +56,7 @@ pol.tracking.PubSub = class {
             const txt1 = evt.data.slice(0,slc);
             const txt2 = evt.data.slice(slc+1);
             const room = t.rooms[txt1];
-        
+
             if ((!t.suspend) && room != null)
                 for (const i in room)
                     if (room[i].json) room[i].cb( JSON.parse(txt2));

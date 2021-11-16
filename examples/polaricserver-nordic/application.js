@@ -219,11 +219,16 @@
      *********************************************************/
    
     browser.ctxMenu.addCallback("POINT", (m, ctxt)=> { 
+
         m.add('Show info', () => srv.infoPopup(ctxt.point, [m.x, m.y]) );
+
         m.add('Last movements', () => 
             WIDGET( "tracking.TrailInfo", [50, 70], false,  x=> x.getTrail(ctxt.ident) ) );
         
-        
+        if (ctxt.point.point.telemetry)
+            m.add('Telemetry', () => 
+                WIDGET( "tracking.Telemetry", [50, 70], false,  x=> x.getItem(ctxt.ident) ) );
+         
         if (ctxt.sarAuth) { 
             m.add('Global settings', () => 
                 WIDGET("tracking.GlobalSettings", [m.x,m.y], false, x=>x.setIdent(ctxt.ident)));
