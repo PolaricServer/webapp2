@@ -1,6 +1,6 @@
 /*
  Map browser based on OpenLayers 5. Tracking. 
- Search historic data on tracker points on server.  
+ Show telemetry data. 
  
  Copyright (C) 2021 Øyvind Hanssen, LA7ECA, ohanssen@acm.org
  
@@ -23,7 +23,7 @@
 
 
 /**
- * Reference search (in a popup window). 
+ * Telemetry (last transmission) 
  */
 
 pol.tracking.Telemetry = class extends pol.core.Widget {
@@ -38,6 +38,7 @@ pol.tracking.Telemetry = class extends pol.core.Widget {
         t.meta = null;
         t.current = null;
         t.ident = "";
+        t.psclient = null;
         
         const _telnum = {
             view: function() {
@@ -69,13 +70,21 @@ pol.tracking.Telemetry = class extends pol.core.Widget {
         this.widget = {
             view: function() { 
                 return  m("div#Telemetry", [       
-                    m("h1", (t.descr == null ? "Telemetry" : t.descr)), 
+                    m("h1", (t.descr == null ? "Telemetry" : t.descr)), nbsp,nbsp,
                     m("span", t.ident+(t.current != null ? ", at "+formatTime(t.current.time) : "")),
+                    m("button", { type: "button", onclick: ()=>history() }, "Graph") ,
                     (t.meta != null && t.current != null && t.current.num ? m(_telnum) : null), 
-                    (t.meta != null && t.current != null && t.current.bin ? m(_telbin) : null), 
+                    (t.meta != null && t.current != null && t.current.bin ? m(_telbin) : null),  
+
                 ] );    
             }
         };
+        
+        
+        
+        function history() {
+             WIDGET( "tracking.TelHist", [50, 70], false,  x=> x.getHist(t.ident, t.meta) );
+        }
         
         function getAnalog(x, chan) {
             if (x.num[chan] == -1)
@@ -97,17 +106,16 @@ pol.tracking.Telemetry = class extends pol.core.Widget {
                 (d.getHours()<10 ? "0" : "") + d.getHours() + ":" +
                 (d.getMinutes()<10 ? "0" : "") + d.getMinutes();
         }
-        
-        
+
     } /* constructor */
     
     
     getItem(id) {
         if (id != this.ident) {
-            if (this.ident != "")
-                this.srv.pubsub.unsubscribe("telemetry:"+this.ident);
+            if (this.ident != "" && t.psclient != null)
+                this.srv.pubsub.unsubscribe("telemetry:"+this.ident, this.psclient);
 
-            this.srv.pubsub.subscribe("telemetry:"+id, x => {
+            this.psclient = this.srv.pubsub.subscribe("telemetry:"+id, x => {
                 this.getItem(id);
             }); 
         }
@@ -126,7 +134,15 @@ pol.tracking.Telemetry = class extends pol.core.Widget {
                 x => { console.warn(x); }
             );
     }
-
+    
+    
+    
+    onclose() { 
+        if (this.ident!="" && this.psclient != null)
+            this.srv.pubsub.unsubscribe("telemetry:"+this.ident, this.psclient); 
+        this.ident="";
+        super.onclose();
+    }
     
 } /* class */
 

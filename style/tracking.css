@@ -264,3 +264,5 @@ div.telbin {margin-top: 1em; margin-bottom: 0.3em}
 div.telbin span {border: 1px solid #555; border-radius: 3px; padding: 2px; padding-bottom: 0px; margin: 3px; background: #ddd}
 div.telbin span.on {background: yellow; border: 1px solid; font-weight: bold}
 
+div#graph {height: 290px; width: 510px; margin-top: -5px}
+
