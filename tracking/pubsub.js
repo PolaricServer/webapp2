@@ -1,8 +1,8 @@
 /*
  Map browser based on OpenLayers 5. Tracking. 
- Websocket connection with Polaric Server backend. 
+ Publish/subscribe service. Based on websocket connection with Polaric Server backend. 
  
- Copyright (C) 2017-2018 Øyvind Hanssen, LA7ECA, ohanssen@acm.org
+ Copyright (C) 2017-2021 Øyvind Hanssen, LA7ECA, ohanssen@acm.org
  
  This program is free software: you can redistribute it and/or modify
  it under the terms of the GNU Affero General Public License as published 
@@ -129,6 +129,7 @@ pol.tracking.PubSub = class {
     /** 
      * Subscribe to updates from the server in a given room. 
      * A subscriber is a callback function to be called when notifications arrive. 
+     * it is returned to allow unsubscribing. 
      * Allow multiple subscribers to a room.  
      */
     subscribe(room, c, text) {
@@ -139,6 +140,7 @@ pol.tracking.PubSub = class {
         }
         this.rooms[room].push({cb:c, json:!text});
         this.suspend = false; 
+        return c;
     }
 
 
@@ -167,9 +169,9 @@ pol.tracking.PubSub = class {
             this.rooms[room] = null;
             this.websocket.send('UNSUBSCRIBE,' + room);
         }
-        else for (i in clients)
-            if (clients[i] == c)
-                client.splice(i,1);
+        else for (i in clients) 
+            if (clients[i].cb == c)
+                clients.splice(i, 1);
     }
 
 } /* class */
