@@ -29,20 +29,22 @@ pol.tracking.BullBoard = class extends pol.core.Widget {
 
     constructor() {
         super();
+        
+        const t = this;
         this.classname = "tracking.BullBoard"; 
         this.server = CONFIG.server;  
-        var t = this;
-        var groups = [];
-        var messages = [];
-        var selectedGroup = 0;
         
-        var edit = [[]]; 
-        var sentText = [];
-        var addgrp = m.stream("");
+        t.groups = [];
+        t.messages = [];
+        t.selectedGroup = 0;
+        t.edit = [[]]; 
+        
+        let sentText = [];
+        let addgrp = m.stream("");
         
         
         /* Render a bulletin group */
-        var showGroup = {
+        const showGroup = {
             view: function(vn) {
                 return m("table", vn.attrs.msgs.map( x => {
                     return m("tr"+(oldSender(x) ? ".oldmsg" : ""), [ m("td", x.sender), m("td", m("table", x.bulls.map( y => {
@@ -57,18 +59,18 @@ pol.tracking.BullBoard = class extends pol.core.Widget {
             }
         }
     
-        var sendBull = {
+        const sendBull = {
             view: function(vn) {
                 var i=0;
                 return m("div.mybulls", [                  
                     m("h4", "My bulletins (send):"),
                     m("div", 
-                    edit[selectedGroup].map( x => {   
+                    t.edit[t.selectedGroup].map( x => {   
                         return m("span.mline", [
-                            m("span", ""+ (selectedGroup==0 ? String.fromCharCode( 'A'.charCodeAt(0)+i) : ''+i)), 
+                            m("span", ""+ (t.selectedGroup==0 ? String.fromCharCode( 'A'.charCodeAt(0)+i) : ''+i)), 
                             m(textInput, { id:"edit"+(i++), value: x, size: 60, 
                                 maxLength:67, regex: /^[^\<\>\'\"]+$/i }), 
-                                (i==edit[selectedGroup].length ? m("span", {onclick: addInpLine}, '+') : "") 
+                                (i==t.edit[t.selectedGroup].length ? m("span", {onclick: addInpLine}, '+') : "") 
                         ]);
                     })),
                     m("button", { type: "button", onclick: sendMessages }, "Update"),
@@ -79,7 +81,7 @@ pol.tracking.BullBoard = class extends pol.core.Widget {
         }
     
     
-        this.widget = {
+        t.widget = {
             view: function() {
                 var i=0;
                 return m("div#bullboard", [
@@ -87,34 +89,32 @@ pol.tracking.BullBoard = class extends pol.core.Widget {
                     m("div.content", [
                     m("h4", "Bulletin group:"),
                     m("div.bgroups", 
-                        groups.map( x => {
+                        t.groups.map( x => {
                             return [m("span", 
-                                {"class": (i==selectedGroup ? 'selected' :''), onclick:apply(selectGroup, i++)}, 
+                                {"class": (i==t.selectedGroup ? 'selected' :''), onclick:apply(_selectGrp, i++)}, 
                                 x ), " " ];
                         }),
-                        (canSend() ? 
+                        (t.canSend() ? 
                             m("span", [ m(textInput, {id:"addGrp", value: addgrp, size: 5}),
                                         m("span", {onclick: grpAdd}, nbsp, "[+]") ]) : "" )
                     ),
-                    m(showGroup, {msgs: messages}),
-                    (canSend() ? m(sendBull) : "")
+                    m(showGroup, {msgs: t.messages}),
+                    (t.canSend() ? m(sendBull) : "")
                 ])]);  
             }
         };
 
-    
-        getGroups();
-            
-        t.server.pubsub.subscribe("bullboard", x => {
-            getGroups();
-            getMessages();
-        });  
-        
-        
         for (var i=0;i<26;i++)
             sentText[i] = false;
         
         setInterval(()=> m.redraw(), 60000);
+        
+        
+        function _selectGrp(x) {
+            t.selectGroup(x);
+        }
+        
+        
         
         /* Add group locally */
         function grpAdd() {
@@ -122,14 +122,14 @@ pol.tracking.BullBoard = class extends pol.core.Widget {
                 return;
             for (i in groups)
                 if (groups[i] == addgrp()) {
-                    selectGroup(i);
+                    t.selectGroup(i);
                     return;
                 }
             groups.push(addgrp().toUpperCase());
-            selectGroup(groups.length-1);
-            messages = [];
+            t.selectGroup(groups.length-1);
+            t.messages = [];
             addgrp(""); 
-            updateScreen();
+            t.updateScreen();
         }
         
         /* Return true if message is newer than 15 minutes */
@@ -140,17 +140,21 @@ pol.tracking.BullBoard = class extends pol.core.Widget {
             var min = Math.floor(diff/1000/60);
             return (min <= 15);
         }
+        
+        
         /* Return true if message is older than 24 hours */
         function oldMsg(msg) {
             var ltime = new Date(msg.time);
             var now = new Date(); 
             var diff = now - ltime;
             var min = Math.floor(diff/1000/60);
-            if (group() == '_A_')
+            if (t.group() == '_A_')
                 return (min > 2880)
             else
                 return (min > 1440);
         }
+        
+        
         /* Return true if messages from sender is older thatn 24 hours */
         function oldSender(s) {
             var old = true; 
@@ -163,132 +167,27 @@ pol.tracking.BullBoard = class extends pol.core.Widget {
         
         /* Add input line */
         function addInpLine() {
-            const lines = edit[selectedGroup];
+            const lines = t.edit[t.selectedGroup];
             lines.push(m.stream(""));
         }
- 
-        
- 
-        /* Re-render and if height extends viewport height, add a scrollbar */
-        function updateScreen() {   
-            m.redraw();
-            setTimeout( () => { 
-                var ht = $('#map').height() - t.pos[1] -80; 
-                if ($('#bullboard .content').parent().is( "#bullboard .scroll" ) ) 
-                    $('#bullboard .content').unwrap();
-                
-                if ($('#bullboard .content').height() < ht) 
-                    ht = $('#bullboard .content').height()+20;
-                else {
-                    $('#bullboard .content').wrap('<div class="scroll"></div>');
-                    $('#bullboard .scroll').height(Math.round(ht));
-                }
-            }, 100);
-        }   
     
-    
-        /* Return true if we can send bulls */
-        function canSend() {
-            return t.server.auth.userid != null &&
-                t.server.auth.callsign != null &&
-                t.server.auth.callsign != "";
-        }
-
-        
-        /* Select the bulletin group to be shown */
-        function selectGroup(group) {
-            if (group >= groups.length)
-                group = 0;
-            if (!edit[group] || edit[group].length == 0) {
-                edit[group] = [];
-                edit[group].push(m.stream(""));
-            }
-            selectedGroup = group;
-            CONFIG.store('tracking.BullBoard.selgroup', groups[group], false);
-            getMessages();
-            if (canSend())
-                getMyMessages(); 
-        }
-    
-    
-        function groupIndex(grp) {
-            for (var i in groups)
-                    if (grp==groups[i]) return i;
-            return 0;
-        }
-    
-        /* Get set of groups from server */
-        function getGroups() {
-            t.server.GET("/bullboard/groups", "", x => { 
-                groups = JSON.parse(x);
-                groups.unshift('APRS');
-                groups.unshift('Announcements');
-        
-                var grp = CONFIG.get('tracking.BullBoard.selgroup');
-                selectedGroup = groupIndex(grp);
-                        
-                if (!selectedGroup)
-                    selectedGroup = 0;
-                selectGroup(selectedGroup);
-            } );
-        }
-        
-    
-        /* Return name of selected group */
-        function group() {
-            var g = selectedGroup;
-            var gg = groups[selectedGroup];
-            if (g == 0)
-                gg = '_A_';
-            else if (g == 1)
-                gg = '_B_'; 
-            return gg;
-        }
-        
-        
-        /* Get selected bulletin group from server */
-        function getMessages() {
-            t.server.GET("/bullboard/"+group()+"/messages", "", x => { 
-                messages = JSON.parse(x);      
-                updateScreen();
-            } );
-        }
-    
-    
-        /* Get my own (sent) messages from server. */
-        function getMyMessages() {
-            const call = t.server.auth.callsign; 
-            if (call==null || call=="")
-                return;
-            t.server.GET("/bullboard/"+group()+"/messages/"+call, "", x => { 
-                var msgs = JSON.parse(x);
-                for (const i in msgs) 
-                    if (msgs[i] != null) {
-                        sentText[i] = true;
-                        edit[selectedGroup][i] = m.stream(msgs[i].text);
-                    }
-            } );  
-        }
-        
         
         function clear() {
-            for (i in edit[selectedGroup])
-                edit[selectedGroup][i]("");
-            updateScreen();
+            for (i in t.edit[t.selectedGroup])
+                t.edit[t.selectedGroup][i]("");
+            t.updateScreen();
             sendMessages();
         }
         
-        
     
         function sendMessages() {
-
-            var msgs = edit[selectedGroup];
+            var msgs = t.edit[t.selectedGroup];
             for (const i in msgs) {
                 if (msgs[i]() == "" && sentText[i]==false) 
                     continue;
                 sentText[i] = (msgs[i]() != "");
                 
-                var bid = (selectedGroup==0 ? String.fromCharCode(Number(i) + ('A'.charCodeAt(0))) : '' + i);
+                var bid = (t.selectedGroup==0 ? String.fromCharCode(Number(i) + ('A'.charCodeAt(0))) : '' + i);
                 var msg = { 
                     bullid: bid,
                     groupid: group(),  
@@ -311,7 +210,6 @@ pol.tracking.BullBoard = class extends pol.core.Widget {
         }
         
         
-        
         /* Format time as age */
         function formatAge(date) {
             var ltime = new Date(date);
@@ -330,7 +228,130 @@ pol.tracking.BullBoard = class extends pol.core.Widget {
         function apply(f, id) {return function() { f(id); }};  
     
     }
+    
+    
+    /* Get set of groups from server */
+    getGroups() {
+        const t=this;
+        t.server.GET("/bullboard/groups", "", x => { 
+            t.groups = JSON.parse(x);
+            t.groups.unshift('APRS');
+            t.groups.unshift('Announcements');
+        
+            var grp = CONFIG.get('tracking.BullBoard.selgroup');
+            t.selectedGroup = t.groupIndex(grp);
+                        
+            if (!t.selectedGroup)
+                t.selectedGroup = 0;
+            t.selectGroup(t.selectedGroup);
+        } );
+    }
+        
+             
+    /* Get selected bulletin group from server */
+    getMessages() {
+        this.server.GET("/bullboard/"+this.group()+"/messages", "", x => { 
+            this.messages = JSON.parse(x);      
+            this.updateScreen();
+        } );
+    }   
+    
+        
+    /* Get my own (sent) messages from server. */
+    getMyMessages() {
+        const call = this.server.auth.callsign; 
+        if (call==null || call=="")
+            return;
+        this.server.GET("/bullboard/"+this.group()+"/messages/"+call, "", x => { 
+            var msgs = JSON.parse(x);
+            for (const i in msgs) 
+                if (msgs[i] != null) {
+                    sentText[i] = true;
+                    this.edit[t.selectedGroup][i] = m.stream(msgs[i].text);
+                }
+        } );  
+    }
+        
+        
+    /* Return name of selected group */
+    group() {
+        var g = this.selectedGroup;
+        var gg = this.groups[this.selectedGroup];
+        if (g == 0)
+            gg = '_A_';
+        else if (g == 1)
+            gg = '_B_'; 
+        return gg;
+    }
+        
+        
+    groupIndex(grp) {
+        for (var i in this.groups)
+            if (grp==this.groups[i]) return i;
+        return 0;
+    }
+    
+    
+    /* Select the bulletin group to be shown */
+    selectGroup(group) {
+        if (group >= this.groups.length)
+            group = 0;
+        if (!this.edit[group] || this.edit[group].length == 0) {
+            this.edit[group] = [];
+            this.edit[group].push(m.stream(""));
+        }
+        this.selectedGroup = group;
+        CONFIG.store('tracking.BullBoard.selgroup', this.groups[group], false);
+        this.getMessages();
+        if (this.canSend())
+            this.getMyMessages(); 
+    }
+    
+        
+    /* Return true if we can send bulls */
+    canSend() {
+        return this.server.auth.userid != null &&
+            this.server.auth.callsign != null &&
+            this.server.auth.callsign != "";
+    }
 
+        
+    /* Re-render and if height extends viewport height, add a scrollbar */
+    updateScreen() {   
+        m.redraw();
+        setTimeout( () => { 
+            var ht = $('#map').height() - this.pos[1] -80; 
+            if ($('#bullboard .content').parent().is( "#bullboard .scroll" ) ) 
+                $('#bullboard .content').unwrap();
+                
+            if ($('#bullboard .content').height() < ht) 
+                ht = $('#bullboard .content').height()+20;
+            else {
+                $('#bullboard .content').wrap('<div class="scroll"></div>');
+                $('#bullboard .scroll').height(Math.round(ht));
+            }
+        }, 100);
+    } 
+        
+        
+    onActivate() {
+        this.getGroups();
+        this.getMessages();
+        this.psclient = this.server.pubsub.subscribe("bullboard", x => {
+            this.getGroups();
+            this.getMessages();
+        });
+    }
+
+    
+    onclose() { 
+        if (this.psclient != null)
+            this.server.pubsub.unsubscribe("bullboard", this.psclient); 
+        this.psclient=null;
+        super.onclose();
+    }
+    
+    
 } /* class */
 
 
