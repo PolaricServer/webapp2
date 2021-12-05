@@ -59,7 +59,11 @@ pol.tracking.Mailbox = class extends pol.core.Widget {
                             { id: "recipient", value: t.recipient,
                                 maxLength: 40, regex: /.*/i }), 
                             m("img#ulist", {src:"images/participant.png", 
-                                title:"Show logged on users (on/off)", onclick:()=>toggleUsers()})),
+                                title:"Show logged on users (on/off)", onclick:()=>toggleUsers()})
+                       //  m(checkBox, "APRS"), m(checkBox, "SMS")
+                    ),
+                         
+ 
                     
                     m("div.field", 
                         m("span.xsleftlab", "Message:"),
@@ -114,14 +118,14 @@ pol.tracking.Mailbox = class extends pol.core.Widget {
         * Subscribe to notifications from server using the pubsub service: 
         * Related to user (if logged in). 
         */
-        t.server.pubsub.subscribe("messages:" + t.server.auth.userid, 
+        t.pscli1 = t.server.pubsub.subscribe("messages:" + t.server.auth.userid, 
             x => { 
                 t.msglist.push(x); 
                 m.redraw();
                 addScroll(true); 
             }
         );   
-        t.server.pubsub.subscribe("msgstatus:" + t.server.auth.userid, 
+        t.pscli2 = t.server.pubsub.subscribe("msgstatus:" + t.server.auth.userid, 
             x => { 
                 setStatus(x);
                 m.redraw();
@@ -259,6 +263,17 @@ pol.tracking.Mailbox = class extends pol.core.Widget {
         m.redraw();
     }
 
+    
+    onclose() { 
+        if (this.pscli1 != null)
+            this.server.pubsub.unsubscribe("messages:" + this.server.auth.userid, this.pscli1); 
+        if (this.pscli2 != null)
+            this.server.pubsub.unsubscribe("msgstatus:" + this.server.auth.userid, this.pscli1); 
+        this.pscli1=this.pscli2=null;
+        super.onclose();
+    }
+    
+    
 } /* class */
 
 

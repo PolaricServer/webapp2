@@ -103,7 +103,6 @@ pol.tracking.Notifier = class {
      * Add notification. 
      */
     add(not) {
-        console.log(not);
         this.audio.play();
         this.list.unshift(not);
         this.updateNumber();
