@@ -108,6 +108,8 @@ const textInput = {
             onchange: function(ev) {
                 vn.attrs.value(ev.target.value);
                 t.cssclass = "";
+                if (vn.attrs.onchange !=null)
+                    vn.attrs.onchange();
             },
             
             value: vn.attrs.value(),
@@ -452,7 +454,11 @@ const removeEdit = {
     }
 }
  
-
+ 
+ 
+ 
+ 
+ 
 /**
  * Use an element as a drag-drop zone for files.
  */

@@ -34,6 +34,7 @@ pol.tracking.db.MyTrackers = class extends pol.tracking.TrackerAlias {
     
         t.classname = "tracking.db.MyTrackers"; 
         t.myTrackers = [];
+        t.editMode = false; 
 
         this.widget = {
             view: function() {
@@ -52,7 +53,8 @@ pol.tracking.db.MyTrackers = class extends pol.tracking.TrackerAlias {
                     }))),
                     m(t.aliasWidget),
                     m("div.butt", [
-                        m("button", { type: "button", onclick: add }, "Update"),
+                        m("button", { type: "button", disabled: !addMode(), onclick: add }, "Add"),
+                        m("button", { type: "button", disabled: !updateMode(),  onclick: update }, "Update"),
                         m("button", { type: "button", onclick: ()=> {t.clear();} }, "Clear"),
                         m("button", { type: "button", onclick: ()=> {resetAll();} }, "Reset All"),
                     ])
@@ -68,7 +70,19 @@ pol.tracking.db.MyTrackers = class extends pol.tracking.TrackerAlias {
         setInterval(getTrackers, 120000);
         // FIXME: Use pubsub service? 
         
-    
+       
+   
+        function addMode() {
+            if (t.edit.id() == null || t.edit.id() == "")
+                return false; 
+            return !t.editMode;
+        }
+        function updateMode() {
+            if (t.edit.id() == null || t.edit.id() == "")
+                return false; 
+            return t.editMode;
+        }
+        
         
         /* Apply a function to an argument. Returns a new function */
         function apply(f, id) {return function() { f(id); }};  
@@ -91,59 +105,87 @@ pol.tracking.db.MyTrackers = class extends pol.tracking.TrackerAlias {
         
   
   
-        /* Add a tracker to the list. Update if it already exists */
+        /* Add a tracker to the list.*/
         function add() {
             let icn = $("#iconpick").get(0).value; 
-
-            updateItem(t.edit.id().toUpperCase(), t.edit.alias(), t.edit.auto, icn);
+            addItem(t.edit.id().toUpperCase(), t.edit.alias(), t.edit.auto, icn);
         }
+        
+        /* Update item */
+        function update() {
+            let icn = $("#iconpick").get(0).value; 
+            updateItem(t.edit.id().toUpperCase(), t.edit.alias(), t.edit.auto, icn);
+        }    
             
-            
-            
+        /* Reset all items */    
         function resetAll() {
             for (const x of t.myTrackers)
                 updateItem(x.id, "", true, "");
-            
         }
         
-            
-        function updateItem(id, alias, auto, icn) {
-            
-            let icn2 = icn.substr(icn.lastIndexOf("/")+1);
-                        
-            const data = {
-                id: id, 
-                user: t.server.auth.userid, 
-                alias: alias,
-                icon: (auto ? null : icn2)
-            };
-            
-            if (data.alias=="") 
-                data.alias = null;
-            if (data.id == null || data.id == "")
+        
+        function addItem(id, alias, auto, icn) {
+            if (id == null || id == "")
                 return; 
+            let data = createItem(id, alias, auto, icn); 
             
             t.server.POST("trackers", JSON.stringify(data), 
                 x => {
-                    console.log("Added/updated tracker: "+data.id);
-                    removeDup(data.id);
-                    data.auto = auto; 
-                    data.icon = (auto ? t.icons[t.dfl] : icn);
-                    if (x=="OK-ACTIVE")
-                        data.active=true;
-                    t.myTrackers.push(data);
-                    sortList();
-                    m.redraw();
+                    console.log("Added tracker: "+data.id);
+                    updateList(data, auto, icn, x);
                 },
                 x => {
-                    console.log("Update tracker -> "+x.status+": "+x.statusText +
+                    console.log("Add tracker -> "+x.status+": "+x.statusText +
                         " ("+x.responseText+")");
-                    alert("Cannot add/update tracker: " + data.id+
+                    alert("Cannot add tracker: " + data.id+
                         '\n"' + x.responseText + '"');
                 }
             );
         }
         
+        
+        function updateItem(id, alias, auto, icn) {
+            if (id == null || id == "")
+                return; 
+            let data = createItem(id, alias, auto, icn); 
+            
+            t.server.PUT("trackers", JSON.stringify(data), 
+                x => {
+                    console.log("Updated tracker: "+data.id);
+                    updateList(data, auto, icn, x);
+                },
+                x => {
+                    console.log("Update tracker -> "+x.status+": "+x.statusText +
+                        " ("+x.responseText+")");
+                    alert("Cannot update tracker: " + data.id+
+                        '\n"' + x.responseText + '"');
+                }
+            );
+        }
+        
+        
+        function createItem(id, alias, auto, icn) {
+            const icn2 = icn.substr(icn.lastIndexOf("/")+1);
+            return {
+                id: id, 
+                user: t.server.auth.userid, 
+                alias: (alias=="" ? null: alias),
+                icon: (auto ? null : icn2)
+            };
+        }
+        
+        
+            
+        function updateList(data, auto, icn, x) {
+            removeDup(data.id);
+            data.auto = auto; 
+            data.icon = (auto ? t.icons[t.dfl] : icn);
+            if (x=="OK-ACTIVE")
+                data.active=true;
+            t.myTrackers.push(data);
+            sortList();
+            m.redraw();
+        }
         
   
         function sortList() {
@@ -179,6 +221,7 @@ pol.tracking.db.MyTrackers = class extends pol.tracking.TrackerAlias {
             t.edit.alias(tr.alias);
             t.edit.icon = tr.icon; 
             t.edit.user = tr.user; 
+            t.editMode = true;
             t.iconGrey();
             $("#iconpick>img").attr("src", (tr.auto? t.icons[t.dfl] : tr.icon)).trigger("change");
             m.redraw();
@@ -192,7 +235,19 @@ pol.tracking.db.MyTrackers = class extends pol.tracking.TrackerAlias {
  
     } /* constructor */
 
-
+    
+    onIdEdit() { 
+        for (const x of this.myTrackers)
+            if (this.edit.id() == x.id) {
+                this.editMode=true;
+                return;
+            }
+        this.editMode=false; 
+    }
+    
+    
+    
+    
 } /* class */
 
 

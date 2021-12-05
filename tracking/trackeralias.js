@@ -45,7 +45,7 @@ pol.tracking.TrackerAlias = class extends pol.core.Widget {
                         m("span.xsleftlab", "Ident:"),
                         m(textInput, 
                             { id:"trackerId", value: t.edit.id, size: 16, 
-                                maxLength:25, regex: /^[^\<\>\'\"]+$/i })),
+                                maxLength:25, onchange: t.onIdEdit(), regex: /^[^\<\>\'\"]+$/i })),
                          
                     m("div.field", 
                         m("span.xsleftlab", "Alias:"),
@@ -111,6 +111,8 @@ pol.tracking.TrackerAlias = class extends pol.core.Widget {
     onActivate() {
         setTimeout(()=> this.iconGrey(), 600); 
     }
+    
+    onIdEdit() {}
         
     setIdent(id) {
         this.edit.id(id);
