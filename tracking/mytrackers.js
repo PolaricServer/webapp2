@@ -149,15 +149,15 @@ pol.tracking.db.MyTrackers = class extends pol.tracking.TrackerAlias {
                 return; 
             let data = createItem(id, alias, auto, icn); 
             
-            t.server.PUT("trackers", JSON.stringify(data), 
+            t.server.PUT("trackers/"+id, JSON.stringify(data), 
                 x => {
-                    console.log("Updated tracker: "+data.id);
+                    console.log("Updated tracker: "+id);
                     updateList(data, auto, icn, x);
                 },
                 x => {
                     console.log("Update tracker -> "+x.status+": "+x.statusText +
                         " ("+x.responseText+")");
-                    alert("Cannot update tracker: " + data.id+
+                    alert("Cannot update tracker: " + id+
                         '\n"' + x.responseText + '"');
                 }
             );
