@@ -266,3 +266,6 @@ div.telbin span.on {background: yellow; border: 1px solid; font-weight: bold}
 
 div#graph {height: 290px; width: 510px; margin-top: -5px}
 
+div#owner {padding-top: 0.6em; padding-bottom: 0}
+div#owner input {width: 8em; background: aliceblue}
+div#owner + form.trackerAlias {border-top: none; padding-top: 0.4em}

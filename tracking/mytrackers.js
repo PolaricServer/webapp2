@@ -2,7 +2,7 @@
  Map browser based on OpenLayers 5. Tracking. 
  Search historic data on tracker points on server.  
  
- Copyright (C) 2018 Øyvind Hanssen, LA7ECA, ohanssen@acm.org
+ Copyright (C) 2018-2021 Øyvind Hanssen, LA7ECA, ohanssen@acm.org
  
  This program is free software: you can redistribute it and/or modify
  it under the terms of the GNU Affero General Public License as published 
@@ -35,6 +35,9 @@ pol.tracking.db.MyTrackers = class extends pol.tracking.TrackerAlias {
         t.classname = "tracking.db.MyTrackers"; 
         t.myTrackers = [];
         t.editMode = false; 
+        t.psclient = null;
+        t.userList = [];
+        t.user = m.stream("");
 
         this.widget = {
             view: function() {
@@ -51,6 +54,15 @@ pol.tracking.db.MyTrackers = class extends pol.tracking.TrackerAlias {
                             m("td", (x.active ? m("img", {src:"images/16px/ok.png"}) : ""))
                         ]);
                     }))),
+                    
+                    
+                    m("div.field#owner", 
+                        m("span.xsleftlab", {title: "Optional: Move tracker to another user"}, "Owner:"),      
+                        m(textInput, {list: "userList", value: t.user}),
+                        m("datalist#userList", t.userList.map( x=> {
+                            return m("option", x)
+                        }))), 
+                         
                     m(t.aliasWidget),
                     m("div.butt", [
                         m("button", { type: "button", disabled: !addMode(), onclick: add }, "Add"),
@@ -70,7 +82,15 @@ pol.tracking.db.MyTrackers = class extends pol.tracking.TrackerAlias {
         setInterval(getTrackers, 120000);
         // FIXME: Use pubsub service? 
         
-       
+        t.server.GET("usernames", null,
+            x=> { 
+                t.userList=JSON.parse(x);
+                t.userList.sort((x,y)=> {return x > y});
+                m.redraw() 
+            },
+            ()=> { console.warn("Couldn't get user list"); }
+        );
+               
    
         function addMode() {
             if (t.edit.id() == null || t.edit.id() == "")
@@ -94,7 +114,15 @@ pol.tracking.db.MyTrackers = class extends pol.tracking.TrackerAlias {
             console.assert(userid && userid!=null, "userid="+userid);
             if (userid == null)
                 return;
+            
             t.server.GET("trackers", "", x => { 
+                /* Subscribe to pubsub room */
+                if (t.psclient == null) 
+                    t.psclient = t.server.pubsub.subscribe("trackers:"+userid, x => {
+                        getTrackers();
+                    }); 
+                
+                /* Parse result */
                 t.myTrackers = JSON.parse(x);
                 for (var tt of t.myTrackers) 
                     t.setIcon(tt, tt.icon); 
@@ -108,13 +136,13 @@ pol.tracking.db.MyTrackers = class extends pol.tracking.TrackerAlias {
         /* Add a tracker to the list.*/
         function add() {
             let icn = $("#iconpick").get(0).value; 
-            addItem(t.edit.id().toUpperCase(), t.edit.alias(), t.edit.auto, icn);
+            addItem(t.edit.id().toUpperCase(), t.user(), t.edit.alias(), t.edit.auto, icn);
         }
         
         /* Update item */
         function update() {
             let icn = $("#iconpick").get(0).value; 
-            updateItem(t.edit.id().toUpperCase(), t.edit.alias(), t.edit.auto, icn);
+            updateItem(t.edit.id().toUpperCase(), t.user(), t.edit.alias(), t.edit.auto, icn);
         }    
             
         /* Reset all items */    
@@ -124,10 +152,10 @@ pol.tracking.db.MyTrackers = class extends pol.tracking.TrackerAlias {
         }
         
         
-        function addItem(id, alias, auto, icn) {
+        function addItem(id, user, alias, auto, icn) {
             if (id == null || id == "")
                 return; 
-            let data = createItem(id, alias, auto, icn); 
+            let data = createItem(id, user, alias, auto, icn); 
             
             t.server.POST("trackers", JSON.stringify(data), 
                 x => {
@@ -144,11 +172,14 @@ pol.tracking.db.MyTrackers = class extends pol.tracking.TrackerAlias {
         }
         
         
-        function updateItem(id, alias, auto, icn) {
+        function updateItem(id, user, alias, auto, icn) {
             if (id == null || id == "")
                 return; 
-            let data = createItem(id, alias, auto, icn); 
-            
+            let data = createItem(id, user, alias, auto, icn); 
+            if (user != "" && user != t.server.auth.userid)
+                if (confirm("Transfer '"+id+"' to user '"+user+"' - are you sure?")==false)
+                    return;
+                
             t.server.PUT("trackers/"+id, JSON.stringify(data), 
                 x => {
                     console.log("Updated tracker: "+id);
@@ -164,11 +195,11 @@ pol.tracking.db.MyTrackers = class extends pol.tracking.TrackerAlias {
         }
         
         
-        function createItem(id, alias, auto, icn) {
+        function createItem(id, user, alias, auto, icn) {
             const icn2 = icn.substr(icn.lastIndexOf("/")+1);
             return {
                 id: id, 
-                user: t.server.auth.userid, 
+                user: (user != null ? user : t.server.auth.userid), 
                 alias: (alias=="" ? null: alias),
                 icon: (auto ? null : icn2)
             };
@@ -245,8 +276,20 @@ pol.tracking.db.MyTrackers = class extends pol.tracking.TrackerAlias {
         this.editMode=false; 
     }
     
+        
+    onclose() { 
+        const id = t.server.auth.userid
+        if (id != null && this.psclient != null)
+            t.server.pubsub.unsubscribe("telemetry:"+id, this.psclient); 
+        this.psclient = null;
+        super.onclose();
+    }
     
     
+    clear() {
+        super.clear();
+        this.user("");
+    }
     
 } /* class */
 
