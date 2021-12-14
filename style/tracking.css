@@ -165,6 +165,8 @@ table.mytrackers td:last-child {border-right: none}
 #trackerEdit form.trackerAlias input#alias {margin-right: 0.6em}
 div.butt {padding-left: 2em; border-top: 2px solid #999; margin-top: 0.3em; padding-top: 0.3em !important}
 
+#tracking\.db\.MyTrackers div.butt {padding-left: 0.2em; padding-right: 0.2em;}
+
 span#confirm {color: green; font-size: smaller; margin-left: 0.5em}
 
 div.itemList>span {white-space:nowrap}

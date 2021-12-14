@@ -41,6 +41,8 @@ pol.tracking.Tags = class extends pol.core.Widget {
         t.usedTags = [];
         t.negTags = new Set();
         t.classname = "tracking.Tags"; 
+        t.url = "";
+        
 
         this.widget = {
             view: function() {
@@ -71,7 +73,7 @@ pol.tracking.Tags = class extends pol.core.Widget {
         
         function add() {
             let arg = [t.tag];
-            t.server.POST("item/"+t.ident()+"/tags", JSON.stringify(arg),
+            t.server.POST(t.url, JSON.stringify(arg),
                 ()=> { t.getTags(); },
                 (x)=> { console.warn("Couldn't add tag: "+x); }
             );
@@ -88,7 +90,7 @@ pol.tracking.Tags = class extends pol.core.Widget {
     
     remove(x) {
         x = encodeURIComponent(x);
-        this.server.DELETE("item/"+this.ident()+"/tags/"+x,
+        this.server.DELETE(this.url+"/"+x,
             ()=> { this.getTags(); m.redraw();  }, 
             (x)=> { console.warn("Couldn't delete object: "+x); })
     }
@@ -100,6 +102,10 @@ pol.tracking.Tags = class extends pol.core.Widget {
     
     setIdent(id) {
         this.ident(id);
+        if (id=='mytrackers')
+            this.url = "trackers/tags";
+        else
+            this.url = "item/"+id+"/tags";
         m.redraw();
     }
     
@@ -115,7 +121,7 @@ pol.tracking.Tags = class extends pol.core.Widget {
             ()=> { console.warn("Couldn't get tag list"); }
         )
         
-        this.server.GET("item/"+this.ident()+"/tags", null,
+        this.server.GET(this.url, null,
             x=> { 
                 this.negTags.clear();
                 this.tagsOn=JSON.parse(x);

@@ -69,6 +69,7 @@ pol.tracking.db.MyTrackers = class extends pol.tracking.TrackerAlias {
                         m("button", { type: "button", disabled: !updateMode(),  onclick: update }, "Update"),
                         m("button", { type: "button", onclick: ()=> {t.clear();} }, "Clear"),
                         m("button", { type: "button", onclick: ()=> {resetAll();} }, "Reset All"),
+                        m("button", { type: "button", onclick: ()=> {tags();} }, "Tags"),
                     ])
                 ])
             }
@@ -149,6 +150,10 @@ pol.tracking.db.MyTrackers = class extends pol.tracking.TrackerAlias {
         function resetAll() {
             for (const x of t.myTrackers)
                 updateItem(x.id, "", true, "");
+        }
+        
+        function tags() {
+            WIDGET("tracking.Tags", [150,150], false, x=> x.setIdent("mytrackers"));
         }
         
         
@@ -278,9 +283,9 @@ pol.tracking.db.MyTrackers = class extends pol.tracking.TrackerAlias {
     
         
     onclose() { 
-        const id = t.server.auth.userid
+        const id = this.server.auth.userid
         if (id != null && this.psclient != null)
-            t.server.pubsub.unsubscribe("telemetry:"+id, this.psclient); 
+            this.server.pubsub.unsubscribe("telemetry:"+id, this.psclient); 
         this.psclient = null;
         super.onclose();
     }
