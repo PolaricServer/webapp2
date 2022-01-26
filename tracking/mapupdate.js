@@ -50,7 +50,9 @@ pol.tracking.MapUpdate = class {
             else
                 console.log("t.onopen is null");
             t.retry = 0;
-            setInterval( ()=> t.websocket.send("****"), 360000);
+            setInterval(function() {
+                t.websocket.send("****"); // Keepalive 
+            }, 120000);
         };
   
   

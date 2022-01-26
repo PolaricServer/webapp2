@@ -81,7 +81,7 @@ pol.tracking.db.MyTrackers = class extends pol.tracking.TrackerAlias {
 
         getTrackers();        
         setInterval(getTrackers, 120000);
-        // FIXME: Use pubsub service? 
+
         
         t.server.GET("usernames", null,
             x=> { 
@@ -149,7 +149,7 @@ pol.tracking.db.MyTrackers = class extends pol.tracking.TrackerAlias {
         /* Reset all items */    
         function resetAll() {
             for (const x of t.myTrackers)
-                updateItem(x.id, "", true, "");
+                updateItem(x.id, t.user(), "", true, "");
         }
         
         function tags() {
@@ -232,7 +232,7 @@ pol.tracking.db.MyTrackers = class extends pol.tracking.TrackerAlias {
   
         /* Remove a tracker from the client side list (a duplicate) */
         function removeDup(id) {
-            for (i in t.myTrackers) 
+            for (const i in t.myTrackers) 
                 if (id==t.myTrackers[i].id)
                     t.myTrackers.splice(i, 1);
         }
