@@ -117,7 +117,7 @@ pol.features.Properties = class extends pol.core.Widget {
                         m(textInput, {id:"editLabel", size: 19, maxLength:25, value: t.label, regex: /.*$/i }),
                         m("button", {onclick: set, title: "Update properties"}, "Update")
                     ]),
-                    
+
                     (!t.layerList.isEmpty() ? 
                         m("span.field", [
                             m("span.sleftlab", "Layer: "),
@@ -125,6 +125,8 @@ pol.features.Properties = class extends pol.core.Widget {
                             m("button", {onclick: move, title: "Move feature to layer"}, "Move to"),
                             m("button", {onclick: getFrom, title: "Get features from layer for editing"}, "Get from"),
                         ]) : ""),
+                         
+                    m("div.link_id", {onclick: ()=> WIDGET("layers.List", [50,70], true)}, "Create/manage layers..."),   
 
                     (t.radius ? m(t.circle) : (t.colist ? m(t.coord) : ""))
                 ])

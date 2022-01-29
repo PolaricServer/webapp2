@@ -12,7 +12,7 @@
  * Uncomment to use aprs.no as a backend. 
  * Default is to use the location of the webapp. 
  */
-SERVER("https://kart2.aprs.no");
+// SERVER("https://kart2.aprs.no");
 
 
 /* 
@@ -22,8 +22,8 @@ SERVER("https://kart2.aprs.no");
  * aprs.no uses "ws" and "srv" through a proxy. Default is to use a separate port: 8081. 
  * Uncomment the following two lines to use a backend with a proxy. 
  */
-WSPREFIX("ws");
-AJAXPREFIX("srv");
+// WSPREFIX("ws");
+// AJAXPREFIX("srv");
 
 
 /* Location of aprsd icons */
@@ -249,7 +249,15 @@ LAYERS ({
             url: "https://openwms.statkart.no/skwms1/wms.rutenett",
             params: {'LAYERS':'UTMrutenett', VERSION: "1.1.1"}
         })
-    }) 
+    }),
+    new ol.layer.Tile({
+       name: "Plus codes grid",
+       source: new ol.source.XYZ({
+          // OpenLayers XYZ layers use WMS tile numbering by default.
+          url: 'https://grid.plus.codes/grid/wms/{z}/{x}/{y}.png?col=red'
+       }),
+    }),
+
 ]);
 
 

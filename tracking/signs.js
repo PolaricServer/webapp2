@@ -311,8 +311,12 @@ pol.tracking.db.Signs = class extends pol.core.Widget {
             for (x of list) 
                 this.myTypes.push({label:x.name, val:x.id, icon: x.icon });
             
-            this.type = this.myTypes[0].val;
-            this.icon = this.myTypes[0].icon; 
+            if (this.myTypes.length > 0) {
+                this.type = this.myTypes[0].val;
+                this.icon = this.myTypes[0].icon; 
+            } else 
+                console.warn("No sign types found in database");
+            
             m.redraw();
         });
     }
@@ -353,8 +357,12 @@ pol.tracking.db.Signs = class extends pol.core.Widget {
         this.descr("");
         this.url("");
         this.scale("");
-        this.type = this.myTypes[0].val; 
-        this.icon = this.myTypes[0].icon;
+        if (this.mTypes != null && this.mTypes.length > 0) {
+            this.type = this.myTypes[0].val; 
+            this.icon = this.myTypes[0].icon;
+        } else 
+            console.warn("No sign types found in database");
+ 
         $('#typeSelect').val(this.type);
         this.setEditMode(false);
     }

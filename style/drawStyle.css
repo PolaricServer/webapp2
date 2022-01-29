@@ -192,3 +192,6 @@ table.lfeatures td {
     font-size: 90%;  
     min-width: 8em;
 }
+table.features caption {min-width: 8em; }
+div#features div.link_id {font-size: 90%; margin-right:0.5em; margin-top: 0.4em; text-align: right }
+div#features hr {color: #ccc}
