@@ -182,8 +182,9 @@ pol.tracking.PointInfo = class extends pol.core.Widget {
                 const x = t.info;
                 return [
                     m(_aprspoint),
-                    m("div.field", 
-                        m("span.leftlab", "Via: "), cleanPath(x.path)), 
+                    (x.path != null ? 
+                       m("div.field", 
+                           m("span.leftlab", "Via: "), cleanPath(x.path)) : null), 
                     
                     m("div.traffic", [
                         (x.trafficTo != null && x.trafficTo.length > 0 ? m("div.field", 
@@ -216,6 +217,8 @@ pol.tracking.PointInfo = class extends pol.core.Widget {
         
         
         function cleanPath(str) {
+            if (str==null)
+                return "";
             return str.replaceAll(/qA.\,?/ig, "")
                     .replaceAll(/(WIDE|SAR)[0-9](\-[0-9])?\,?/ig, "")
                     .replaceAll("*", "")
@@ -231,7 +234,7 @@ pol.tracking.PointInfo = class extends pol.core.Widget {
     getItem(id) {
         m.redraw();
         this.srv.GET("item/"+id+"/info", null, 
-                x  => { this.info = JSON.parse(x); m.redraw(); },
+                x  => { this.info = JSON.parse(x); m.redraw()},
                 () => { console.warn("Item not found"); }
             );
     }

@@ -18,7 +18,7 @@ case "$1" in
             usermod -G dialout polaric
         fi
         chown www-data:polaric /var/lib/polaric/mapcache
-        chmod 775 /var/lib/polaric/mapcache
+        chmod 2775 /var/lib/polaric/mapcache
         if ls /var/lib/polaric/mapcache/*.db > /dev/null 2>%1; then
             chown www-data:polaric /var/lib/polaric/mapcache/*.db
             chmod 664 /var/lib/polaric/mapcache/*.db
