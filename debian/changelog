@@ -1,3 +1,13 @@
+polaric-webapp2 (1.8) stable; urgency=medium
+
+  * Move GPX generation to client
+  * Use REST API for info popups and showing packets
+  * Telemetry
+  * "my-trackers" improvements
+  * Various fixes..
+
+ -- Oyvind Hanssen <ohanssen@acm.org>  Thu, 27 Jan 2022 11:23:14 +0100
+
 polaric-webapp2 (1.7.3) stabble; urgency=medium
 
   * Installation script fix
