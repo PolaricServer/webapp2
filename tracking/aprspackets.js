@@ -1,8 +1,8 @@
 /*
- Map browser based on OpenLayers 5. Tracking. 
- Search historic data on tracker points on server.  
+ Map browser based on OpenLayers. Tracking. 
+ Search historic data on APRS packets on server.  
  
- Copyright (C) 2019 Øyvind Hanssen, LA7ECA, ohanssen@acm.org
+ Copyright (C) 2019-2022 Øyvind Hanssen, LA7ECA, ohanssen@acm.org
  
  This program is free software: you can redistribute it and/or modify
  it under the terms of the GNU Affero General Public License as published 
@@ -37,6 +37,7 @@ pol.tracking.AprsPackets = class extends pol.core.Widget {
         t.classname = "tracking.AprsPackets"; 
         t.tlist = [];
         t.callsign = "";
+        t.n = 200;
         
         this.showList = {
             view: function() {
@@ -48,7 +49,7 @@ pol.tracking.AprsPackets = class extends pol.core.Widget {
                             m("td", x.source),
                             m("td", {title: x.time}, formatTime(x.time)),
                             m("td", x.to),
-                            m("td", x.via),
+                            m("td", fixPath(x.via)),
                             m("td", x.report),
                                  
                         ])
@@ -60,33 +61,65 @@ pol.tracking.AprsPackets = class extends pol.core.Widget {
         
         this.widget = {
             view: function() {
+                var tsearch = "";
+                if (t.tfrom)
+                    tsearch += " From: "+t.tfrom;
+                if (t.at)
+                    tsearch += " To: "+t.at;
+                if (!t.tfrom && !t.at)
+                    tsearch = " Last "+t.n+" packets";
+                
                 return m("div#rawpackets", [       
                     m("h1", "APRS packets"),
-                    m("span",t.callsign+" (last 200 packets)"),br,
+                    m("span",t.callsign+" -"+tsearch),br,
                     m("div#packetresult")    
                 ])
             }
         };
   
         
+        t.days = ['jan','feb','mar','apr','may','jun','jul','aug','sep','oct','nov','dec'];
+        
+        
         function formatTime(dt) {
             const d = new Date(dt);
             return "" +
+                (d.getDate()+1 + " "+t.days[d.getMonth()]+" ")+
                 (d.getHours()<10 ? "0" : "") + d.getHours() + ":" +
                 (d.getMinutes()<10 ? "0" : "") + d.getMinutes() +":"+
                 (d.getSeconds()<10 ? "0" : "") + d.getSeconds();
         }
         
+        
+        function fixPath(pt) {
+            const pp = pt.split(/qA/);
+            const pp1 = pp[0].split("*");
+            const ipath = m("span.ipath", "qA"+pp[1]);
+            
+            if (pp1.length == 2)
+                return m("span", [m("span.usedpath", pp1[0]+'*'), pp1[1], ipath]);
+            else
+                return m("span", [pp[0]+" ", ipath]);
+        }
+        
+        
     } /* constructor */
     
     
-    getPackets(ident) {
+    getPackets(ident, n, at, tfrom) {
         console.assert(ident && ident != null, "Assertion failed");
         this.callsign=ident;
+        if (!n) this.n = 500; else this.n = n;
+        this.at = at;
+        this.tfrom = tfrom;
+        var tsearch = ""; 
+        if (this.at) tsearch += "&tto="+this.at;
+        if (this.tfrom) tsearch += "&tfrom="+this.tfrom;
         m.redraw();
         if (!ident || ident==null)
             return;
-        CONFIG.server.GET("hist/"+ident+"/aprs?n=200", null,
+
+        CONFIG.server.GET("hist/"+ident+"/aprs?n="+this.n+tsearch, null,
             x=> { 
                 this.tlist = JSON.parse(x); 
                 /* 

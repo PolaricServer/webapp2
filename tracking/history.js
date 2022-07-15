@@ -1,9 +1,9 @@
  
 /*
- Map browser based on OpenLayers 5. Tracking. 
+ Map browser based on OpenLayers. Tracking. 
  Search historic data on tracker points on server.  
  
- Copyright (C) 2018-2019 Øyvind Hanssen, LA7ECA, ohanssen@acm.org
+ Copyright (C) 2018-2022 Øyvind Hanssen, LA7ECA, ohanssen@acm.org
  
  This program is free software: you can redistribute it and/or modify
  it under the terms of the GNU Affero General Public License as published 
@@ -64,7 +64,7 @@ pol.tracking.db.History = class extends pol.core.Widget {
         t.widget = {
             view: function() {
                 return m("div", [
-                    m("h1", "Historical tracks"),
+                    m("h1", "Historical data search"),
                     m(showList),    
                     m("form.hist", [ 
                         m("div.field", 
@@ -83,7 +83,11 @@ pol.tracking.db.History = class extends pol.core.Widget {
                                 title: "If checked, end-time is now" }, "Open end")),
                         
                         m("div.histbutt", [
-                            m("button#hist_b1", {type: "button", onclick: search}, "Search"),
+                            m("button#hist_b1", {type: "button", 
+                                title: "Show trail - search", onclick: search}, "Trail"),
+                            m("button#hist_pkts", {type: "button", 
+                                title: "Raw APRS packets - search", onclick: packets}, "Pkts"),
+                          
                             m("button#hist_b2", {type: "button", 
                                 title: "Clear all", onclick: clear}, "Clear"),
                             m("button#hist_b3", {type: "button", 
@@ -93,7 +97,7 @@ pol.tracking.db.History = class extends pol.core.Widget {
                             m("button#hist_b5", {type: "button", 
                                 title: "Show all trails in list", onclick: showAll}, "Show all"),
                             m("button#hist_b6", {type: "button", 
-                                title: "Export to GPX file", onclick: exportGpx}, "Export"),
+                                title: "Export trails to GPX file", onclick: exportGpx}, "Export"),
                             m("button#hist_back", {type: "button",  
                                 title: "Return to realtime tracking", onclick: goBack}, "Back")
                         ])
@@ -176,6 +180,14 @@ pol.tracking.db.History = class extends pol.core.Widget {
             showTrail(copyItem());
         }
 
+        function packets() {
+            getSearch();
+            var it = copyItem();
+            WIDGET( "tracking.AprsPackets", [50, 70], false, 
+                x=> x.getPackets(it.call, 500,  it.todate+"/"+it.totime, it.fromdate+"/"+it.fromtime) );
+            
+        }
+        
    
         /* Show all items in list - button handler */
         function showAll() {
