@@ -63,7 +63,7 @@ pol.tracking.Search = class extends pol.core.Widget {
                         m("form", [ 
                             "Keywords (tags): ", br, 
                                 m("div#tags", t.tags.filter(x=> prefixSel(x)).map( x=> {
-                                    return m(checkBox, {checked: t.selected[x], id: "tag_"+x, onchange: apply(tagToggle, x)}, x)
+                                    return m(checkBox, {checked: t.selected[x], id: "tag_"+x, onchange: apply(tagToggle, x)}, limitLen(x,20));
                                 })),
                             
                             
@@ -80,6 +80,10 @@ pol.tracking.Search = class extends pol.core.Widget {
             }
         };
    
+        function limitLen(x, len) {
+            return x.substring(0,len-1)+(x.length>len? "..":"");
+        }
+        
         
         function apply(f, x) {
             return () => { return f(x); } 
@@ -139,6 +143,7 @@ pol.tracking.Search = class extends pol.core.Widget {
                 '?srch='+(filt==null ? "*":filt)  + (tags!=null ? '&tags='+tags : ''), null, 
                 x => {
                     t.result = JSON.parse(x);
+
                    /* 
                     * Mount mithril component for resulting table to #ttable div
                     * make table scrollable. 

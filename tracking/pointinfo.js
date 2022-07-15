@@ -176,6 +176,24 @@ pol.tracking.PointInfo = class extends pol.core.Widget {
         }
         
         
+        var _datexsit = {
+            view: () => {
+                const x = t.info;
+                return [
+                    m("div.field", 
+                        m("span.leftlab", "Type-Road: "), x.sitType, " : ",x.roadNr),
+                    m("div.field", 
+                        m("span.leftlab", "Severity: "), x.severity),
+                    m("div.field", 
+                        m("span.leftlab", "Valid time span: "), m("span.nobr", formatDTG(x.startTime)), nbsp, "-", nbsp, formatDTG(x.endTime)), 
+                    m("div.datexcom", x.comments[0]), 
+                    m("div.datexcom", x.comments[1]),
+                ]
+            }
+        }
+        
+        
+        
         /* APRS station */
         var _station = {
             view: () => {
@@ -203,6 +221,7 @@ pol.tracking.PointInfo = class extends pol.core.Widget {
                 if (t.info.type=="Station") return m(_station);
                 if (t.info.type=="AprsObject") return m(_aprspoint);
                 if (t.info.type=="AisVessel") return m(_aisvessel);
+                if (t.info.type=="DatexSitRecord") return m(_datexsit);
                 else return m(_trackerpoint);
             }
         };

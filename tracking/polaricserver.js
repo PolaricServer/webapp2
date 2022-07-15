@@ -146,7 +146,7 @@ pol.tracking.PolaricServer = class extends pol.core.Server {
                 });
         }
         else 
-            POPUP("tracking.PointInfo", pixel, x=>x.getItem(p.point.ident))
+            POPUP("tracking.PointInfo", pixel, x=>x.getItem( encodeURIComponent(p.point.ident)))
     }      
      
 } /* class */

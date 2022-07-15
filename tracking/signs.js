@@ -40,7 +40,7 @@ pol.tracking.db.Signs = class extends pol.core.Widget {
         t.url = m.stream("");
         t.scale = m.stream("");
         t.pos = [0,0];
-        t.ident = -1;
+        t.ident = "";
         t.type = 0;
         t.icon = "";
         t.typeSel = false; 
@@ -170,13 +170,13 @@ pol.tracking.db.Signs = class extends pol.core.Widget {
         
         /* Update object in database */
         function update() {
-            if (t.ident < 0)
+            if (t.ident == "")
                 return; 
             if (t.pos[0]==0 && t.pos[1]==0) {
                 error("Invalid position");
                 return;
             }
-            t.server.PUT("signs/"+parseInt(t.ident), JSON.stringify(getObject()), 
+            t.server.PUT("signs/"+t.ident, JSON.stringify(getObject()), 
                ()=> { t.getSigns() }, 
                 x=> { error("Cannot update on server: "+x.responseText) }
             ); 
@@ -205,7 +205,7 @@ pol.tracking.db.Signs = class extends pol.core.Widget {
         
         
         function remove(i) {
-            t._remove(i);
+            t._remove(i, true);
         }
         
         
@@ -243,7 +243,7 @@ pol.tracking.db.Signs = class extends pol.core.Widget {
     _remove(i, index) {
         if (i==null)
             return;
-        const ident = (index ? this.mySigns[i].id : i);
+        const ident = (index ? this.mySigns[i].id : ""+i);
         this.server.DELETE("signs/"+ident, x => {
             console.log("Removed sign: "+ident);
             if (index) { 
@@ -353,7 +353,7 @@ pol.tracking.db.Signs = class extends pol.core.Widget {
     /* Clear all fields */
     clearFields() {
         this.pos = [0,0];
-        this.ident = -1;  
+        this.ident = "";  
         this.descr("");
         this.url("");
         this.scale("");

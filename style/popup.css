@@ -188,7 +188,7 @@ div#tags {
   -webkit-column-width: 1em; 
   border:1px dotted #555; 
   background: #ddc; 
-  width: 32em; 
+  width: 40em; 
   padding: 3px
 }
 div#tags input {margin: 0.15em}

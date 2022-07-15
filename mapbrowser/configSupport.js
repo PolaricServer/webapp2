@@ -270,6 +270,10 @@ function SCALE_GT (sc)
    { return function() {return CONFIG.mb.getScale() > sc; }}
    
    
+function LOGIN()
+   { return function() {return CONFIG.server && CONFIG.server.loggedIn; }}
+   
+   
 function AND(a, b)
    { return function() {return a() && b();} }
    
@@ -376,6 +380,7 @@ function createLayer_WFS(opts)
    
    const layer = new ol.layer.Vector({
       name: opts.name,
+      description: opts.description,
       source: vSource,
       style: opts.style
    });

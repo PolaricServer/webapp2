@@ -70,6 +70,7 @@ install: mapbrowser-min.js
 	install -m 644 lib/moment.min.js lib/pikaday.min.js lib/pikaday.css $(INSTALL_WEB)/lib
 	install -m 644 lib/mithril.min.js lib/mithril-stream.js $(INSTALL_WEB)/lib
 	install -m 644 lib/proj4.js $(INSTALL_WEB)/lib
+	install -m 644 lib/echarts.min.js $(INSTALL_WEB)/lib
 	
 	install -m 644 sound/*.wav $(INSTALL_WEB)/sound
 	

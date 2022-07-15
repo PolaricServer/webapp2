@@ -1,4 +1,5 @@
-
+span.ipath {margin-left: 0.2em; color: #339; font-style: italic}
+span.usedpath {color: green; font-weight: bold}
         
 div.lstill, div.lobject, div.lmoving {
    border: 1px solid #766;   
@@ -271,3 +272,5 @@ div#graph {height: 290px; width: 510px; margin-top: -5px}
 div#owner {padding-top: 0.6em; padding-bottom: 0}
 div#owner input {width: 8em; background: aliceblue}
 div#owner + form.trackerAlias {border-top: none; padding-top: 0.4em}
+
+.datexcom {border: 2px dotted; background: #edd; margin: 0.7em; padding: 0.5em; max-width: 30em}

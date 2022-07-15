@@ -52,7 +52,7 @@ pol.core.LayerSwitcher = class extends pol.core.Widget {
                     m("h2", "Base layer"), m("form", t.mb.config.baseLayers.map(x => {
                         var idx = i++;
                         return (x.predicate() ? 
-                            m("span", [ 
+                            m("span", {title: x.get("description")}, [ 
                                 m("input#blayer"+idx, {
                                     onclick: handleSelect(idx), 
                                     type:"radio", name:"layer", value:"layer"+ (idx), 
@@ -70,7 +70,8 @@ pol.core.LayerSwitcher = class extends pol.core.Widget {
                                 id: "layer"+idx, 
                                 onclick: handleToggle(idx),
                                 checked: x.getVisible()
-                            },  x.get("name"), br )
+                            }, 
+                            m("span", {title: x.get("description")}, x.get("name")), br )
                         : null) 
                     })) 
                 ]);                             
