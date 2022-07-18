@@ -84,7 +84,7 @@ pol.tracking.AprsPackets = class extends pol.core.Widget {
         function formatTime(dt) {
             const d = new Date(dt);
             return "" +
-                (d.getDate()+1 + " "+t.days[d.getMonth()]+" ")+
+                (d.getDate() + " "+t.days[d.getMonth()]+" ")+
                 (d.getHours()<10 ? "0" : "") + d.getHours() + ":" +
                 (d.getMinutes()<10 ? "0" : "") + d.getMinutes() +":"+
                 (d.getSeconds()<10 ? "0" : "") + d.getSeconds();

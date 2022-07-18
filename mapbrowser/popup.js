@@ -310,7 +310,7 @@ pol.core.Popup = class {
         let xoffs = false, yoffs = false;
         
         if (img != null) {
-            img.style.left= -9+'px';
+            img.style.left= -16+'px';
             img.style.top= -9+'px';
         } 
         else {
@@ -329,7 +329,7 @@ pol.core.Popup = class {
             x -= xoff;
             if (x < 1) x=1;
             if (img!=null)
-                img.style.left = (xoff-9)+'px';
+                img.style.left = (xoff-16)+'px';
         }
 
         yoff = y + 20 + pdiv.clientHeight - this.onDiv.clientHeight;
