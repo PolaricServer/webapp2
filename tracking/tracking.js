@@ -312,6 +312,48 @@ pol.tracking.Tracking = class {
     } /* AddPoint */
 
 
+    
+    createPopupLabel(pos, text, xtext) {
+        const t = this;
+        let element = document.createElement('div');
+        element.className = "popuplabel";
+        let lbl = new ol.Overlay({
+            element: element,
+            offset: [-7, -1],
+            insertFirst: false,
+            positioning: 'center-left'
+        });
+        lbl.setPosition(pos);
+        CONFIG.mb.map.addOverlay(lbl);
+        
+        /* Mouse event handlers */
+        element.onclick = function(e) {
+            browser.gui.removePopup();
+            element._clicked = true;
+            browser.gui.showPopup({
+                geoPos: proj2ll(pos), html: xtext+"<br>"+text});
+            e.stopPropagation();
+        }       
+        
+        element.onmouseenter = function(e) { 
+            setTimeout(() => {
+                if (element._clicked) return;
+                browser.gui.removePopup();
+                browser.gui.showPopup({
+                    geoPos: proj2ll(pos), html: text}); 
+            }, 500);
+            e.stopPropagation();
+        }
+        element.onmouseleave = function(e) {
+           if (!element._clicked) 
+               setTimeout(() => { 
+                   browser.gui.removePopup();
+                   element._clicked = false;
+                }, 1000);
+           e.stopPropagation();
+        }  
+        return lbl;
+    }
 
 
     /**
@@ -443,8 +485,10 @@ pol.tracking.Tracking = class {
         if (hide) {      
             if (trail !=null)
                this.source.removeFeature(trail);
-            if (tpoints !=null)
-               this.source.removeFeature(tpoints);	    
+            if (tpoints !=null) {
+                this.source.removeFeature(tpoints);	
+                this.removeTrailPoints(feature.point);
+            }
         }
         else
             if (feature.point != null)
@@ -499,12 +543,20 @@ pol.tracking.Tracking = class {
     } /* addTrail */
 
 
-
-
+    formatTime(dt) {
+        const days = ['jan','feb','mar','apr','may','jun','jul','aug','sep','oct','nov','dec'];
+        const d = new Date(dt);
+        return "" +
+            (d.getDate() + " "+days[d.getMonth()]+" ")+
+            (d.getHours()<10 ? "0" : "") + d.getHours() + ":" +
+            (d.getMinutes()<10 ? "0" : "") + d.getMinutes() +":"+
+            (d.getSeconds()<10 ? "0" : "") + d.getSeconds();
+    }
+        
+        
     /**
      * Add points to a trail.
      * TODO: Should there be a method to enable/disable this?
-     * TODO: Should points be clickable, to pop up some info?
      */
     addTrailPoints(p) {
         console.assert(p!=null, "p is null");
@@ -514,11 +566,20 @@ pol.tracking.Tracking = class {
 
         feature = new ol.Feature(new ol.geom.MultiPoint([]));
         feature.setId(p.ident+'.trailpoints');
+        p.trail.labels = [];
 
         /* update position */
-        for (const i in p.trail.linestring)
+        for (const i in p.trail.linestring) {
+
+            p.trail.labels.push(
+                this.createPopupLabel( ll2proj(p.trail.linestring[i].pos), 
+                    this.formatTime(p.trail.linestring[i].time), p.ident)
+            );
+            
             feature.getGeometry().appendPoint(
-                new ol.geom.Point( ll2proj(p.trail.linestring[i].pos)));
+               new ol.geom.Point( ll2proj(p.trail.linestring[i].pos) ) 
+            );
+        }
 
         /* Update style */
         const style = new ol.style.Style({
@@ -532,6 +593,19 @@ pol.tracking.Tracking = class {
     }
 
 
+    removeTrailPoints(p) {
+        let feature = this.source.getFeatureById(p.ident+'.trailpoints');
+        this.source.removeFeature(feature);
+        if (!p.trail || !p.trail.labels)
+            return;
+        for (const x of p.trail.labels) 
+            CONFIG.mb.map.removeOverlay(x);
+        p.trail.labels = [];
+    }
+    
+    
+    
+    
     
     addCoveragePoints(p, ident, color) {
         const style = new ol.style.Style({
@@ -584,6 +658,8 @@ pol.tracking.Tracking = class {
             if (feature.label)
                 CONFIG.mb.map.removeOverlay(feature.label);
             this.source.removeFeature(feature);
+            if (feature.point) 
+                this.removeTrailPoints(feature.point);
         }
     }
 
