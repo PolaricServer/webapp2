@@ -97,7 +97,6 @@ pol.tracking.db.Sharing = class extends pol.core.Widget {
             t.server.GET("groups", "", x => { 
                 t.groupList = JSON.parse(x);    
                 t.groupList.sort((x,y)=> {return x > y});
-                console.log("groupList", t.groupList);
                 for (const xx of t.groupList) 
                     t.userList.push('@'+xx.ident);
             },

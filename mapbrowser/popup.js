@@ -413,7 +413,7 @@ pol.core.Popup = class {
         
         function setAdjustedPos(pd, pimg, x,y) {
             if (pd != null) 
-                pd.adjustedPos = t.setPosition_(pd, pimg, x, y);
+                pd.adjustedPos = t.setPosition_(pd, pimg, x+5, y);
         }
     }
 
