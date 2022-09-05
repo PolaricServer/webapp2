@@ -226,7 +226,7 @@ pol.tracking.db.Signs = class extends pol.core.Widget {
     
     remove (ii, noconfirm) {
         if (!noconfirm && noconfirm!=true && confirm("Remove - are you sure?") == false)
-                return;
+            return;
         var i = this.getIdent(ii);
         if (this.isActive()) {
             for (const ix in this.mySigns) 
@@ -258,10 +258,7 @@ pol.tracking.db.Signs = class extends pol.core.Widget {
         let ii; 
         if (!/__db/.test(i))
             return null;
-        if (!isNaN(i))
-            ii = i;
-        else 
-            ii = parseInt( /[0-9]+/.exec(i) ); 
+        ii = i.substring(5);
         return ii;
     }
         
@@ -357,7 +354,7 @@ pol.tracking.db.Signs = class extends pol.core.Widget {
         this.descr("");
         this.url("");
         this.scale("");
-        if (this.mTypes != null && this.mTypes.length > 0) {
+        if (this.mTypes != null && this.mTypes.length == 0) {
             this.type = this.myTypes[0].val; 
             this.icon = this.myTypes[0].icon;
         } else 
