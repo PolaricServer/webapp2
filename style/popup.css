@@ -1,6 +1,4 @@
 
-button, input {font-size: 90%}
-
 div.POPUP img.popup_pin {
   visibility: hidden;
 }
@@ -31,9 +29,6 @@ div.POPUP {
   margin-left: 7px; 
   margin-right: 7px; 
 }
-
-div.widget { overflow: hidden !important;}
-
 
 div.POPUPMENU {
   padding-bottom: 0.3em;
@@ -145,27 +140,6 @@ span.removeEdit {white-space: nowrap}
    margin-top: 0.5em;
 }
 
-.leftlab, .sleftlab, .xsleftlab, label.lleftlab {
-  float: left;
-  width: 9.0em;
-  text-align: right;
-  padding-right: 7px;
-  color: gray;
-  padding-top: 0.1em;
-}
-
-.sleftlab {
-  width: 5.5em;
-} 
-
-.xsleftlab {
-  width: 4.5em;
-} 
-
-.lleftlab {
-  width: 7em;
-}
-
 
 span.kartref {
   padding: 0px 0px 0px 0px;
@@ -195,19 +169,8 @@ div#tags input {margin: 0.15em}
 div#tags span {display: block}
 
 
-input[type=text] {background: white; height: 1.6em}
-input[type=password] {background: white; height: 1.6em}
-input[readonly]  {background: #cef; height: 1.6em}
-input[disabled]  {background: #ccc}
-input.valid      {background: #dfd}
-input.invalid    {background: #fdd}
 
-
-input#search {margin-top: 0.7em; width: 18em}
-
-
-
-h1, #layerSwitcher h2 { 
+#layerSwitcher h2 { 
   font-family: arial, helvetica, sans-serif; 
   font-size: 1.2em; 
   margin-bottom: 0.5em; 
@@ -289,27 +252,7 @@ form.mapref hr { border: dotted 1px #888 }
 
 #layerEdit #vis {margin-bottom: 0.5em}
 
-button {
- border:1px outset #bbb;
- padding:.18em;
- padding-left:.45em;
- padding-right:.45em;
- margin:3px;
- background:#ded;
- border-radius:3px;
- outline: none;
- background: linear-gradient(#efe, #ded, #cdc, #bcb);
-}
 
-button:hover {
-  background: linear-gradient(#fff, #efe, #ded, #cdc);
-}
-
-button:active {border: 1px inset #999; background: #efe}
-
-button::-moz-focus-inner {
-  border: none;
-}
 
 #hist_back {color: gray}
 .searchMode {
@@ -347,57 +290,15 @@ div#iconlist>img:hover
    { background: white; border: 1px dotted red; margin: -1px } 
 
 
-.dragdrop {
-    border: 3px dotted; margin-bottom: 5px; padding: 0.3em; 
-    background: #cee; width: 25em; min-height: 3em;
-    display: inline-block; font-size: x-small
-}
-.dragdrop img {vertical-align: middle}
-.dragover {background: #cfc}
 
-.link_id {color: #00a;}
 
-div.errmsg {color: red; margin-left: 2em; margin-bottom: 0.8em}
-
-input {max-height: 1.4em; margin-bottom: 0.1em}
-button {padding: 0.1em 0.5em 0.1em 0.5em; margin-top: 0 }
-
-.field {display: flex; align-items: center; margin-top: 2px}
-.field {line-height: 1.15em}
-.field label {margin-bottom: -2px}
 div#traffic {line-height: 1em; margin-top: 0.6em }
-.field label.leftlab {margin-bottom: 0px}
 
 .featureInfo {
   padding: 0.1em;
   padding-bottom: 0;
   background: #eec;
   margin: -2px;
-}
-
-
-select option {font-size: 90%}
-
-select {
-	display: block;
-	color: #444;
-    font-size: 0.85em;
-    line-height: 1.2;
-	padding: .2em .4em .3em .2em;
-    margin-top: -1px;
-	width: 15em;
-	box-sizing: border-box;
-	border: 1px solid #aaa;
-	box-shadow: 0 1px 0 1px rgba(0,0,0,.04);
-	border-radius: 3px;
-	-moz-appearance: none;
-	-webkit-appearance: none;
-	appearance: none;
-	background-image: url('data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%23007CB2%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-12.9%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2012.9l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095c3.5-3.5%205.4-7.8%205.4-12.8%200-5-1.9-9.2-5.5-12.8z%22%2F%3E%3C%2Fsvg%3E'),
-	  linear-gradient(to bottom, #ffffff 0%,#d5d5c5 100%);
-	background-repeat: no-repeat, repeat;
-	background-position: right .7em top 50%, 0 0;
-	background-size: .7em auto, 100%;
 }
 
 #tracking\.PointInfo {min-width: 32em}
