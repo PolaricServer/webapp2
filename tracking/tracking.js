@@ -331,27 +331,10 @@ pol.tracking.Tracking = class {
             browser.gui.removePopup();
             element._clicked = true;
             browser.gui.showPopup({
-                geoPos: proj2ll(pos), html: xtext+"<br>"+text});
+                geoPos: proj2ll(pos), html: text+"<br>"+xtext});
             e.stopPropagation();
         }       
         
-        element.onmouseenter = function(e) { 
-            setTimeout(() => {
-                if (element._clicked) return;
-                browser.gui.removePopup();
-                browser.gui.showPopup({
-                    geoPos: proj2ll(pos), html: text}); 
-            }, 500);
-            e.stopPropagation();
-        }
-        element.onmouseleave = function(e) {
-           if (!element._clicked) 
-               setTimeout(() => { 
-                   browser.gui.removePopup();
-                   element._clicked = false;
-                }, 1000);
-           e.stopPropagation();
-        }  
         return lbl;
     }
 
@@ -538,7 +521,7 @@ pol.tracking.Tracking = class {
         });
         feature.setStyle(style);
 
-        if (CONFIG.mb.getResolution() < 20)
+        if (CONFIG.mb.getResolution() < 90)
             this.addTrailPoints(p);
     } /* addTrail */
 
@@ -569,16 +552,18 @@ pol.tracking.Tracking = class {
         p.trail.labels = [];
 
         /* update position */
-        for (const i in p.trail.linestring) {
-
+        for (const x of p.trail.linestring) {
             p.trail.labels.push(
-                this.createPopupLabel( ll2proj(p.trail.linestring[i].pos), 
-                    this.formatTime(p.trail.linestring[i].time), p.ident)
+                this.createPopupLabel( ll2proj(x.pos), 
+                    this.formatTime(x.time), 
+                    p.ident +
+                    (x.path!=null ? "<br>Via: "+x.path : ""))
             );
             
-            feature.getGeometry().appendPoint(
-               new ol.geom.Point( ll2proj(p.trail.linestring[i].pos) ) 
-            );
+            if ((CONFIG.mb.getResolution() < 30) && x.path != null && x.path != "(ext)" && x.path != "(int)" && x.path != "AIS")
+                feature.getGeometry().appendPoint(
+                    new ol.geom.Point( ll2proj(x.pos) ) 
+                );
         }
 
         /* Update style */
@@ -593,6 +578,8 @@ pol.tracking.Tracking = class {
     }
 
 
+    
+    
     removeTrailPoints(p) {
         let feature = this.source.getFeatureById(p.ident+'.trailpoints');
         this.source.removeFeature(feature);
