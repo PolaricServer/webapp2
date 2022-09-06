@@ -4,7 +4,7 @@
  * Feel free to modify it to meet your needs. 
  * See examples aprs.no.config.js for more examples... 
  * 
- * (c) 2017-2021 LA7ECA, Ø. Hanssen
+ * (c) 2017-2022 LA7ECA, Ø. Hanssen
  *************************************************************/
 
 /* 
@@ -12,7 +12,7 @@
  * Uncomment to use aprs.no as a backend. 
  * Default is to use the location of the webapp. 
  */
-// SERVER("https://kart2.aprs.no");
+// SERVER("https://aprs.no");
 
 
 /* 
@@ -54,25 +54,32 @@ SCALE     ( 20000 );
 WELCOME(true);
 
 
-/* Default filter view selections, per group. 
+/*
+ * Default filter view selections, per group.
+ * 
+ * DEFAULT_FILTER takes two arguments: Name of the group (see groups config 
+ * in polaric-aprsd) and name of the filter (see view-filters in polaric-aprsd). 
+ * You would probably want to add one per group. 
  */
 DEFAULT_FILTER(null,  "track"); // Default - if not set for group
-DEFAULT_FILTER("RKH", "FORFtrack");
-DEFAULT_FILTER("AMK", "AMKtrack");
 
 
 
-
-/*
+/*************************************************************************************
  * We can add projections using Proj4js, using the ADD_PROJECTION function.
  * Here, we need the UTM zone 32 and 33 projections for Scandinavia
- */
+ *************************************************************************************/
 
 const utmproj = ADD_PROJECTION
  (  "EPSG:32633", "+proj=utm +zone=33 +ellps=WGS84 +datum=WGS84 +units=m +no_defs",
      [-2500000, 3500000, 3045984, 9045984]
  );
-    
+ 
+ const utm33euref = ADD_PROJECTION
+ (  "EPSG:32633", "+proj=utm +zone=33 +ellps=EUREF89 +datum=EUREF89 +units=m +no_defs",
+     [-2500000, 3500000, 3045984, 9045984]
+ );
+ 
  const utm32 = ADD_PROJECTION
  (  "EPSG:32632", "+proj=utm +zone=32 +ellps=WGS84 +datum=WGS84 +units=m +no_defs",
      [-2500000, 3500000, 3045984, 9045984]
@@ -130,8 +137,6 @@ const Svalbard = POLYGON([
     [37.8369, 80.1862], [26.9824, 77.9157],  [26.0596, 76.383],  [20.6543, 74.5433]
 ]);
 
-const KV_ATTR = "Maps: © <a href=\"kartverket.no\">Kartverket</a>"
-
 
 
 /***********************************************************************************************
@@ -151,46 +156,29 @@ const KV_ATTR = "Maps: © <a href=\"kartverket.no\">Kartverket</a>"
  * 
  ************************************************************************************************/
 
+/* Attribution */
+const KV_ATTR = "Maps: © <a href=\"kartverket.no\">Kartverket</a>"
+
+
+
 LAYERS({ 
     base: true,
-    predicate: TRUE,
+    predicate: LOGIN(),
     projection: "EPSG:900913",
 },
 [
     new ol.layer.Tile({
         name: 'OpenStreetMap',
         source: new ol.source.OSM()
-    })
+    }),
+
 ]);
 
 
 
 
 /* 
- * Base layers in UTM projection. Norway or Svalbard and scale > 8000000. 
- * Layers are shown if predicate evaluates to true
- */
-
-LAYERS({ 
-    base: true,
-    predicate: AND( SCALE_LT(8000000), OR( IN_EXTENT(Norway), IN_EXTENT(Svalbard) )),
-    projection: utmproj,
-},
-[
-    /* Use mapcache running on the server */
-    createLayer_MapCache( {
-        name: "Norgeskart bakgrunn (cache)",
-        opacity: 0.65,
-        layers: "kv_grunnkart",
-        tilegrid: KV_grid_UTM,
-        attributions: KV_ATTR, 
-        seed_max_res: 30
-    })
-]);
-       
-
-
-/* Base layers in UTM projection. Norway and scale > 8000000 
+ * Base layers in UTM projection. Norway and scale > 8000000 
  * Layers are shown if predicate evaluates to true
  */
 
@@ -268,6 +256,7 @@ LAYERS ({
 },[  
     createLayer_WFS({
         name : "Brannstasjoner (DSB)",
+        description: "Lokale brannstasjoner. Kilde: DSB.",
         url  : "https://ogc.dsb.no/wfs.ashx", 
         ftype: "layer_183",
         newVersion: false,
