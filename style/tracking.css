@@ -291,3 +291,5 @@ input#dtinput_time {
     margin-left: 0.3em; background: #ffc;
     color: blue;
 }
+
+div#features div.link_id {margin-top: 0.6em; border-top: #999 2px solid}

@@ -76,7 +76,6 @@ pol.tracking.db.Timemachine = class extends pol.core.Widget {
         };
            
         CONFIG.mb.map.on("change:view", e => {
-            alert("BERT");
             search();
         });
             
