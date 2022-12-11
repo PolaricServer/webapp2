@@ -96,10 +96,10 @@ pol.core.Server = class {
 
     
     /* Store/retrieve JSON objects on server. To be defined in subclass */
-    getObj(tag, f)       { /* Dummy */ }
-    putObj(tag, obj, f)  { /* Dummy */ }
-    removeObj(tag, id)   { /* Dummy */ }
-
+    getObj(tag, f)                { /* Dummy */ }
+    putObj(tag, obj, f)           { /* Dummy */ }
+    removeObj(tag, id)            { /* Dummy */ }
+    updateObj(tag, ident, obj, f) { /* Dummy */ }
 
 
     /**

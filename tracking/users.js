@@ -42,6 +42,7 @@ pol.tracking.Users = class extends pol.core.Widget {
         t.sar = false; 
         t.admin = false;
         t.suspend = false; 
+        t.hidesuspend = true;
         
         
         /* List of users (table) */
@@ -49,10 +50,10 @@ pol.tracking.Users = class extends pol.core.Widget {
             view: function() {
                 var i=0;
                 return m("table", 
-                        m("tbody", t.users.map(x => {
+                        m("tbody", t.users.filter(x=> {x.idx=i++; return ufilter(x)} ).map(x => {
                             return m("tr", [
                                 m("td",
-                                    m(removeEdit, {remove: apply(remove,i), edit: apply(edit, i++)})),
+                                    m(removeEdit, {remove: apply(remove,x.idx), edit: apply(edit, x.idx)})),
                                 m("td", x.ident),   
                                      
                                 m("td", 
@@ -103,7 +104,8 @@ pol.tracking.Users = class extends pol.core.Widget {
                          
                     m("div.field", 
                         m("span.xsleftlab", {title: "Group"}, "Group:"),
-                        m(t.groups), m("span#selGroup", ""+t.selGroup) ),
+                        m(t.groups), m("span#selGroup", ""+t.selGroup), nbsp,
+                    ),
 
                     m("div.field", 
                         m("span.xsleftlab", "Access:"),
@@ -111,6 +113,8 @@ pol.tracking.Users = class extends pol.core.Widget {
                             title: "Administrator (super user level)" }, "Admin"), nbsp,  
                         m(checkBox, {id: "acc_susp", onclick: toggleSuspend, checked: t.suspend, 
                             title: "User access is suspended (no login)" }, "Suspend (U)"), nbsp,
+                        m(checkBox, {id: "acc_susp", onclick: toggleHideSuspend, checked: t.hidesuspend }, 
+                            "Hide suspended"),
                       
                         m("span#hamop", 
                           (t.callsign() != null && t.callsign().length > 1  ? "(HAM radio op)" : ""))),
@@ -146,6 +150,14 @@ pol.tracking.Users = class extends pol.core.Widget {
         
         function toggleSuspend() {
             t.suspend = (t.suspend ? false : true);
+        }
+                
+        function toggleHideSuspend() {
+            t.hidesuspend = (t.hidesuspend ? false : true);
+        }
+        
+        function ufilter(u) {
+            return !t.hidesuspend || !u.suspend;
         }
         
         

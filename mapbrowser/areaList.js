@@ -100,10 +100,8 @@ pol.core.AreaList = class extends pol.core.Widget {
                 return;
             // If server available and logged in, delete on server
             const srv = CONFIG.server; 
-            if (srv && srv != null && srv.loggedIn && srv.hasDb && t.myAreas[id].index >= 0) 
+            if (srv && srv != null && srv.loggedIn && srv.hasDb && t.myAreas[id].index != "") 
                 srv.removeObj("area", t.myAreas[id].index);
-            else
-                CONFIG.store("core.AreaList", t.myAreas, true);
             t.myAreas.splice(id, 1);
         }
    
@@ -122,18 +120,18 @@ pol.core.AreaList = class extends pol.core.Widget {
             const area = {name: t.currName(), extent: ext};  
             area.baseLayer = CONFIG.mb.getBaseLayer().get("name");
             area.oLayers = getOLayers();
-            t.myAreas.push(area);
 
             /* IF server available and logged in, store on server as well */
             const srv = CONFIG.server; 
             if (srv && srv != null && srv.loggedIn && srv.hasDb)
                 srv.putObj("area", area, i => { 
                     area.index = i;
-                    area.server = true;
+                    area.server = true;    
+                    t.myAreas.push(area);
                     m.redraw();
                 });
             else
-                CONFIG.store("core.AreaList", t.myAreas, true);
+                console.warn("Not logged in or server doesn't support storage");
         }
    
     
@@ -160,50 +158,29 @@ pol.core.AreaList = class extends pol.core.Widget {
     
     getMyAreas() 
     {
-        const t = this;
-        t.myAreas = []; 
-        /* Get stored areas */
-        t.myAreas = CONFIG.get("core.AreaList");
-        if (t.myAreas == null)
-            t.myAreas = [];
-    
-        for (const x of t.myAreas) {
-            x.server = false; 
-            x.index = -1; 
-        }
-	
+        const t = this; 
+
         /* Get areas stored on server (if logged on) */
-        setTimeout( () => {
-            const srv = CONFIG.server; 
-            if (srv != null && srv.loggedIn && srv.hasDb) {
+        const srv = CONFIG.server; 
+        if (srv != null && srv.loggedIn && srv.hasDb) {
+            srv.getObj("area", a => {     
                 t.myAreas = []; 
-                srv.getObj("area", a => {
-                    for (const obj of a) 
-                        if (obj != null) {
-                            const x = obj.data;
-                            x.index = obj.id;
-                            removeDup(x.name);
-                            x.server = true;
-                            x.readonly = obj.readOnly; 
-                            x.noremove = obj.noRemove;
-                            t.myAreas.push(x);  
-                        }
-                    m.redraw();
-                });
-            }    
-        }, 1500);
-        
-        function removeDup(name) {
-            for (const i in t.myAreas)
-                if (t.myAreas[i].name == name) {
-                    var x = t.myAreas[i]; 
-                    if (x.server)
-                        x.name += "_";
-                    else
-                        t.myAreas.splice(i, 1);
-                    return;
-                }
+                for (const obj of a) 
+                    if (obj != null) {
+                        const x = obj.data;
+                        x.index = obj.id;
+                        x.server = true;
+                        x.readonly = obj.readOnly; 
+                        x.noremove = obj.noRemove;
+                        t.myAreas.push(x);  
+                    }
+                m.redraw();
+            });
         }
+        else
+            console.warn("Not logged in or server doesn't support storage");
+
+        
     }
     
     

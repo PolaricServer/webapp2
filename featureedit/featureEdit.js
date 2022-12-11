@@ -34,6 +34,7 @@ pol.features.Edit = class extends pol.core.Widget {
     constructor() {
         super();
         this.classname = "features.Edit";
+        this.suspendCb = false;
         const t = this;
         this.tool = snow.drawTools;
         this.icontool = snow.iconTools;
@@ -116,7 +117,7 @@ pol.features.Edit = class extends pol.core.Widget {
             tmr = setTimeout(()=> {
                 t.doUpdate(x, op);
                 tmr = null;
-            }, 1000); 
+            }, 2000); 
         }
         
         
@@ -199,6 +200,20 @@ pol.features.Edit = class extends pol.core.Widget {
         }
     }
    
+   
+    reload() {
+        if (this.suspendCb)
+            return;
+        const ftrs = snow.drawSource.getFeatures(); 
+            for (const f of ftrs) 
+                if (f.index)
+                    snow.drawSource.removeFeature(f);
+        this.restoreFeatures();
+        if (this.props) 
+            setTimeout(this.props.update, 200);
+    }
+   
+   
     removeFeatures(lname) {
         console.log("removeFeatures: ",lname);
         const srv = CONFIG.server; 
@@ -227,11 +242,20 @@ pol.features.Edit = class extends pol.core.Widget {
             
             const fromtag = "feature" + (!fromlayer ? "" : "."+fromlayer);
             const totag = "feature" + ((!x.layer || x.layer=="DRAFT") ? "" : "."+x.layer);
-            
-            if (op=='chg' || op=="rm")
+            console.log("doUpdate", x);
+            if (op=="rm")
                 srv.removeObj(fromtag, x.index);
-            if (op=='add' || op=='chg') 
+            if (op=='add') 
                 srv.putObj(totag, this.feature2obj(x), i => {x.index = i;} );
+            if (op=='chg')
+                srv.updateObj(totag, x.index, this.feature2obj(x) );
+            
+            /* In order to prevent a notification caused by a change on this client
+             * to be handled we suspend handling of change notifications for some 
+             * time. This is a hack. We should implement a more reliable scheme later. 
+             */
+            this.suspendCb = true;
+            setTimeout(()=>{this.suspendCb = false;}, 2000);
         }
     }
 

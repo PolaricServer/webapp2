@@ -375,6 +375,7 @@ snow.deselectAll = function()
 //Function for selecting marked areas. 
 snow.selectMarkedArea = function(f)
 {
+
     if ( snow.drawSource.getFeatures().includes(f) && !snow.selectedFeatures.includes(f) )
     {
         /* Select */

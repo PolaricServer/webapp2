@@ -23,7 +23,6 @@ pol.features = pol.features || {};
 
 
 
-
 pol.features.Properties = class extends pol.core.Widget {
 
     constructor(dt) {
@@ -83,8 +82,10 @@ pol.features.Properties = class extends pol.core.Widget {
             view: function() {
                 let i=0;
                 return m("div#features", [       
-                    m("h1", "Features/properties"),
+                    m("h1", "Feature manager"),
                     
+                    m("div#fcontainer", [
+                         
                     m("table.features", 
                       m("caption", "Editor features:"),
                       m("tbody", features().map( x => {
@@ -94,17 +95,28 @@ pol.features.Properties = class extends pol.core.Widget {
                             m("td", shortType(x.getGeometry().getType())),
                             m("td", (x.label ? x.label : ""))
                         ])
-                    }))),    
+                    }))),  
                     
-                    ( selectedLayer() != null && selectedLayer().getSource().getFeatures().length > 0 ? 
+                    m("div#movebutt", 
+                        m("button",{onclick: move, title: "Move feature to layer"}, ">"), br, 
+                        m("button", {onclick: getFrom, title: "Get features from layer for editing"}, "<")  
+                    ),   
+                      
+                    m("div#layerfeatures", [
+                        m("h2", "Drawing layer:"), 
+                        m("span", [ m(t.layers, {id:"tolayer"}), 
+                            m("span.add", {title: "Add/manage layers", onclick: layerWidget}, "+") ] ),  
+                    
+                    ( selectedLayer() != null && selectedLayer().getSource().getFeatures().length > 0 ?  
                         m("table.lfeatures", [
                           m("caption", "Layer features:"),
                           m("tbody", selectedLayer().getSource().getFeatures().map( x => {
                             return m("tr", 
                                 m("td", (x.label ? x.label : "(no label)"))
                             )
-                        }))] ) : ""),    
-                    
+                        }))] ) : "")
+                    ])
+                    ]),    
                     hr,
                                         
                     m("span.field", [
@@ -116,17 +128,7 @@ pol.features.Properties = class extends pol.core.Widget {
                         m("span.sleftlab", "Label: "),
                         m(textInput, {id:"editLabel", size: 19, maxLength:25, value: t.label, regex: /.*$/i }),
                         m("button", {onclick: set, title: "Update properties"}, "Update")
-                    ]),
-
-                    (!t.layerList.isEmpty() ? 
-                        m("span.field", [
-                            m("span.sleftlab", "Layer: "),
-                            m(t.layers, {id:"tolayer"}), 
-                            m("button", {onclick: move, title: "Move feature to layer"}, "Move to"),
-                            m("button", {onclick: getFrom, title: "Get features from layer for editing"}, "Get from"),
-                        ]) : ""),
-                         
-                    m("div.link_id", {onclick: ()=> WIDGET("layers.List", [50,70], true)}, "Create/manage layers..."),   
+                    ]), 
 
                     (t.radius ? m(t.circle) : (t.colist ? m(t.coord) : ""))
                 ])
@@ -140,7 +142,8 @@ pol.features.Properties = class extends pol.core.Widget {
         setTimeout(changeHandler, 3300);
         snow.drawSource.on("changefeature", changeHandler);
         
-        $(document).on("selectfeature", ()=> {
+        $(document).on("selectfeature", ()=> {  
+            console.log("selectFeature");
             _edit(snow.lastSelected); 
             changeHandler();
         } );
@@ -156,6 +159,13 @@ pol.features.Properties = class extends pol.core.Widget {
         
         /* Apply a function to an argument. Returns a new function */
         function apply(f, id) {return function() { f(id); }};  
+        
+        
+        function layerWidget() {
+            WIDGET("layers.List", [50,70], true,
+                x => x.selectType("drawing"));
+        }
+        
         
         function shortType(x) {
             if (x=="LineString")
@@ -260,6 +270,8 @@ pol.features.Properties = class extends pol.core.Widget {
         }
         
         function set() {
+            if (t.selected == null)
+                return;
             t.selected.label = t.label();
             t.drawTool.doUpdate(t.selected, "chg");
         }
@@ -291,7 +303,7 @@ pol.features.Properties = class extends pol.core.Widget {
                 snow.deleteFeature(t.selected);
                 t.selected.layer = x.get("name");
                 const s = t.selected;
-                setTimeout(()=>t.editor.doUpdate(s, "chg"), 1200);
+                setTimeout(() => t.editor.doUpdate(s, "chg"), 1200);
                 t.selected = null;
                 t.colist = NaN; 
                 t.radius = NaN;
@@ -337,4 +349,10 @@ pol.features.Properties = class extends pol.core.Widget {
 
         
     } /* constructor */
+    
+    update() {
+        m.redraw();
+    }
+    
+    
 } /* class */

@@ -1,6 +1,7 @@
    /* 
     * This is an example of how an application can be constructed using polaric components.  
     * Se also config.js for configuration of the application. 
+    * Version 1.5
     */
    
     /* 
@@ -21,7 +22,7 @@
     */
    var urlArgs = getParams(window.location.href);
    if (urlArgs['car'] != null) 
-	  CONFIG.store('display.in-car', true);
+	CONFIG.store('display.in-car', true);
       
    /* 
     * Instantiate the map browser and try to restore widgets from a previous session. 
@@ -57,12 +58,20 @@
             getWIDGET("core.AreaList").getMyAreas();
             getWIDGET("tracking.db.Sharing").getShares();
         });
+        
         srv.pubsub.subscribe("object", x => {
             console.log("Change to object:", x);
             if (x=="area")
                 getWIDGET("core.AreaList").getMyAreas();
             else if (x=="layer")
                 getWIDGET("layers.List").getMyLayers();
+            else if (x=="feature")
+                getWIDGET("features.Edit").reload();
+        });
+         
+        srv.pubsub.subscribe("sign", x => {
+            console.log("Change to signs:", x);
+            getWIDGET("tracking.db.Signs").getSigns();
         });
         
     }, 1000); 
@@ -85,6 +94,7 @@
      * delayed to allow connection to server to be established first. 
      */
     setTimeout(()=> {
+        console.log("Server config: ", CONFIG.server);
         getWIDGET("core.AreaList");
         getWIDGET("layers.List");
     }, 1000);
@@ -188,16 +198,14 @@
         }
         
         if (srv.hasDb) {
-            if (srv.auth.sar)
-                m.add("Signs...", () => WIDGET("tracking.db.Signs", [50,70], true));
+            m.add("Signs...", () => WIDGET("tracking.db.Signs", [50,70], true));
             m.add("History...", () => WIDGET("tracking.db.History", [50,70], true)); 
             m.add("Heard points via..", () => WIDGET("tracking.db.HeardVia", [50,70], true));
         }
-
-        if (srv.loggedIn)
-            m.add('Short messages', () => WIDGET("tracking.Mailbox",[50,70], true));
         
         m.add("Bulletin board", () => WIDGET("tracking.BullBoard", [50,70], true));
+        if (srv.loggedIn)
+            m.add('Short messages', () => WIDGET("tracking.Mailbox",[50,70], true));
         
         if (CONFIG.get('display.in-car') != null) {
             m.add("Kodi", startKodi);
@@ -221,6 +229,7 @@
     browser.ctxMenu.addCallback("POINT", (m, ctxt)=> { 
 
         m.add('Show info', () => srv.infoPopup(ctxt.point, [m.x, m.y]) );
+
         m.add('Last movements', () => 
             WIDGET( "tracking.TrailInfo", [50, 70], false,  x=> x.getTrail(ctxt.ident) ) );
         

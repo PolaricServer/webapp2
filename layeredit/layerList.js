@@ -1,7 +1,7 @@
 /*
- Map browser based on OpenLayers 5. Layer editor.
+ Map browser based on OpenLayers. Layer editor.
  
- Copyright (C) 2017-2021 Øyvind Hanssen, LA7ECA, ohanssen@acm.org
+ Copyright (C) 2017-2022 Øyvind Hanssen, LA7ECA, ohanssen@acm.org
  
  This program is free software: you can redistribute it and/or modify
  it under the terms of the GNU Affero General Public License as published 
@@ -16,7 +16,6 @@
  You should have received a copy of the GNU Affero General Public License
  along with this program. If not, see <http://www.gnu.org/licenses/>.
 */
-
 
 
 /**
@@ -34,7 +33,7 @@ pol.layers.List = class List extends pol.core.Widget {
         const t = this;
    
         /* Register types */
-        t.addType("dummy", "Select layer type..", new pol.layers.Dummy(this));
+        t.addType("_any_", "Select layer type..", new pol.layers.Dummy(this));
         if (CONFIG.server!=null && CONFIG.server.hasDb) {
             t.addType("drawing", "Drawing layer", new pol.layers.Drawing(this));
             t.addType("gpx", "GPX/GeoJSON files upload", new pol.layers.Gpx(this));
@@ -43,26 +42,27 @@ pol.layers.List = class List extends pol.core.Widget {
         t.addType("wfs", "Standard WFS layer", new pol.layers.Wfs(this));
 
    
-        this.layer = t.typeList["dummy"].obj; 
+        this.layer = t.typeList["_any_"].obj; 
 
    
         this.widget = {
             view: function() {
-                let i=0;
                 return m("div#layerEdit", [       
                     m("h1", "My map layers"),  
-                    m("table.mapLayers", m("tbody", t.myLayerNames.map( x => {
-                        i++;
-                        return m("tr", [ m("td", 
-                            (removable(i-1) ? 
-                                m(removeEdit, {remove: apply(x=>t.removeLayer(x), i-1), edit: apply(editLayer, i-1) })
-                                : ""),
-                            (sharable(i-1) ? 
-                                m("img", {src:"images/16px/user.png", title:"Sharing", onclick: apply(sharing, i-1)} )
-                                : "") 
-                            ),
-                            m("td", {'class': (x.server ? "onserver" : null)}, x.name) ] );
-                    }))), 
+                    m("table.mapLayers", m("tbody", t.myLayerNames
+                        .filter( x => { const t = $("#lType").val(); return !t || t=="_any_" || x.type == t} )
+                        .map( x => {
+                            const i = indexOf(x.name);
+                            return m("tr", [ m("td", 
+                                (removable(i) ? 
+                                    m(removeEdit, {remove: apply(x=>t.removeLayer(x), i), edit: apply(editLayer, i) })
+                                    : ""),
+                                (sharable(i) ? 
+                                    m("img", {src:"images/16px/user.png", title:"Sharing", onclick: apply(sharing, i)} )
+                                    : "") 
+                                ),
+                                m("td", {'class': (x.server ? "onserver" : null)}, x.name) ] );
+                        }))), 
                     
                     m("div", [ 
                         m("div.field", 
@@ -83,9 +83,18 @@ pol.layers.List = class List extends pol.core.Widget {
         /* Get stored layers */
         this.getMyLayers();
 
+        
+        function indexOf(n) {
+            for (var i in t.myLayerNames) 
+                if (n === t.myLayerNames[i].name)
+                    return i;
+            i=-1;
+        }
+        
         function sharable(i) {
             return !t.myLayerNames[i].readonly;
         }
+        
         function removable(i) {
             return !t.myLayerNames[i].noremove;
         }
@@ -107,7 +116,7 @@ pol.layers.List = class List extends pol.core.Widget {
             const lname = t.layer.lName();
             t.layer = t.typeList[tid].obj;
             t.layer.lName(lname);
-            m.redraw();
+            setTimeout(()=> m.redraw(), 100);
         }
    
    
@@ -130,6 +139,15 @@ pol.layers.List = class List extends pol.core.Widget {
     } /* constructor */
 
     
+    
+    selectType(lname) {
+        $("#lType").val(lname).trigger("change"); 
+        this.layer = this.typeList[lname].obj;
+        this.layer.lName("");
+        m.redraw();
+    }
+        
+        
     suspend() {
         const t = this;
         t.suspendGet = true; 
@@ -274,7 +292,7 @@ pol.layers.List = class List extends pol.core.Widget {
         this.suspend();
         
         /* If server available and logged in, delete on server as well */
-        if (srv && srv != null && srv.loggedIn && srv.hasDb && this.myLayerNames[id].index >= 0) {
+        if (srv && srv != null && srv.loggedIn && srv.hasDb && this.myLayerNames[id].index != "") {
             srv.removeObj("layer", this.myLayerNames[id].index, 
                 /* n is number of objects actually deleted from database. 0 if there are 
                  * still users that have links to it */

@@ -83,6 +83,10 @@ pol.layers.Drawing = class extends pol.layers.Edit {
     
     removeLayer(layer, onserver) {
         getWIDGET("features.Edit").removeFeatures(layer.get("name"));
+        for (const x of layer.getSource().getFeatures()) {
+            console.log("Remove feature: ", x.index);
+            srv.removeObj("layer", x.index, null);
+        }
     }
     
     

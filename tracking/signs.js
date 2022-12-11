@@ -45,6 +45,7 @@ pol.tracking.db.Signs = class extends pol.core.Widget {
         t.icon = "";
         t.typeSel = false; 
         t.userSel = true; 
+        t.inProgr = false;
  
         this.signsList = {
             view: function() {
@@ -177,7 +178,7 @@ pol.tracking.db.Signs = class extends pol.core.Widget {
                 return;
             }
             t.server.PUT("signs/"+t.ident, JSON.stringify(getObject()), 
-               ()=> { t.getSigns() }, 
+               ()=> { setTimeout(t.getSigns, 500);  }, 
                 x=> { error("Cannot update on server: "+x.responseText) }
             ); 
         }
@@ -190,7 +191,7 @@ pol.tracking.db.Signs = class extends pol.core.Widget {
                 return;
             }
             t.server.POST("signs", JSON.stringify(getObject()), 
-               ()=> { t.getSigns() }, 
+               ()=> { setTimeout(t.getSigns, 500); }, 
                 x=> { error("Cannot add to server: "+x.responseText) }
             );
         }
@@ -319,8 +320,11 @@ pol.tracking.db.Signs = class extends pol.core.Widget {
     }
     
     
-    /* Get list of trackers from server */
+    /* Get list of signs from server */
     getSigns() {
+        if (this.inProgr)
+            return;
+        this.inProgr = true;
         const userid = this.server.auth.userid;
         console.assert(userid && userid!=null, "userid="+userid);
         if (userid == null)
@@ -332,7 +336,8 @@ pol.tracking.db.Signs = class extends pol.core.Widget {
         this.server.GET("signs"+query, "", x => { 
             this.mySigns = JSON.parse(x);
             this.sortList();
-            setTimeout(()=> this.mountList(), 500);
+            setTimeout(()=> this.mountList(), 1000);
+            this.inProgr = false;
         } );
     }
     
@@ -376,7 +381,7 @@ pol.tracking.db.Signs = class extends pol.core.Widget {
                 
     /* Sort signs list */        
     sortList() {
-        this.mySigns.sort((a,b) => { 
+        this.mySigns = this.mySigns.sort((a,b) => { 
             if (a.tname == b.tname)
                 return (a.descr < b.descr ? -1 : 1)
             else
