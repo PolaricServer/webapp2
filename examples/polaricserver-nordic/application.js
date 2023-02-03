@@ -201,6 +201,7 @@
             m.add("Signs...", () => WIDGET("tracking.db.Signs", [50,70], true));
             m.add("History...", () => WIDGET("tracking.db.History", [50,70], true)); 
             m.add("Heard points via..", () => WIDGET("tracking.db.HeardVia", [50,70], true));
+            m.add("Time machine..", () => WIDGET("tracking.db.Timemachine", [50,70], true)); 
         }
         
         m.add("Bulletin board", () => WIDGET("tracking.BullBoard", [50,70], true));
