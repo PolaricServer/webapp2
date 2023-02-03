@@ -1,3 +1,10 @@
+polaric-webapp2 (1.10) stable; urgency=medium
+
+  * Client for time-machine
+  * Various fixes..
+
+ -- Oyvind Hanssen <ohanssen@acm.org>  Fri, 03 Feb 2023 17:33:52 +0100
+
 polaric-webapp2 (1.9) stable; urgency=medium
 
   * OL to version 6.14.1
