@@ -34,6 +34,9 @@ function WELCOME(on)
 function LOGO(url)
  { CONFIG.set('logo', url); }
 
+function SECURE(sec)
+ { CONFIG.set('secure', sec); }
+ 
 function SERVER(url) 
  { CONFIG.set('server', url); }
 

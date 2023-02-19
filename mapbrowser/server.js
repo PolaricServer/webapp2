@@ -44,11 +44,16 @@ pol.core.Server = class {
      */
     constructor() {
         let host = CONFIG.get('server');
+        let secure = CONFIG.get('secure');
         
         /* Default is to use window.location as host, and port 8081 */
         if (host == null) {
             let hh = window.location.host; 
             let pp = window.location.protocol;
+
+            if (pp=='http:' && secure)
+                pp='https:';
+            
             host = "";
             if (pp)
                 host += pp+"//"
@@ -59,7 +64,7 @@ pol.core.Server = class {
             host +=":8081"
         }
         if (! /.+\:\/\//.test(host) )
-            host = "http://"+host;
+            host = (secure ? "https": "http") + "://" + host;
         if (host.charAt(host.length) != '/')
             host += '/';
     
