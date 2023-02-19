@@ -1,10 +1,26 @@
  
-Mithril     2.0.4
-Moment      2.24.0
+Mithril     2.2.2
+Moment      2.29.4 (with locales)
+Pikaday     1.8.2  
 Jquery      3.4.1
 Jquery-ui   1.12.1
 OpenLayers  6.14.1
 proj4       2.5
-Pikaday     1.8.0?  
+
+
+---------------------------------------------------------------------------------------
+
+Mithril: 
+https://mithril.js.org/
+https://github.com/MithrilJS
+
+
+Moment: 
+https://momentjs.com/
+
+
+Pikaday: 
+https://pikaday.com/
+
 
 
