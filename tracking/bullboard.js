@@ -195,7 +195,7 @@ pol.tracking.BullBoard = class extends pol.core.Widget {
                 }
 
                 /* Perform the REST call to the server */
-                t.server.PUT("bullboard/"+group()+"/messages", JSON.stringify(msg),
+                t.server.POST("bullboard/"+group()+"/messages", JSON.stringify(msg),
                     x => {
                         console.log("Sent bulletin to: "+msg.groupid+": "+msg.text);
                     },
