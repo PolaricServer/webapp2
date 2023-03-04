@@ -478,9 +478,29 @@ function SETLABEL(id, label) {
 }
 
 
+
 function evalExpr(expr, f) {
+    
+    function repl(x) {
+        x = x.substring(2, x.length-1);
+        const path = x.split(".");
+
+        var data = f.get(path[0]);   
+        if (typeof data == "string")
+            return data;
+        for (var i=1; i<path.length; i++) {
+            if (typeof data !== "undefined") 
+                data = data[path[i]];
+        }
+        if (typeof data == "undefined")
+            return ""; 
+        if (typeof data !== "string")
+            console.warn("Reference to non-string object: ", data);
+        return data;        
+    }
+    
     return expr.replace( /\$\([^\)]+\)/g, 
-            x => f.get( x.substring(2, x.length-1)) 
+            x => repl(x)
         );
 }
 

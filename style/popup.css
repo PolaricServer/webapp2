@@ -241,7 +241,8 @@ form.mapref hr { border: dotted 1px #888 }
 }
 
 #wmsUrl, #wfsUrl, #wfsFtype, #wmsLayers {width: 28em}
-#editLayer, #wfsLabel {width: 16em}
+#editLayer {width: 18em}
+#wfsLabel {width: 28em}
 
 #layerEdit div.buttons {
   padding-left: 5.7em; padding-top: 0.3em; 

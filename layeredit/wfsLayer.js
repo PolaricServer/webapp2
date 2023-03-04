@@ -102,7 +102,8 @@ pol.layers.Wfs = class extends pol.layers.Edit {
         });
         x.styleId = styleId;
         x.label = this.wlabel();
-        x.version = this.version;
+        x.version = this.version;     
+
         return x;
     }
 
@@ -117,7 +118,7 @@ pol.layers.Wfs = class extends pol.layers.Edit {
         this.ftype(layer.getSource().ftype);
         this.wlabel(layer.label);
         this.version = layer.version;
-        $("#wfsStyle").val(layer.styleId).trigger("change");
+        setTimeout(()=> $("#wfsStyle").val(layer.styleId).trigger("change"), 100);
     }
 
     
