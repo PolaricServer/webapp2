@@ -240,14 +240,13 @@ form.mapref hr { border: dotted 1px #888 }
    padding-bottom: 0.4em
 }
 
-#wmsUrl, #wfsUrl, #wfsFtype, #wmsLayers {width: 28em}
+#wmsUrl, #wfsUrl, #wmsLayers, #wfsLabel {width: 35em}
 #editLayer {width: 18em}
-#wfsLabel {width: 28em}
-
 #layerEdit div.buttons {
   padding-left: 5.7em; padding-top: 0.3em; 
   border-top: 2px solid #aaa
 }
+
 
 #layerEdit div.wserver {margin-top: 0.5em}
 
