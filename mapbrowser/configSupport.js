@@ -400,10 +400,10 @@ function createLayer_WFS(opts)
 function FEATUREINFO(fi) {
     return function(feat) {
         let fi2 = fi.slice(0);
-        // FIXME. Refering to 'A' is too implementation dependent (OpenLayers) 
+        // FIXME. Refering to 'values_' is too implementation dependent (OpenLayers) 
         for (i in fi) {
-            feat.A.get = function(key) {return this[key];}
-            fi2[i] = {lbl:fi[i].lbl, val: evalExpr(fi[i].val, feat.A)};
+            feat.values_.get = function(key) {return this[key];}
+            fi2[i] = {lbl:fi[i].lbl, val: evalExpr(fi[i].val, feat.values_)};
         }
         return fi2;
     }

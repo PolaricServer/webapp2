@@ -38,8 +38,7 @@ pol.core.MapInfo = class extends pol.core.Widget {
                     m("h1", "Map view info"), 
                     m("div.field", 
                         m("span.sleftlab", "Base layer:"),
-                        m("span", browser.getBaseLayer().A.name)
-                        // FIXME: Is there a way to get to the name? 
+                        m("span", browser.getBaseLayer().values_.name)
                     ),
                     m("div.field", 
                         m("span.sleftlab", "Projection:"),
@@ -102,7 +101,7 @@ pol.core.MapInfo = class extends pol.core.Widget {
         }
         
         function res_limit() {
-            return browser.getBaseLayer().A.max_res;
+            return browser.getBaseLayer().values_.max_res;
                // FIXME
         }
         

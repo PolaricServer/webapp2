@@ -133,7 +133,7 @@ pol.core.FeatureInfo = class {
                     continue;
                 let prev = null;
                 for (const f of feats) {
-                    if (f.hide || (prev != null && f.A == prev.A) ) 
+                    if (f.hide || (prev != null && f.values_ == prev.values_) ) 
                         continue;
                     f.handler = lr.handler;
                     features.push(f)
