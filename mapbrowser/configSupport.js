@@ -400,9 +400,10 @@ function createLayer_WFS(opts)
 function FEATUREINFO(fi) {
     return function(feat) {
         let fi2 = fi.slice(0);
+        // FIXME. Refering to 'A' is too implementation dependent (OpenLayers) 
         for (i in fi) {
-            feat.values_.get = function(key) {return this[key];}
-            fi2[i] = {lbl:fi[i].lbl, val: evalExpr(fi[i].val, feat.values_)};
+            feat.A.get = function(key) {return this[key];}
+            fi2[i] = {lbl:fi[i].lbl, val: evalExpr(fi[i].val, feat.A)};
         }
         return fi2;
     }
@@ -449,6 +450,7 @@ function getStyle(id) {
    
 function GETSTYLE(id) { 
   let gotit = false;
+
   return function(f,r) {
      if (gotit==false) {
         let ll = "";
