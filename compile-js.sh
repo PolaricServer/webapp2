@@ -1,33 +1,25 @@
 #!/bin/bash
 
-#
-# The closure compiler that comes with debian is far too old. 
-# It cannot be used. 
-# If you use npm it is fairly easy: Keep the next line as it is. 
 
-closure_compiler () {
-    npx google-closure-compiler "$@"
-}
-
+BABEL="babeljs --minified --compact=true --no-comments"
 
 #
-# combine and minify using the closure compiler
+# combine and minify using the babel compiler
 #
 
 D=mapbrowser
-closure_compiler --language_in ECMASCRIPT_2017 --js $D/config.js --js $D/server.js --js $D/jscoord.js --js $D/mapref.js --js $D/mapbrowser.js --js $D/widget.js --js $D/featureinfo.js --js $D/uiSupport.js --js $D/popup.js --js $D/popupmenu.js --js $D/measure.js --js $D/toolbar.js --js $D/areaList.js --js $D/mousepos.js --js $D/layerSwitcher.js --js $D/refSearch.js --js $D/configSupport.js --js $D/docreader.js $D/mapInfo.js > mapbrowser-min.js
+$BABEL $D/config.js $D/server.js $D/jscoord.js $D/mapref.js $D/mapbrowser.js $D/widget.js $D/featureinfo.js $D/uiSupport.js $D/popup.js $D/popupmenu.js $D/measure.js $D/toolbar.js $D/areaList.js $D/mousepos.js $D/layerSwitcher.js $D/refSearch.js $D/configSupport.js $D/docreader.js $D/mapInfo.js > mapbrowser-min.js
 
 D=layeredit
-closure_compiler --language_in ECMASCRIPT_2017 --js $D/layerEdit.js --js $D/layerList.js --js $D/wmsLayer.js --js $D/wfsLayer.js --js $D/gpxLayer.js --js $D/drawingLayer.js > layeredit-min.js
+$BABEL $D/layerEdit.js $D/layerList.js $D/wmsLayer.js $D/wfsLayer.js $D/gpxLayer.js $D/drawingLayer.js > layeredit-min.js
 
 D=tracking
-closure_compiler --language_in ECMASCRIPT_2017 --js $D/tracking.js --js $D/polaricserver.js --js $D/pubsub.js --js $D/mapupdate.js --js $D/search.js --js $D/filters.js --js $D/notifier.js --js $D/bullboard.js --js $D/history.js --js $D/timemachine.js --js $D/heardvia.js --js $D/labelStyle.js --js $D/trackeralias.js --js $D/globalsettings.js --js $D/mytrackers.js --js $D/ownobjects.js --js $D/signs.js --js $D/ownpos.js --js $D/sarmode.js --js $D/trailinfo.js --js $D/tags.js  --js $D/users.js --js $D/passwd.js --js $D/bikewheel.js --js $D/mailbox.js --js $D/sharing.js --js $D/aprspackets.js --js $D/pointinfo.js --js $D/telemetry.js --js $D/telhist.js > tracking-min.js
+$BABEL $D/tracking.js $D/polaricserver.js $D/pubsub.js $D/mapupdate.js $D/search.js $D/filters.js $D/notifier.js $D/bullboard.js $D/history.js $D/timemachine.js $D/heardvia.js $D/labelStyle.js $D/trackeralias.js $D/globalsettings.js $D/mytrackers.js $D/ownobjects.js $D/signs.js $D/ownpos.js $D/sarmode.js $D/trailinfo.js $D/tags.js $D/users.js $D/passwd.js $D/bikewheel.js $D/mailbox.js $D/sharing.js $D/aprspackets.js $D/pointinfo.js $D/telemetry.js $D/telhist.js > tracking-min.js
 
 D=featureedit
-closure_compiler --language_in ECMASCRIPT_2017 --js $D/snow/drawConfig.js --js $D/snow/drawGlobals.js --js $D/snow/undoFunctions.js --js $D/snow/drawStyle.js --js $D/snow/drawFunctions.js --js $D/snow/drawTooltipHelper.js --js $D/snow/drawEvents.js --js $D/snow/gpxDownload.js --js $D/snow/drawIcons.js --js $D/snow/mithrilDrawBox.js --js $D/snow/mithrilIcons.js --js $D/snow/measureTooltip.js --js $D/featureEdit.js --js $D/properties.js > featureedit-min.js
+$BABEL $D/snow/drawConfig.js $D/snow/drawGlobals.js $D/snow/undoFunctions.js $D/snow/drawStyle.js $D/snow/drawFunctions.js $D/snow/drawTooltipHelper.js $D/snow/drawEvents.js $D/snow/gpxDownload.js $D/snow/drawIcons.js $D/snow/mithrilDrawBox.js $D/snow/mithrilIcons.js $D/snow/measureTooltip.js $D/featureEdit.js -$D/properties.js  > featureedit-min.js
 
 
-closure_compiler --language_in ECMASCRIPT_2017 --js application.js > application-min.js
 
 #
 # combine and minify css
