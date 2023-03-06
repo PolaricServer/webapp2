@@ -12,7 +12,7 @@
  * Uncomment to use aprs.no as a backend. 
  * Default is to use the location of the webapp. 
  */
-// SERVER("https://aprs.no");
+//SERVER("https://aprs.no");
 
 
 /* 
@@ -22,8 +22,8 @@
  * aprs.no uses "ws" and "srv" through a proxy. Default is to use a separate port: 8081. 
  * Uncomment the following two lines to use a backend with a proxy. 
  */
-// WSPREFIX("ws");
-// AJAXPREFIX("srv");
+//WSPREFIX("ws");
+//AJAXPREFIX("srv");
 
 
 /* Location of aprsd icons */
@@ -51,7 +51,7 @@ SCALE     ( 20000 );
 /* If set to true, a popup window will appear when application is started, 
  * showing the content in 'welcome.html'. 
  */
-WELCOME(true);
+WELCOME(false);
 
 
 /*
@@ -163,7 +163,7 @@ const KV_ATTR = "Maps: © <a href=\"kartverket.no\">Kartverket</a>"
 
 LAYERS({ 
     base: true,
-    predicate: LOGIN(),
+    predicate: TRUE,
     projection: "EPSG:900913",
 },
 [
