@@ -37,7 +37,9 @@ pol.tracking.Users = class extends pol.core.Widget {
         t.callsign = m.stream("");
         t.passwd = m.stream("");
         t.group = "DEFAULT";
+        t.agroup = "DEFAULT";
         t.selGroup = "";
+        t.selAGroup = "";
         t.groupList = [];
         t.sar = false; 
         t.admin = false;
@@ -77,6 +79,13 @@ pol.tracking.Users = class extends pol.core.Widget {
                     .map( x => m("option", {value: x.ident }, x.ident) ));
             }
         }
+        t.agroups = {    
+            view: function() {
+                return m("select#agroup", {onchange: selectHandler2 }, t.groupList
+                    .map( x => m("option", {value: x.ident }, x.ident) ));
+            }
+        }
+        
         
         this.widget = {
             view: function() {
@@ -106,7 +115,11 @@ pol.tracking.Users = class extends pol.core.Widget {
                         m("span.xsleftlab", {title: "Group"}, "Group:"),
                         m(t.groups), m("span#selGroup", ""+t.selGroup), nbsp,
                     ),
-
+                    m("div.field", 
+                        m("span.xsleftlab", {title: "Alternative group"}, "Alt group:"),
+                        m(t.agroups), m("span#selAGroup", ""+t.selAGroup), nbsp,
+                    ),
+                    
                     m("div.field", 
                         m("span.xsleftlab", "Access:"),
                         m(checkBox, {id: "acc_admin", onclick: toggleAdmin, checked: t.admin, 
@@ -131,8 +144,8 @@ pol.tracking.Users = class extends pol.core.Widget {
         };
         
         getGroups();
-        setTimeout( selectHandler, 2000);
-        
+        setTimeout(()=>t.clear(), 100);
+
         /* Apply a function to an argument. Returns a new function */
         function apply(f, id) {return function() { f(id); }};  
  
@@ -178,6 +191,16 @@ pol.tracking.Users = class extends pol.core.Widget {
         
         
         
+        function selectHandler2() {
+            t.agroup = $("select#agroup").val();
+            for (const x of t.groupList)
+                if (x.ident==t.agroup)
+                    t.selAGroup = x.name;
+            m.redraw();
+        }
+        
+        
+        
         /* Add a user (on server) */
         function add() {
             const data = {
@@ -186,6 +209,7 @@ pol.tracking.Users = class extends pol.core.Widget {
                 callsign: (t.callsign()=="" || t.callsign()==" " ? "" : t.callsign().toUpperCase()),
                 passwd: (t.passwd()=="" || t.passwd()==" " ? null : t.passwd()),
                 group: t.group,
+                agroup: t.agroup,
                 admin: t.admin, 
                 suspend: t.suspend
             };
@@ -213,6 +237,7 @@ pol.tracking.Users = class extends pol.core.Widget {
                 passwd: (t.passwd()=="" || t.passwd()==" " ? null : t.passwd()),
                 callsign: (t.callsign()=="" || t.callsign()==" " ? "" : t.callsign().toUpperCase()),
                 group: t.group,
+                agroup: t.agroup,
                 admin: t.admin, 
                 suspend: t.suspend
             };
@@ -224,6 +249,7 @@ pol.tracking.Users = class extends pol.core.Widget {
                             t.users[i].name = data.name; 
                             t.users[i].callsign = data.callsign;
                             t.users[i].group = data.group;
+                            t.users[i].agroup = data.agroup;
                             t.users[i].admin = data.admin;
                             t.users[i].suspend = data.suspend;
                             break;
@@ -258,10 +284,13 @@ pol.tracking.Users = class extends pol.core.Widget {
             t.callsign(u.callsign);
             t.passwd("");
             t.group = u.group;
+            t.agroup = u.altgroup;
             t.admin = u.admin;
             t.suspend = u.suspend;
-            $("select#group").val(t.group).trigger("change");
-            selectHandler();
+            setTimeout(()=> {
+                $("select#group").val(t.group).trigger("change");
+                $("select#agroup").val(t.agroup).trigger("change");
+            }, 100);
         }
     
         
@@ -287,10 +316,15 @@ pol.tracking.Users = class extends pol.core.Widget {
         this.ident("");
         this.name("");
         this.passwd("");
-        this.group = "";
+        this.group = "DEFAULT";
+        this.agroup = "DEFAULT";
         this.admin = false;
         this.suspend = false;
-        m.redraw();
+        m.redraw();          
+        setTimeout(()=> {
+            $("select#group").val(this.group).trigger("change");
+            $("select#agroup").val(this.agroup).trigger("change");
+        }, 100);
     }
     
         
