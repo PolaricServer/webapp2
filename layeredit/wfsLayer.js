@@ -57,7 +57,7 @@ pol.layers.Wfs = class extends pol.layers.Edit {
                         m("span.sleftlab", 
                           {title: "Label text. Use $(attr) to include feature attributes"}, 
                           "Label: "),
-                        m(textInput, {id:"wfsLabel", size: 20, maxLength: 60, value: t.wlabel, regex: /^.+$/i })
+                        m(textInput, {id:"wfsLabel", size: 20, maxLength: 200, value: t.wlabel, regex: /^.+$/i })
                     ),     
                     
                     m("div.field", 
@@ -78,7 +78,7 @@ pol.layers.Wfs = class extends pol.layers.Edit {
         
         function setVer() {
             t.version = !t.version;
-            console.log("t.version=",t.version);
+            console.log("t.version=", t.version);
         }
       
         function getFT() {
@@ -103,9 +103,10 @@ pol.layers.Wfs = class extends pol.layers.Edit {
                     this.ftypes.push($(elem).find("Name").text());
                 });
                 
-                console.log(this.ftypes); 
-                if (this.ftype != null)
+                if (this.ftype != null) 
                     setTimeout(()=> $("#wfsFtype").val(this.ftype).trigger("change"), 100);
+                else 
+                    this.ftype = this.ftypes[0];
                 m.redraw();
             });
     }
@@ -116,8 +117,10 @@ pol.layers.Wfs = class extends pol.layers.Edit {
     * Return true if add button can be enabled 
     */
     enabled() {
-        return  this.lName && 
-                this.wurl() && this.ftype; 
+        if (this.ftype == null) 
+            this.ftype = $("#wfsFtype").val();
+        var en = this.wurl() && this.ftype != null;  
+        return en;
     }
       
       
@@ -128,22 +131,21 @@ pol.layers.Wfs = class extends pol.layers.Edit {
     createLayer(name) 
     {
         const styleId = $("#wfsStyle").val(); 
-        const ftype = $("#wfsFtype").val();
+        this.ftype = $("#wfsFtype").val();
         
-        console.log("Create WFS layer: URL="+this.wurl()+", ftype="+ftype+
+        console.log("Create WFS layer: URL="+this.wurl()+", ftype="+this.ftype+
             ", style="+styleId+", label="+this.wlabel());
     
         const x = createLayer_WFS( {
             name: name,
             url: this.wurl(),
-            ftype: ftype,
+            ftype: this.ftype,
             style: (this.wlabel() != "" ? SETLABEL(styleId, this.wlabel()) : GETSTYLE(styleId)),
             newVersion: !this.version
         });
         x.styleId = styleId;
         x.label = this.wlabel();
         x.version = this.version;     
-
         return x;
     }
 
@@ -160,16 +162,13 @@ pol.layers.Wfs = class extends pol.layers.Edit {
         this.version = layer.version;
         setTimeout(()=> $("#wfsStyle").val(layer.styleId).trigger("change"), 100);
         this.getFeatureTypes();
-        
-        // FIXME: This will not work since list of types is not loaded yet
-        //setTimeout(()=> $("#wfsFtype").val(this.ftype).trigger("change"), 100);
     }
 
     
     reset() {
         super.reset(); 
         this.wurl("");
-        this.ftype("");
+        this.ftype = null;
         this.wlabel("");
         this.ftypes = [];
         this.version = false;
