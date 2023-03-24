@@ -114,7 +114,7 @@ pol.tracking.PolaricServer = class extends pol.core.Server {
                     this.loggedIn = true;
                     CONFIG.mb.toolbar.changeIcon
                         ("toolbar_login", "images/unlocked.png", 
-                        () => this.logout(), 
+                        () => WIDGET("tracking.AuthInfo", [320,30], true),
                         "Logged in as: '"+this.auth.userid+"'. Click to log out");
                 }
                 for (x of this.auth.services)

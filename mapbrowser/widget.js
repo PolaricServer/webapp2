@@ -175,6 +175,10 @@ pol.core.Widget = class {
             this.onActivate(); 
     }
 
+    closePopup() {
+        this.popup.close();
+    }
+    
     
     onclose() { 
         this.rs_ro.disconnect();

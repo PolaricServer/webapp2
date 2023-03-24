@@ -453,10 +453,7 @@ function GETSTYLE(id) {
 
   return function(f,r) {
      if (gotit==false) {
-        let ll = "";
-        for (x in f.getProperties())
-            ll += (x + " ");
-        console.log("FEATURE PROPERTIES: "+ll);
+        console.log("FEATURE PROPERTIES: ", f.getProperties());
         gotit = true;
      }
      return getStyle(id);
