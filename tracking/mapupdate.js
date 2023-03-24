@@ -62,8 +62,9 @@ pol.tracking.MapUpdate = class {
                 console.log("Got RESTART message");
                 setTimeout(function() {location.reload();}, 25000);
             }
-            else if ((!t.suspend) && t.subscriber != null)
+            else if ((!t.suspend) && t.subscriber != null) {
                 t.subscriber(JSON.parse(evt.data));
+            }
         };
 
    
@@ -113,7 +114,7 @@ pol.tracking.MapUpdate = class {
     /** 
      * Subscribe to updates from the server 
      */
-    subscribe(flt, c, tag) {
+    subscribe(flt, c, tag, keep) {
         console.assert(flt!=null && flt!="" && c!=null, "Assertion failed");
         this.subscriber = c;  
         this.suspend = false; 
@@ -126,7 +127,8 @@ pol.tracking.MapUpdate = class {
   
         var msg = 'SUBSCRIBE,' + flt+',' + 
             roundDeg(ext[0])+ ',' + roundDeg(bottom)+ ',' + roundDeg(ext[2])+ ',' + roundDeg(top)+ ',' +
-            Math.round(scale) + (tag ? ","+tag : "");
+            Math.round(scale)  + (keep ? ",true" : ",false") + (tag ? ","+tag : "") ;
+
         this.websocket.send(msg);
   
   

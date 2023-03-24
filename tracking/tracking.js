@@ -39,6 +39,7 @@ pol.tracking.Tracking = class {
     constructor(srv) {
         const t = this;
 
+        t.zoom = 0;
         t.filter = null;
         t.tag = null;
         t.ready = false;
@@ -128,6 +129,7 @@ pol.tracking.Tracking = class {
             t.clear();
             const ovr = browser.map.getOverlays(); 
             setTimeout(()=>ovr.clear(), 10);
+            t.producer.subscribe(t.filter, x => t.update(x), t.tag, false );
         });
         
         
@@ -144,7 +146,7 @@ pol.tracking.Tracking = class {
 
             /* Subscribe to updates from server */
             if (t.filter != null)
-                t.producer.subscribe(t.filter, x => t.update(x), t.tag );
+                t.producer.subscribe(t.filter, x => t.update(x), t.tag, false );
         }
 
 
@@ -154,16 +156,20 @@ pol.tracking.Tracking = class {
         function onMoveStart() {
             if (t.srch)
                 return;
-            if (!init) {
-                /* Clear the layer while moving the map */
-                t.layer.setVisible(false);
-                t.clear();
-            }
         }
         
 
         /* Called when move of map ends */
         function onMoveEnd() {
+            let z = Math.round(CONFIG.mb.getScale()/1000);
+            if  (z > 999)
+                z = Math.round(z/100);
+            else if (z > 99)
+                z = Math.round(z/10);
+            
+            const zoomed = (z != t.zoom);
+            t.zoom = z; 
+            
             if (t.srch)
                 return;
             if (init)
@@ -171,7 +177,10 @@ pol.tracking.Tracking = class {
             else {
                 /* Re-subscribe */
                 t.layer.setVisible(true);
-                t.producer.subscribe(t.filter, x => t.update(x), t.tag );
+                if (zoomed) 
+                    t.clear();
+                t.producer.subscribe(t.filter, x => t.update(x), t.tag, (zoomed != true) );
+                
             }
         }
 
@@ -736,7 +745,15 @@ pol.tracking.Tracking = class {
             return
         if (ov == null)
             return;
-	
+        
+        if (ov.overload) {
+            console.log("Overload (too many points in overlay generation)");
+            CONFIG.filt.setDisabled(true);
+            return;
+        }
+        else
+            CONFIG.filt.setDisabled(false);
+        
         if (ov.sarmode)
             $("#sarmode").removeClass("sar_hidden");
         else

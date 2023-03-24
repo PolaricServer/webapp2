@@ -27,16 +27,16 @@
 pol.tracking.Filters = class {
     
     constructor(tr) { 
-        var tbar = CONFIG.mb.toolbar;
         var t = this;
         var group = CONFIG.server.auth.groupid;
         if (group == null || group == "")
             group = "NOLOGIN";
         t.filterViews = [];
         t.tracker = tr; 
+        t.tbar = CONFIG.mb.toolbar;
          
-        tbar.addIcon(1, "images/filter.png", "tb_filter", null, "Filter selector");
-        tbar.addDiv(1, "filterChoice", null);
+        t.tbar.addIcon(1, "images/filter.png", "tb_filter", null, "Filter selector");
+        t.tbar.addDiv(1, "filterChoice", null);
         CONFIG.mb.ctxMenu.addMenuId('tb_filter', 'FILTERSELECT', true);
    
         /* Set default or saved filter selection */   
@@ -65,7 +65,17 @@ pol.tracking.Filters = class {
         t.getFilters();
     }    
 
-            
+    
+    
+    setDisabled(dis) {
+        if (dis==true) 
+            this.tbar.changeIcon("tb_filter", "images/filter.gray.png", null, "Too many points - overlay disabled");
+        else
+            this.tbar.changeIcon("tb_filter", "images/filter.png", null, "Filter selector");
+    }
+        
+        
+        
     /* Get list of filter profiles from server */
     getFilters() {
         CONFIG.server.GET("filters", "", x => { 

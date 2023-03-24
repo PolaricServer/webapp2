@@ -94,7 +94,7 @@ pol.tracking.AprsPackets = class extends pol.core.Widget {
         function fixPath(pt) {
             const pp = pt.split(/qA/);
             const pp1 = pp[0].split("*");
-            const ipath = m("span.ipath", "qA"+pp[1]);
+            const ipath = m("span.ipath", (pp[1]!= null ? "qA"+pp[1] : ""));
             
             if (pp1.length == 2)
                 return m("span", [m("span.usedpath", pp1[0]+'*'), pp1[1], ipath]);

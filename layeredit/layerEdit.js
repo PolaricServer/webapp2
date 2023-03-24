@@ -166,7 +166,7 @@ pol.layers.Edit = class {
             if (srv && srv != null && srv.loggedIn) {
                 const obj = {type: t.typeid, name: t.lName(), data: t.layer2obj(layer)}; 
                 srv.putObj("layer", obj, i => { 
-                    layer.index = JSON.parse(i);
+                    layer.index = i; //JSON.parse(i);
                     layer.server = true;
                 });
                 _add(false);
@@ -174,6 +174,7 @@ pol.layers.Edit = class {
             }
             else
                 _add(true); 
+            t.origName = t.lName();
             return false; 
             
             
