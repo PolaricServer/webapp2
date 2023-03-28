@@ -39,7 +39,7 @@ pol.tracking.TelHist = class extends pol.core.Widget {
         t.index = 0;
         t.prevIndex = 0;
         t.chart = null; 
-        setTimeout( ()=>{ t.resetChart(); }, 200);
+       // setTimeout( ()=>{ t.resetChart(); }, 500);
      
         t.option = {
               color: [
@@ -71,7 +71,7 @@ pol.tracking.TelHist = class extends pol.core.Widget {
             view: function() { 
                 return  m("div#TelHist", [       
                     m("h1", "Telemetry graph - "+t.ident), 
-                    m("div#graph"),
+                    m("div.graph", {id: "graph_"+t.ident}),
                     m("button", { type: "button", onclick: ()=>t.getHist(t.ident, t.meta) }, "Next"),     
                 ] );    
             }
@@ -137,6 +137,7 @@ pol.tracking.TelHist = class extends pol.core.Widget {
                         break;
                     }
                 }
+                
                 this.chart.setOption(opt);   
                 this.index++;
                 if (this.index >= 5)
@@ -152,7 +153,8 @@ pol.tracking.TelHist = class extends pol.core.Widget {
     resetChart() {
         if (this.chart != null)
             this.chart.dispose();
-        this.chart = echarts.init(document.getElementById('graph'), 'vintage');
+        let elem = document.getElementById('graph_'+this.ident);
+        this.chart = echarts.init(elem, 'vintage');
     }
 
     

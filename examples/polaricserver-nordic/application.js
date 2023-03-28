@@ -43,6 +43,7 @@
         const mu = new pol.tracking.Tracking(srv);
         const flt = new pol.tracking.Filters(mu);
         CONFIG.tracks = mu;
+        CONFIG.filt = flt;
         if (urlArgs['track'] != null) 
         	CONFIG.tracks.setTracked(urlArgs['track']);
         
@@ -213,6 +214,8 @@
             m.add(null);
             m.add("Exit", chromeExit);
         }
+        
+        m.add("Auth Info", () => WIDGET("tracking.AuthInfo", [50,70], true));
     });
 
     /*
@@ -236,7 +239,7 @@
         
         if (ctxt.point.point.telemetry)
             m.add('Telemetry', () => 
-                WIDGET( "tracking.Telemetry", [50, 70], false,  x=> x.getItem(ctxt.ident) ) );
+                WIDGET( "tracking.Telemetry", [50, 70], true,  x=> x.getItem(ctxt.ident), ctxt.ident ));
          
         if (ctxt.sarAuth) { 
             m.add('Global settings', () => 

@@ -271,7 +271,7 @@ div.telbin {margin-top: 1em; margin-bottom: 0.3em}
 div.telbin span {border: 1px solid #555; border-radius: 3px; padding: 2px; padding-bottom: 0px; margin: 3px; background: #ddd}
 div.telbin span.on {background: yellow; border: 1px solid; font-weight: bold}
 
-div#graph {height: 290px; width: 510px; margin-top: -5px}
+div.graph {height: 290px; width: 510px; margin-top: -5px}
 
 div#owner {padding-top: 0.6em; padding-bottom: 0}
 div#owner input {width: 8em; background: aliceblue}
@@ -293,3 +293,11 @@ input#dtinput_time {
 }
 
 div#features div.link_id {margin-top: 0.6em; border-top: #999 2px solid}
+
+@keyframes blinking {
+    0% { opacity: 1; }
+    90% { opacity: 0; }
+}
+
+div.statusmsg {color: #a09; margin-top: 0.1em; margin-left: 2em; margin-bottom: -0.4em; }
+select#group {width: 9em}

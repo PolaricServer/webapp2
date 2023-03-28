@@ -84,14 +84,14 @@ pol.widget.restore = function() {
 /**
  * Get a widget object. Use factory to create it if necessary. 
  */
-pol.widget.get = function(id) {
+pol.widget.get = function(id, multi) {
     let x = pol.widget._active[id]; 
     const fact = pol.widget._factory[id];
     if (!fact || !fact.create) {
         console.warn("No factory found for: "+id);
         return null;
     }
-    if (!x) 
+    if (!x || multi != null) 
         x = pol.widget._active[id]=fact.create();  
     return x;
 }
@@ -100,11 +100,13 @@ pol.widget.get = function(id) {
 /**
  * Activate a widget object (in a popup). Use factory to create it if necessary. 
  */    
-pol.widget.start = function(id, pos, pinned, saved, f) {
-    const x = pol.widget.get(id);
+
+pol.widget.start = function(id, pos, pinned, saved, f, multi) {
+    const x = pol.widget.get(id, multi);
     if (x==null)
         return;
-    x.activatePopup(id, pos, pinned, saved);    
+    let iid = (multi != null ? id+"_"+multi : id);
+    x.activatePopup(iid, pos, pinned, saved);    
     if (f && f!=null) 
         setTimeout(()=>f(x), 300);
 }

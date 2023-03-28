@@ -83,7 +83,7 @@ pol.tracking.Telemetry = class extends pol.core.Widget {
         
         
         function history() {
-             WIDGET( "tracking.TelHist", [50, 70], false,  x=> x.getHist(t.ident, t.meta) );
+             WIDGET( "tracking.TelHist", [50, 70], false,  x=> x.getHist(t.ident, t.meta), t.ident );
         }
         
         function getAnalog(x, chan) {
@@ -112,7 +112,7 @@ pol.tracking.Telemetry = class extends pol.core.Widget {
     
     getItem(id) {
         if (id != this.ident) {
-            if (this.ident != "" && t.psclient != null)
+            if (this.ident != "" && this.psclient != null)
                 this.srv.pubsub.unsubscribe("telemetry:"+this.ident, this.psclient);
 
             this.psclient = this.srv.pubsub.subscribe("telemetry:"+id, x => {

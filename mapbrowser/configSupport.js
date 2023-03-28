@@ -549,7 +549,6 @@ function CIRCLE(radius, opts) {
   return new ol.style.Circle(opts);
 }
 
-
-function WIDGET(id, pos,save,f) { pol.widget.start(id, pos, true, save, f); }
+function WIDGET(id, pos,save,f,multi) { pol.widget.start(id, pos, true, save, f, multi); }
 function POPUP(id,pos,f) {pol.widget.start(id, pos, false, false, f); }
 function getWIDGET(id) { return pol.widget.get(id); }
