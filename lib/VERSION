@@ -6,7 +6,7 @@ Jquery      3.4.1
 Jquery-ui   1.12.1
 OpenLayers  7.3
 proj4       2.5
-
+echarts     5.4.2 (custom built with default selections)
 
 ---------------------------------------------------------------------------------------
 
@@ -22,5 +22,5 @@ https://momentjs.com/
 Pikaday: 
 https://pikaday.com/
 
-
-
+Echarts:
+https://echarts.apache.org/
