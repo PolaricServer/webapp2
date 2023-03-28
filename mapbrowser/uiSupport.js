@@ -209,6 +209,7 @@ const iconPick = {
 const Datepick = {
     oncreate: function(vn) {
         const input = document.createElement( 'input' );
+        this.input = input;
         input.readOnly = true; 
         input.id=vn.attrs.id;
         input.value = vn.attrs.value; 
@@ -218,6 +219,10 @@ const Datepick = {
             format: "YYYY-MM-DD"
         });
 	},
+    
+    onupdate (vn) {
+      this.input.value = vn.attrs.value;
+    },
     
     onchange: function(vn) {
         vn.attrs.value = input.value; 

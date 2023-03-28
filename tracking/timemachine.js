@@ -37,6 +37,8 @@ pol.tracking.db.Timemachine = class extends pol.core.Widget {
         t.tdate = formatDate(new Date());
         t.ttime = m.stream( formatTime(new Date()) );
         t.searchmode = false; 
+        t.message = null;
+        
     
         var it = null;
     
@@ -49,7 +51,9 @@ pol.tracking.db.Timemachine = class extends pol.core.Widget {
                        
                         m("span.tm",
                             m(dateTimeInput, {id: "dtinput", dvalue: t.tdate, tvalue: t.ttime})), 
-                        
+        
+                        m("div.statusmsg", t.message),
+                         
                         m("div.tmbutt", [
                             m("button#tm_b1", {type: "button", 
                                 title: "Show trail - search", onclick: search}, "Go to.."),
@@ -90,7 +94,6 @@ pol.tracking.db.Timemachine = class extends pol.core.Widget {
         
         /* Perform search for editable item - button handler */   
         function _search(reset) {
-            CONFIG.tracks.clear();
             showPoints( reset );
         }
         
@@ -98,7 +101,7 @@ pol.tracking.db.Timemachine = class extends pol.core.Widget {
         function timedSearch() {
             if (waiting != null)
                 window.clearTimeout(waiting);
-            waiting=setTimeout( ()=> {waiting=null; _search(false) }, 600); 
+            waiting=setTimeout( ()=> {waiting=null; _search(false) }, 700); 
         }
         
         
@@ -138,7 +141,13 @@ pol.tracking.db.Timemachine = class extends pol.core.Widget {
             const tc = tm.split(/\s*:\s*/);
             let hours = parseInt(tc[0]);
             hours--;
-            if (hours < 0) hours = 23; 
+            if (hours < 0) {
+                hours = 23;
+                let d = new Date(t.tdate);
+                decrementDay(d);
+                t.tdate = formatDate(d);
+                m.redraw();
+            }
             t.ttime(pad2(hours) +":"+ tc[1]);
             timedSearch();
         }
@@ -148,7 +157,13 @@ pol.tracking.db.Timemachine = class extends pol.core.Widget {
             const tc = tm.split(/\s*:\s*/);
             let hours = parseInt(tc[0]);
             hours++;
-            if (hours > 23) hours = 0; 
+            if (hours > 23) {
+                hours = 0;
+                let d = new Date(t.tdate);
+                incrementDay(d);
+                t.tdate = formatDate(d);
+                m.redraw();
+            }
             t.ttime(pad2(hours) +":"+ tc[1]);
             timedSearch();
         }
@@ -159,8 +174,10 @@ pol.tracking.db.Timemachine = class extends pol.core.Widget {
             if (!t.searchmode)
                 return;
             $('#hist_back').removeClass('searchMode');
-            t.searchmode = true;
-                CONFIG.tracks.searchMode(false);
+            t.searchmode = false;
+            CONFIG.tracks.searchMode(false); 
+            t.message = null;
+            m.redraw();
         }
         
        
@@ -168,12 +185,15 @@ pol.tracking.db.Timemachine = class extends pol.core.Widget {
         /* Show the trail for a given item */
         function showPoints(reset) {
             t.tdate   = $('#dtinput_date').val();
+            var done = false;
             var scale = CONFIG.mb.getScale();
             var filt = CONFIG.tracks.filter;
             var qstring = "?tto="+t.tdate+"/"+t.ttime()+"&scale="+roundDeg(scale)+"&filter="+filt;
             if (reset==true) 
                 qstring += "&reset";
             var ext = CONFIG.mb.getExtent(); 
+            setTimeout(()=> {if (!done) t.message = "Searching, please wait...";m.redraw(); }, 200);
+            CONFIG.tracks.clear();
             
             CONFIG.server.GET("hist/snapshot/" + roundDeg(ext[0]) + "/"+ roundDeg(ext[1]) +
                           "/"+ roundDeg(ext[2]) + "/" + roundDeg(ext[3]) + qstring, "", 
@@ -182,6 +202,9 @@ pol.tracking.db.Timemachine = class extends pol.core.Widget {
                     t.searchmode = true;
                     CONFIG.tracks.searchMode(true);
                     CONFIG.tracks.update(JSON.parse(x), true);
+                    t.message = null;
+                    done = true;
+                    m.redraw();
                 });
         }
     
@@ -209,6 +232,27 @@ pol.tracking.db.Timemachine = class extends pol.core.Widget {
 
 
 /* FIXME: source file? namespace? Module? */
+
+
+
+function parseDate(d) {
+    return new Date(d);
+}
+
+
+function decrementDay(d) {
+    let day = d.getDate(); 
+    day--;
+    d.setDate(day);
+}
+
+function incrementDay(d) {
+    let day = d.getDate(); 
+    day++;
+    d.setDate(day);
+}
+
+
 
 function formatDate(d) {
     return ""+d.getFullYear() + "-" + 
