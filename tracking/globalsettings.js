@@ -56,6 +56,8 @@ pol.tracking.GlobalSettings = class extends pol.tracking.TrackerAlias {
 
         function update() {
             let icn = $("#iconpick").get(0).value; 
+            if (!icn) 
+                console.warn("Icon picker didn't work");
             let icn2 = icn.substr(icn.lastIndexOf("/")+1);
             let id =  $("#trackerId").val();
             if (!id.match(/^.+\@.+$/g))

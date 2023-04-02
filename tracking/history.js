@@ -35,6 +35,7 @@ pol.tracking.db.History = class extends pol.core.Widget {
     
         t.classname = "tracking.db.History"; 
         t.item = null;
+        t.srch = null;
         t.list = []; 
         t.searchmode = false; 
     
@@ -74,7 +75,8 @@ pol.tracking.db.History = class extends pol.core.Widget {
                       
                         m("div.field", 
                             m("span.sleftlab", "Start: "),
-                            m(dateTimeInput, {id: "hist_start", dvalue: t.item.fromdate, tvalue: t.item.fromtime})),
+                            m(dateTimeInput, {id: "hist_start", dvalue: t.item.fromdate, tvalue: t.item.fromtime})
+                        ),
                       
                         m("div.field", 
                             m("span.sleftlab", "End: "),
@@ -121,7 +123,8 @@ pol.tracking.db.History = class extends pol.core.Widget {
         /* Apply a function to an argument. Returns a new function */
         function apply(f, id) {return function() { f(id); }};  
     
-    
+
+        
         /* Delete item from list */
         function deleteItem (i) {
             t.list.splice(i, 1);
@@ -177,7 +180,7 @@ pol.tracking.db.History = class extends pol.core.Widget {
         function search() {
             getSearch();
             CONFIG.tracks.clear();
-            showTrail(copyItem());
+            showTrail(t.srch);
         }
 
         function packets() {
@@ -303,13 +306,13 @@ pol.tracking.db.History = class extends pol.core.Widget {
         function getSearch() {
             t.item.call(t.item.call().toUpperCase());
             t.item.fromdate = $('#hist_start_date').val();
-            if (t.item.open) {
-                t.item.totime('-');
-                t.item.todate = '-';
-            }
-            else 
-                t.item.todate   = $('#hist_end_date').val();
+            t.item.todate   = $('#hist_end_date').val();
             
+            t.srch = copyItem();
+            if (t.srch.open) {
+                t.srch.totime = '-';
+                t.srch.todate = '-';
+            }
             CONFIG.store('tracking.db.hist.item', JSON.stringify(t.item), false);
         }
     
