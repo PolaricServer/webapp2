@@ -244,7 +244,7 @@ span#objname {
 }
    
 
-select#group select#agroup {width: 9em; height: 1.9em}
+select#group,select#agroup {width: 9em; height: 1.9em}
 
 span#selGroup, span#selAGroup {
     margin-left: 0.6em; color: #050; 
@@ -283,6 +283,8 @@ div#owner + form.trackerAlias {border-top: none; padding-top: 0.4em}
 span.tm {margin-left: 1.5em;}
 div.tmbutt {margin-top: 0.7em}
 button.tm_fw img {height: 18px; margin-bottom: -4px; margin-left: -5px; margin-right: -5px; }
+form.hist button.tm_fw {height: 24px; width: 20px; margin-right: 0px}
+
 input#dtinput_date {font-size: 1.05em; padding-left: 0.5em; width: 6em}
 input#dtinput_time {
     font-weight: bold; font-size: 1.3em; 
@@ -291,6 +293,9 @@ input#dtinput_time {
     margin-left: 0.3em; background: #ffc;
     color: blue;
 }
+span.datetime img {height: 16px; vertical-align: middle; margin-right: 2px; margin-left: 1px}
+input#hist_start_time, input#hist_end_time {font-weight: bold; background: #ffc; color: blue; padding-left: 0.4em; width: 3.2em}
+input#hist_end_time:disabled {background: #ccc; color: #999}   
 
 div#features div.link_id {margin-top: 0.6em; border-top: #999 2px solid}
 

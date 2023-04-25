@@ -3,7 +3,7 @@
  Map browser based on OpenLayers. Tracking. 
  Search historic data on tracker points on server.  
  
- Copyright (C) 2018-2022 Øyvind Hanssen, LA7ECA, ohanssen@acm.org
+ Copyright (C) 2018-2023 Øyvind Hanssen, LA7ECA, ohanssen@acm.org
  
  This program is free software: you can redistribute it and/or modify
  it under the terms of the GNU Affero General Public License as published 
@@ -34,8 +34,8 @@ pol.tracking.db.Timemachine = class extends pol.core.Widget {
         var t = this;
     
         t.classname = "tracking.db.Timemachine"; 
-        t.tdate = formatDate(new Date());
-        t.ttime = m.stream( formatTime(new Date()) );
+        t.time = new pol.core.Time(timedSearch);
+        
         t.searchmode = false; 
         t.message = null;
         
@@ -50,27 +50,16 @@ pol.tracking.db.Timemachine = class extends pol.core.Widget {
                     m("form.tm", [ 
                        
                         m("span.tm",
-                            m(dateTimeInput, {id: "dtinput", dvalue: t.tdate, tvalue: t.ttime})), 
+                            m(dateTime, {id: "dtinput", tval: t.time})), 
         
                         m("div.statusmsg", t.message),
                          
+                        
                         m("div.tmbutt", [
                             m("button#tm_b1", {type: "button", 
                                 title: "Show trail - search", onclick: search}, "Go to.."),
-                          
-                            m("button.tm_fw", {type: "button", 
-                                title: "Go back 1 hour", onclick: decr_hour}, m("img", {src:"images/fback.png", height: "22px"})),
-                          
-                            m("button.tm_fw", {type: "button", 
-                                title: "Go back 1 minute", onclick: decr_minute}, m("img", {src:"images/back.png", height: "22px"})),
-                          
-                            m("button.tm_fw", {type: "button", 
-                                title: "Go forward 1 minute", onclick: incr_minute}, m("img", {src:"images/forward.png", height: "23px"})),
-                          
-                            m("button.tm_fw", {type: "button", 
-                                title: "Go forward 1 hour", onclick: incr_hour}, m("img", {src:"images/fforward.png", height: "23px"})),
-                          
-                            m("button#hist_back", {type: "button",  
+                            m(timeButt, {tval: t.time, hour: true}),
+                            m("button#tm_back", {type: "button",  
                                 title: "Return to realtime tracking", onclick: goBack}, "Back")
                         ])
                     ]),
@@ -103,77 +92,13 @@ pol.tracking.db.Timemachine = class extends pol.core.Widget {
                 window.clearTimeout(waiting);
             waiting=setTimeout( ()=> {waiting=null; _search(false) }, 700); 
         }
-        
-        
-        function pad2(number) {
-            return (number < 10 ? '0' : '') + number
-        }
-
-    
-        function decr_minute() {
-            let decrhour = false;
-            const tm = t.ttime();
-            const tc = tm.split(/\s*:\s*/);
-            let minutes = parseInt(tc[1]);
-            minutes--;
-            if (minutes < 0) { minutes = 59; decrhour=true; }
-            t.ttime(tc[0]+":"+pad2(minutes));
-            if (decrhour)
-                decr_hour();
-            timedSearch();
-        }
-    
-         function incr_minute() {
-            let incrhour = false;
-            const tm = t.ttime();
-            const tc = tm.split(/\s*:\s*/);
-            let minutes = parseInt(tc[1]);
-            minutes++;
-            if (minutes > 59) { minutes = 0; incrhour=true; }
-            t.ttime(tc[0]+":"+pad2(minutes));
-            if (incrhour)
-                incr_hour();
-            timedSearch();
-        }
- 
-        function decr_hour() {
-            const tm = t.ttime();
-            const tc = tm.split(/\s*:\s*/);
-            let hours = parseInt(tc[0]);
-            hours--;
-            if (hours < 0) {
-                hours = 23;
-                let d = new Date(t.tdate);
-                decrementDay(d);
-                t.tdate = formatDate(d);
-                m.redraw();
-            }
-            t.ttime(pad2(hours) +":"+ tc[1]);
-            timedSearch();
-        }
-         
-        function incr_hour() {
-            const tm = t.ttime();
-            const tc = tm.split(/\s*:\s*/);
-            let hours = parseInt(tc[0]);
-            hours++;
-            if (hours > 23) {
-                hours = 0;
-                let d = new Date(t.tdate);
-                incrementDay(d);
-                t.tdate = formatDate(d);
-                m.redraw();
-            }
-            t.ttime(pad2(hours) +":"+ tc[1]);
-            timedSearch();
-        }
- 
+   
     
         /* Go back to ordinary tracking mode - button handler */
         function goBack() {
             if (!t.searchmode)
                 return;
-            $('#hist_back').removeClass('searchMode');
+            $('#tm_back').removeClass('searchMode');
             t.searchmode = false;
             CONFIG.tracks.searchMode(false); 
             t.message = null;
@@ -184,11 +109,11 @@ pol.tracking.db.Timemachine = class extends pol.core.Widget {
     
         /* Show the trail for a given item */
         function showPoints(reset) {
-            t.tdate   = $('#dtinput_date').val();
+            t.time.tdate   = $('#dtinput_date').val();
             var done = false;
             var scale = CONFIG.mb.getScale();
             var filt = CONFIG.tracks.filter;
-            var qstring = "?tto="+t.tdate+"/"+t.ttime()+"&scale="+roundDeg(scale)+"&filter="+filt;
+            var qstring = "?tto="+t.time.tdate+"/"+t.time.ttime()+"&scale="+roundDeg(scale)+"&filter="+filt;
             if (reset==true) 
                 qstring += "&reset";
             var ext = CONFIG.mb.getExtent(); 
@@ -198,7 +123,7 @@ pol.tracking.db.Timemachine = class extends pol.core.Widget {
             CONFIG.server.GET("hist/snapshot/" + roundDeg(ext[0]) + "/"+ roundDeg(ext[1]) +
                           "/"+ roundDeg(ext[2]) + "/" + roundDeg(ext[3]) + qstring, "", 
                 x => {
-                    $('#hist_back').addClass('searchMode');
+                    $('#tm_back').addClass('searchMode');
                     t.searchmode = true;
                     CONFIG.tracks.searchMode(true);
                     CONFIG.tracks.update(JSON.parse(x), true);
@@ -208,10 +133,7 @@ pol.tracking.db.Timemachine = class extends pol.core.Widget {
                 });
         }
     
-    
-        
-    
-            
+      
         function roundDeg(d) {
             return Math.round(d*100000) / 100000;
         }
@@ -234,38 +156,6 @@ pol.tracking.db.Timemachine = class extends pol.core.Widget {
 /* FIXME: source file? namespace? Module? */
 
 
-
-function parseDate(d) {
-    return new Date(d);
-}
-
-
-function decrementDay(d) {
-    let day = d.getDate(); 
-    day--;
-    d.setDate(day);
-}
-
-function incrementDay(d) {
-    let day = d.getDate(); 
-    day++;
-    d.setDate(day);
-}
-
-
-
-function formatDate(d) {
-    return ""+d.getFullYear() + "-" + 
-        (d.getMonth()<9 ? "0" : "") + (d.getMonth()+1) + "-" +
-        (d.getDate()<10 ? "0" : "")  + d.getDate();
-}
-
-
-function formatTime(d) {
-    return "" +
-        (d.getHours()<10 ? "0" : "") + d.getHours() + ":" +
-        (d.getMinutes()<10 ? "0" : "") + d.getMinutes();
-}
 
 
 

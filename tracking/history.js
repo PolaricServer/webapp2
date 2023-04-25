@@ -3,7 +3,7 @@
  Map browser based on OpenLayers. Tracking. 
  Search historic data on tracker points on server.  
  
- Copyright (C) 2018-2022 Øyvind Hanssen, LA7ECA, ohanssen@acm.org
+ Copyright (C) 2018-2023 Øyvind Hanssen, LA7ECA, ohanssen@acm.org
  
  This program is free software: you can redistribute it and/or modify
  it under the terms of the GNU Affero General Public License as published 
@@ -52,9 +52,9 @@ pol.tracking.db.History = class extends pol.core.Widget {
                               m("img", {src: "images/time.png", title: "Set time (from form)", onclick: apply(setTime, i)})) ]
                         ),
                              
-                        m("td", {onclick:apply(showItem, i++)}, x.call),         
-                        m("td", x.fromdate+" / "+x.fromtime),
-                        m("td", x.todate+" / "+x.totime)
+                        m("td", {onclick:apply(showItem, i++)}, x.call()),         
+                        m("td", x.from.tdate+" / "+x.from.ttime()),
+                        m("td", x.to.tdate+" / "+x.to.ttime())
                     );
                 })))
             }
@@ -75,12 +75,14 @@ pol.tracking.db.History = class extends pol.core.Widget {
                       
                         m("div.field", 
                             m("span.sleftlab", "Start: "),
-                            m(dateTimeInput, {id: "hist_start", dvalue: t.item.fromdate, tvalue: t.item.fromtime})
+                            m(dateTime, {id: "hist_start", tval: t.item.from}),
+                            m(timeButt, {tval: t.item.from})
                         ),
                       
                         m("div.field", 
                             m("span.sleftlab", "End: "),
-                            m(dateTimeInput, {id: "hist_end", dvalue: t.item.todate, tvalue: t.item.totime}), 
+                            m(dateTime, {id: "hist_end", tval: t.item.to}), 
+                            m(timeButt, {tval: t.item.to}),
                             m(checkBox, {id: "hist_open", onclick: hOpen, checked: t.item.open, 
                                 title: "If checked, end-time is now" }, "Open end")),
                         
@@ -110,10 +112,8 @@ pol.tracking.db.History = class extends pol.core.Widget {
         };
     
     
-    
-        t.list = JSON.parse(CONFIG.get('tracking.db.hist'));
-        if (t.list==null)
-            t.list=[];
+
+        restoreList();
         t.setItem(item);
     
         setTimeout( 
@@ -136,16 +136,13 @@ pol.tracking.db.History = class extends pol.core.Widget {
         function editItem (i) {
             
             let x = Object.assign({}, t.list[i]);
-            x.call = m.stream(x.call);
-            x.totime = m.stream(x.totime);
-            x.fromtime = m.stream(x.fromtime);
             t.item = x; 
 
-            $('#hist_start_date').val(x.fromdate).trigger("change");
+            $('#hist_start_date').val(x.from.tdate).trigger("change");
             if (x.open) 
                 $('#hist_end_date').val(formatDate(new Date())).trigger("change");
             else 
-                $('#hist_end_date').val(x.todate).trigger("change");
+                $('#hist_end_date').val(x.to.tdate).trigger("change");
             
             $('#hist_end_date, #hist_end_time').prop('disabled', x.open);
             m.redraw();
@@ -162,16 +159,16 @@ pol.tracking.db.History = class extends pol.core.Widget {
     
         function setTime(i) {
             let x = t.list[i];
-            x.totime = t.item.totime();
-            x.fromtime = t.item.fromtime();
-            x.fromdate = $('#hist_start_date').val();
+            x.to.ttime(t.item.to.ttime());
+            x.from.ttime(t.item.from.ttime());
+            x.from.tdate = $('#hist_start_date').val();
             
             if (t.item.open) {
-                x.totime = '-';
-                x.todate = '-';
+                x.to.ttime('-');
+                x.to.tdate = '-';
             }
             else 
-                x.todate   = $('#hist_end_date').val();
+                x.to.tdate   = $('#hist_end_date').val();
             saveList();
             m.redraw();
         }
@@ -187,7 +184,7 @@ pol.tracking.db.History = class extends pol.core.Widget {
             getSearch();
             var it = copyItem();
             WIDGET( "tracking.AprsPackets", [50, 70], false, 
-                x=> x.getPackets(it.call, 500,  it.todate+"/"+it.totime, it.fromdate+"/"+it.fromtime) );
+                x=> x.getPackets(it.call(), 500,  it.to.tdate+"/"+it.to.ttime(), it.from.tdate+"/"+it.from.ttime()) );
             
         }
         
@@ -214,8 +211,10 @@ pol.tracking.db.History = class extends pol.core.Widget {
         function hOpen() {
             if (!t.item.open) 
                 $('#hist_end_date, #hist_end_time').prop('disabled',true);
-            else 
+            else {
                 $('#hist_end_date, #hist_end_time').prop('disabled',false);
+                t.item.to.setNow();
+            }
 
             t.item.open = !t.item.open;
             $('#hist_open').prop('checked', t.item.open);
@@ -224,13 +223,12 @@ pol.tracking.db.History = class extends pol.core.Widget {
     
         /* Show the trail for a given item */
         function showTrail(x) {
-            var qstring = "?tfrom="+x.fromdate+"/"+x.fromtime+"&tto="+x.todate+"/"+x.totime;
-            CONFIG.server.GET("/hist/"+x.call+"/trail"+qstring, "", 
+            var qstring = "?tfrom="+x.from.tdate+"/"+x.from.ttime()+"&tto="+x.to.tdate+"/"+x.to.ttime();
+            CONFIG.server.GET("/hist/"+x.call()+"/trail"+qstring, "", 
                 x => {
                     $('#hist_back').addClass('searchMode');
                     t.searchmode = true;
                     CONFIG.tracks.searchMode(true);
-                    console.log("TRAIL: ", JSON.parse(x));
                     CONFIG.tracks.update(JSON.parse(x), true);
                 });
         }
@@ -270,8 +268,8 @@ pol.tracking.db.History = class extends pol.core.Widget {
         /* Generate gpx trail for a given item */
         function gpxTrail(x) {
             return new Promise((resolve, reject) => {
-                var qstring = "?tfrom="+x.fromdate+"/"+x.fromtime+"&tto="+x.todate+"/"+x.totime;
-                CONFIG.server.GET("/hist/"+x.call+"/trail"+qstring, "", 
+                var qstring = "?tfrom="+x.from.tdate+"/"+x.from.ttime()+"&tto="+x.to.tdate+"/"+x.to.ttime();
+                CONFIG.server.GET("/hist/"+x.call()+"/trail"+qstring, "", 
                     x => {
                         const data = JSON.parse(x).points[0];
                         if (data.trail == null) {
@@ -305,24 +303,26 @@ pol.tracking.db.History = class extends pol.core.Widget {
         /* Get search parameters. Save them to localstorage as well */   
         function getSearch() {
             t.item.call(t.item.call().toUpperCase());
-            t.item.fromdate = $('#hist_start_date').val();
-            t.item.todate   = $('#hist_end_date').val();
+            t.item.from.tdate = $('#hist_start_date').val();
+            t.item.to.tdate   = $('#hist_end_date').val();
             
             t.srch = copyItem();
             if (t.srch.open) {
-                t.srch.totime = '-';
-                t.srch.todate = '-';
+                t.srch.to.ttime('-');
+                t.srch.to.tdate = '-';
             }
-            CONFIG.store('tracking.db.hist.item', JSON.stringify(t.item), false);
+            t.saveItem();
         }
     
     
         /* Make a copy of the editable item. Convert stream-values */
         function copyItem() {
             let x = Object.assign({}, t.item);
-            x.fromtime = x.fromtime();
-            x.totime = x.totime();
-            x.call = x.call();
+            x.call = m.stream(t.item.call());
+            x.from = Object.assign({}, t.item.from);
+            x.to = Object.assign({}, t.item.to);
+            x.from.ttime = m.stream(t.item.from.ttime());
+            x.to.ttime = m.stream(t.item.to.ttime());
             return x;
         }
         
@@ -332,8 +332,7 @@ pol.tracking.db.History = class extends pol.core.Widget {
         /* Add search to list */
         function add() {
             getSearch();
-            let x = copyItem();
-            t.list.push(x);
+            t.list.push(copyItem());
             saveList();
         }
     
@@ -347,11 +346,9 @@ pol.tracking.db.History = class extends pol.core.Widget {
                 let mtr = JSON.parse(x);
                 for (var tt of mtr) { 
                    let tr = {
-                       call: tt.id, 
-                       fromdate: t.item.fromdate,
-                       fromtime: t.item.fromtime(),
-                       todate: t.item.todate,
-                       totime: t.item.totime()
+                       call: m.stream(tt.id), 
+                       from: t.item.from, 
+                       to: t.item.to
                    };
                    t.list.push(tr);
                 }
@@ -363,17 +360,67 @@ pol.tracking.db.History = class extends pol.core.Widget {
         
         function clear() {
             t.item.call("");
+            t.item.from.setNow();
+            t.item.to.setNow();
             t.list = []; 
-            CONFIG.store('tracking.db.hist.item', JSON.stringify(t.item), false);
+            t.saveItem();
             saveList();
         }
     
+       
         /* Save list to local storage */
         function saveList() { 
-            CONFIG.store('tracking.db.hist', JSON.stringify(t.list), false);
+              const list = [];
+              for (it of t.list)
+                  list.push(t._saveItem(it));
+              CONFIG.store('tracking.db.hist', JSON.stringify(list), false);
         }
+        
+        
+        function restoreList() {
+            let list = JSON.parse(CONFIG.get('tracking.db.hist'));
+            if (Array.isArray(list)==false)
+                list = [];
+            if (list==null || list==[])
+                t.list=[];    
+            for (it of list)
+                t.list.push(t._restoreItem(it));
+        }
+        
  
     } /* constructor */
+    
+    
+    _saveItem(x) {        
+        return {
+            call: x.call(), todate: x.to.tdate, totime: x.to.ttime(),
+            fromdate: x.from.tdate, fromtime: x.from.ttime(), open:x.open 
+        }
+    }
+    
+        
+    _restoreItem(it) {
+        const to = new pol.core.Time();
+        if (it == null)
+            return {call: m.stream(""), to: to, from: new pol.core.Time(), open:false};
+        to.tdate = it.todate;
+        to.ttime(it.totime);
+        const frm = new pol.core.Time();
+        frm.tdate = it.fromdate;
+        frm.ttime(it.fromtime);
+        return {call: m.stream(it.call), to: to, from: frm, open:it.open};
+    }
+    
+    
+    saveItem() {
+        CONFIG.store('tracking.db.hist.item', JSON.stringify(this._saveItem(this.item)), false);
+    }
+       
+       
+    restoreItem() {
+        const it = JSON.parse(CONFIG.get('tracking.db.hist.item'));
+        this.item = this._restoreItem(it); 
+    }
     
     
     onclose() {
@@ -390,9 +437,8 @@ pol.tracking.db.History = class extends pol.core.Widget {
     newItem(item) {
         return {
             call: m.stream((item? item: "")),
-            fromdate: null, todate: null,
-            fromtime: m.stream(""),
-            totime: m.stream("")
+            from: new pol.core.Time(),
+            to: new pol.core.Time()
         };
     }
     
@@ -401,52 +447,29 @@ pol.tracking.db.History = class extends pol.core.Widget {
     /* Initialize fields of editable item */
     setItem(item) {
         const t = this;
-      	if (item) {
-            t.item = newItem(item);
-            CONFIG.store('tracking.db.hist.item', JSON.stringify(t.item), false);
+      	if (item != null) {
+            t.item = t.newItem(item);
+            t.saveItem();
             m.redraw();
         }
         else {
-            t.item = JSON.parse(CONFIG.get('tracking.db.hist.item'));
-            if (t.item != null) {
-                t.item.call = m.stream(t.item.call);
-                t.item.fromtime = m.stream(t.item.fromtime);
-                t.item.totime = m.stream(t.item.totime);
-            }
+            t.restoreItem();
         }
         if (t.item==null) 
             t.item = t.newItem();
-        
-        
-        if (t.item.fromdate == null)
-            t.item.fromdate = formatDate(new Date());
-        if (t.item.todate == null || t.item.todate == '-')
-            t.item.todate = formatDate(new Date());
-        if (t.item.fromtime() == '')
-            t.item.fromtime(formatTime(new Date()));
-        if (t.item.totime() == '' || t.item.totime() == '-')
-            t.item.totime(formatTime(new Date()));  
+        if (t.item.from==null)
+            t.item.from = new pol.core.Time();
+        if (t.item.to==null)
+            t.item.to = new pol.core.Time();
+
+        if (!t.item.to.timeIsSet())
+            t.item.to.setNow();
+        if (!t.item.from.timeIsSet())
+            t.item.from.setNow();
         return t;
     }
     
 } /* class */
-
-
-
-/* FIXME: source file? namespace? Module? */
-
-function formatDate(d) {
-    return ""+d.getFullYear() + "-" + 
-        (d.getMonth()<9 ? "0" : "") + (d.getMonth()+1) + "-" +
-        (d.getDate()<10 ? "0" : "")  + d.getDate();
-}
-
-
-function formatTime(d) {
-    return "" +
-        (d.getHours()<10 ? "0" : "") + d.getHours() + ":" +
-        (d.getMinutes()<10 ? "0" : "") + d.getMinutes();
-}
 
 
 

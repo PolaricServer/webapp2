@@ -240,12 +240,40 @@ const Datepick = {
  *     dvalue - date value (stream)
  *     tvalue - time (stream) 
  */
-const dateTimeInput = {
+
+const dateTime = {
     view: function(vn) {
-        return m("span", 
-            m(Datepick, {value: vn.attrs.dvalue, id:vn.attrs.id+"_date"}),
+        return m("span.datetime", 
+            m(Datepick, {value: vn.attrs.tval.tdate, id:vn.attrs.id+"_date"}),
             m(textInput, {id:vn.attrs.id+"_time", size: "5", maxLength: "5", 
-                value: vn.attrs.tvalue, regex: /^(([0-1][0-9])|(2[0-3]))\:[0-5][0-9]$/ }));
+                value: vn.attrs.tval.ttime, regex: /^(([0-1][0-9])|(2[0-3]))\:[0-5][0-9]$/ }),
+            m("img", {title: "Set time to now", src:"images/time.png", onclick: ()=> vn.attrs.tval.setNow()}));
+    }
+}
+
+
+const timeButt = {
+    view: function(vn) {
+        const t = vn.attrs.tval;
+        return m("span", 
+            (vn.attrs.hour ? 
+                m("button.tm_fw", {type: "button", 
+                    title: "Go back 1 hour", onclick: ()=>t.decr_hour()}, 
+                    m("img", {src:"images/fback.png", height: "22px"})) : null ),
+             
+            m("button.tm_fw", {type: "button", 
+                    title: "Go back 1 minute", onclick: ()=>t.decr_minute()}, 
+                    m("img", {src:"images/back.png", height: "22px"})),
+                          
+            m("button.tm_fw", {type: "button", 
+                    title: "Go forward 1 minute", onclick: ()=>t.incr_minute()}, 
+                    m("img", {src:"images/forward.png", height: "23px"})), 
+            
+            (vn.attrs.hour ? 
+                m("button.tm_fw", {type: "button", 
+                    title: "Go forward 1 hour", onclick: ()=>t.incr_hour()}, 
+                    m("img", {src:"images/fforward.png", height: "22px"})) : null ),
+        );
     }
 }
 

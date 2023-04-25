@@ -37,7 +37,7 @@ pol.tracking.Users = class extends pol.core.Widget {
         t.callsign = m.stream("");
         t.passwd = m.stream("");
         t.group = "DEFAULT";
-        t.agroup = "DEFAULT";
+        t.altgroup = "DEFAULT";
         t.selGroup = "";
         t.selAGroup = "";
         t.groupList = [];
@@ -112,11 +112,11 @@ pol.tracking.Users = class extends pol.core.Widget {
                             maxLength: 32, regex: /.*/i })), 
                          
                     m("div.field", 
-                        m("span.xsleftlab", {title: "Group"}, "Group:"),
+                        m("span.xsleftlab", {title: "Primary Group"}, "Group:"),
                         m(t.groups), m("span#selGroup", ""+t.selGroup), nbsp,
                     ),
                     m("div.field", 
-                        m("span.xsleftlab", {title: "Alternative group"}, "Alt group:"),
+                        m("span.xsleftlab", {title: "Secondary group"}, "Alt group:"),
                         m(t.agroups), m("span#selAGroup", ""+t.selAGroup), nbsp,
                     ),
                     
@@ -192,9 +192,9 @@ pol.tracking.Users = class extends pol.core.Widget {
         
         
         function selectHandler2() {
-            t.agroup = $("select#agroup").val();
+            t.altgroup = $("select#agroup").val();
             for (const x of t.groupList)
-                if (x.ident==t.agroup)
+                if (x.ident==t.altgroup)
                     t.selAGroup = x.name;
             m.redraw();
         }
@@ -209,7 +209,7 @@ pol.tracking.Users = class extends pol.core.Widget {
                 callsign: (t.callsign()=="" || t.callsign()==" " ? "" : t.callsign().toUpperCase()),
                 passwd: (t.passwd()=="" || t.passwd()==" " ? null : t.passwd()),
                 group: t.group,
-                agroup: t.agroup,
+                altgroup: t.altgroup,
                 admin: t.admin, 
                 suspend: t.suspend
             };
@@ -237,7 +237,7 @@ pol.tracking.Users = class extends pol.core.Widget {
                 passwd: (t.passwd()=="" || t.passwd()==" " ? null : t.passwd()),
                 callsign: (t.callsign()=="" || t.callsign()==" " ? "" : t.callsign().toUpperCase()),
                 group: t.group,
-                agroup: t.agroup,
+                altgroup: t.altgroup,
                 admin: t.admin, 
                 suspend: t.suspend
             };
@@ -249,7 +249,7 @@ pol.tracking.Users = class extends pol.core.Widget {
                             t.users[i].name = data.name; 
                             t.users[i].callsign = data.callsign;
                             t.users[i].group = data.group;
-                            t.users[i].agroup = data.agroup;
+                            t.users[i].altgroup = data.altgroup;
                             t.users[i].admin = data.admin;
                             t.users[i].suspend = data.suspend;
                             break;
@@ -284,12 +284,12 @@ pol.tracking.Users = class extends pol.core.Widget {
             t.callsign(u.callsign);
             t.passwd("");
             t.group = u.group;
-            t.agroup = u.altgroup;
+            t.altgroup = u.altgroup;
             t.admin = u.admin;
             t.suspend = u.suspend;
             setTimeout(()=> {
                 $("select#group").val(t.group).trigger("change");
-                $("select#agroup").val(t.agroup).trigger("change");
+                $("select#agroup").val(t.altgroup).trigger("change");
             }, 100);
         }
     
@@ -317,13 +317,13 @@ pol.tracking.Users = class extends pol.core.Widget {
         this.name("");
         this.passwd("");
         this.group = "DEFAULT";
-        this.agroup = "DEFAULT";
+        this.altgroup = "DEFAULT";
         this.admin = false;
         this.suspend = false;
         m.redraw();          
         setTimeout(()=> {
             $("select#group").val(this.group).trigger("change");
-            $("select#agroup").val(this.agroup).trigger("change");
+            $("select#agroup").val(this.altgroup).trigger("change");
         }, 100);
     }
     
