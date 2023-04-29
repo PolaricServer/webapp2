@@ -130,7 +130,15 @@ pol.tracking.db.History = class extends pol.core.Widget {
             t.list.splice(i, 1);
             saveList();
         }
-    
+        
+        
+        function toIsoString(d, t) {
+            if (d=="-" || t=="-")
+                return "-/-";
+            const dt = new Date(d+" "+t);
+            return dt.toISOString();
+        }
+        
     
         /* Edit item (move it to search form) */
         function editItem (i) {
@@ -184,7 +192,8 @@ pol.tracking.db.History = class extends pol.core.Widget {
             getSearch();
             var it = copyItem();
             WIDGET( "tracking.AprsPackets", [50, 70], false, 
-                x=> x.getPackets(it.call(), 500,  it.to.tdate+"/"+it.to.ttime(), it.from.tdate+"/"+it.from.ttime()) );
+                x=> x.getPackets(it.call(), 500,  toIsoString(it.to.tdate, it.to.ttime()), 
+                        toIsoString(it.from.tdate, it.from.ttime() ) ) );
             
         }
         
@@ -223,7 +232,9 @@ pol.tracking.db.History = class extends pol.core.Widget {
     
         /* Show the trail for a given item */
         function showTrail(x) {
-            var qstring = "?tfrom="+x.from.tdate+"/"+x.from.ttime()+"&tto="+x.to.tdate+"/"+x.to.ttime();
+            var qstring = "?tfrom=" + toIsoString(x.from.tdate, x.from.ttime()) 
+              + "&tto=" + toIsoString(x.to.tdate, x.to.ttime());
+            
             CONFIG.server.GET("/hist/"+x.call()+"/trail"+qstring, "", 
                 x => {
                     $('#hist_back').addClass('searchMode');
@@ -268,7 +279,10 @@ pol.tracking.db.History = class extends pol.core.Widget {
         /* Generate gpx trail for a given item */
         function gpxTrail(x) {
             return new Promise((resolve, reject) => {
-                var qstring = "?tfrom="+x.from.tdate+"/"+x.from.ttime()+"&tto="+x.to.tdate+"/"+x.to.ttime();
+                
+                var qstring = "?tfrom=" + toIsoString(x.from.tdate,x.from.ttime()) 
+                   + "&tto=" + toIsoString(x.to.tdate, x.to.ttime());
+                
                 CONFIG.server.GET("/hist/"+x.call()+"/trail"+qstring, "", 
                     x => {
                         const data = JSON.parse(x).points[0];

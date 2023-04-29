@@ -113,7 +113,14 @@ pol.tracking.db.HeardVia = class extends pol.core.Widget {
         /* Apply a function to an argument. Returns a new function */
         function apply(f, id) {return function() { f(id); }};  
     	    t.color = 0;
-    
+        
+            
+        function toIsoString(d, t) {
+            const dt = new Date(d+" "+t);
+            return dt.toISOString();
+        }
+        
+        
         /* Delete item from list */
         function deleteItem (i) {
             t.list.splice(i, 1);
@@ -186,8 +193,9 @@ pol.tracking.db.HeardVia = class extends pol.core.Widget {
     
         /* Show the cloud for a given item */
         function showCloud(c, color) {
-            var qstring = "?tfrom="+c.fromdate+"/00:00"+"&tto="
-                + (c.todate=='-' ? '-/-' : c.todate+"/23:59");
+            var qstring = "?tfrom=" + toIsoString(c.fromdate,"00:00") + "&tto="
+                + (c.todate=='-' ? '-/-' : toIsoString(c.todate,"23:59") );
+                
             CONFIG.server.GET("/hist/"+c.call+"/hrdvia"+qstring, "", 
                 x => {
                     $('#hrd_back').addClass('searchMode');

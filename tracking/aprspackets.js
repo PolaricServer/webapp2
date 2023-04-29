@@ -63,9 +63,9 @@ pol.tracking.AprsPackets = class extends pol.core.Widget {
             view: function() {
                 var tsearch = "";
                 if (t.tfrom)
-                    tsearch += " From: "+t.tfrom;
+                    tsearch += " From: "+ formatTime(t.tfrom);
                 if (t.at)
-                    tsearch += " To: "+t.at;
+                    tsearch += " To: "+ formatTime(t.at);
                 if (!t.tfrom && !t.at)
                     tsearch = " Last "+t.n+" packets";
                 
@@ -106,6 +106,7 @@ pol.tracking.AprsPackets = class extends pol.core.Widget {
     } /* constructor */
     
     
+    // Time should be in ISO format !!
     getPackets(ident, n, at, tfrom) {
         console.assert(ident && ident != null, "Assertion failed");
         this.callsign=ident;

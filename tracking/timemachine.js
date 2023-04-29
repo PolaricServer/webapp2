@@ -105,7 +105,14 @@ pol.tracking.db.Timemachine = class extends pol.core.Widget {
             m.redraw();
         }
         
-       
+        
+        function toIsoString(d, t) {
+            const dt = new Date(d+" "+t);
+            return dt.toISOString();
+        }
+        
+
+
     
         /* Show the trail for a given item */
         function showPoints(reset) {
@@ -113,7 +120,7 @@ pol.tracking.db.Timemachine = class extends pol.core.Widget {
             var done = false;
             var scale = CONFIG.mb.getScale();
             var filt = CONFIG.tracks.filter;
-            var qstring = "?tto="+t.time.tdate+"/"+t.time.ttime()+"&scale="+roundDeg(scale)+"&filter="+filt;
+            var qstring = "?tto="+toIsoString(t.time.tdate, t.time.ttime()) + "&scale=" + roundDeg(scale) + "&filter="+filt;
             if (reset==true) 
                 qstring += "&reset";
             var ext = CONFIG.mb.getExtent(); 
