@@ -1,8 +1,14 @@
-polaric-webapp2 (1.10+) UNRELEASED; urgency=medium
+polaric-webapp2 (1.11) stable; urgency=medium
 
-  * Hacking and cracking
+  * Update libraries (OL to version 7.3, etc)
+  * Support HTTPS backend
+  * Use babel to compile/minify
+  * WFS setup improvements 
+  * AuthInfo widget (role based auth)
+  * Allow multiple telemtry windows
+  * Various fixes..
 
- -- Oyvind Hanssen <ohanssen@acm.org>  Tue, 21 Mar 2023 21:40:43 +0100
+ -- Oyvind Hanssen <ohanssen@acm.org>  Wed, 26 Apr 2023 22:44:20 +0200
 
 polaric-webapp2 (1.10) stable; urgency=medium
 

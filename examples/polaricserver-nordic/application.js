@@ -22,7 +22,7 @@
     */
    var urlArgs = getParams(window.location.href);
    if (urlArgs['car'] != null) 
-	CONFIG.store('display.in-car', true);
+	  CONFIG.store('display.in-car', true);
       
    /* 
     * Instantiate the map browser and try to restore widgets from a previous session. 
@@ -44,6 +44,7 @@
         const flt = new pol.tracking.Filters(mu);
         CONFIG.tracks = mu;
         CONFIG.filt = flt;
+        
         if (urlArgs['track'] != null) 
         	CONFIG.tracks.setTracked(urlArgs['track']);
         
@@ -117,7 +118,7 @@
    
     browser.ctxMenu.addCallback("MAP", (m, ctxt)=> {
         m.add('Show map reference', () => browser.show_MaprefPix( [m.x, m.y] ) );  
-        if (srv.auth.sar) {
+        if (srv.auth.sar || srv.auth.admin) {
             m.add('Add APRS object', () => 
                 WIDGET("tracking.OwnObjects", [50,70], true, x=> x.setPosPix([m.x, m.y]))); 
             
@@ -157,7 +158,7 @@
         m.add('Search items',  () => WIDGET("tracking.Search", [50,70], true));
         m.add('Find position', () => WIDGET("core.refSearch",  [50,70], true));
 
-        if (srv.auth.sar) {                 
+        if (srv.auth.sar || srv.auth.admin) {                 
             m.add('Add APRS object', () => 
                 WIDGET("tracking.OwnObjects", [50,70], true)); 
         }
@@ -174,7 +175,7 @@
         m.add("Label font -", () => CONFIG.labelStyle.previous());
         m.add(null);
      
-        if (srv.auth.sar) {
+        if (srv.auth.sar || srv.auth.admin) {
             m.add("SAR mode..", () => WIDGET("tracking.SarMode", [50,70], false)); 
             m.add(null);
             if (srv.auth.admin) {

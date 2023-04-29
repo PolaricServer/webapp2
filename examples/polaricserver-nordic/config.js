@@ -4,7 +4,7 @@
  * Feel free to modify it to meet your needs. 
  * See examples aprs.no.config.js for more examples... 
  * 
- * (c) 2017-2022 LA7ECA, Ø. Hanssen
+ * (c) 2017-2023 LA7ECA, Ø. Hanssen
  *************************************************************/
 
 /* 
@@ -13,6 +13,12 @@
  * Default is to use the location of the webapp. 
  */
 //SERVER("https://aprs.no");
+
+/* 
+ * If backend server is using HTTPS, uncomment this
+ */
+//SECURE(true);
+
 
 
 /* 
@@ -54,21 +60,15 @@ SCALE     ( 20000 );
 WELCOME(false);
 
 
-/*
- * Default filter view selections, per group.
- * 
- * DEFAULT_FILTER takes two arguments: Name of the group (see groups config 
- * in polaric-aprsd) and name of the filter (see view-filters in polaric-aprsd). 
- * You would probably want to add one per group. 
+/* Default filter view selections, per group. 
  */
 DEFAULT_FILTER(null,  "track"); // Default - if not set for group
 
 
-
-/*************************************************************************************
+/*
  * We can add projections using Proj4js, using the ADD_PROJECTION function.
  * Here, we need the UTM zone 32 and 33 projections for Scandinavia
- *************************************************************************************/
+ */
 
 const utmproj = ADD_PROJECTION
  (  "EPSG:32633", "+proj=utm +zone=33 +ellps=WGS84 +datum=WGS84 +units=m +no_defs",
@@ -137,6 +137,8 @@ const Svalbard = POLYGON([
     [37.8369, 80.1862], [26.9824, 77.9157],  [26.0596, 76.383],  [20.6543, 74.5433]
 ]);
 
+const KV_ATTR = "Maps: © <a href=\"kartverket.no\">Kartverket</a>"
+
 
 
 /***********************************************************************************************
@@ -156,29 +158,23 @@ const Svalbard = POLYGON([
  * 
  ************************************************************************************************/
 
-/* Attribution */
-const KV_ATTR = "Maps: © <a href=\"kartverket.no\">Kartverket</a>"
-
-
-
 LAYERS({ 
     base: true,
-    predicate: TRUE,
+    predicate: LOGIN(),
     projection: "EPSG:900913",
 },
 [
     new ol.layer.Tile({
         name: 'OpenStreetMap',
         source: new ol.source.OSM()
-    }),
-
+    })
+        
 ]);
 
 
 
 
-/* 
- * Base layers in UTM projection. Norway and scale > 8000000 
+/* Base layers in UTM projection. Norway and scale > 8000000 
  * Layers are shown if predicate evaluates to true
  */
 
@@ -310,8 +306,14 @@ STYLES ([
     },
     { id: "Red dashed",
         tag : /gpx|wfs/, 
-        stroke: {color: 'rgba(200,0,0,1)', width: 2.3, lineDash: [3,3.5]},
+        stroke: {color: 'rgba(200,0,0,1)', width: 2.2, lineDash: [3,3.5]},
 	    fill  : 'rgba(255,240,220,0.3)',
+	    text  : {scale: 0.9,  offsetY: 14, fill: '#300', stroke: {color: '#fff', width: 3} },
+	    image : CIRCLE(4, {fill: '#55ea'})
+    },  
+    { id: "Red (no fill)",
+        tag : /gpx|wfs/, 
+        stroke: {color: 'rgba(200,0,0,1)', width: 1.5},
 	    text  : {scale: 0.9,  offsetY: 14, fill: '#300', stroke: {color: '#fff', width: 3} },
 	    image : CIRCLE(4, {fill: '#55ea'})
     },
@@ -321,10 +323,16 @@ STYLES ([
 	    fill  : 'rgba(220,255,220,0.3)',
 	    text  : {scale: 0.9,  offsetY: 14, fill: '#300', stroke: {color: '#fff', width: 3} },
 	    image : CIRCLE(4, {fill: '#f448'})
+    }, 
+    { id: "Green (no fill)",
+        tag: /gpx|wfs/,
+        stroke: {color: 'rgba(0,100,0,1)', width: 1.5},
+	    text  : {scale: 0.9,  offsetY: 14, fill: '#300', stroke: {color: '#fff', width: 3} },
+	    image : CIRCLE(4, {fill: '#f448'})
     },
     { id: "Blue dashed",
         tag: /gpx|wfs/,
-        stroke: {color: 'rgba(0,80,200,1)', width: 2.3, lineDash: [3,3]},
+        stroke: {color: 'rgba(0,80,200,1)', width: 2.2, lineDash: [3,3]},
 	    fill  : 'rgba(200,220,253,0.3)',
 	    text  : {scale: 0.9,  offsetY: 14, fill: '#003', stroke: {color: '#fff', width: 3} },
 	    image : CIRCLE(4, {fill: '#55ff'})
@@ -372,7 +380,7 @@ STYLES ([
  * Extents are upper left corner (1) and lower right corner (2) in decimal degrees
  * [longitude-1, latitude-1, longitude-2, latitude-2]
  * 
- * This example lists the norwegian counties. Change to satisfy your own need.
+ * This example lists the norwegian counties. Edit to satisfy your own need.
  ***************************************************************************************/
 
 var defaultView = 'default';
