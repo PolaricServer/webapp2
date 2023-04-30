@@ -160,7 +160,6 @@ const KV_ATTR = "Maps: © <a href=\"kartverket.no\">Kartverket</a>"
 
 LAYERS({ 
     base: true,
-    predicate: LOGIN(),
     projection: "EPSG:900913",
 },
 [

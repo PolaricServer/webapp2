@@ -326,6 +326,7 @@ pol.tracking.db.History = class extends pol.core.Widget {
                 t.srch.to.tdate = '-';
             }
             t.saveItem();
+            return t.srch;
         }
     
     
@@ -345,8 +346,8 @@ pol.tracking.db.History = class extends pol.core.Widget {
     
         /* Add search to list */
         function add() {
-            getSearch();
-            t.list.push(copyItem());
+            const x = getSearch();
+            t.list.push(x);
             saveList();
         }
     
