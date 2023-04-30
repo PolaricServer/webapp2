@@ -17,7 +17,7 @@
 /* 
  * If backend server is using HTTPS, uncomment this
  */
-//SECURE(true);
+// SECURE(true);
 
 
 
@@ -160,6 +160,7 @@ const KV_ATTR = "Maps: © <a href=\"kartverket.no\">Kartverket</a>"
 
 LAYERS({ 
     base: true,
+    predicate: TRUE,
     projection: "EPSG:900913",
 },
 [
@@ -183,6 +184,16 @@ LAYERS({
     projection: utmproj,
 },
 [    
+    /* This is an example of how we can use mapcache */
+    createLayer_MapCache( {
+        name: "Norgeskart bakgrunn (cache)",
+        opacity: 0.65,
+        layers: "kv_grunnkart",
+        tilegrid: KV_grid_UTM,
+        attributions: KV_ATTR, 
+        seed_max_res: 30
+    }),   
+    
     new ol.layer.Tile({
         name: "Norges grunnkart",
         opacity: 0.85,
@@ -379,7 +390,7 @@ STYLES ([
  * Extents are upper left corner (1) and lower right corner (2) in decimal degrees
  * [longitude-1, latitude-1, longitude-2, latitude-2]
  * 
- * This example lists the norwegian counties. Edit to satisfy your own need.
+ * This example lists the norwegian counties. Change to satisfy your own need.
  ***************************************************************************************/
 
 var defaultView = 'default';

@@ -241,8 +241,7 @@ pol.core.Widget = class {
      
         function dragStop( event, ui ) {
             t.pos = [ui.position.left, ui.position.top];
-            if (t.saved)
-                save();
+            save();
         }
      
      
