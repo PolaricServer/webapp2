@@ -306,3 +306,7 @@ div#features div.link_id {margin-top: 0.6em; border-top: #999 2px solid}
 
 div.statusmsg {color: #a09; margin-top: 0.1em; margin-left: 2em; margin-bottom: -0.4em; }
 select#group {width: 9em}
+
+
+#syncNodes h3 {font-size: 90%; margin-bottom: 0.4em; margin-top: 0.5em; color: #666; margin-left: 0.5em}
+#syncNodes table {margin-left: 0.5em}
