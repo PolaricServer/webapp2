@@ -3,7 +3,7 @@
  Map browser based on OpenLayers 5. 
  Superclass for widgets in draggable popup windows. 
  
- Copyright (C) 2017-2018 Øyvind Hanssen, LA7ECA, ohanssen@acm.org
+ Copyright (C) 2017-2023 Øyvind Hanssen, LA7ECA, ohanssen@acm.org
  
  This program is free software: you can redistribute it and/or modify
  it under the terms of the GNU Affero General Public License as published 
@@ -123,6 +123,7 @@ pol.core.Widget = class {
         this.pos = null;
         this.saved = true;
         this.classname = null;
+        this.domclass = null;
         this.active = false; 
         this._allowPopup = true;
         
@@ -195,7 +196,7 @@ pol.core.Widget = class {
     activatePopup(id, pixPos, pinned, saved) 
     {
         console.assert(id != null && pixPos != null 
-            && pixPos[0] >= 0 && pixPos[1] >= 0, "id="+id+", pixPos="+pixPos);
+            && pixPos[0] > -50 && pixPos[1] > -50, "id="+id+", pixPos="+pixPos);
         if (!this._allowPopup)
             return null;
         if (pixPos == null)
@@ -217,7 +218,7 @@ pol.core.Widget = class {
             pin: saveCb,
             pinned: pinned,
             id: id,
-            cclass: "widget",
+            cclass: "widget" + (this.domclass == null ? "" : " "+this.domclass),
             onclose: ()=> {unSave(); t.active=false; t.onclose();}
         });           
 

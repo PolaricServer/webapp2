@@ -8,11 +8,13 @@
 
 @media 
   screen and (max-device-width: 500px),
-  screen and (max-device-width: 25em), 
+  screen and (max-device-width: 35em), 
   screen and (max-device-height: 500px),
-  screen and (max-device-height: 25em)
+  screen and (max-device-height: 35em)
 {
-
+   div.toolbar {background: #cecb }
+   .ol-attribution, .logo {visibility: hidden}
+      
    div.POPUPMENU div div {
       font-size: 1.2em; 
       line-height: 1.5em;
@@ -24,7 +26,7 @@
    }
 
    div.ITEM_last {border-bottom: none !important}
-   #infopopup {max-width: 92%; margin-right: 5px !important; margin-left: -10px !important }
+   .infopopup {max-width: 99%; margin-right: 1px !important; margin-left: -1px !important }
 
    .mousepos, .ui-tooltip {visibility: hidden}
    .ol-scale-line { bottom: 0.4em; }
@@ -35,11 +37,11 @@
 /* Portrait orientation */
 @media 
   screen and (max-device-width: 500px),
-  screen and (max-device-width: 25em) 
+  screen and (max-device-width: 35em) 
 {
    #toolbar_login {visibility: hidden; width: 0}
    #tb_measure {visibility: hidden; width: 0}
-   #infopopup {min-width: 90% !important}
+   .infopopup {min-width: 90% !important}
 }
 
 
@@ -47,9 +49,9 @@
 /* Landscape orientation */
 @media 
   screen and (max-device-height: 500px),
-  screen and (max-device-height: 25em) 
+  screen and (max-device-height: 35em) 
 {
-    #infopopup {min-width: 23em !important}
+    .infopopup {min-width: 23em !important}
 }
 
 
@@ -58,15 +60,15 @@
 
 /*****************************************************************************
  * TABLETS
- *****************************************************************************
+ *****************************************************************************/
 
 @media 
-    only screen and (hover: none) and (min-width: 768px) and (-webkit-min-device-pixel-ratio: 2.0),
-    only screen and (hover: none) and (min-height: 768px) and (-webkit-min-device-pixel-ratio: 2.0)
+     (min-device-width: 50em) and (-webkit-min-device-pixel-ratio: 2.0)
 
 {
     div {font-size: 105%}
-    #infopopup {font-size: 1.1em}
+    .infopopup {font-size: 2.1em}
+
 
     div.POPUPMENU div div {
       font-size: 1.4em; 
@@ -88,7 +90,7 @@
 }
  
  
-*/
+
 
 
 

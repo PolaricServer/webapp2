@@ -34,6 +34,7 @@ pol.tracking.PointInfo = class extends pol.core.Widget {
         t.srv = CONFIG.server;
         
         t.classname = "tracking.PointInfo"; 
+        t.domclass = "infopopup";
         t.info = null;
 
         var _default = {
