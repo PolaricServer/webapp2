@@ -43,24 +43,28 @@ pol.mapref.formatDM = function(ref) {
 pol.mapref.formatMaidenhead = function(ref) 
 {
    const z1 = ref[0] + 180;
+   const z2 = ref[1] + 90;
+   
    const longZone1 = Math.floor( z1 / 20);
    const char1 = chr(65 + longZone1);
 
-   const z2 = ref[1] + 90;
    const latZone1 = Math.floor(z2 / 10);
    const char2 = chr(65 + latZone1);
 
+   
    const longZone2 = Math.floor((z1 % 20) / 2);
    const char3 = chr(48 + longZone2);
 
    const latZone4 = Math.floor(z2 % 10);
    const char4 = chr(48 + latZone4);
 
-   const longZone5 = Math.floor(((ref[0] + 180) % 2) * 12);
+   
+   const longZone5 = Math.floor((z1 % 2) * 12);
    const char5 = chr(97 + longZone5);
 
-   const latZone6 = Math.floor(((ref[1] + 90) % 1) * 24);
+   const latZone6 = Math.floor((z2 % 1) * 24);
    const char6 = chr(97 + latZone6);
+   
    
    return char1+char2+char3+char4+char5+char6;
 }

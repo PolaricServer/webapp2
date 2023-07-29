@@ -102,15 +102,15 @@ th {
 
 
 table, #searchresult table, #userList table, #signsList table, #trailresult table
-{border-collapse: collapse;}
+{border-collapse: collapse; }
 
-.items td, #historypopup td, #searchresult td, #userList td, #signsList td, #trailresult td, #rawAprs td {
+.items td, #historypopup td, #searchresult td, #userList td, #signsList td, #trailresult td, #rawAprs td, #syncNodes td {
   padding-left: 0.5em; 
   padding-right: 0.5em;
   padding-bottom: 0.2em;
   padding-top: 0.2em;
   line-height: 1em;
-  border: 1px #d86 dotted
+  border: 1px #d75 dotted
 }
 
 tr {height: 12px;}

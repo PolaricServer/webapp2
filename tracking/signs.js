@@ -178,7 +178,7 @@ pol.tracking.db.Signs = class extends pol.core.Widget {
                 return;
             }
             t.server.PUT("signs/"+t.ident, JSON.stringify(getObject()), 
-               ()=> { setTimeout(t.getSigns, 500);  }, 
+               ()=> { setTimeout(()=>t.getSigns(), 500);  }, 
                 x=> { error("Cannot update on server: "+x.responseText) }
             ); 
         }
@@ -191,7 +191,7 @@ pol.tracking.db.Signs = class extends pol.core.Widget {
                 return;
             }
             t.server.POST("signs", JSON.stringify(getObject()), 
-               ()=> { setTimeout(t.getSigns, 500); }, 
+               ()=> { }, 
                 x=> { error("Cannot add to server: "+x.responseText) }
             );
         }
@@ -322,7 +322,7 @@ pol.tracking.db.Signs = class extends pol.core.Widget {
     
     /* Get list of signs from server */
     getSigns() {
-        if (this.inProgr)
+       if (this.inProgr)
             return;
         this.inProgr = true;
         const userid = this.server.auth.userid;
@@ -362,8 +362,7 @@ pol.tracking.db.Signs = class extends pol.core.Widget {
         if (this.mTypes != null && this.mTypes.length == 0) {
             this.type = this.myTypes[0].val; 
             this.icon = this.myTypes[0].icon;
-        } else 
-            console.warn("No sign types found in database");
+        } 
  
         $('#typeSelect').val(this.type);
         this.setEditMode(false);
@@ -374,6 +373,8 @@ pol.tracking.db.Signs = class extends pol.core.Widget {
      * make it scrollable. 
      */        
     mountList() {
+        if (!this.isActive())
+            return;
         m.mount($("div#signsList").get(0), this.signsList);
         this.setScrollTable("#signsEdit", "div#signsList");
     }
