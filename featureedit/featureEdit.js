@@ -80,14 +80,12 @@ pol.features.Edit = class extends pol.core.Widget {
         });
        
         snow.drawSource.on("changefeature", e=> {
-            console.log("changefeature:", e);
             changeHandler(e.feature, "chg");
         });
         
         
         snow.addDrawCB( 
             e=> {
-                console.log("add feature: ", e);
                 changeHandler(e.feature, "add");
             }
         );
@@ -215,7 +213,6 @@ pol.features.Edit = class extends pol.core.Widget {
    
    
     removeFeatures(lname) {
-        console.log("removeFeatures: ",lname);
         const srv = CONFIG.server; 
         if (srv != null && srv.loggedIn && srv.hasDb) {
             const tag = "feature"+ (lname ? "."+lname : "");

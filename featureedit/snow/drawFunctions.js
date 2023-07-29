@@ -16,7 +16,6 @@ snow.addDrawCB = function(draw) {
 //Function to add drawing functionality to map.
 snow.addDraw = function()
 {
-    console.log("ADD DRAW");
     snow.draw = new Draw(
     {
         source: snow.drawSource,
