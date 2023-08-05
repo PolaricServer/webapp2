@@ -36,7 +36,7 @@ pol.tracking.isSign = function(p) {
 pol.tracking.Tracking = class {
     
     /* Constructor takes a server as an argument */
-    constructor(srv) {
+    constructor(srv, scale) {
         const t = this;
 
         t.zoom = 0;
@@ -52,7 +52,11 @@ pol.tracking.Tracking = class {
         t.iconpath = CONFIG.get('iconpath');
         if (t.iconpath == null)
             t.iconpath = '';
-
+        
+        t.iconscale = scale;
+        if (t.iconscale == null)
+            t.iconscale = 1;
+        
         var init = true;
         t.producer = new pol.tracking.MapUpdate(t.server);
 
@@ -188,8 +192,6 @@ pol.tracking.Tracking = class {
 
     
 
-
-
     /**
      * Show list of points. Clickable to show info about each.
      */
@@ -302,6 +304,7 @@ pol.tracking.Tracking = class {
         const style = new ol.style.Style({
             image:
                 new ol.style.Icon( ({
+                    scale: this.iconscale,
                     anchor: [0.5, 0.5],
                     src: this.iconpath + p.icon, 
                     opacity: ((p.label != null && p.label.style.includes("lstill")) 
@@ -525,7 +528,7 @@ pol.tracking.Tracking = class {
         const style = new ol.style.Style({
             stroke:
                 new ol.style.Stroke( ({
-                    color: "#"+p.trail.style[0], width: 2.0
+                    color: "#"+p.trail.style[0], width: 2.0 * this.iconscale
                 }))
         });
         feature.setStyle(style);

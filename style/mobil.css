@@ -30,6 +30,8 @@
 
    .mousepos, .ui-tooltip {visibility: hidden}
    .ol-scale-line { bottom: 0.4em; }
+   .popup_close {width: 2.1em; height: 2.1em !important; margin-top: -0.35em}
+   div#layerSwitcher {line-height: 1.3em !important} 
 }
 
 
@@ -39,6 +41,9 @@
   screen and (max-device-width: 500px),
   screen and (max-device-width: 35em) 
 {
+   #msg {width: 15em !important}
+   .widget {max-width: 98% !important; margin-left: -2px !important; margin-right: 2px !important}
+   
    #toolbar_login {visibility: hidden; width: 0}
    #tb_measure {visibility: hidden; width: 0}
    .infopopup {min-width: 90% !important}
@@ -67,7 +72,8 @@
 
 {
     div {font-size: 105%}
-    .infopopup {font-size: 2.1em}
+    .POPUP {font-size: 1.05em !important}
+   .popup_close {width: 2.1em; height: 2.1em !important; margin-top: -0.35em}
 
 
     div.POPUPMENU div div {
@@ -85,13 +91,25 @@
    #tb_draw, .ui-tooltip {visibility: hidden; width: 0}
    .ol-zoom {top: 75px}
    #filterChoice {margin-top: 2px}
-   div#layerSwitcher {font-size: 130% !important}   
-   div#layerSwitcher input {font-size: 20px !important}
+   div#layerSwitcher {font-size: 120% !important; line-height: 1.4em !important}   
+   div#layerSwitcher input {height: 1.3em !important}
 }
  
  
 
+ 
+/***************************************************
+ * High resolution screen
+ ***************************************************/
 
+@media 
+   screen and (min-resolution: 190dpi) and (-webkit-max-device-pixel-ratio: 2.0), 
+   screen and (min-resolution: 300dpi) and (-webkit-max-device-pixel-ratio: 5.0)
+{
+       .POPUP {font-size: 1.15em !important}
+       div#layerSwitcher input {vertical-align: middle; height: 1.4em !important; width: 1.5em }
+
+}
 
 
 
