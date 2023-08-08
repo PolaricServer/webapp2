@@ -29,6 +29,7 @@ pol.tracking.MapUpdate = class {
     constructor(server) {
         this.suspend = false;
         this.retry = 0;
+        this.cretry = 0;
         var t = this;
         t.onopen = null;
         t.subscriber = null;
@@ -71,15 +72,14 @@ pol.tracking.MapUpdate = class {
         /** Socket close handler. Retry connection. */
         t.websocket.onclose = function(evt) {
             t.retry++;
-            if (t.retry <= 3)
-                setTimeout(function() {
-                    console.log("Attempt reconnect to server (for tracking overlay).");
-                    t.websocket = new WebSocket(url);
-                }, 16000);
+            if (t.retry <= 4)
+                retry(true);
             else {
                 t.retry = 0;
                 console.log("Lost connection to server (for tracking overlay).");
                 alert("ERROR: Lost connection to server");
+                cretry = 1;
+                retry(false);
             }
         }
   
@@ -88,9 +88,30 @@ pol.tracking.MapUpdate = class {
         t.websocket.onerror = function(evt) { 
             console.log("Failed to connect to server (for tracking overlay).");
             alert("ERROR: Failed to connect to server");
+            retry(false);
         };
     }
 
+    
+    
+    retry(time, recon) {
+        if (recon) { 
+            t.retry++; 
+            time=15000 + (t.retry*10000); 
+        } 
+        else {
+            t.cretry++; 
+            time=30000 * t.cretry; 
+            if (time >= 900000) time = 900000; // Max 10 minutes
+        }
+        
+        setTimeout(function() {
+            console.log("Attempt to " + (recon?"re":"") + "connect to server (for tracking overlay).");
+            t.websocket = new WebSocket(url);
+        }, time);
+    }
+    
+    
 
 
     /** 

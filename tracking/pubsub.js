@@ -29,6 +29,7 @@ pol.tracking.PubSub = class {
     constructor (server) {
         this.suspend = false;
         this.retry = 0;
+        this.cretry = 0;
         const t = this;
         t.onopen = null;
         t.rooms = {};
@@ -62,31 +63,49 @@ pol.tracking.PubSub = class {
                     if (room[i].json) room[i].cb( JSON.parse(txt2));
                     else room[i].cb(txt2);
         };
-   
         
         /** Socket close handler. Retry connection. */
         t.websocket.onclose = function(evt) {
             t.retry++;
-            if (t.retry <= 3)
-                setTimeout( () => {
-                    console.log("Attempt reconnect to server (for notify service).");
-                    t.websocket = new WebSocket(url);
-                }, 16000);
+            if (t.retry <= 4)
+                retry(true);
             else {
                 t.retry = 0;
                 console.log("Lost connection to server (for notify service).");
-                alert("ERROR: Lost connection to server");
+                cretry = 1;
+                retry(false);
             }
         }
+  
    
         /** Socket error handler */
         t.websocket.onerror = function(evt) { 
             console.log("Failed to connect to server (for notify service).");
-            alert("ERROR: Failed to connect to server");
+            retry(false);
         };
+        
         
     } /* constructor */
 
+        
+    
+    retry(time, recon) {
+        if (recon) { 
+            t.retry++; 
+            time=15000 + (t.retry*10000); 
+        } 
+        else {
+            t.cretry++; 
+            time=30000 * t.cretry; 
+            if (time >= 900000) time = 900000; // Max 10 minutes
+        }
+        
+        setTimeout(function() {
+            console.log("Attempt to " + (recon?"re":"") + "connect to server (for notify service).");
+            t.websocket = new WebSocket(url);
+        }, time);
+    }
+    
 
     /** 
      * Suspend the map-updater for a given time 
