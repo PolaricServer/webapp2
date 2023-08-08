@@ -44,6 +44,9 @@
    #msg {width: 15em !important}
    .widget {max-width: 98% !important; margin-left: -2px !important; margin-right: 2px !important}
    
+   div#aprsObject input {max-width: 18em !important}
+   div#aprsObject select {max-width: 12em !important}
+
    #toolbar_login {visibility: hidden; width: 0}
    #tb_measure {visibility: hidden; width: 0}
    .infopopup {min-width: 90% !important}
