@@ -206,7 +206,8 @@ pol.layers.List = class List extends pol.core.Widget {
         /* lrs is a list of name,type pairs */
         let lrs = []; 
         
-        if (srv == null || !srv.hasDb) {
+        const s = CONFIG.server;
+        if (s == null || !s.hasDb) {
             t._clearMyLayers();
             lrs = CONFIG.get("layers.list");
             if (lrs == null)
@@ -238,9 +239,9 @@ pol.layers.List = class List extends pol.core.Widget {
             * Duplicates from local storage are removed.
             */
             setTimeout( () => {
-                const srv = CONFIG.server; 
+                const s = CONFIG.server; 
                 t._clearMyLayers(); 
-                srv.getObj("layer", a => {
+                s.getObj("layer", a => {
                     for (const obj of a) 
                         if (obj != null) {
                             const wr = obj.data;
@@ -286,14 +287,14 @@ pol.layers.List = class List extends pol.core.Widget {
         if (!noconfirm && noconfirm!=true && confirm("Remove - are you sure?") == false)
                 return;
         console.assert(id >= 0 && id < this.myLayers.length, "id="+id+", length="+this.myLayers.length);
-        const srv = CONFIG.server; 
+        const s = CONFIG.server; 
         const lr = this.myLayers[id];
         const typespecific = this.typeList[this.myLayerNames[id].type].obj
         this.suspend();
         
         /* If server available and logged in, delete on server as well */
-        if (srv && srv != null && srv.loggedIn && srv.hasDb && this.myLayerNames[id].index != "") {
-            srv.removeObj("layer", this.myLayerNames[id].index, 
+        if (s && s != null && s.loggedIn && s.hasDb && this.myLayerNames[id].index != "") {
+            s.removeObj("layer", this.myLayerNames[id].index, 
                 /* n is number of objects actually deleted from database. 0 if there are 
                  * still users that have links to it */
                 n => {

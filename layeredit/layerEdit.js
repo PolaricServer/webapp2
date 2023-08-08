@@ -120,10 +120,10 @@ pol.layers.Edit = class {
             layer.filt = {ext:t.filt.ext, zoom:t.filt.zoom, proj:t.filt.proj};
             
             /* IF server available and logged in, update on server as well */
-            const srv = CONFIG.server; 
-            if (srv && srv != null && srv.loggedIn) {
+            const s = CONFIG.server; 
+            if (s && s != null && s.loggedIn) {
                 const obj = {type: t.typeid, name: t.lName(), data: t.layer2obj(layer)}; 
-                srv.updateObj("layer", t.index, obj, i => { 
+                s.updateObj("layer", t.index, obj, i => { 
                     layer.server = true;
                     _update();
                     m.redraw();
@@ -162,10 +162,10 @@ pol.layers.Edit = class {
             layer.filt = {ext:t.filt.ext, zoom:t.filt.zoom, proj:t.filt.proj}; 
                         
             /* IF server available and logged in, store on server as well */
-            const srv = CONFIG.server; 
-            if (srv && srv != null && srv.loggedIn) {
+            const s = CONFIG.server; 
+            if (s && s != null && s.loggedIn) {
                 const obj = {type: t.typeid, name: t.lName(), data: t.layer2obj(layer)}; 
-                srv.putObj("layer", obj, i => { 
+                s.putObj("layer", obj, i => { 
                     layer.index = i; //JSON.parse(i);
                     layer.server = true;
                 });

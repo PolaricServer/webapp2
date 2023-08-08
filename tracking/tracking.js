@@ -96,7 +96,7 @@ pol.tracking.Tracking = class {
          * We check if there are any tracking-points at the clicked positions and if this
          * is the case, we create a context with name 'POINT'.
          */
-        browser.addContextMenu("MAP", e => {
+        CONFIG.browser.addContextMenu("MAP", e => {
             const pts = t.getPointsAt([e.clientX, e.clientY]);
             if (pts && pts != null) {
                 if (pts.length > 1) {
@@ -118,7 +118,7 @@ pol.tracking.Tracking = class {
 
    
         /* Add click handler for tracking-features. Click on icons and pop up some info... */
-        browser.map.on("click", e => {
+        CONFIG.browser.map.on("click", e => {
             const points = t.getPointsAt(e.pixel);
             if (points != null && points.length > 0) {
                 if (points.length == 1)
@@ -129,7 +129,7 @@ pol.tracking.Tracking = class {
         });
         
         
-        browser.map.on("change:view", e => {
+        CONFIG.browser.map.on("change:view", e => {
             t.clear();
             const ovr = browser.map.getOverlays(); 
             setTimeout(()=>ovr.clear(), 10);
@@ -209,7 +209,7 @@ pol.tracking.Tracking = class {
                 ])
             }
         }
-        browser.gui.showPopup( {vnode: widget, geoPos: browser.pix2LonLat(pixel)} );
+        CONFIG.browser.gui.showPopup( {vnode: widget, geoPos: CONFIG.browser.pix2LonLat(pixel)} );
 
         function showContext(e, x) {
             if (cmenu) {
@@ -340,9 +340,9 @@ pol.tracking.Tracking = class {
         
         /* Mouse event handlers */
         element.onclick = function(e) {
-            browser.gui.removePopup();
+            CONFIG.browser.gui.removePopup();
             element._clicked = true;
-            browser.gui.showPopup({
+            CONFIG.browser.gui.showPopup({
                 geoPos: proj2ll(pos), html: text+"<br>"+xtext});
             e.stopPropagation();
         }       
