@@ -277,14 +277,15 @@ pol.tracking.Mailbox = class extends pol.core.Widget {
 } /* class */
 
 
-/* Context menu */
+/* Context menu 
+ * FIXME
 setTimeout( ()=> {
-        CONFIG.browser.ctxMenu.addCallback("MESSAGES", (m, ctxt)=> {
+        CONFIG.mb.ctxMenu.addCallback("MESSAGES", (m, ctxt)=> {
             m.add('Reply',  () => getWIDGET("tracking.Mailbox").reply(ctxt.msg) );
             m.add('Remove', () => getWIDGET("tracking.Mailbox").remove(ctxt.msg.msgId) );
         }); 
     }, 2000 );
-
+*/
         
 pol.widget.setFactory( "tracking.Mailbox", {
         create: () => new pol.tracking.Mailbox()
