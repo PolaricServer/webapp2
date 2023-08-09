@@ -77,10 +77,10 @@ pol.core.refSearch = class refSearch extends pol.core.Widget {
                 setTimeout(()=> {errmsg="", m.redraw();}, 7000);
             }
             else
-                browser.goto_Pos(pp, true);
+                CONFIG.mb.goto_Pos(pp, true);
         }
 
-        browser.map.on('moveend', ()=> { m.redraw();});
+        CONFIG.mb.map.on('moveend', ()=> { m.redraw();});
     }
     
 } /* class */

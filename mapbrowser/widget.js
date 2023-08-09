@@ -210,7 +210,7 @@ pol.core.Widget = class {
         if (t.onActivate)
             t.onActivate(); 
         
-        this.popup = browser.gui.showPopup( {
+        this.popup = CONFIG.mb.gui.showPopup( {
             vnode: this.widget,
             pixPos: pixPos,
             draggable: true,

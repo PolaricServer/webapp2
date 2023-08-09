@@ -396,7 +396,7 @@ pol.core.MapBrowser = class {
      * @returns position
      */
     getCenterUTM() {    
-        const center = browser.getCenter();
+        const center = this.getCenter();
         const cref = new LatLng(center[1], center[0]);
         return cref.toUTMRef(); 
     }
@@ -623,7 +623,7 @@ pol.core.MapBrowser = class {
      * @param {ol.Pixel} pix - pixel on current map view where position is. 
      */
     show_MaprefPix(pix)
-       { this.show_Mapref(browser.pix2LonLat(pix)); }
+       { this.show_Mapref(this.pix2LonLat(pix)); }
     
     
     

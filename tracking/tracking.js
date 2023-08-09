@@ -96,7 +96,7 @@ pol.tracking.Tracking = class {
          * We check if there are any tracking-points at the clicked positions and if this
          * is the case, we create a context with name 'POINT'.
          */
-        CONFIG.browser.addContextMenu("MAP", e => {
+        CONFIG.mb.addContextMenu("MAP", e => {
             const pts = t.getPointsAt([e.clientX, e.clientY]);
             if (pts && pts != null) {
                 if (pts.length > 1) {
@@ -118,7 +118,7 @@ pol.tracking.Tracking = class {
 
    
         /* Add click handler for tracking-features. Click on icons and pop up some info... */
-        CONFIG.browser.map.on("click", e => {
+        CONFIG.mb.map.on("click", e => {
             const points = t.getPointsAt(e.pixel);
             if (points != null && points.length > 0) {
                 if (points.length == 1)
@@ -129,9 +129,9 @@ pol.tracking.Tracking = class {
         });
         
         
-        CONFIG.browser.map.on("change:view", e => {
+        CONFIG.mb.map.on("change:view", e => {
             t.clear();
-            const ovr = browser.map.getOverlays(); 
+            const ovr = CONFIG.mb.map.getOverlays(); 
             setTimeout(()=>ovr.clear(), 10);
             t.producer.subscribe(t.filter, x => t.update(x), t.tag, false );
         });
@@ -209,7 +209,7 @@ pol.tracking.Tracking = class {
                 ])
             }
         }
-        CONFIG.browser.gui.showPopup( {vnode: widget, geoPos: CONFIG.browser.pix2LonLat(pixel)} );
+        CONFIG.mb.gui.showPopup( {vnode: widget, geoPos: CONFIG.mb.pix2LonLat(pixel)} );
 
         function showContext(e, x) {
             if (cmenu) {
@@ -224,6 +224,12 @@ pol.tracking.Tracking = class {
             else
                 t.server.infoPopup(x, pixel)
         }
+    }
+ 
+ 
+ 
+    getLayerSource() {
+        return this.source; 
     }
  
  
@@ -340,9 +346,9 @@ pol.tracking.Tracking = class {
         
         /* Mouse event handlers */
         element.onclick = function(e) {
-            CONFIG.browser.gui.removePopup();
+            CONFIG.mb.gui.removePopup();
             element._clicked = true;
-            CONFIG.browser.gui.showPopup({
+            CONFIG.mb.gui.showPopup({
                 geoPos: proj2ll(pos), html: text+"<br>"+xtext});
             e.stopPropagation();
         }       

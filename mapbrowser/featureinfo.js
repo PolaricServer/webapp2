@@ -25,6 +25,7 @@
 
 pol.core.FeatureInfo = class {
 
+    // FIXME: Argument not needed. Use CONFIG.mb
     constructor(browser) {
         this.layers = [];
         const t = this;
@@ -35,7 +36,7 @@ pol.core.FeatureInfo = class {
         *   pop up a infoWidget if only one
         *   pop up a listWidget if more than one, to let user select. 
         */  
-        browser.map.on("click", e => {
+        CONFIG.mb.map.on("click", e => {
             forAllFeatures(e.pixel, 
                 f => infoWidget.popup(e, f),
                 list => {
@@ -46,7 +47,7 @@ pol.core.FeatureInfo = class {
         
    
         
-        browser.map.on('movestart', ()=> {
+        CONFIG.mb.map.on('movestart', ()=> {
             for (const x of t.layers) {
                 if (x.layer.clearOnMove && x.layer instanceof ol.layer.Vector) 
                     x.layer.getSource().clear(true);
@@ -81,7 +82,7 @@ pol.core.FeatureInfo = class {
                 this.list = x;
                 this.ev = e;
                 CONFIG.mb.gui.removePopup();
-                browser.gui.showPopup( {vnode: listWidget, geoPos: browser.pix2LonLat(e.pixel)} );
+                CONFIG.mb.gui.showPopup( {vnode: listWidget, geoPos: CONFIG.mb.pix2LonLat(e.pixel)} );
                 e.stopPropagation();
             }
         }
@@ -110,7 +111,7 @@ pol.core.FeatureInfo = class {
             popup: (e, x)=> {
                 this.info = x.handler(x);
                 CONFIG.mb.gui.removePopup();
-                browser.gui.showPopup( {vnode: infoWidget, geoPos: browser.pix2LonLat(e.pixel)} );
+                CONFIG.mb.gui.showPopup( {vnode: infoWidget, geoPos: CONFIG.mb.pix2LonLat(e.pixel)} );
                 e.stopPropagation();
             }
         }

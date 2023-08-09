@@ -29,7 +29,7 @@ pol.core.MapInfo = class extends pol.core.Widget {
         super();
         const t = this;
         t.classname = "core.MapInfo"; 
-        t.baselayer = browser.getBaseLayer();
+        t.baselayer = CONFIG.mb.getBaseLayer();
         
         this.widget = {
             view: function() {
@@ -38,31 +38,31 @@ pol.core.MapInfo = class extends pol.core.Widget {
                     m("h1", "Map view info"), 
                     m("div.field", 
                         m("span.sleftlab", "Base layer:"),
-                        m("span", browser.getBaseLayer().values_.name)
+                        m("span", CONFIG.mb.getBaseLayer().values_.name)
                     ),
                     m("div.field", 
                         m("span.sleftlab", "Projection:"),
-                        m("span", browser.getProjection())
+                        m("span", CONFIG.mb.getProjection())
                     ),
                     m("div.field", 
                         m("span.sleftlab", "Resolution:"),
-                        m("span", round3d(browser.getResolution())), nbsp,
-                        m("span", "(zoom "+browser.view.getZoom()+")" )
+                        m("span", round3d(CONFIG.mb.getResolution())), nbsp,
+                        m("span", "(zoom "+CONFIG.mb.view.getZoom()+")" )
                     ),
                     m("div.field", 
                         m("span.sleftlab", "Scale:"),
-                        m("span", Math.round(browser.getScale()))
+                        m("span", Math.round(CONFIG.mb.getScale()))
                     ),
                     m("div.field", 
                         m("span.sleftlab", "Extent:"),
-                        m("span", showExtent(browser.getExtent()))
+                        m("span", showExtent(CONFIG.mb.getExtent()))
                     ),
                     m("div.field", 
                         m("span.sleftlab", "Center:"),
-                        m("span", showCenter(browser.getCenter()))
+                        m("span", showCenter(CONFIG.mb.getCenter()))
                     ), 
                     
-                    ( browser.getResolution() < res_limit() &&  srv.auth.admin ?
+                    ( CONFIG.mb.getResolution() < res_limit() &&  srv.auth.admin ?
                         m("div.butt", 
                           m("button", {onclick: seed, title: "Download map tiles for this area"}, "Download Tiles"), "to server"
                         )
@@ -79,16 +79,16 @@ pol.core.MapInfo = class extends pol.core.Widget {
 
         
         function seed() {
-            const res = browser.getResolution();
+            const res = CONFIG.mb.getResolution();
             if (!res_limit()) 
                 alert("Seeding not supported for this map");
             else if (res > res_limit()) 
                 alert("Seeding not supported in this zoom level");
             else {
-                const layers = browser.getBaseLayer().getSource().params_.LAYERS;
-                const ext = browser.getExtent();
+                const layers = CONFIG.mb.getBaseLayer().getSource().params_.LAYERS;
+                const ext = CONFIG.mb.getExtent();
                 const uext = ol.proj.transformExtent(ext, "EPSG:4326", 
-                    browser.getBaseLayer().getSource().getProjection());
+                    CONFIG.mb.getBaseLayer().getSource().getProjection());
                 
                 let x = {args: [
                     layers, 
@@ -101,7 +101,7 @@ pol.core.MapInfo = class extends pol.core.Widget {
         }
         
         function res_limit() {
-            return browser.getBaseLayer().values_.max_res;
+            return CONFIG.mb.getBaseLayer().values_.max_res;
                // FIXME
         }
         

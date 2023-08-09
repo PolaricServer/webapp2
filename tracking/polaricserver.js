@@ -137,13 +137,13 @@ pol.tracking.PolaricServer = class extends pol.core.Server {
      */
     infoPopup(p, pixel) {
         console.assert(p!=null, "Assertion failed");
-        browser.gui.removePopup();
+        CONFIG.mb.gui.removePopup();
         if (pol.tracking.isSign(p)) {
             if (p.point.href.indexOf("P:") === 0)
-                browser.gui.imagePopup(p.point.title, p.point.href, 
-                {id: "imagepopup", geoPos: browser.pix2LonLat(pixel)});
+                CONFIG.mb.gui.imagePopup(p.point.title, p.point.href, 
+                {id: "imagepopup", geoPos: CONFIG.mb.pix2LonLat(pixel)});
             else
-                browser.gui.showPopup({
+                CONFIG.mb.gui.showPopup({
                     pixPos: pixel, 
                     html: (p.point.href ? '<a href="'+p.point.href+'">'+p.point.title+'</a>' 
                                        : p.point.title)
