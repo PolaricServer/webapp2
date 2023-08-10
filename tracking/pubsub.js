@@ -68,12 +68,12 @@ pol.tracking.PubSub = class {
         t.websocket.onclose = function(evt) {
             t.retry++;
             if (t.retry <= 4)
-                t.retry(true);
+                t._retry(true);
             else {
                 t.retry = 0;
                 console.log("Lost connection to server (for notify service).");
                 cretry = 1;
-                t.retry(false);
+                t._retry(false);
             }
         }
   
@@ -81,7 +81,7 @@ pol.tracking.PubSub = class {
         /** Socket error handler */
         t.websocket.onerror = function(evt) { 
             console.log("Failed to connect to server (for notify service).");
-            t.retry(false);
+            t._retry(false);
         };
         
         
@@ -89,14 +89,15 @@ pol.tracking.PubSub = class {
 
         
     
-    retry(recon) {
+    _retry(recon) {
+        let time = 1000;
         if (recon) { 
-            t.retry++; 
-            time=15000 + (t.retry*10000); 
+            this.retry++; 
+            time=15000 + (this.retry*10000); 
         } 
         else {
-            t.cretry++; 
-            time=30000 * t.cretry; 
+            this.cretry++; 
+            time=30000 * this.cretry; 
             if (time >= 900000) time = 900000; // Max 10 minutes
         }
         
