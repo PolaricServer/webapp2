@@ -2,7 +2,7 @@
  Map browser based on OpenLayers 5. Tracking. 
  Publish/subscribe service. Based on websocket connection with Polaric Server backend. 
  
- Copyright (C) 2017-2021 Øyvind Hanssen, LA7ECA, ohanssen@acm.org
+ Copyright (C) 2017-2023 Øyvind Hanssen, LA7ECA, ohanssen@acm.org
  
  This program is free software: you can redistribute it and/or modify
  it under the terms of the GNU Affero General Public License as published 
@@ -68,12 +68,12 @@ pol.tracking.PubSub = class {
         t.websocket.onclose = function(evt) {
             t.retry++;
             if (t.retry <= 4)
-                retry(true);
+                t.retry(true);
             else {
                 t.retry = 0;
                 console.log("Lost connection to server (for notify service).");
                 cretry = 1;
-                retry(false);
+                t.retry(false);
             }
         }
   
@@ -81,7 +81,7 @@ pol.tracking.PubSub = class {
         /** Socket error handler */
         t.websocket.onerror = function(evt) { 
             console.log("Failed to connect to server (for notify service).");
-            retry(false);
+            t.retry(false);
         };
         
         
@@ -89,7 +89,7 @@ pol.tracking.PubSub = class {
 
         
     
-    retry(time, recon) {
+    retry(recon) {
         if (recon) { 
             t.retry++; 
             time=15000 + (t.retry*10000); 

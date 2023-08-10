@@ -2,7 +2,7 @@
  Map browser based on OpenLayers 5. Tracking. 
  Websocket connection with Polaric Server backend. 
  
- Copyright (C) 2017-2018 Øyvind Hanssen, LA7ECA, ohanssen@acm.org
+ Copyright (C) 2017-2023 Øyvind Hanssen, LA7ECA, ohanssen@acm.org
  
  This program is free software: you can redistribute it and/or modify
  it under the terms of the GNU Affero General Public License as published 
@@ -73,13 +73,13 @@ pol.tracking.MapUpdate = class {
         t.websocket.onclose = function(evt) {
             t.retry++;
             if (t.retry <= 4)
-                retry(true);
+                t.retry(true);
             else {
                 t.retry = 0;
                 console.log("Lost connection to server (for tracking overlay).");
                 alert("ERROR: Lost connection to server");
                 cretry = 1;
-                retry(false);
+                t.retry(false);
             }
         }
   
@@ -88,13 +88,13 @@ pol.tracking.MapUpdate = class {
         t.websocket.onerror = function(evt) { 
             console.log("Failed to connect to server (for tracking overlay).");
             alert("ERROR: Failed to connect to server");
-            retry(false);
+            t.retry(false);
         };
     }
 
     
     
-    retry(time, recon) {
+    retry(recon) {
         if (recon) { 
             t.retry++; 
             time=15000 + (t.retry*10000); 
