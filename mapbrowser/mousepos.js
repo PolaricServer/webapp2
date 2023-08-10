@@ -2,7 +2,7 @@
     Map browser based on OpenLayers 5. 
     Control that shows mouse position (latlong, UTM, maidenhad) and scale. 
     
-    Copyright (C) 2017-2018 Øyvind Hanssen, LA7ECA, ohanssen@acm.org
+    Copyright (C) 2017-2023 Øyvind Hanssen, LA7ECA, ohanssen@acm.org
     
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU Affero General Public License as published 
@@ -112,25 +112,41 @@ pol.core.MousePos = class extends ol.control.Control {
 
 
 
+    
     /**
      * Show position in UTM format, latlong format and as maidenhead locator.
+     * Use pixel pos
      */
     updatePos(x) {
         if (x==null) {
-            this.utm.innerHTML = "<span>(utm pos)</span>";
-            this.latlong.innerHTML = "<span>(latlong pos)</span>";
-            this.maidenhead.innerHTML = "<span>(locator)</span>";
+            this.updatePosGeo(null);
         }
         else {
             const map = this.getMap();
             let c = map.getCoordinateFromPixel(x);
             if (c == null) 
                 c = [0,0];
+            this.updatePosGeo(c);
+        }
+    }
+    
+    
+    /**
+     * Show position in UTM format, latlong format and as maidenhead locator.
+     * Use geographical pos
+     */
+    updatePosGeo(c) {
+        if (c==null) {
+            this.utm.innerHTML = "<span>(utm pos)</span>";
+            this.latlong.innerHTML = "<span>(latlong pos)</span>";
+            this.maidenhead.innerHTML = "<span>(locator)</span>";
+        }
+        else {
+            const map = this.getMap();
             const coord = ol.proj.toLonLat(c, map.getView().getProjection());    
             this.latlong.innerHTML = '<span>'+pol.mapref.formatDM(coord)+'</span>';
             this.utm.innerHTML = '<span>'+pol.mapref.formatUTM(coord)+'</span>'; 
             this.maidenhead.innerHTML = '<span>'+pol.mapref.formatMaidenhead(coord);
         }
     }
-
-} /* class */
+}

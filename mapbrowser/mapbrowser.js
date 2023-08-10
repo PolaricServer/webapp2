@@ -1,6 +1,6 @@
  /*
     Map browser based on OpenLayers 5. 
-    Copyright (C) 2017-2019 Øyvind Hanssen, LA7ECA, ohanssen@acm.org
+    Copyright (C) 2017-2023 Øyvind Hanssen, LA7ECA, ohanssen@acm.org
     
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU Affero General Public License as published 
@@ -83,6 +83,9 @@ pol.core.MapBrowser = class {
                 t.view.setCenter(ol.proj.fromLonLat(center, t.config.get('core.projection'))), 400);
         }
         
+        /* Mouse position indicator */
+        t.mousepos = new pol.core.MousePos({}),
+        
         /* OpenLayers map */
         t.map = new ol.Map({
             target: targ,
@@ -90,7 +93,7 @@ pol.core.MapBrowser = class {
             loadTilesWhileAnimating: true,
             controls: [
                 new ol.control.ScaleLine({}),
-                new pol.core.MousePos({}),
+                t.mousepos,
                 new ol.control.Zoom({}),
                 t.toolbar,
                 t.attribution
@@ -379,6 +382,7 @@ pol.core.MapBrowser = class {
         this.view.setCenter(
             ol.proj.fromLonLat(center, this.view.getProjection())
         ); 
+        this.mousepos.updatePosGeo(center); 
     };
 
 
