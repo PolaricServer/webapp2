@@ -103,7 +103,7 @@ pol.tracking.PubSub = class {
         
         setTimeout(function() {
             console.log("Attempt to " + (recon?"re":"") + "connect to server (for notify service).");
-            t.websocket = new WebSocket(url);
+            this.websocket = new WebSocket(url);
         }, time);
     }
     

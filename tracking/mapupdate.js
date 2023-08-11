@@ -108,7 +108,7 @@ pol.tracking.MapUpdate = class {
         
         setTimeout(function() {
             console.log("Attempt to " + (recon?"re":"") + "connect to server (for tracking overlay).");
-            t.websocket = new WebSocket(url);
+            this.websocket = new WebSocket(url);
         }, time);
     }
     
