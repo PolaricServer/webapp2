@@ -139,7 +139,7 @@ pol.tracking.AprsPackets = class extends pol.core.Widget {
 
 pol.widget.setFactory( "tracking.AprsPackets", {
         create:   () => new pol.tracking.AprsPackets(), // Instantiate 
-        onRestore: NaN /* To be called when automatic restore */
+        onRestore: null /* To be called when automatic restore */
     });
 
  

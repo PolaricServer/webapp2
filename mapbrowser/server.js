@@ -115,18 +115,22 @@ pol.core.Server = class {
      * @param error:  Function( jqXHR jqXHR, String textStatus, String errorThrown )
      * @param success: Function( Anything data, String textStatus, jqXHR jqXHR )
      */
-    ajax(type, service, data, success, error) {
+    ajax(type, service, data, success, error, content, hdrs) {
         return $.ajax(this.url+service,  {
             type: type,
             data: data, 
             success: success,
             error: error,  
-            contentType: false,
+            contentType: (content!=null ? content : false),
             processData: (type!="POST"),
-            crossDomain: true,
+            crossDomain: true,  
+            
+            headers: (hdrs!=null ? hdrs : null),
+            
             xhrFields: { withCredentials: true }
         });
     }
+    
 
 
 
@@ -138,7 +142,10 @@ pol.core.Server = class {
     POST(service, data, success, error) {
         return this.ajax('POST', service, data, success, error); 
     }
-
+    
+    POSTFORM(service, data, success, error) {
+        return this.ajax('POST', service, data, success, error, "application/x-www-form-urlencoded"); 
+    }
 
     PUT(service, data, success, error) {
         return this.ajax('PUT', service, data, success, error); 

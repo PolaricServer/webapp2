@@ -2,7 +2,7 @@
     Map browser based on OpenLayers 5. 
     Toolbar. 
     
-    Copyright (C) 2017-2018 Øyvind Hanssen, LA7ECA, ohanssen@acm.org
+    Copyright (C) 2017-2023 Øyvind Hanssen, LA7ECA, ohanssen@acm.org
     
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU Affero General Public License as published 
@@ -106,18 +106,20 @@ pol.core.Toolbar = class extends ol.control.Control  {
       
                 if (w.myAreas.length > 0)
                     m.add(null);
-                m.add("Edit YOUR areas..", ()=> WIDGET("core.AreaList", [90,70], true)); 
-                m.add(null);
+                if (CONFIG.server && CONFIG.server.loggedIn ) {
+                    m.add("Edit YOUR areas..", ()=> WIDGET("core.AreaList", [90,70], true)); 
+                    m.add(null);
+                }
       
-                for (const i in browser.config.aMaps) {
-                    const aMap = browser.config.aMaps[i]; 
+                for (const i in this.browser.config.aMaps) {
+                    const aMap = this.browser.config.aMaps[i]; 
                     if (aMap && aMap.name && aMap.name.length > 1 && !aMap.hidden )
-                        m.add(aMap.title, handleSelect(browser.config.aMaps, i));
+                        m.add(aMap.title, handleSelect(this.browser.config.aMaps, i));
                 }
 
                 function handleSelect(a, i) {
                     return function() {
-                        browser.gotoExtent(a[i]);
+                        CONFIG.browser.gotoExtent(a[i]);
                     } 
                 }
             });
