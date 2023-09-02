@@ -27,19 +27,36 @@ pol.tracking.PolaricServer = class extends pol.core.Server {
         this.auth = { userid: "", groupid: "", callsign: "", servercall: "", admin: false, sar: false, services: "" }; 
         this.hasDb = false;
         const t = this;
+           
+        /* This is for the new Hmac-based authentication scheme */
+        this.userid = "_nouser_";
+        this.key = null;
+        
+        this.restoreCredentials().then( ()=> {
+            console.log("Got credentials - starting tracking, etc..");
+            this.loginStatus();
+            this.pubsub = new pol.tracking.PubSub(this);
+            const mu = new pol.tracking.Tracking(srv, (hires? 1.4 : 1) );  
+            const flt = new pol.tracking.Filters(mu);
+            CONFIG.tracks = mu;
+            CONFIG.filt = flt;
+            
+            if (t.auth.userid != null) {
+                const not = new pol.tracking.Notifier();
+                CONFIG.notifier = not; 
+            }            
+        });
+
         
         /* Add items to toolbar */
         CONFIG.mb.toolbar.addSection(3);
         CONFIG.mb.toolbar.addIcon(3, "images/locked.png", "toolbar_login", null, "Log in");
-        this.pubsub = new pol.tracking.PubSub(this);
         CONFIG.mb.toolbar.addIcon(3, "images/sar.png", "sarmode");
         
         /* Get login status. Periodic, interval: 6 minutes */
-        this.loginStatus();
         setInterval( ()=> {
-            if (this.auth.userid != "")
-                this.loginStatus();
-        }, 360000);
+            this.loginStatus();
+        },360000);
                 
     }
 
@@ -51,6 +68,76 @@ pol.tracking.PolaricServer = class extends pol.core.Server {
         { window.location.href = this.url+"logout?url="+this.origin; } 
         
         
+        
+    async genAuthString(message) {
+        const nonce = pol.security.getRandom(8);
+        if (message==null) 
+            message = "";
+        const hmac = await this.getHmac(nonce+message);
+        if (hmac == null)
+            return null;
+        return this.userid+';'+nonce+';'+hmac;
+    }
+    
+        
+    /*
+     * Generate authorization header on requests
+     */
+    async genHeaders(message) {
+        const str = await this.genAuthString(message);
+        if (str==null)
+            return null;
+        return {'Authorization' : 'Arctic-Hmac '+str};
+    }
+  
+  
+    /* Generate HMAC. 
+     * If the message is non-empty, generate a SHA256 hash from it and use this 
+     * in the generation of a HMAC
+     */
+    async getHmac(message) {
+        let msgHash = "";
+        if (this.key==null)
+            return null;
+        if (message != null && message != "")
+            msgHash = await pol.security.Sha256_B64(message)
+        return await pol.security.hmac_Sha256_B64(this.key, msgHash);
+    }
+    
+    
+    /* Set the secret key and save it in datastore */
+    async setCredentials(userid, secret) {
+        const x = await pol.security.hmac_getKey(secret)
+        this.key = x;
+        CONFIG.store("api.key", secret, true);
+        this.userid = userid;
+        CONFIG.store("api.userid", userid, true);
+    }
+    
+    
+    /*
+     * Restore credentials - username and secret key from
+     * local store. 
+     */ 
+    async restoreCredentials() {
+        const ktext = CONFIG.get("api.key");
+        const userid = CONFIG.get("api.userid");
+        if (userid != null)
+            this.userid = userid;
+
+        if (ktext == null || ktext.length != 64)
+            this.key = null;
+        else
+            this.key = await pol.security.hmac_getKey(ktext);;
+    }
+    
+    
+    /* Remove the secret key */
+    removeKey() {
+        CONFIG.remove("api.key");
+        this.key = null;
+    }
+  
   
     /**
      * add object to logged in user.
@@ -61,7 +148,7 @@ pol.tracking.PolaricServer = class extends pol.core.Server {
             x => { console.log("Added server object for user: "+this.auth.userid); 
                    if (typeof f == 'function') f(x); 
                  },
-            x => { console.log("ERROR: " + x); } );
+            (xhr,stat,err) => { console.log("ERROR: ", err); } );
     }
     
     
@@ -71,7 +158,7 @@ pol.tracking.PolaricServer = class extends pol.core.Server {
             x => { console.log("Updated server object "+ident+" for user "+this.auth.userid); 
                    if (typeof f == 'function') f(x); 
             },
-            x => { console.log("ERROR: " + x); } );
+            (xhr,stat,err) => { console.log("ERROR: ", err); } );
     }
 
 
@@ -81,7 +168,7 @@ pol.tracking.PolaricServer = class extends pol.core.Server {
                 console.log("Server object "+id+" for user "+this.auth.userid+": "+x+" objects removed");
                 if (typeof f == 'function') f(x);
             },
-            x => { console.log("ERROR: " + x); }
+            (xhr,stat,err) => { console.log("ERROR: ", err); }
             
         );
     }
@@ -124,7 +211,7 @@ pol.tracking.PolaricServer = class extends pol.core.Server {
             
             (xhr, st, err) => {
                 this.loggedIn = false; 
-                console.log("Couldn't get login info: "+st); 
+                console.log("Couldn't get login info: ", err); 
                 CONFIG.mb.toolbar.changeIcon
                     ("toolbar_login", "images/locked.png", () => this.login(), "Click to log in");
             });

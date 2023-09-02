@@ -1,7 +1,7 @@
 /*
  Map browser based on OpenLayers 5. 
  
- Copyright (C) 2017-2018 Øyvind Hanssen, LA7ECA, ohanssen@acm.org
+ Copyright (C) 2017-2023 Øyvind Hanssen, LA7ECA, ohanssen@acm.org
  
  This program is free software: you can redistribute it and/or modify
  it under the terms of the GNU Affero General Public License as published 
@@ -112,48 +112,69 @@ pol.core.Server = class {
      * @param type: String - HTTP method
      * @param service: String - Service url. 
      * @param data: PlainObject|String|Array
+     * @param success: Function( Anything data, String textStatus, jqXHR jqXHR )   
      * @param error:  Function( jqXHR jqXHR, String textStatus, String errorThrown )
-     * @param success: Function( Anything data, String textStatus, jqXHR jqXHR )
      */
     ajax(type, service, data, success, error, content, hdrs) {
-        return $.ajax(this.url+service,  {
-            type: type,
-            data: data, 
-            success: success,
-            error: error,  
-            contentType: (content!=null ? content : false),
-            processData: (type!="POST"),
-            crossDomain: true,  
-            
-            headers: (hdrs!=null ? hdrs : null),
-            
-            xhrFields: { withCredentials: true }
-        });
+        this.genHeaders(data).then( (genhdrs) => {
+            return $.ajax(this.url+service,  {
+                type: type,
+                data: data, 
+                success: success,
+                error: error,  
+                contentType: (content!=null ? content : false),
+                processData: (type!="POST"),
+                crossDomain: true,  
+                xhrFields: { withCredentials: true }, 
+                headers: this.mergeHdrs(genhdrs, hdrs)
+            });
+        }).catch( (e)=> {} );
     }
     
-
-
-
-    GET(service, data, success, error) {
-        return this.ajax('GET', service, data, success, error); 
-    }
-
-
-    POST(service, data, success, error) {
-        return this.ajax('POST', service, data, success, error); 
+    
+    mergeHdrs(x, y) {
+        let z = {};
+        if (x!= null)
+            for (const key in x)
+                z[key] = x[key];
+        if (y!= null)
+            for (const key in y)
+                z[key] = y[key];
+        return z;
     }
     
-    POSTFORM(service, data, success, error) {
-        return this.ajax('POST', service, data, success, error, "application/x-www-form-urlencoded"); 
+    
+    /* 
+     * This can be redefined in a subclass to the Authorization header or other headers 
+     * that is to be used on GET, PUT, POST and DELETE (not on POSTFORM)
+     */
+    async genHeaders(x) {
+        return null; 
     }
 
-    PUT(service, data, success, error) {
-        return this.ajax('PUT', service, data, success, error); 
+
+    GET(service, data, success, error, cnt, hdrs) {
+        return this.ajax('GET', service, data, success, error, cnt, hdrs); 
     }
 
 
-    DELETE(service, success, error) {
-        return this.ajax('DELETE', service, null, success, error); 
+    POST(service, data, success, error, cnt, hdrs) {
+        return this.ajax('POST', service, data, success, error, cnt, hdrs); 
+    }
+    
+    
+    POSTFORM(service, data, success, error, cnt, hdrs) {
+        return this.ajax('POST', service, data, success, error, "application/x-www-form-urlencoded", hdrs); 
+    }
+
+    
+    PUT(service, data, success, error, cnt, hdrs) {
+        return this.ajax('PUT', service, data, success, error, cnt, hdrs); 
+    }
+
+
+    DELETE(service, success, error, cnt, hdrs) {
+        return this.ajax('DELETE', service, null, success, error, cnt, hdrs); 
     }
 
 } /* class */

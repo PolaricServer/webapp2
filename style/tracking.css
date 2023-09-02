@@ -310,3 +310,14 @@ select#group {width: 9em}
 
 #syncNodes h3 {font-size: 90%; margin-bottom: 0.4em; margin-top: 0.5em; color: #666; margin-left: 0.5em}
 #syncNodes table {margin-left: 0.5em}
+
+
+#methodSelect {width: 6em}
+#testrest textarea{width: 26.6em}
+#testResp {padding: 0.6em; background: #ccc; border: dotted 1px; #aaa; max-width:35em; overflow-wrap: anywhere}
+#testResp.success {background: #afa; color: #030}
+#testResp.err {background: #fbb; color: #300}
+.headerEdit {margin-top: 0.1em; margin-bottom: 0.1em}
+span.plus {font-weight: bold; font-size: 140%; color: blue}
+
+

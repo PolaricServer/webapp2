@@ -40,56 +40,63 @@ pol.tracking.MapUpdate = class {
         url += 'jmapdata';
    
         console.log("Opening Websocket. URL: "+url);
-        t.websocket = new WebSocket(url);
+        CONFIG.server.genAuthString(null).then( x => {
+            t.websocket = new WebSocket(url+(x==null ? "" : "?"+x));
 
    
-        /** Socket connected handler */
-        t.websocket.onopen = function() { 
-            console.log("Connected to server (for tracking overlay).");
-            if (t.onopen != null) 
-                t.onopen();
-            else
-                console.log("t.onopen is null");
-            t.retry = 0;
-            setInterval(function() {
-                t.websocket.send("****"); // Keepalive 
-            }, 120000);
-        };
-  
-  
-        /** Incoming message on socket */
-        t.websocket.onmessage = function(evt) { 
-            if (evt.data == 'RESTART!') {
-                console.log("Got RESTART message");
-                setTimeout(function() {location.reload();}, 25000);
-            }
-            else if ((!t.suspend) && t.subscriber != null) {
-                t.subscriber(JSON.parse(evt.data));
-            }
-        };
-
-   
-        /** Socket close handler. Retry connection. */
-        t.websocket.onclose = function(evt) {
-            t.retry++;
-            if (t.retry <= 4)
-                t._retry(true);
-            else {
+            /** Socket connected handler */
+            t.websocket.onopen = function() { 
+                console.log("Connected to server (for tracking overlay).");
+                if (t.onopen != null) 
+                    t.onopen();
+                else
+                    console.log("t.onopen is null");
                 t.retry = 0;
-                console.log("Lost connection to server (for tracking overlay).");
-                alert("ERROR: Lost connection to server");
-                cretry = 1;
-                t._retry(false);
+                setInterval(function() {
+                    t.websocket.send("****"); // Keepalive 
+                }, 120000);
+            };
+  
+  
+            /** Incoming message on socket */
+            t.websocket.onmessage = function(evt) { 
+                if (evt.data == 'RESTART!') {
+                    console.log("Got RESTART message");
+                    setTimeout(function() {location.reload();}, 30000);
+                }
+                else if ((!t.suspend) && t.subscriber != null) {
+                    try { 
+                        t.subscriber(JSON.parse(evt.data));
+                    }
+                    catch (err) {
+                        console.warn("Cannot parse data from server: ", evt.data);
+                    }
+                }
+            };
+
+   
+            /** Socket close handler. Retry connection. */
+            t.websocket.onclose = function(evt) {
+                t.retry++;
+                if (t.retry <= 4)
+                    t._retry(true);
+                else {
+                    t.retry = 0;
+                    console.log("Lost connection to server (for tracking overlay).");
+                    alert("ERROR: Lost connection to server");
+                    cretry = 1;
+                    t._retry(false);
+                }
             }
-        }
   
    
-        /** Socket error handler */
-        t.websocket.onerror = function(evt) { 
-            console.log("Failed to connect to server (for tracking overlay).");
-            alert("ERROR: Failed to connect to server");
-            t._retry(false);
-        };
+            /** Socket error handler */
+            t.websocket.onerror = function(evt) { 
+                console.log("Failed to connect to server (for tracking overlay).");
+                alert("ERROR: Failed to connect to server");
+                t._retry(false);
+            };
+        });
     }
 
     
