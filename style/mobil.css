@@ -32,6 +32,10 @@
    .ol-scale-line { bottom: 0.4em; }
    .popup_close {width: 2.1em; height: 2.1em !important; margin-top: -0.35em}
    div#layerSwitcher {line-height: 1.3em !important} 
+   
+   div#mySpeed>div {padding: 1em; padding-bottom: 0.5em; border: 1px solid red}
+   div#mySpeed span.n {font-size: 3em; font-weight: bold}
+   div#mySpeed span.kmh {font-size: 2.5em}
 }
 
 

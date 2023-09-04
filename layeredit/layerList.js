@@ -218,7 +218,7 @@ pol.layers.List = class List extends pol.core.Widget {
                 const editor = this.typeList[lrs[i].type];
                 const jsx = CONFIG.get("layers.layer."+lrs[i].name.replace(/\s/g, "_" ));
            
-                if (jsx != null && editor.obj.allowed()) { 
+                if (jsx != null && editor != null && editor.obj.allowed()) { 
                     const x = editor.obj.json2layer(jsx);
                     t.myLayers.push(x);
                     CONFIG.mb.addConfiguredLayer(x, lrs[i].name);

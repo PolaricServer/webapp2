@@ -1,22 +1,28 @@
    /* 
     * This is an example of how an application can be constructed using polaric components.  
     * Se also config.js for configuration of the application. 
-    * Version 1.5
     */
-   
-    /* 
-     * Display a warning if MSIE is used. 
-     * Note that to display this for IE browser and to be able to use IE11
-     * and other old browser be sure to use the compiled/minified javascript code, 
-     * including this file.
-     */
-    var mobile = navigator.platform.match(/i(Phone|Pad)|Android/i);
-    var ua = window.navigator.userAgent;
-    var msie = ua.indexOf("MSIE ");
-    var trident = ua.indexOf('Trident/');
-    if (msie > 0 || trident > 0)
-       alert("Note that MSIE is not supported. A more recent browser is recommended");
 
+    var mobplatform = navigator.platform.match(/i(Phone|Pad)|Android/i);
+    var ua = window.navigator.userAgent;
+    
+    var phone = 
+        window.matchMedia('screen and (max-device-width: 500px), screen and (max-device-width: 35em),screen and (max-device-height: 500px),screen and (max-device-height: 35em)').matches;
+        
+    var tablet = 
+        window.matchMedia('(min-device-width: 50em) and (-webkit-min-device-pixel-ratio: 2.0)').matches;
+        
+    var mobile = mobplatform | phone | tablet;
+    
+    var hires = 
+        window.matchMedia('screen and (min-resolution: 190dpi) and (-webkit-max-device-pixel-ratio: 2.0), '+
+                          'screen and (min-resolution: 300dpi) and (-webkit-max-device-pixel-ratio: 5.0)').matches;
+    
+    var mobile = mobplatform | phone | tablet;
+    
+    if (hires)
+        alert("HIGH RES");
+   
    /*
     * Read the URL GET parameters
     */
@@ -40,19 +46,10 @@
     const srv = new pol.tracking.PolaricServer();
     CONFIG.server = srv;
     setTimeout( () => {
-        const mu = new pol.tracking.Tracking(srv);
-        const flt = new pol.tracking.Filters(mu);
-        CONFIG.tracks = mu;
-        CONFIG.filt = flt;
-        
+
         if (urlArgs['track'] != null) 
         	CONFIG.tracks.setTracked(urlArgs['track']);
-        
-        if (srv.auth.userid != null) {
-            const not = new pol.tracking.Notifier();
-            CONFIG.notifier = not; 
-        }
-        
+                
         /* Get updates when sharing of objects are changed */ 
         srv.pubsub.subscribe("sharing", x => {
             console.log("Change to object sharing");
@@ -117,20 +114,23 @@
      *********************************************************/
    
     browser.ctxMenu.addCallback("MAP", (m, ctxt)=> {
+        
         m.add('Show map reference', () => browser.show_MaprefPix( [m.x, m.y] ) );  
-        if (srv.auth.sar || srv.auth.admin) {
+        if (!phone && srv.auth.sar) {
             m.add('Add APRS object', () => 
                 WIDGET("tracking.OwnObjects", [50,70], true, x=> x.setPosPix([m.x, m.y]))); 
-            
+                        
             if (srv.hasDb)
                 m.add('Add sign', () => 
                     WIDGET("tracking.db.Signs", [50,70], true, x=> x.setPosPix([m.x, m.y])));
         }
         
         /* BICYCLE WHEEL */
-        m.add('Add LKP/IPP with rings', () => 
-            WIDGET("tracking.BikeWheel", [50,70], true, x=> x.setPosPix([m.x, m.y]))); 
+        if (!phone)
+            m.add('Add LKP/IPP with rings', () => 
+                WIDGET("tracking.BikeWheel", [50,70], true, x=> x.setPosPix([m.x, m.y]))); 
         
+            
         m.add(null);
         m.add('Center point', () =>   
             browser.view.setCenter( browser.map.getCoordinateFromPixel([m.x, m.y])) );
@@ -139,12 +139,14 @@
         m.add('Zoom out', () =>     
             browser.view.setZoom(browser.view.getZoom()-1) );
         
-        if (srv.auth.admin) {
+        if (!phone && srv.auth.admin) {
             m.add('Set server (own) position', ()=> 
                 WIDGET("tracking.OwnPos", [50,70], true, x=> x.setPosPix([m.x, m.y])));
         }
-        m.add('Map view info', () => 
-            WIDGET("core.MapInfo", [50,70], true ));
+        if (!phone) 
+            m.add('Map view info', () => 
+                WIDGET("core.MapInfo", [50,70], true ));
+        
         
     });
 
@@ -154,28 +156,34 @@
      *********************************************************/
    
     browser.ctxMenu.addCallback("TOOLBAR", (m, ctxt)=> {   
-
-        m.add('Search items',  () => WIDGET("tracking.Search", [50,70], true));
-        m.add('Find position', () => WIDGET("core.refSearch",  [50,70], true));
-
-        if (srv.auth.sar || srv.auth.admin) {                 
+        m.add('Test REST',  () => WIDGET("tracking.TestRest", [50,70], true));
+        m.add('Test LOGIN',  () => WIDGET("tracking.Login", [50,70], true));
+        
+        if (!phone) {
+            m.add('Search items',  () => WIDGET("tracking.Search", [50,70], true));
+            m.add('Find position', () => WIDGET("core.refSearch",  [50,70], true));
+        }
+        
+        if (!phone && (srv.auth.sar || srv.auth.admin)) {                 
             m.add('Add APRS object', () => 
                 WIDGET("tracking.OwnObjects", [50,70], true)); 
         }
         
-        m.add('Area List',  () => WIDGET("core.AreaList", [50,70], true)); 
-        m.add('Layer List', () => WIDGET("layers.List", [50,70], true));
+        if (!phone) {
+            m.add('Area List',  () => WIDGET("core.AreaList", [50,70], true)); 
+            m.add('Layer List', () => WIDGET("layers.List", [50,70], true));
         
-        if (browser.getPermalink())
-            m.add("Permalink OFF", () => browser.setPermalink(false)); 
-        else
-            m.add("Permalink ON", () => browser.setPermalink(true)); 
+            if (browser.getPermalink())
+                m.add("Permalink OFF", () => browser.setPermalink(false)); 
+            else
+                m.add("Permalink ON", () => browser.setPermalink(true)); 
+        }
         
         m.add("Label font +", () => CONFIG.labelStyle.next());
         m.add("Label font -", () => CONFIG.labelStyle.previous());
         m.add(null);
      
-        if (srv.auth.sar || srv.auth.admin) {
+        if (!phone && (srv.auth.sar || srv.auth.admin)) {
             m.add("SAR mode..", () => WIDGET("tracking.SarMode", [50,70], false)); 
             m.add(null);
             if (srv.auth.admin) {
@@ -194,35 +202,41 @@
         
         
         if (srv.loggedIn) {
-            if (srv.hasDb) 
+            if (!phone && srv.hasDb) 
                 m.add("My trackers", () => WIDGET("tracking.db.MyTrackers", [50, 70], true));
             m.add("Notification", () => WIDGET("tracking.NotifyList", [50, 70], false));
         }
         
         if (srv.hasDb) {
-            m.add("Signs...", () => WIDGET("tracking.db.Signs", [50,70], true));
-            m.add("History...", () => WIDGET("tracking.db.History", [50,70], true)); 
-            m.add("Heard points via..", () => WIDGET("tracking.db.HeardVia", [50,70], true));
+            if (!phone) {
+                m.add("Signs...", () => WIDGET("tracking.db.Signs", [50,70], true));
+                m.add("History...", () => WIDGET("tracking.db.History", [50,70], true)); 
+                m.add("Heard points via..", () => WIDGET("tracking.db.HeardVia", [50,70], true));
+            }    
             m.add("Time machine..", () => WIDGET("tracking.db.Timemachine", [50,70], true)); 
         }
         
-        m.add("Bulletin board", () => WIDGET("tracking.BullBoard", [50,70], true));
+        if (!phone) 
+            m.add("Bulletin board", () => WIDGET("tracking.BullBoard", [50,70], true));
         if (srv.loggedIn)
             m.add('Short messages', () => WIDGET("tracking.Mailbox",[50,70], true));
         
-        if (CONFIG.get('display.in-car') != null) {
+        if (!phone && CONFIG.get('display.in-car') != null) {
             m.add("Kodi", startKodi);
             m.add(null);
             m.add("Exit", chromeExit);
         }
         
         m.add("Auth Info", () => WIDGET("tracking.AuthInfo", [50,70], true));
+        if (!phone && srv.hasDb && srv.auth.admin) {
+            m.add("Synch nodes", () => WIDGET("tracking.db.SyncNodes", [50,70], true));
+        }
     });
 
     /*
      * Using a Raspberry pi display in a car it can be useful to dim the display
      */
-    if (CONFIG.get('display.in-car') != null) 
+    if (!phone && CONFIG.get('display.in-car') != null) 
       	    CONFIG.mb.toolbar.addIcon(3, "images/brightness.ico", null, adjustBacklight, "Change backlight level");
    
    

@@ -27,89 +27,106 @@
 pol.tracking.PubSub = class {
     
     constructor (server) {
+        this.server = server;
         this.suspend = false;
-        this.retry = 0;
+        this.retry = -1;
         this.cretry = 0;
         const t = this;
         t.onopen = null;
         t.rooms = {};
             /* Each room is an array of subscribers (callback functions) */
-   
-        let url = server.wsurl; 
-        url += 'notify';   
-        console.log("Opening Websocket. URL: "+url);
-        t.websocket = new WebSocket(url);
 
-        /** Socket connected handler */
-        t.websocket.onopen = function() { 
-            console.log("Connected to server (for notify service).");
-            if (t.onopen != null) 
-                t.onopen();
-            t.retry = 0;
-            setInterval(function() {
-                t.websocket.send("****"); // Keepalive 
-            }, 120000);
-        };
-  
-        /** Incoming message on socket */
-        t.websocket.onmessage = function(evt) { 
-            const slc = evt.data.indexOf(",");
-            const txt1 = evt.data.slice(0,slc);
-            const txt2 = evt.data.slice(slc+1);
-            const room = t.rooms[txt1];
-
-            if ((!t.suspend) && room != null)
-                for (const i in room)
-                    if (room[i].json) room[i].cb( JSON.parse(txt2));
-                    else room[i].cb(txt2);
-        };
+        t.open(); 
         
-        /** Socket close handler. Retry connection. */
-        t.websocket.onclose = function(evt) {
-            t.retry++;
-            if (t.retry <= 4)
-                t._retry(true);
+        /* 
+         * FIXME: If there is a close and a reconnect through this, the 
+         * subscriptions are not necessarily restored. There are two possible 
+         * appraches: (1) put subsciption handlers in an array which is traversed at a reconnect 
+         * or put all subscriptions in the onopen function !!! We may also allow for an array 
+         * of onopen functions. 
+         */
+        setInterval ( ()=> {
+            if (t.retry==0)
+                t.open();
+            else if (t.retry > 0)
+                t.retry--;
+        }, 5000)
+    }
+    
+        
+    open() {
+        const t = this; 
+        t.retry = -1;    
+        let url = t.server.wsurl; 
+        url += 'notify';  
+        console.log("Opening Websocket. URL: "+url);
+        CONFIG.server.genAuthString(null).then( x => {
+            t.websocket = new WebSocket(url+(x==null ? "" : "?"+x));
+
+
+              /** Socket connected handler */
+            t.websocket.onopen = function() { 
+                console.log("Connected to server (for notify service).");
+                if (t.onopen != null) 
+                    t.onopen();
+                else
+                    console.log("t.onopen is null");
+                t.retry = -1;  t.cretry = 0;
+            };
+            
+            
+            /** Incoming message on socket */
+            t.websocket.onmessage = function(evt) { 
+                const slc = evt.data.indexOf(",");
+                const txt1 = evt.data.slice(0,slc);
+                const txt2 = evt.data.slice(slc+1);
+                const room = t.rooms[txt1];
+
+                if ((!t.suspend) && room != null)
+                    for (const i in room)
+                        if (room[i].json) room[i].cb( JSON.parse(txt2));
+                        else room[i].cb(txt2);
+            };
+        
+            
+            /** Socket close handler. Retry connection. */
+            t.websocket.onclose = function(evt) {
+                console.log("Lost connection to server (pubsub): ", evt.code, evt.reason);
+                if (evt.code==1000)
+                    normalRetry();
+                else
+                    errorRetry();
+            }
+  
+   
+            /** Socket error handler */
+            t.websocket.onerror = function(evt) { 
+                console.log("Server connection error (pubsub)");
+                errorRetry();
+            };
+        });
+        
+        function normalRetry() { 
+            retry=4;
+        }
+        
+        function errorRetry() {
+            t.retry = 6 + t.cretry * 3;
+            if (t.cretry < 10) 
+                t.cretry++;
             else {
-                t.retry = 0;
-                console.log("Lost connection to server (for notify service).");
-                cretry = 1;
-                t._retry(false);
+                console.log("Giving up connecting (pubsub)");
+                t.retry = -1; // GIVE UP after 10 attempts
             }
         }
-  
-   
-        /** Socket error handler */
-        t.websocket.onerror = function(evt) { 
-            console.log("Failed to connect to server (for notify service).");
-            t._retry(false);
-        };
         
-        
-    } /* constructor */
+    } 
 
         
-    
-    _retry(recon) {
-        let time = 1000;
-        if (recon) { 
-            this.retry++; 
-            time=15000 + (this.retry*10000); 
-        } 
-        else {
-            this.cretry++; 
-            time=30000 * this.cretry; 
-            if (time >= 900000) time = 900000; // Max 10 minutes
-        }
-        
-        setTimeout(function() {
-            console.log("Attempt to " + (recon?"re":"") + "connect to server (for notify service).");
-            this.websocket = new WebSocket(url);
-        }, time);
-    }
     
 
     /** 
-     * Suspend the map-updater for a given time 
+     * Suspend the updater for a given time 
      */
     suspend(time) {
         console.assert(time>0, "Assertion failed");
@@ -156,6 +173,7 @@ pol.tracking.PubSub = class {
         console.assert(room!=null && room!="" && c!=null, "Assertion failed");
         if (!this.rooms[room] || this.rooms[room] == null) {
             this.rooms[room] = new Array();
+            console.log("pubsub.subscribe", room, c, text);
             this.websocket.send('SUBSCRIBE,' + room);
         }
         this.rooms[room].push({cb:c, json:!text});

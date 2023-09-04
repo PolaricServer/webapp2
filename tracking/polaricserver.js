@@ -41,12 +41,16 @@ pol.tracking.PolaricServer = class extends pol.core.Server {
             CONFIG.tracks = mu;
             CONFIG.filt = flt;
             
-            if (t.auth.userid != null) {
-                const not = new pol.tracking.Notifier();
-                CONFIG.notifier = not; 
-            }            
+            /* Callback when pubsub websocket is opened */
+            this.pubsub.onopen = function() {
+                console.log("pubsump.onopen");
+                if (t.userid != null) {
+                    const not = new pol.tracking.Notifier();
+                    CONFIG.notifier = not; 
+                }            
+            };    
         });
-
+        
         
         /* Add items to toolbar */
         CONFIG.mb.toolbar.addSection(3);
@@ -137,8 +141,21 @@ pol.tracking.PolaricServer = class extends pol.core.Server {
         CONFIG.remove("api.key");
         this.key = null;
     }
-  
-  
+    
+    
+    
+    isAuth() {
+        return (this.key != null);
+    }
+    
+    
+    
+    clearAuth() {
+        this.removeKey();
+        this.auth = { userid: "", groupid: "", callsign: "", servercall: "", admin: false, sar: false, services: "" }; 
+    }
+    
+    
     /**
      * add object to logged in user.
      */  

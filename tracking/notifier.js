@@ -64,8 +64,9 @@ pol.tracking.Notifier = class {
         * Related to user (if logged in), general system notifications and 
         * (if authorized) related to admin user 
         */
-        t.server.pubsub.subscribe("notify:" + t.server.auth.userid, 
-            x => t.add(x) );   
+        if (t.server.userid != null)
+            t.server.pubsub.subscribe("notify:" + t.server.userid, 
+                x => t.add(x) );   
         t.server.pubsub.subscribe("notify:SYSTEM", 
             x => t.add(x) );
         if (t.server.auth.admin) 

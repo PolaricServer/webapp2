@@ -69,18 +69,23 @@ pol.core.MapBrowser = class {
         }
         
         /* OpenLayers view */
+        const proj = t.config.get('core.projection');
+        
+        console.log("PROJ=", proj);
+        
         t.view = new ol.View({   
-            projection: t.config.get('core.projection'),                         
-            center: ol.proj.fromLonLat(center, t.config.get('core.projection')), 
+            projection: proj,                         
+            center: ol.proj.fromLonLat(center, proj), 
             zoom: 2
         });
+
         
         /* Workaround issue with OL */
-        if (t.config.get('core.projection')=='EPSG:900913') {
+        if (proj=='EPSG:900913') {
             setTimeout(()=>
-                t.view.setCenter(ol.proj.fromLonLat(center, t.config.get('core.projection'))), 50);
+                t.view.setCenter(ol.proj.fromLonLat(center, proj)), 50);
             setTimeout(()=>
-                t.view.setCenter(ol.proj.fromLonLat(center, t.config.get('core.projection'))), 400);
+                t.view.setCenter(ol.proj.fromLonLat(center, proj)), 400);
         }
         
         /* Mouse position indicator */

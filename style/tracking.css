@@ -319,5 +319,5 @@ select#group {width: 9em}
 #testResp.err {background: #fbb; color: #300}
 .headerEdit {margin-top: 0.1em; margin-bottom: 0.1em}
 span.plus {font-weight: bold; font-size: 140%; color: blue}
-
+div#errmsg {color: #b00; margin-left:1em; margin-right: 1em; margin-bottom: 0.6em; }
 
