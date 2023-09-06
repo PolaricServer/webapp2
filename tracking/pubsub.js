@@ -27,24 +27,22 @@
 pol.tracking.PubSub = class {
     
     constructor (server) {
-        this.server = server;
-        this.suspend = false;
-        this.retry = -1;
-        this.cretry = 0;
         const t = this;
+        t.server = server;
+        t.suspend = false;
+        t.retry = -1;
+        t.cretry = 0;
+        t.firstopen = true;
+
         t.onopen = null;
+        t.onclude = null;
+        t.subscriptions = [];
         t.rooms = {};
             /* Each room is an array of subscribers (callback functions) */
 
         t.open(); 
         
-        /* 
-         * FIXME: If there is a close and a reconnect through this, the 
-         * subscriptions are not necessarily restored. There are two possible 
-         * appraches: (1) put subsciption handlers in an array which is traversed at a reconnect 
-         * or put all subscriptions in the onopen function !!! We may also allow for an array 
-         * of onopen functions. 
-         */
+ 
         setInterval ( ()=> {
             if (t.retry==0)
                 t.open();
@@ -63,19 +61,18 @@ pol.tracking.PubSub = class {
         CONFIG.server.genAuthString(null).then( x => {
             t.websocket = new WebSocket(url+(x==null ? "" : "?"+x));
 
-
-              /** Socket connected handler */
+            /* Socket connected handler */
             t.websocket.onopen = function() { 
                 console.log("Connected to server (for notify service).");
-                if (t.onopen != null) 
+                if (t.onopen != null && t.firstopen) 
                     t.onopen();
-                else
-                    console.log("t.onopen is null");
+                t.firstopen = false;
+                t.restoreSubs();
                 t.retry = -1;  t.cretry = 0;
             };
             
             
-            /** Incoming message on socket */
+            /* Incoming message on socket */
             t.websocket.onmessage = function(evt) { 
                 const slc = evt.data.indexOf(",");
                 const txt1 = evt.data.slice(0,slc);
@@ -89,9 +86,10 @@ pol.tracking.PubSub = class {
             };
         
             
-            /** Socket close handler. Retry connection. */
+            /* Socket close handler. Retry connection. */
             t.websocket.onclose = function(evt) {
                 console.log("Lost connection to server (pubsub): ", evt.code, evt.reason);
+                closeHandler();
                 if (evt.code==1000)
                     normalRetry();
                 else
@@ -103,12 +101,21 @@ pol.tracking.PubSub = class {
             t.websocket.onerror = function(evt) { 
                 console.log("Server connection error (pubsub)");
                 errorRetry();
+                closeHandler();
             };
         });
+        
+        
+        function closeHandler() {
+            if (t.onclose != null)
+                t.onclose();
+        }
+        
         
         function normalRetry() { 
             retry=4;
         }
+        
         
         function errorRetry() {
             t.retry = 6 + t.cretry * 3;
@@ -134,7 +141,11 @@ pol.tracking.PubSub = class {
         setTimeout( () => {this.suspend = false; }, time);
     }
 
-
+       
+    isConnected() {
+        return (this.websocket != null 
+            && this.websocket.readyState === Websocket.OPEN);
+    }
 
     /** 
      * Close it 
@@ -163,6 +174,13 @@ pol.tracking.PubSub = class {
 
 
    
+    restoreSubs() {
+        for (const rm of Object.keys(this.rooms))
+            this.websocket.send('SUBSCRIBE,' + rm);
+    }
+    
+   
+   
     /** 
      * Subscribe to updates from the server in a given room. 
      * A subscriber is a callback function to be called when notifications arrive. 
@@ -186,8 +204,6 @@ pol.tracking.PubSub = class {
      * Unsubscribe all subscribers to a room 
      */
     unsubscribeAll(room) {
-        console.assert(room!=null && room!="" && this.rooms[room] 
-            && this.rooms[room] != null, "Assertion failed");
         this.rooms[room] = null;
     }
 

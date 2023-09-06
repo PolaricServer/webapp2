@@ -3,7 +3,7 @@
  Map browser based on OpenLayers 5. Tracking. 
  Notifications.  
  
- Copyright (C) 2017-2020 Øyvind Hanssen, LA7ECA, ohanssen@acm.org
+ Copyright (C) 2017-2023 Øyvind Hanssen, LA7ECA, ohanssen@acm.org
  
  This program is free software: you can redistribute it and/or modify
  it under the terms of the GNU Affero General Public License as published 
@@ -52,11 +52,16 @@ pol.tracking.Notifier = class {
         if (t.list == null)
             t.list = [];
 
-        /* Add nofifications icon to toolbar */
-        CONFIG.mb.toolbar.addDiv(3 ,"toolbar_not", "Nofifications");
-        $('#toolbar_not').append('<img src="images/bell.png"></img>');
-        $('#toolbar_not').click(
-            () => WIDGET("tracking.NotifyList", [180,70], true));
+        /* Add nofifications icon to toolbar or set it visible if it exists */
+        if (CONFIG.mb.toolbar.divExists("toolbar_not")) 
+            CONFIG.mb.toolbar.hideDiv("toolbar_not", false);
+        else {
+            CONFIG.mb.toolbar.addDiv(3 ,"toolbar_not", "Nofifications");
+            $('#toolbar_not').append('<img src="images/bell.png"></img>');
+            $('#toolbar_not').click(
+                () => WIDGET("tracking.NotifyList", [180,70], true));
+        }
+        
         t.updateNumber(); 
          
        /* 
@@ -64,7 +69,7 @@ pol.tracking.Notifier = class {
         * Related to user (if logged in), general system notifications and 
         * (if authorized) related to admin user 
         */
-        if (t.server.userid != null)
+        if (t.server.isAuth())
             t.server.pubsub.subscribe("notify:" + t.server.userid, 
                 x => t.add(x) );   
         t.server.pubsub.subscribe("notify:SYSTEM", 
@@ -75,7 +80,7 @@ pol.tracking.Notifier = class {
     
         /* Remove notifications older than ttl. Skip if ttl is 0 */
         /* TTL is in minutes */
-        setInterval( () => {
+        t.setInt = setInterval( () => {
             for (const i in t.list) {
                 const x = t.list[i];
                 if (x.ttl <= 0)
@@ -89,6 +94,24 @@ pol.tracking.Notifier = class {
     } /* constructor */
 
 
+    
+    stop() {
+        const t = this;
+        if (t.setInt != null) 
+            clearInterval(t.setInt);
+        /* 
+         * This can be called AFTER a login has been invalidated, så we 
+         * have to jsut unsubscribe the rooms 
+         */
+        t.server.pubsub.unsubscribeAll("notify:" + t.server.userid);   
+        t.server.pubsub.unsubscribeAll("notify:SYSTEM");
+        t.server.pubsub.unsubscribeAll("notify:ADMIN");
+            
+         if (CONFIG.mb.toolbar.divExists("toolbar_not")); 
+            CONFIG.mb.toolbar.hideDiv("toolbar_not", true);
+    }
+    
+    
     /** 
      * Update number on toolbar. 
      */
@@ -226,6 +249,11 @@ pol.tracking.NotifyList = class extends pol.core.Widget {
         
     } /* constructor */
 
+    
+    stop() {
+        this.notifier.stop();
+    }
+    
 } /* class */
 
 

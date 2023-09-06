@@ -29,28 +29,28 @@ pol.tracking.PolaricServer = class extends pol.core.Server {
         const t = this;
            
         /* This is for the new Hmac-based authentication scheme */
-        this.userid = "_nouser_";
-        this.key = null;
+        t.userid = "_nouser_";
+        t.key = null;
+        t.authOk = false;
         
-        this.restoreCredentials().then( ()=> {
+        t.restoreCredentials().then( ()=> {
             console.log("Got credentials - starting tracking, etc..");
-            this.loginStatus();
-            this.pubsub = new pol.tracking.PubSub(this);
+            
+            t.pubsub = new pol.tracking.PubSub(this);
             const mu = new pol.tracking.Tracking(srv, (hires? 1.4 : 1) );  
             const flt = new pol.tracking.Filters(mu);
             CONFIG.tracks = mu;
             CONFIG.filt = flt;
+            t.loginStatus();
             
-            /* Callback when pubsub websocket is opened */
-            this.pubsub.onopen = function() {
-                console.log("pubsump.onopen");
-                if (t.userid != null) {
-                    const not = new pol.tracking.Notifier();
-                    CONFIG.notifier = not; 
-                }            
+            /* Callback when pubsub websocket is opened for the first time */
+            t.pubsub.onopen = function() {
             };    
+            /* Callback when pubsub websocket is closed */
+            t.pubsub.onclose = function() {
+            }
+            
         });
-        
         
         /* Add items to toolbar */
         CONFIG.mb.toolbar.addSection(3);
@@ -65,14 +65,7 @@ pol.tracking.PolaricServer = class extends pol.core.Server {
     }
 
 
-    login()
-        { window.location.href = this.url+"formLogin?origin="+this.origin; } 
-        
-    logout()
-        { window.location.href = this.url+"logout?url="+this.origin; } 
-        
-        
-        
+    
     async genAuthString(message) {
         const nonce = pol.security.getRandom(8);
         if (message==null) 
@@ -145,14 +138,16 @@ pol.tracking.PolaricServer = class extends pol.core.Server {
     
     
     isAuth() {
-        return (this.key != null);
+        return (this.key != null && this.authOk);
     }
     
     
     
     clearAuth() {
+        console.log("Clear auth");
         this.removeKey();
-        this.auth = { userid: "", groupid: "", callsign: "", servercall: "", admin: false, sar: false, services: "" }; 
+        this.loginStatus(); // To confirm and update things... 
+                       // We may do this directly... 
     }
     
     
@@ -206,31 +201,42 @@ pol.tracking.PolaricServer = class extends pol.core.Server {
     loginStatus() {
         this.GET("authStatus", "", 
             x => { 
+                if (this.authOk)
+                    return;
                 this.auth = JSON.parse(x);
-                if (this.auth.userid == null || this.auth.userid == 'null') {
-                    console.log("Not logged in");
-                    this.loggedIn = false;
-                    CONFIG.mb.toolbar.changeIcon
-                        ("toolbar_login", "images/locked.png", () => this.login(), "Click to log in");
-                }
-                else {
-                    console.log("Logged in to server (userid="+this.auth.userid+").");
-                    this.loggedIn = true;
-                    CONFIG.mb.toolbar.changeIcon
-                        ("toolbar_login", "images/unlocked.png", 
-                        () => WIDGET("tracking.AuthInfo", [320,30], true),
-                        "Logged in as: '"+this.auth.userid+"'. Click to log out");
-                }
+                console.log("Authentication succcess (userid="+this.userid+").");
+                this.authOk = true;
+                
+                CONFIG.mb.toolbar.changeIcon
+                    ("toolbar_login", "images/unlocked.png", 
+                    () => WIDGET("tracking.AuthInfo", [320,30], true),
+                    "Logged in as: '"+this.auth.userid+"'. Click to log out");
+                
                 for (x of this.auth.services)
                     if (x=='database')
                         this.hasDb = true;
+                
+                /* Close the pubsub channel to get a new which is authenticated 
+                 * FIXME: We need to restore the connection after close is finished 
+                 */
+                this.pubsub.close();
+                
+                /* Notifier is used only when logged in. 
+                 * FIXME: Do this after connection is restored.
+                 */
+                CONFIG.notifier = this.not = new pol.tracking.Notifier();
             }, 
             
             (xhr, st, err) => {
-                this.loggedIn = false; 
-                console.log("Couldn't get login info: ", err); 
+                // this.removeKey();
+                console.log("Authentication failed (not logged in): ", err); 
                 CONFIG.mb.toolbar.changeIcon
                     ("toolbar_login", "images/locked.png", () => this.login(), "Click to log in");
+         
+                /* Stop notifier */
+                if (this.not != null) 
+                    this.not.stop();
+                CONFIG.notifier = this.not = null;
             });
     }
    

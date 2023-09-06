@@ -196,13 +196,24 @@ pol.core.Toolbar = class extends ol.control.Control  {
      */
     changeDiv(id, title, cls) {
         const x = document.getElementById(id);
-        if (title)
+        if (x==null)
+            return false;
+        if (title != null)
             x.setAttribute("title", title);
-        if (cls) 
+        if (cls != null) 
             x.className = cls;
+        return true;
     }
 
-
+    hideDiv(id, hide) {
+        const x = document.getElementById(id);
+        x.style.visibility = (hide ? 'hidden' : 'visible'); 
+    }
+    
+    divExists(id) {
+        return document.getElementById(id) != null; 
+    }
+    
     /**
      * Add spacing betwen icons on toolbar. 
      */
