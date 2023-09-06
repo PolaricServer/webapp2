@@ -63,7 +63,11 @@ pol.core.AreaList = class extends pol.core.Widget {
    
    
         t.getMyAreas(); 
-   
+        t.authCb = CONFIG.server.addAuthCb( ()=> {
+            t.getMyAreas();
+            if (!CONFIG.server.isAuth())
+                t.closePopup();
+        });
    
    
         /* Apply a function to an argument. Returns a new function */
@@ -156,6 +160,13 @@ pol.core.AreaList = class extends pol.core.Widget {
     } /* constructor */
     
     
+    /*
+    onClose() {
+        super.onClose();
+        CONFIG.server.removeAuthCb(this.authCb);
+    }
+    */
+    
     
     getMyAreas() 
     {
@@ -163,9 +174,10 @@ pol.core.AreaList = class extends pol.core.Widget {
 
         /* Get areas stored on server (if logged on) */
         const srv = CONFIG.server; 
-        if (srv != null && srv.loggedIn && srv.hasDb) {
+        t.myAreas = [];           
+        m.redraw();
+        if (srv != null && srv.isAuth() && srv.hasDb) {
             srv.getObj("area", a => {     
-                t.myAreas = []; 
                 for (const obj of a) 
                     if (obj != null) {
                         const x = obj.data;
@@ -176,7 +188,7 @@ pol.core.AreaList = class extends pol.core.Widget {
                         t.myAreas.push(x);  
                     }
                 m.redraw();
-            });
+            }); 
         }
         else
             console.warn("Not logged in or server doesn't support storage");

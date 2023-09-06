@@ -29,13 +29,13 @@ pol.tracking.PolaricServer = class extends pol.core.Server {
         const t = this;
            
         /* This is for the new Hmac-based authentication scheme */
-        t.userid = "_nouser_";
+        t.userid = "_NONE_";
         t.key = null;
         t.authOk = false;
+        t.authCallbacks =  [];
+        t.cbId = 0;
         
         t.restoreCredentials().then( ()=> {
-            console.log("Got credentials - starting tracking, etc..");
-            
             t.pubsub = new pol.tracking.PubSub(this);
             const mu = new pol.tracking.Tracking(srv, (hires? 1.4 : 1) );  
             const flt = new pol.tracking.Filters(mu);
@@ -144,12 +144,25 @@ pol.tracking.PolaricServer = class extends pol.core.Server {
     
     
     clearAuth() {
-        console.log("Clear auth");
         this.removeKey();
         this.loginStatus(); // To confirm and update things... 
                        // We may do this directly... 
     }
     
+    /* Add callback - to be called when logout happens */
+    addAuthCb(f) {
+        this.cbId++;
+        this.authCallbacks.push({cbid:this.cbId, func: f});
+        return this.cbId;
+    }
+        
+        
+    /* Remove logout callback. Use id returned from addAuthCb */
+    removeAuthCb(cbid) {
+        for (const i in this.authCallbacks)
+            if (this.authCallbacks[i].cbid==cbid)
+                this.authCallbacks.slice(i);
+    }
     
     /**
      * add object to logged in user.
@@ -211,7 +224,7 @@ pol.tracking.PolaricServer = class extends pol.core.Server {
                     ("toolbar_login", "images/unlocked.png", 
                     () => WIDGET("tracking.AuthInfo", [320,30], true),
                     "Logged in as: '"+this.auth.userid+"'. Click to log out");
-                
+
                 for (x of this.auth.services)
                     if (x=='database')
                         this.hasDb = true;
@@ -225,10 +238,12 @@ pol.tracking.PolaricServer = class extends pol.core.Server {
                  * FIXME: Do this after connection is restored.
                  */
                 CONFIG.notifier = this.not = new pol.tracking.Notifier();
+                this.doAuthCb();
             }, 
             
             (xhr, st, err) => {
                 // this.removeKey();
+                this.authOk = false;
                 console.log("Authentication failed (not logged in): ", err); 
                 CONFIG.mb.toolbar.changeIcon
                     ("toolbar_login", "images/locked.png", () => this.login(), "Click to log in");
@@ -237,10 +252,19 @@ pol.tracking.PolaricServer = class extends pol.core.Server {
                 if (this.not != null) 
                     this.not.stop();
                 CONFIG.notifier = this.not = null;
+                this.doAuthCb();
             });
     }
    
-
+    /* Callback functions to be notified of logout or login*/
+    doAuthCb() {
+        for (const x of this.authCallbacks)
+            x.func();
+    }
+    
+   
+   
+   
     /** 
      * Get info about point from server and show in popup.  
      * FIXME: Move this somewhere else? 
