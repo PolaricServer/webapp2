@@ -191,7 +191,6 @@ pol.tracking.PubSub = class {
         console.assert(room!=null && room!="" && c!=null, "Assertion failed");
         if (!this.rooms[room] || this.rooms[room] == null) {
             this.rooms[room] = new Array();
-            console.log("pubsub.subscribe", room, c, text);
             this.websocket.send('SUBSCRIBE,' + room);
         }
         this.rooms[room].push({cb:c, json:!text});

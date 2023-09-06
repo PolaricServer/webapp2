@@ -208,6 +208,7 @@ pol.core.Toolbar = class extends ol.control.Control  {
     hideDiv(id, hide) {
         const x = document.getElementById(id);
         x.style.visibility = (hide ? 'hidden' : 'visible'); 
+        x.style.width = (hide ? '0' : 'unset');
     }
     
     divExists(id) {

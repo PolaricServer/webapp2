@@ -195,7 +195,15 @@ pol.tracking.NotifyList = class extends pol.core.Widget {
                 ]);  
             }
         };
-
+    
+        
+        
+        t.authCb = CONFIG.server.addAuthCb( ()=> {
+            if (!CONFIG.server.isAuth())
+                t.closePopup();
+        });
+    
+    
         function limit(x, limit) {
             return (x.length > limit ? 
                     x.substring(0, limit - 3) + "..." : x);
@@ -249,10 +257,8 @@ pol.tracking.NotifyList = class extends pol.core.Widget {
         
     } /* constructor */
 
-    
-    stop() {
-        this.notifier.stop();
-    }
+
+
     
 } /* class */
 
