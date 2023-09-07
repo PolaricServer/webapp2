@@ -1,7 +1,7 @@
 /*
  Map browser based on OpenLayers 5. Layer editor.
  
- Copyright (C) 2017-2021 Øyvind Hanssen, LA7ECA, ohanssen@acm.org
+ Copyright (C) 2017-2023 Øyvind Hanssen, LA7ECA, ohanssen@acm.org
  
  This program is free software: you can redistribute it and/or modify
  it under the terms of the GNU Affero General Public License as published 
@@ -121,27 +121,15 @@ pol.layers.Edit = class {
             
             /* IF server available and logged in, update on server as well */
             const s = CONFIG.server; 
-            if (s && s != null && s.loggedIn) {
+            if (s && s != null && s.isAuth()) {
                 const obj = {type: t.typeid, name: t.lName(), data: t.layer2obj(layer)}; 
                 s.updateObj("layer", t.index, obj, i => { 
                     layer.server = true;
-                    _update();
+                    t.list.myLayers[layerIdx] = layer;
                     m.redraw();
                 });
-            } else 
-                _update();
-            
-            return false;
-            
-            function _update() {     
-                CONFIG.mb.removeConfiguredLayer(t.list.myLayers[layerIdx]);
-                CONFIG.mb.addConfiguredLayer(layer, t.lName());
-                t.list.myLayers[layerIdx] = layer; 
-                
-                // Save the layer using the concrete subclass
-                CONFIG.store("layers.layer."+layer.get("name").replace(/\s/g, "_"), t.layer2json(layer), true);
             }
-        
+            return false;
         }
    
    
@@ -163,17 +151,15 @@ pol.layers.Edit = class {
                         
             /* IF server available and logged in, store on server as well */
             const s = CONFIG.server; 
-            if (s && s != null && s.loggedIn) {
+            if (s && s != null && s.isAuth()) {
                 const obj = {type: t.typeid, name: t.lName(), data: t.layer2obj(layer)}; 
                 s.putObj("layer", obj, i => { 
                     layer.index = i; //JSON.parse(i);
                     layer.server = true;
                 });
-                _add(false);
+                _add();
                 m.redraw();
             }
-            else
-                _add(true); 
             t.origName = t.lName();
             return false; 
             
@@ -183,16 +169,10 @@ pol.layers.Edit = class {
             }
             
             
-            function _add(store) {
+            function _add() {
                 CONFIG.mb.addConfiguredLayer(layer, t.lName(), true);
                 t.list.myLayerNames.push( {name: t.lName(), type: t.typeid, server: layer.server, index: layer.index} );
                 t.list.myLayers.push( layer );
-                if (!store)
-                    return;
-                // Save the layer name list. 
-                CONFIG.store("layers.list", t.list.myLayerNames, true);
-                // Save the layer using the concrete subclass
-                CONFIG.store("layers.layer."+layer.get("name").replace(/\s/g, "_"), t.layer2json(layer), true);       
             }
         }
    

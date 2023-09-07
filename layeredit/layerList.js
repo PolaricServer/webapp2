@@ -1,7 +1,7 @@
 /*
  Map browser based on OpenLayers. Layer editor.
  
- Copyright (C) 2017-2022 Øyvind Hanssen, LA7ECA, ohanssen@acm.org
+ Copyright (C) 2017-2023 Øyvind Hanssen, LA7ECA, ohanssen@acm.org
  
  This program is free software: you can redistribute it and/or modify
  it under the terms of the GNU Affero General Public License as published 
@@ -82,7 +82,14 @@ pol.layers.List = class List extends pol.core.Widget {
    
         /* Get stored layers */
         this.getMyLayers();
-
+        t.authCb = CONFIG.server.addAuthCb( ()=> {
+            t.getMyLayers();
+            if (!CONFIG.server.isAuth())
+                t.closePopup();
+        });
+        
+        
+        
         
         function indexOf(n) {
             for (var i in t.myLayerNames) 
@@ -200,82 +207,39 @@ pol.layers.List = class List extends pol.core.Widget {
      */
     getMyLayers() {
         const t = this;
-        if (t.suspendGet)
+        if (t.suspendGet) // ???
             return;
                    
         /* lrs is a list of name,type pairs */
         let lrs = []; 
         
         const s = CONFIG.server;
-        if (s == null || !s.hasDb) {
-            t._clearMyLayers();
-            lrs = CONFIG.get("layers.list");
-            if (lrs == null)
-                lrs = [];
-            
-            /* Go through layers from local storage and add them if valid */
-            for (const i in lrs) {
-                const editor = this.typeList[lrs[i].type];
-                const jsx = CONFIG.get("layers.layer."+lrs[i].name.replace(/\s/g, "_" ));
-           
-                if (jsx != null && editor != null && editor.obj.allowed()) { 
-                    const x = editor.obj.json2layer(jsx);
-                    t.myLayers.push(x);
-                    CONFIG.mb.addConfiguredLayer(x, lrs[i].name);
-                }
-                else 
-                    lrs.splice(i, 1);
-            }
-            CONFIG.store("layers.list", lrs, true);
-
-            for (const x of lrs) {
-                x.server = false; 
-                x.index = -1; 
-            }
-        }
-        else {
+        if (s.isAuth() && s.hasDb) {
             /* 
             * If logged in, get layers stored on server.
             * Duplicates from local storage are removed.
             */
-            setTimeout( () => {
-                const s = CONFIG.server; 
-                t._clearMyLayers(); 
-                s.getObj("layer", a => {
-                    for (const obj of a) 
-                        if (obj != null) {
-                            const wr = obj.data;
-                            wr.data.name = wr.name;
-                            const x = this.typeList[wr.type].obj.obj2layer(wr.data);        
-                            removeDup(wr.name);
-                            lrs.push({
-                                name:wr.name, type:wr.type, server:true, readonly:obj.readOnly, 
-                                noremove: obj.noRemove, index: obj.id
-                            });
-                            t.myLayers.push(x);
-                            CONFIG.mb.addConfiguredLayer(x, wr.name);
-                            this.myLayerNames = lrs;
-                        }
-                    m.redraw();
-                });
-            }, 200);
+            const s = CONFIG.server; 
+            t._clearMyLayers(); 
+            s.getObj("layer", a => {
+                for (const obj of a) 
+                    if (obj != null) {
+                        const wr = obj.data;
+                        wr.data.name = wr.name;
+                        const x = this.typeList[wr.type].obj.obj2layer(wr.data);        
+                        lrs.push({
+                            name:wr.name, type:wr.type, server:true, readonly:obj.readOnly, 
+                            noremove: obj.noRemove, index: obj.id
+                        });
+                        t.myLayers.push(x);
+                        CONFIG.mb.addConfiguredLayer(x, wr.name);
+                        this.myLayerNames = lrs;
+                    }
+                m.redraw();
+            });
         }
         return this.myLayerNames = lrs;   
         
-        
-        /* 
-         * 
-         * FIXME: Should names be unique? Field in database schema? 
-         * Handle situation where two or more layers from *database* have the same name. 
-         */
-        function removeDup(name) {
-            for (const i in lrs) {   
-                if (lrs[i].name == name) {
-                    t._removeLayer(i);
-                        return;
-                }
-            }
-        }
     }
         
  
@@ -293,7 +257,7 @@ pol.layers.List = class List extends pol.core.Widget {
         this.suspend();
         
         /* If server available and logged in, delete on server as well */
-        if (s && s != null && s.loggedIn && s.hasDb && this.myLayerNames[id].index != "") {
+        if (s && s != null && s.isAuth() && s.hasDb && this.myLayerNames[id].index != "") {
             s.removeObj("layer", this.myLayerNames[id].index, 
                 /* n is number of objects actually deleted from database. 0 if there are 
                  * still users that have links to it */
@@ -303,26 +267,8 @@ pol.layers.List = class List extends pol.core.Widget {
                 }
             );
         }
-        else {       
-            this._removeLayer(id, lr, true);
-            typespecific.removeLayer(lr, false);
-        }
     }       
         
-        
-    /* Remove layer from list and local storage */
-    _removeLayer(id, lr, store) {
-        if (lr == null)
-            lr = this.myLayers[id];
-        if (store && this.myLayerNames[id].id)
-            CONFIG.remove("layers.layer."+this.myLayerNames[id].id.replace(/\s/g, "_" ));
-        this.myLayers.splice(id,1);
-        this.myLayerNames.splice(id,1);
-        if (store)
-            CONFIG.store("layers.list", this.myLayerNames, true);
-        if (lr != null)
-            CONFIG.mb.removeConfiguredLayer(lr);
-    }
     
         
 } /* class */
