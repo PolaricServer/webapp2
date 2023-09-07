@@ -27,44 +27,54 @@
 pol.tracking.MapUpdate = class {    
     
     constructor(server) {
-        this.suspend = false;
-        this.retry = 0;
-        this.cretry = 0;
-        var t = this;
+        const t = this;
+        t.suspend = false;
+        t.retry = -1;
+        t.cretry = 0;
+        t.server = server;
+                
+        t.firstopen = true;
         t.onopen = null;
         t.subscriber = null;
         /* Should be a (callback function). 
          * We may have an array of subscribers instead? 
          */
-        var url = server.wsurl; 
+        
+        t.open(); 
+ 
+        setInterval ( ()=> {
+            if (t.retry==0)
+                t.open();
+            else if (t.retry > 0)
+                t.retry--;
+        }, 5000)
+    }
+    
+    
+    
+    open() {
+        const t = this;
+        t.retry = -1;
+        var url = t.server.wsurl; 
         url += 'jmapdata';
-   
         console.log("Opening Websocket. URL: "+url);
         CONFIG.server.genAuthString(null).then( x => {
             t.websocket = new WebSocket(url+(x==null ? "" : "?"+x));
 
    
-            /** Socket connected handler */
+            /* Socket connected handler */
             t.websocket.onopen = function() { 
                 console.log("Connected to server (for tracking overlay).");
-                if (t.onopen != null) 
+                if (t.onopen != null && t.firstopen) 
                     t.onopen();
-                else
-                    console.log("t.onopen is null");
-                t.retry = 0;
-                setInterval(function() {
-                    t.websocket.send("****"); // Keepalive 
-                }, 120000);
+                t.firstopen = false;      
+                t.retry = -1;  t.cretry = 0;
             };
-  
+            
   
             /** Incoming message on socket */
             t.websocket.onmessage = function(evt) { 
-                if (evt.data == 'RESTART!') {
-                    console.log("Got RESTART message");
-                    setTimeout(function() {location.reload();}, 30000);
-                }
-                else if ((!t.suspend) && t.subscriber != null) {
+                if ((!t.suspend) && t.subscriber != null) {
                     try { 
                         t.subscriber(JSON.parse(evt.data));
                     }
@@ -74,49 +84,48 @@ pol.tracking.MapUpdate = class {
                 }
             };
 
-   
-            /** Socket close handler. Retry connection. */
+            
+            /* Socket close handler. Retry connection. */
             t.websocket.onclose = function(evt) {
-                t.retry++;
-                if (t.retry <= 4)
-                    t._retry(true);
-                else {
-                    t.retry = 0;
-                    console.log("Lost connection to server (for tracking overlay).");
-                    alert("ERROR: Lost connection to server");
-                    cretry = 1;
-                    t._retry(false);
-                }
+                console.log("Lost connection to server (for tracking overlay): ", evt.code, evt.reason);
+                closeHandler();
+                if (evt.code==1000)
+                    normalRetry();
+                else
+                    errorRetry();
             }
-  
+    
    
             /** Socket error handler */
             t.websocket.onerror = function(evt) { 
-                console.log("Failed to connect to server (for tracking overlay).");
-                alert("ERROR: Failed to connect to server");
-                t._retry(false);
+                console.log("Server connection error (tracking overlay)");
+                errorRetry();
+                closeHandler();
             };
         });
-    }
-
-    
-    
-    _retry(recon) {
-        let time = 1000;
-        if (recon) { 
-            this.retry++; 
-            time=15000 + (this.retry*10000); 
-        } 
-        else {
-            this.cretry++; 
-            time=30000 * this.cretry; 
-            if (time >= 900000) time = 900000; // Max 10 minutes
+        
+        
+        function closeHandler() {
+            if (t.onclose != null)
+                t.onclose();
         }
         
-        setTimeout(function() {
-            console.log("Attempt to " + (recon?"re":"") + "connect to server (for tracking overlay).");
-            this.websocket = new WebSocket(url);
-        }, time);
+        
+        function normalRetry() { 
+            retry=4;
+        }
+        
+        
+        function errorRetry() {
+            t.retry = 6 + t.cretry * 3;
+            if (t.cretry < 10) 
+                t.cretry++;
+            else {
+                console.log("Giving up connecting (tracking overlay)");
+                t.retry = -1; // GIVE UP after 10 attempts
+            }
+        }
+        
     }
     
     
@@ -131,7 +140,12 @@ pol.tracking.MapUpdate = class {
         setTimeout( ()=> { this.suspend = false; }, time);
     }
 
-
+    
+    isConnected() {
+        return (this.websocket != null 
+            && this.websocket.readyState === Websocket.OPEN);
+    }
+    
     /** 
      * Close the map-updater 
      */
