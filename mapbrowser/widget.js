@@ -179,6 +179,7 @@ pol.core.Widget = class {
     }
 
     closePopup() {
+        this.active = false; 
         if (this.popup != null) 
             this.popup.close();
     }

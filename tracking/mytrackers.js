@@ -77,10 +77,19 @@ pol.tracking.db.MyTrackers = class extends pol.tracking.TrackerAlias {
     
         if (!t.server.hasDb)
             return;
+        
+        
+        t.authCb = CONFIG.server.addAuthCb( ()=> {
+            if (!CONFIG.server.isAuth())
+                t.closePopup();
+        });
 
-
+        
         getTrackers();        
-        setInterval(getTrackers, 120000);
+        setInterval( ()=> {
+            if (t.isActive())
+                t.getTrackers(); 
+        }, 120000);
 
         
         t.server.GET("usernames", null,

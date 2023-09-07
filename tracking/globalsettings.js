@@ -2,7 +2,7 @@
  Map browser based on OpenLayers 5. Tracking. 
  Search historic data on tracker points on server.  
  
- Copyright (C) 2019 Øyvind Hanssen, LA7ECA, ohanssen@acm.org
+ Copyright (C) 2019-2023 Øyvind Hanssen, LA7ECA, ohanssen@acm.org
  
  This program is free software: you can redistribute it and/or modify
  it under the terms of the GNU Affero General Public License as published 
@@ -86,7 +86,11 @@ pol.tracking.GlobalSettings = class extends pol.tracking.TrackerAlias {
             );
                             
         }
-
+        
+        t.authCb = CONFIG.server.addAuthCb( ()=> {
+            if (!CONFIG.server.isAuth())
+                t.closePopup();
+        });
         
     } /* constructor */
     

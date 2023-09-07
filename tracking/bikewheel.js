@@ -3,7 +3,7 @@
  Map browser based on OpenLayers 5. Tracking. 
  Search historic data on tracker points on server.  
  
- Copyright (C) 2020 Øyvind Hanssen, LA7ECA, ohanssen@acm.org
+ Copyright (C) 2020-2023 Øyvind Hanssen, LA7ECA, ohanssen@acm.org
  
  This program is free software: you can redistribute it and/or modify
  it under the terms of the GNU Affero General Public License as published 
@@ -104,7 +104,11 @@ pol.tracking.BikeWheel = class extends pol.core.Widget {
             }
         };
         
-        
+        t.authCb = CONFIG.server.addAuthCb( ()=> {
+            if (!CONFIG.server.isAuth())
+                t.closePopup();
+        });
+                
         setTimeout(()=>t.clear(), 500);
         
         //Default source for drawing.
@@ -128,7 +132,7 @@ pol.tracking.BikeWheel = class extends pol.core.Widget {
         
         
         function restoreFeatures() {            
-            if (srv != null && srv.loggedIn) 
+            if (srv != null && srv.isAuth()) 
                 srv.GET("/sar/ipp", null,
                     (dt)=> {
                         const list = JSON.parse(dt);
@@ -242,7 +246,7 @@ pol.tracking.BikeWheel = class extends pol.core.Widget {
             const item = createItem(); 
             
             /* Update on server if logged in */
-            if (srv != null && srv.loggedIn) 
+            if (srv != null && srv.isAuth()) 
                 srv.POST("sar/ipp", JSON.stringify(item), 
                     ()=> { console.log("Posted IPP/LKP: "+item.ident); },
                     (e)=> { error("Cannot post IPP/LKP: "+e); }
@@ -276,7 +280,7 @@ pol.tracking.BikeWheel = class extends pol.core.Widget {
             const item = createItem();
             
             /* Update on server if logged in */
-            if (srv != null && srv.loggedIn) 
+            if (srv != null && srv.isAuth()) 
                 srv.PUT("sar/ipp/"+item.ident, JSON.stringify(item), 
                     ()=> { console.log("Updated IPP/LKP: "+item.ident); },
                     (e)=> { error("Cannot update IPP/LKP: "+e); }
@@ -356,7 +360,7 @@ pol.tracking.BikeWheel = class extends pol.core.Widget {
     remove(i) {
         /* Remove on server if logged in */
         const item = this.olist[i];
-        if (srv != null && srv.loggedIn) 
+        if (srv != null && srv.isAuth()) 
             srv.DELETE("sar/ipp/"+item.ident, 
                 ()=> { console.log("Deleted IPP/LKP: "+item.ident); },
                 (e)=> { error("Cannot delete IPP/LKP: "+e); }

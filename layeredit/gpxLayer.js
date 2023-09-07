@@ -2,7 +2,7 @@
  Map browser based on OpenLayers 5. Layer editor. 
  GPX file layer. 
  
- Copyright (C) 2018-2021 Øyvind Hanssen, LA7ECA, ohanssen@acm.org
+ Copyright (C) 2018-2023 Øyvind Hanssen, LA7ECA, ohanssen@acm.org
  
  This program is free software: you can redistribute it and/or modify
  it under the terms of the GNU Affero General Public License as published 
@@ -129,7 +129,7 @@ pol.layers.Gpx = class extends pol.layers.Edit {
     
     
     allowed() 
-        { return CONFIG.server.loggedIn; }
+        { return CONFIG.server.isAuth(); }
         
 
     /**

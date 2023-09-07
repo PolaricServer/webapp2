@@ -73,6 +73,12 @@ pol.tracking.Users = class extends pol.core.Widget {
         }
         
         
+        t.authCb = CONFIG.server.addAuthCb( ()=> {
+            this.getUsers();
+            if (!CONFIG.server.isAuth())
+                t.closePopup();
+        });
+                
         t.groups = {    
             view: function() {
                 return m("select#group", {onchange: selectHandler }, t.groupList

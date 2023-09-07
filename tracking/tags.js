@@ -70,6 +70,13 @@ pol.tracking.Tags = class extends pol.core.Widget {
             }
         };
         
+                
+        t.authCb = CONFIG.server.addAuthCb( ()=> {
+            if (!CONFIG.server.isAuth())
+                t.closePopup();
+        });
+                
+        
         
         function add() {
             let arg = [t.tag];

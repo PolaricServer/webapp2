@@ -2,7 +2,7 @@
  Map browser based on OpenLayers 5. 
  Feature editor widget (drawing tool) based on snowcode project.
  
- Copyright (C) 2019-2020 Øyvind Hanssen, LA7ECA, ohanssen@acm.org
+ Copyright (C) 2019-2023 Øyvind Hanssen, LA7ECA, ohanssen@acm.org
  
  This program is free software: you can redistribute it and/or modify
  it under the terms of the GNU Affero General Public License as published 
@@ -180,7 +180,7 @@ pol.features.Edit = class extends pol.core.Widget {
      */
     restoreFeatures(lname) {
         const srv = CONFIG.server;
-        if (srv != null && srv.loggedIn && srv.hasDb) {
+        if (srv != null && srv.isAuth() && srv.hasDb) {
             const tag = "feature"+ (lname ? "."+lname : "");
             srv.getObj(tag, a => {
                 for (const obj of a) 
@@ -214,7 +214,7 @@ pol.features.Edit = class extends pol.core.Widget {
    
     removeFeatures(lname) {
         const srv = CONFIG.server; 
-        if (srv != null && srv.loggedIn && srv.hasDb) {
+        if (srv != null && srv.isAuth() && srv.hasDb) {
             const tag = "feature"+ (lname ? "."+lname : "");
             
             const lr = getWIDGET("layers.List").getLayer(lname); 
@@ -235,7 +235,7 @@ pol.features.Edit = class extends pol.core.Widget {
     */ 
     doUpdate(x, op, fromlayer) {
         const srv = CONFIG.server; 
-        if (srv != null && srv.loggedIn && srv.hasDb) {
+        if (srv != null && srv.isAuth() && srv.hasDb) {
             
             const fromtag = "feature" + (!fromlayer ? "" : "."+fromlayer);
             const totag = "feature" + ((!x.layer || x.layer=="DRAFT") ? "" : "."+x.layer);

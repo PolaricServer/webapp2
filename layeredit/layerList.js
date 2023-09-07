@@ -40,8 +40,8 @@ pol.layers.List = class List extends pol.core.Widget {
         }
         t.addType("wms", "Standard WMS layer", new pol.layers.Wms(this));   
         t.addType("wfs", "Standard WFS layer", new pol.layers.Wfs(this));
-
-   
+               
+        t.addType("_any_", "Select layer type..", new pol.layers.Dummy(this));
         this.layer = t.typeList["_any_"].obj; 
 
    
@@ -81,7 +81,7 @@ pol.layers.List = class List extends pol.core.Widget {
         };
    
         /* Get stored layers */
-        this.getMyLayers();
+
         t.authCb = CONFIG.server.addAuthCb( ()=> {
             t.getMyLayers();
             if (!CONFIG.server.isAuth())
@@ -146,6 +146,9 @@ pol.layers.List = class List extends pol.core.Widget {
     } /* constructor */
 
     
+    onActivate() {
+        this.getMyLayers();
+    }
     
     selectType(lname) {
         $("#lType").val(lname).trigger("change"); 
@@ -207,7 +210,7 @@ pol.layers.List = class List extends pol.core.Widget {
      */
     getMyLayers() {
         const t = this;
-        if (t.suspendGet) // ???
+        if (t.suspendGet || !this.isActive()) 
             return;
                    
         /* lrs is a list of name,type pairs */

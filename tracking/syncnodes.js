@@ -94,7 +94,13 @@ pol.tracking.db.SyncNodes = class extends pol.core.Widget {
                 ]) 
             }
         };
-
+        
+        
+        t.authCb = CONFIG.server.addAuthCb( ()=> {
+            if (!CONFIG.server.isAuth())
+                t.closePopup();
+        });
+        
         
         setInterval(()=> t.getNodes(), 60000);
         

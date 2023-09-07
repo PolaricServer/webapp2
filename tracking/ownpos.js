@@ -61,7 +61,12 @@ pol.tracking.OwnPos = class extends pol.core.Widget {
             }
         };
         
-    
+        
+        t.authCb = CONFIG.server.addAuthCb( ()=> {
+            if (!CONFIG.server.isAuth())
+                t.closePopup();
+        });
+            
         
         /* Update object on backend (through REST call */
         function update() {
