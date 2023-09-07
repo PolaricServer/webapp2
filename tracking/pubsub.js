@@ -35,13 +35,12 @@ pol.tracking.PubSub = class {
         t.firstopen = true;
 
         t.onopen = null;
-        t.onclude = null;
+        t.onclose = null;
         t.subscriptions = [];
         t.rooms = {};
             /* Each room is an array of subscribers (callback functions) */
 
         t.open(); 
-        
  
         setInterval ( ()=> {
             if (t.retry==0)
