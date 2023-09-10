@@ -319,5 +319,8 @@ select#group {width: 9em}
 #testResp.err {background: #fbb; color: #300}
 .headerEdit {margin-top: 0.1em; margin-bottom: 0.1em}
 span.plus {font-weight: bold; font-size: 140%; color: blue}
-div#errmsg {color: #b00; margin-left:1em; margin-right: 1em; margin-bottom: 0.6em; }
 
+div#errmsg {color: #500; margin-left:1em; margin-right: 1em; margin-bottom: 0.6em; background: #fdd}
+div#successmsg {color: #040; margin-left:1em; margin-right: 1em; margin-bottom: 0.6em; background: #cfc}
+div#errmsg, div#successmsg {border: 2px dotted; padding: 0.5em; padding-top: 0.3em}
+div#serverConfig {min-width: 30em}
