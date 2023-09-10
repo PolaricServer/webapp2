@@ -17,8 +17,15 @@
  You should have received a copy of the GNU Affero General Public License
  along with this program. If not, see <http://www.gnu.org/licenses/>.
 */
- 
- 
+
+
+ /** @namespace */
+var pol = pol || {};
+pol.core = pol.core || {};
+pol.tracking = pol.tracking || {}; 
+
+
+
 
 pol.tracking.PolaricServer = class extends pol.core.Server {
     
@@ -33,14 +40,15 @@ pol.tracking.PolaricServer = class extends pol.core.Server {
         t.key = null;
         t.authOk = false;
         t.authCallbacks =  [];
+        t.onstartfunc = null;
         t.cbId = 0;
         
         t.restoreCredentials().then( ()=> {
             t.pubsub = new pol.tracking.PubSub(this);
-            const mu = new pol.tracking.Tracking(srv, (hires? 1.4 : 1) );  
-            const flt = new pol.tracking.Filters(mu);
-            CONFIG.tracks = mu;
-            CONFIG.filt = flt;
+            
+            if (t.startcb != null)
+                t.startcb();
+
             t.loginStatus();
             
             /* Callback when pubsub websocket is opened for the first time */
@@ -52,10 +60,6 @@ pol.tracking.PolaricServer = class extends pol.core.Server {
             
         });
         
-        /* Add items to toolbar */
-        CONFIG.mb.toolbar.addSection(3);
-        CONFIG.mb.toolbar.addIcon(3, "images/locked.png", "toolbar_login", null, "Log in");
-        CONFIG.mb.toolbar.addIcon(3, "images/sar.png", "sarmode");
         
         /* Get login status. Periodic, interval: 6 minutes */
         setInterval( ()=> {
@@ -129,6 +133,23 @@ pol.tracking.PolaricServer = class extends pol.core.Server {
     }
     
     
+    /*
+     * Register callback function for startup
+     */
+    onStart(f) {
+        this.startcb = f;
+    }
+    
+    
+    /* 
+     * Register callback functions for login and logout 
+     */
+    onLogin(login, logout) {
+        this.logincb = login; 
+        this.logoutcb = logout;
+    }
+    
+    
     /* Remove the secret key */
     removeKey() {
         CONFIG.remove("api.key");
@@ -140,13 +161,16 @@ pol.tracking.PolaricServer = class extends pol.core.Server {
     isAuth() {
         return (this.key != null && this.authOk);
     }
+        
     
-    
-    
+    /*
+     * Clear authentication (remove secret key). 
+     * Corresponds to logout
+     */
     clearAuth() {
         this.removeKey();
         this.loginStatus(); // To confirm and update things... 
-                       // We may do this directly... 
+                            // We may do this directly... 
     }
     
     /* Add callback - to be called when logout happens */
@@ -219,11 +243,6 @@ pol.tracking.PolaricServer = class extends pol.core.Server {
                 this.auth = JSON.parse(x);
                 console.log("Authentication succcess (userid="+this.userid+").");
                 this.authOk = true;
-                
-                CONFIG.mb.toolbar.changeIcon
-                    ("toolbar_login", "images/unlocked.png", 
-                    () => WIDGET("tracking.AuthInfo", [320,30], true),
-                    "Logged in as: '"+this.auth.userid+"'. Click to log out");
 
                 for (x of this.auth.services)
                     if (x=='database')
@@ -233,29 +252,45 @@ pol.tracking.PolaricServer = class extends pol.core.Server {
                  * FIXME: We need to restore the connection after close is finished 
                  */
                 this.pubsub.close();
-                
-                /* Notifier is used only when logged in. 
-                 * FIXME: Do this after connection is restored.
-                 */
-                CONFIG.notifier = this.not = new pol.tracking.Notifier();
                 this.doAuthCb();
-            }, 
+                if (this.logincb != null)
+                    this.logincb();
+            },
             
             (xhr, st, err) => {
-                // this.removeKey();
                 this.authOk = false;
-                console.log("Authentication failed (not logged in): ", err); 
-                CONFIG.mb.toolbar.changeIcon
-                    ("toolbar_login", "images/locked.png", () => this.login(), "Click to log in");
-         
                 /* Stop notifier */
                 if (this.not != null) 
                     this.not.stop();
                 CONFIG.notifier = this.not = null;
                 this.doAuthCb();
+                if (this.logoutcb != null)
+                    this.logoutcb(err);
+                this.loginStatus2();
             });
     }
-   
+    
+    
+    
+    /* 
+     * If authentication fails, we can call this to get the auth status anyway, since it 
+     * contains info about capabilities of the server. Maybe we should separate this out. 
+     */
+    loginStatus2() {
+        this.GET("authStatus2", "", 
+            x => { 
+                this.auth = JSON.parse(x);
+                for (x of this.auth.services)
+                    if (x=='database')
+                        this.hasDb = true;
+            },
+            null
+        );
+    }
+    
+
+        
+                 
     /* Callback functions to be notified of logout or login*/
     doAuthCb() {
         for (const x of this.authCallbacks)

@@ -26,8 +26,8 @@ pol.tracking = pol.tracking || {};
 pol.tracking.isSign = function(p) {
     return (p.getId().indexOf("__") === 0);
 }
-     
-     
+
+
      
 /**
  * Tracking layer class.
@@ -107,9 +107,11 @@ pol.tracking.Tracking = class {
                 if (pts.length > 0) 
                     /* Just one point */
                     return { 
-                        sarAuth: pts[0].point.sarAuth,
                         name:  (pol.tracking.isSign(pts[0]) ? "SIGN" : "POINT"), 
                         ident: pts[0].getId(),
+                        aprs:  pts[0].point.aprs,
+                        own:   pts[0].point.own,
+                        telemetry: pts[0].point.telemetry,
                         point: pts[0]
                     };
             }
@@ -149,7 +151,7 @@ pol.tracking.Tracking = class {
             CONFIG.mb.map.on('moveend', onMoveEnd);
 
             /* Subscribe to updates from server */
-            if (t.filter != null)
+            if (t.filter != null) 
                 t.producer.subscribe(t.filter, x => t.update(x), t.tag, false );
         }
 

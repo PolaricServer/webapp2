@@ -70,7 +70,8 @@ pol.core.Popup = class {
         this.allowedPopups++;
                        
         this.activepopup.style.display = "none" ;
-        this.activepopup.parentNode.removeChild(this.activepopup);
+        if (this.activepopup.parentNode != null)
+            this.activepopup.parentNode.removeChild(this.activepopup);
         this.activepopup = null;
     }
 

@@ -55,7 +55,9 @@ pol.tracking.MapUpdate = class {
     open() {
         const t = this;
         t.retry = -1;
-        var url = t.server.wsurl; 
+        let url = t.server.wsurl; 
+        let kalive = null;
+        
         url += 'jmapdata';
         console.log("Opening Websocket. URL: "+url);
         CONFIG.server.genAuthString(null).then( x => {
@@ -69,6 +71,7 @@ pol.tracking.MapUpdate = class {
                     t.onopen();
                 t.firstopen = false;      
                 t.retry = -1;  t.cretry = 0;
+                kalive = setInterval(()=> t.websocket.send("*****"), 400000);
             };
             
   
@@ -88,6 +91,7 @@ pol.tracking.MapUpdate = class {
             /* Socket close handler. Retry connection. */
             t.websocket.onclose = function(evt) {
                 console.log("Lost connection to server (for tracking overlay): ", evt.code, evt.reason);
+                clearInterval(kalive);
                 closeHandler();
                 if (evt.code==1000)
                     normalRetry();
@@ -99,6 +103,7 @@ pol.tracking.MapUpdate = class {
             /** Socket error handler */
             t.websocket.onerror = function(evt) { 
                 console.log("Server connection error (tracking overlay)");
+                clearInterval(kalive);
                 errorRetry();
                 closeHandler();
             };
