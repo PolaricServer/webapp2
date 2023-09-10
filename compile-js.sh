@@ -19,7 +19,8 @@ $BABEL $D/tracking.js $D/polaricserver.js $D/pubsub.js $D/mapupdate.js $D/search
 D=featureedit
 $BABEL $D/snow/drawConfig.js $D/snow/drawGlobals.js $D/snow/undoFunctions.js $D/snow/drawStyle.js $D/snow/drawFunctions.js $D/snow/drawTooltipHelper.js $D/snow/drawEvents.js $D/snow/gpxDownload.js $D/snow/drawIcons.js $D/snow/mithrilDrawBox.js $D/snow/mithrilIcons.js $D/snow/measureTooltip.js $D/featureEdit.js $D/properties.js > featureedit-min.js
 
-
+D=psadmin
+$BABEL $D/passwd.js $D/statusInfo.js $D/syncnodes.js $D/users.js $D/testrest.js > psadmin-min.js
 
 #
 # combine and minify css

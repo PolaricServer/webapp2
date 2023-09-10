@@ -19,18 +19,19 @@
 */
  
 
+pol.psadmin = pol.psadmin || {};
 
 /**
  * Reference search (in a popup window). 
  */
 
-pol.tracking.Users = class extends pol.core.Widget {
+pol.psadmin.Users = class extends pol.core.Widget {
 
     constructor() {
         super();
         var t = this;
         t.server = CONFIG.server;
-        t.classname = "tracking.Users"; 
+        t.classname = "psadmin.Users"; 
         t.users = [];
         t.ident = m.stream("");
         t.name = m.stream("");
@@ -369,6 +370,6 @@ pol.tracking.Users = class extends pol.core.Widget {
 
 
 
-pol.widget.setFactory( "tracking.Users", {
-        create: () => new pol.tracking.Users()
+pol.widget.setFactory( "psadmin.Users", {
+        create: () => new pol.psadmin.Users()
     }); 

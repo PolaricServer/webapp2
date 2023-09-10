@@ -19,18 +19,19 @@
 */
  
 
+pol.psadmin = pol.psadmin || {};
 
 /**
  * Reference search (in a popup window). 
  */
 
-pol.tracking.Passwd = class extends pol.core.Widget {
+pol.psadmin.Passwd = class extends pol.core.Widget {
 
     constructor() {
         super();
         var t = this;
         t.server = CONFIG.server;
-        t.classname = "tracking.Passwd"; 
+        t.classname = "psadmin.Passwd"; 
         t.passwd = m.stream("");
         t.passwd2 = m.stream("");
         
@@ -97,6 +98,6 @@ pol.tracking.Passwd = class extends pol.core.Widget {
 
 
 
-pol.widget.setFactory( "tracking.Passwd", {
-        create: () => new pol.tracking.Passwd()
+pol.widget.setFactory( "psadmin.Passwd", {
+        create: () => new pol.psadmin.Passwd()
     }); 

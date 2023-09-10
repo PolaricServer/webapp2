@@ -20,9 +20,7 @@
     
     var mobile = mobplatform | phone | tablet;
     
-    if (hires)
-        alert("HIGH RES");
-   
+  
    /*
     * Read the URL GET parameters
     */
@@ -45,6 +43,42 @@
      */  
     const srv = new pol.tracking.PolaricServer();
     CONFIG.server = srv;
+    
+    srv.onStart( ()=> {
+        /* 
+         * This block may perhaps be put in a callback instead to make this class more 
+         * independent of a specific app. See also loginStatus. 
+         */
+        const mu = new pol.tracking.Tracking(srv, (hires? 1.4 : 1) );  
+        const flt = new pol.tracking.Filters(mu);
+        CONFIG.tracks = mu;
+        CONFIG.filt = flt;
+        /* Add items to toolbar */
+        CONFIG.mb.toolbar.addSection(3);
+        CONFIG.mb.toolbar.addIcon(3, "images/locked.png", "toolbar_login", null, "Log in");
+        CONFIG.mb.toolbar.addIcon(3, "images/sar.png", "sarmode");
+    });
+    
+    srv.onLogin( 
+        ()=> {
+            CONFIG.mb.toolbar.changeIcon
+                ("toolbar_login", "images/unlocked.png", 
+                () => WIDGET("tracking.Login", [320,30], true),
+                "Logged in as: '"+srv.auth.userid+"'. Click to log out");      
+                
+                /* Notifier is used only when logged in. 
+                 * FIXME: Do this after connection is restored.
+                 */
+                CONFIG.notifier = this.not = new pol.tracking.Notifier();
+        }, 
+        (err)=> {
+            console.log("Authentication failed (not logged in): ", err); 
+            CONFIG.mb.toolbar.changeIcon
+                ("toolbar_login", "images/locked.png", 
+                () => WIDGET("tracking.Login", [230,30], true), "Click to log in");
+        }
+    );
+    
     setTimeout( () => {
 
         if (urlArgs['track'] != null) 
@@ -73,7 +107,7 @@
             getWIDGET("tracking.db.Signs").getSigns();
         });
         
-    }, 1000); 
+    }, 5000); 
    
     CONFIG.labelStyle = new pol.tracking.LabelStyle();
 
@@ -156,9 +190,8 @@
      *********************************************************/
    
     browser.ctxMenu.addCallback("TOOLBAR", (m, ctxt)=> {   
-        m.add('Test REST',  () => WIDGET("tracking.TestRest", [50,70], true));
-        m.add('Test LOGIN',  () => WIDGET("tracking.Login", [50,70], true));
-        
+        m.add('Test REST',  () => WIDGET("psadmin.TestRest", [50,70], true));
+ 
         if (!phone) {
             m.add('Search items',  () => WIDGET("tracking.Search", [50,70], true));
             m.add('Find position', () => WIDGET("core.refSearch",  [50,70], true));
@@ -170,9 +203,10 @@
         }
         
         if (!phone) {
-            m.add('Area List',  () => WIDGET("core.AreaList", [50,70], true)); 
-            m.add('Layer List', () => WIDGET("layers.List", [50,70], true));
-        
+            if (srv.isAuth()) {
+                m.add('Area List',  () => WIDGET("core.AreaList", [50,70], true)); 
+                m.add('Layer List', () => WIDGET("layers.List", [50,70], true));
+            }    
             if (browser.getPermalink())
                 m.add("Permalink OFF", () => browser.setPermalink(false)); 
             else
@@ -188,20 +222,20 @@
             m.add(null);
             if (srv.auth.admin) {
                 m.add("Admin/configuration..", webConfig);
-                m.add("User admin..", () => WIDGET("tracking.Users", [50, 70], true));
+                m.add("Status info", () => WIDGET("psadmin.StatusInfo", [50, 70], true));
+                m.add("User admin..", () => WIDGET("psadmin.Users", [50, 70], true));
+                m.add("Server config..", () => WIDGET("psadmin.ServerConfig", [50, 70], true));
             }
         }
         m.add(null);
-        if (srv.loggedIn) {
-            m.add('Log out', () => srv.logout() );
-            m.add("Set/change password..", () => WIDGET("tracking.Passwd", [50,70], true));
+        if (srv.isAuth()) {
+            m.add("Set/change password..", () => WIDGET("psadmin.Passwd", [50,70], true));
         }
-        else
-            m.add('Log in', () => srv.login() );
+
         m.add(null);
         
         
-        if (srv.loggedIn) {
+        if (srv.isAuth()) {
             if (!phone && srv.hasDb) 
                 m.add("My trackers", () => WIDGET("tracking.db.MyTrackers", [50, 70], true));
             m.add("Notification", () => WIDGET("tracking.NotifyList", [50, 70], false));
@@ -218,7 +252,7 @@
         
         if (!phone) 
             m.add("Bulletin board", () => WIDGET("tracking.BullBoard", [50,70], true));
-        if (srv.loggedIn)
+        if (srv.isAuth())
             m.add('Short messages', () => WIDGET("tracking.Mailbox",[50,70], true));
         
         if (!phone && CONFIG.get('display.in-car') != null) {
@@ -226,10 +260,9 @@
             m.add(null);
             m.add("Exit", chromeExit);
         }
-        
-        m.add("Auth Info", () => WIDGET("tracking.AuthInfo", [50,70], true));
+
         if (!phone && srv.hasDb && srv.auth.admin) {
-            m.add("Synch nodes", () => WIDGET("tracking.db.SyncNodes", [50,70], true));
+            m.add("Synch nodes", () => WIDGET("psadmin.db.SyncNodes", [50,70], true));
         }
     });
 
@@ -252,11 +285,11 @@
         m.add('Last movements', () => 
             WIDGET( "tracking.TrailInfo", [50, 70], false,  x=> x.getTrail(ctxt.ident) ) );
         
-        if (ctxt.point.point.telemetry)
+        if (ctxt.telemetry)
             m.add('Telemetry', () => 
                 WIDGET( "tracking.Telemetry", [50, 70], true,  x=> x.getItem(ctxt.ident), ctxt.ident ));
          
-        if (ctxt.sarAuth) { 
+        if (srv.auth.sar||srv.auth.admin) { 
             m.add('Global settings', () => 
                 WIDGET("tracking.GlobalSettings", [m.x,m.y], false, x=>x.setIdent(ctxt.ident)));
 
@@ -265,7 +298,7 @@
             m.add('Reset info', () => resetInfo(ctxt.ident) );
             m.add('Change trail color', () => chColor(ctxt.ident) );
             
-            if (ctxt.point.point.own)
+            if (ctxt.own)
                 m.add('Remove object', () => 
                     getWIDGET("tracking.OwnObjects").remove( ctxt.ident.substring(0, ctxt.ident.indexOf('@') ) ) );
         }
@@ -286,11 +319,11 @@
             m.add('Hide trail', () => CONFIG.tracks.hideTrail(ctxt.ident, true) );
         m.add(null);
              
-        if (ctxt.sarAuth && srv.hasDb && ctxt.point.point.aprs) { 
+        if ((srv.auth.sar||srv.auth.admin) && srv.hasDb && ctxt.aprs) { 
             m.add('Add to my trackers', () => 
                 WIDGET("tracking.db.MyTrackers", [50, 70], true, x=> x.setIdent(ctxt.ident))); 
         }
-        if (srv.hasDb && ctxt.point.point.aprs) {
+        if (srv.hasDb && ctxt.aprs) {
 
             m.add('Raw APRS packets', () => 
                 WIDGET( "tracking.AprsPackets", [50, 70], false,  x=> x.getPackets(ctxt.ident, 300) ) );

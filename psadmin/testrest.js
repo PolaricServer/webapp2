@@ -19,18 +19,19 @@
 */
  
 
+pol.psadmin = pol.psadmin || {};
 
 /**
  * Reference search (in a popup window). 
  */
 
-pol.tracking.TestRest = class extends pol.core.Widget {
+pol.psadmin.TestRest = class extends pol.core.Widget {
 
     constructor() {
         super();
         var t = this;
         t.server = CONFIG.server;
-        t.classname = "tracking.TestRest";
+        t.classname = "psadmin.TestRest";
         t.url = m.stream("");
         t.method = m.stream("GET");
         t.body = null;
@@ -220,6 +221,6 @@ pol.tracking.TestRest = class extends pol.core.Widget {
 
 
 
-pol.widget.setFactory( "tracking.TestRest", {
-        create: () => new pol.tracking.TestRest()
+pol.widget.setFactory( "psadmin.TestRest", {
+        create: () => new pol.psadmin.TestRest()
     }); 

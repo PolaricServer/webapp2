@@ -18,14 +18,14 @@
  along with this program. If not, see <http://www.gnu.org/licenses/>.
 */
  
-pol.tracking.db = pol.tracking.db || {};
+pol.psadmin.db = pol.psadmin.db || {};
 
 
 
 /**
  * Reference search (in a popup window). 
  */
-pol.tracking.db.SyncNodes = class extends pol.core.Widget { 
+pol.psadmin.db.SyncNodes = class extends pol.core.Widget { 
 
     constructor() {
         super();       
@@ -33,7 +33,7 @@ pol.tracking.db.SyncNodes = class extends pol.core.Widget {
         const t = this;        
         t.server = CONFIG.server;
 
-        t.classname = "tracking.db.SyncNodes"; 
+        t.classname = "psadmin.db.SyncNodes"; 
         t.parents = [];
         t.children = [];
         t.items = m.stream("");
@@ -199,6 +199,6 @@ pol.tracking.db.SyncNodes = class extends pol.core.Widget {
 
 
 
-pol.widget.setFactory( "tracking.db.SyncNodes", {
-        create: () => new pol.tracking.db.SyncNodes()
+pol.widget.setFactory( "psadmin.db.SyncNodes", {
+        create: () => new pol.psadmin.db.SyncNodes()
     }); 
