@@ -20,6 +20,11 @@
     
     var mobile = mobplatform | phone | tablet;
     
+    /* Set to true to incldue REST API testbench in menu */
+    var developer_mode = true; 
+    
+    
+    
   
    /*
     * Read the URL GET parameters
@@ -180,8 +185,6 @@
         if (!phone) 
             m.add('Map view info', () => 
                 WIDGET("core.MapInfo", [50,70], true ));
-        
-        
     });
 
    
@@ -190,8 +193,10 @@
      *********************************************************/
    
     browser.ctxMenu.addCallback("TOOLBAR", (m, ctxt)=> {   
-        m.add('Test REST',  () => WIDGET("psadmin.TestRest", [50,70], true));
- 
+        if (developer_mode) {
+            m.add('Test REST API',  () => WIDGET("psadmin.TestRest", [50,70], true));
+            m.add(null);
+        }
         if (!phone) {
             m.add('Search items',  () => WIDGET("tracking.Search", [50,70], true));
             m.add('Find position', () => WIDGET("core.refSearch",  [50,70], true));
@@ -221,10 +226,14 @@
             m.add("SAR mode..", () => WIDGET("tracking.SarMode", [50,70], false)); 
             m.add(null);
             if (srv.auth.admin) {
-                m.add("Admin/configuration..", webConfig);
                 m.add("Status info", () => WIDGET("psadmin.StatusInfo", [50, 70], true));
                 m.add("User admin..", () => WIDGET("psadmin.Users", [50, 70], true));
                 m.add("Server config..", () => WIDGET("psadmin.ServerConfig", [50, 70], true));
+                m.add("Own pos config..", () => WIDGET("psadmin.OwnposConfig", [50, 70], true));
+                m.add("Channels config..", () => WIDGET("psadmin.Channels", [50, 70], true));
+                if (srv.hasDb) {
+                    m.add("Synch nodes", () => WIDGET("psadmin.db.SyncNodes", [50,70], true));
+                }
             }
         }
         m.add(null);
@@ -238,7 +247,6 @@
         if (srv.isAuth()) {
             if (!phone && srv.hasDb) 
                 m.add("My trackers", () => WIDGET("tracking.db.MyTrackers", [50, 70], true));
-            m.add("Notification", () => WIDGET("tracking.NotifyList", [50, 70], false));
         }
         
         if (srv.hasDb) {
@@ -261,9 +269,7 @@
             m.add("Exit", chromeExit);
         }
 
-        if (!phone && srv.hasDb && srv.auth.admin) {
-            m.add("Synch nodes", () => WIDGET("psadmin.db.SyncNodes", [50,70], true));
-        }
+        
     });
 
     /*
@@ -363,15 +369,6 @@
     function histList_hout() {}
     function histList_hover() {}
 
-
-    function setPasswd()
-        { srv.popup('Password', 'passwd', 430, 250); }
-  
-    function webConfig()
-        { srv.popup('Config', 'config_menu'+'?inapp=true', 900, 700); }
- 
-    function setTags(ident)
-        { srv.popup('editTags', 'addtag?objid='+ident, 560, 300); }
 
         
     // FIXME: maybe an "are you sure" dialog?     

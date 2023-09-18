@@ -402,9 +402,29 @@ const latLngInput = class {
         this.Ed = m.stream("");
         this.Em = m.stream("");
     }
+       
+    
+    getFromModel (vn) {
+        if (this.pModel && vn.attrs.value[0]==this.pModel[0] && vn.attrs.value[1]==this.pModel[1]) {
+            return; 
+        }
+        this.pModel = vn.attrs.value;
+        const Ednum = Math.floor(vn.attrs.value[0]);
+        const Ndnum = Math.floor(vn.attrs.value[1]);
+        const W = (Ednum < 0); 
+        const S = (Ndnum < 0);
+        
+        this.Ed( "" + Math.abs(Ednum));
+        this.Em( "" + Math.abs(Math.round((vn.attrs.value[0]-Ednum)*60*1000)/1000));
+        this.Nd( "" + Math.abs(Ndnum));
+        this.Nm( "" + Math.abs(Math.round((vn.attrs.value[1]-Ndnum)*60*100)/100));
+        
+    }
+
     
     view(vn) {
         const center = CONFIG.mb.getCenter();
+        this.getFromModel(vn);
         return m("span",                 
                  { onclick: function() {     
                      pol.ui.autojump('ll_Nd', 'll_Nm');
@@ -414,6 +434,7 @@ const latLngInput = class {
             m(textInput, {id:"ll_Nd", size: "2", maxLength: "2", value: this.Nd, regex:/^(([0-8]?[0-9])|90)$/}), "°", nbsp,nbsp,
             m(textInput, {id:"ll_Nm", size: "6", maxLength: "6", value: this.Nm, regex: reg_MIN }), "\'", nbsp, 
             m("span#ll_NS",   {onclick:this.clickNS}, (center[1] < 0 ? "S":"N")), nbsp, nbsp,
+            
             m(textInput, {id:"ll_Ed", size: "3", maxLength: "3", value: this.Ed, regex:/^[0-9]{1,3}$/}), "°", nbsp,nbsp,
             m(textInput, {id:"ll_Em", size: "6", maxLength: "6", value: this.Em, regex: reg_MIN }), "\'", nbsp,  
             m("span#ll_EW",   {onclick:this.clickEW}, (center[0] < 0 ? "W":"E")), nbsp, nbsp)

@@ -6,7 +6,7 @@ button, input {font-size: 90%}
 div.widget { overflow: hidden !important;}
 
 
-.leftlab, .wleftlab, .sleftlab, .xsleftlab, label.lleftlab {
+.leftlab, .wleftlab, .sleftlab, .xsleftlab, .lleftlab {
   float: left;
   width: 9.0em;
   text-align: right;

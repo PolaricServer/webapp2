@@ -1,6 +1,6 @@
 /*
  Map browser based on OpenLayers 5. Tracking. 
- Search historic data on tracker points on server.  
+ Server config (igate, etc..)
  
  Copyright (C) 2023 Øyvind Hanssen, LA7ECA, ohanssen@acm.org
  
@@ -46,9 +46,6 @@ pol.psadmin.ServerConfig = class extends pol.core.Widget {
         t.rfgate_allow = false;
         t.obj_rfgate = false;
         t.remotectl_on = false;
-       
-        t.errmsg = null;
-        t.successmsg = null;
         
         
         t.authCb = CONFIG.server.addAuthCb( ()=> {
@@ -64,7 +61,7 @@ pol.psadmin.ServerConfig = class extends pol.core.Widget {
                     m("h1", "Polaric-APRSD Server Config"), 
                     
                     (t.errmsg != null ? m("div#errmsg", t.errmsg) : null),
-                    (t.successmg != null ? m("div#successmsg", t.successmsg) : null),
+                    (t.successmsg != null ? m("div#successmsg", t.successmsg) : null),
                          
                     m("div.field", 
                         m("span.wleftlab", "Callsign:"), 
@@ -74,12 +71,12 @@ pol.psadmin.ServerConfig = class extends pol.core.Widget {
                     m("div.field", 
                         m("span.wleftlab", "Igate:"),
                         m(checkBox, {id: "rfgate_allow", onclick: toggleIgate, checked: t.rfgate_on, 
-                            title: "RF/Internet gateway (igate)" }, "Activated") ),    
+                            title: "RF/Internet gateway (igate)" }, "Activate") ),    
                                         
                     m("div.field", 
                         m("span.wleftlab", "Igating to RF:"),
                         m(checkBox, {id: "rfgate_allow", onclick: toggleRfgate, checked: t.rfgate_allow, 
-                            title: "Allow igating to RF" }, "Activated"), nbsp,  
+                            title: "Allow igating to RF" }, "Activate"), nbsp,  
                         m(checkBox, {id: "obj_rfgate", onclick: toggleObjRfgate, checked: t.obj_rfgate, 
                             title: "Allow igating to RF for objects" }, "RF igating for object") ),     
                          
@@ -182,18 +179,16 @@ pol.psadmin.ServerConfig = class extends pol.core.Widget {
             t.server.PUT("system/adm/server", JSON.stringify(data), 
                 x => {
                     console.log("Update succeeded");
-                    t.errmsg = "Update succeeded. Reboot may be necessary";
+                    t.successMsg("Update succeeded. Reboot may be necessary", 10000);
                     m.redraw();
                     
                 },
                 (xhr, st, err) => {
-                    console.log("Server update failed", st, err);
-                    alert("Server update failed: " + err);
+                    console.log("Server update failed: ", st, err);
+                    t.errMsg("Server update failed: "+err, 10000);
                 }
             );
         }
-        
- 
     } /* constructor */
 
     
@@ -207,7 +202,6 @@ pol.psadmin.ServerConfig = class extends pol.core.Widget {
         CONFIG.server.GET("system/adm/server", "", x => { 
             const conf = JSON.parse(x);
             const t = this;
-            console.log("GOT server config", conf);
             t.mycall(conf.mycall); 
             t.igate_range(""+conf.radius);
             t.igate_path(conf.path_igate);

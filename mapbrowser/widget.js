@@ -120,6 +120,9 @@ pol.widget.start = function(id, pos, pinned, saved, f, multi) {
 pol.core.Widget = class {
     
     constructor() {
+        this.successmsg = null;
+        this.errmsg = null;
+        
         this.pos = null;
         this.saved = true;
         this.classname = null;
@@ -151,7 +154,22 @@ pol.core.Widget = class {
         });
         
     }
-
+    
+    successMsg(msg, time) {
+        this.successmsg = msg;
+        if (time > 0) 
+            setTimeout(()=>{this.successmsg = null}, time);
+        m.redraw();
+    }
+    
+    errMsg(msg, time) {
+        this.errmsg = msg;
+        if (time > 0) 
+            setTimeout(()=>{this.errmsg = null}, time);
+        m.redraw();
+    }
+    
+    
     resizeObserve(func) {
         this.rs_ro.observe($("#map").get(0));
         this.rs_func = func;

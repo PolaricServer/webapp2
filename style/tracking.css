@@ -155,18 +155,20 @@ div.histt, div.hrdvia {
     margin-top: 0.3em; margin-left: 4.4em; 
 }
 
-table.mytrackers {margin-top: -0.3em; margin-bottom: 0.4em}
+table.mytrackers, table.myChannels {margin-top: -0.3em; margin-bottom: 0.4em}
 
-table.mytrackers td {
+table.mytrackers, table.myChannels td {
     padding-bottom: 0; padding-top: 0; padding-right: .3em; 
     padding-left: .2em; border-right: 1px dotted #555
 }
 
-table.mytrackers td img {vertical-align: middle}
-table.mytrackers td img.icon {height: 18px}
-table.mytrackers tr {border-bottom: 1px dotted #999; height: 0.4em !important}
-table.mytrackers tr:last-child {border-bottom: none}
-table.mytrackers td:last-child {border-right: none}
+table.mytrackers,table.myChannels td img {vertical-align: middle}
+table.mytrackers,table.myChannels td img.icon {height: 18px}
+table.mytrackers,table.myChannels tr {border-bottom: 1px dotted #999; height: 0.4em !important}
+table.mytrackers,table.myChannels tr:last-child {border-bottom: none}
+table.mytrackers,table.myChannels td:last-child {padding-left: 4px; padding-bottom: 4px;border-right: none}
+table.mytrackers, table.myChannels {margin-left: 2em; margin-right: 2em}
+
 #trackerEdit form.trackerAlias {border-top: 2px solid #999; padding-top: 0.6em}
 #trackerEdit form.trackerAlias input#alias {margin-right: 0.6em}
 
@@ -323,4 +325,12 @@ span.plus {font-weight: bold; font-size: 140%; color: blue}
 div#errmsg {color: #500; margin-left:1em; margin-right: 1em; margin-bottom: 0.6em; background: #fdd}
 div#successmsg {color: #040; margin-left:1em; margin-right: 1em; margin-bottom: 0.6em; background: #cfc}
 div#errmsg, div#successmsg {border: 2px dotted; padding: 0.5em; padding-top: 0.3em}
-div#serverConfig {min-width: 30em}
+div#serverConfig, div#ownposConfig {min-width: 30em}
+div#channels {min-width: 25em}
+span.symselect {display: contents}
+#symSelect {width: 10em}
+
+select#ctypeSelect {width: 8em}
+div#config {margin-top: 0.7em; margin-bottom: 0.7em; background: #ddc; 
+     border: solid #aaa 1px; padding-bottom: 0.3em; padding-right: 0.3em}
+div#chanList {border-bottom: 2px solid #999; margin-bottom: 0.7em; padding-left: 2em}
