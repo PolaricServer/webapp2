@@ -33,37 +33,63 @@ pol.psadmin.statusInfo = class extends pol.core.Widget {
             runsince:"", version:"", items:0, ownobj:0, clients:0, 
             loggedin:0, usedmem:0, plugins: [], channels: []
         }; 
+        t.clients = []; 
+        
+        
+        const showClients = {
+            view: function() {
+                let i=0;
+                return m("table.Clients", m("thead",  
+                        m("tr", m("th", "Created"), m("th", "Client"), m("th", "In"), m("th", "Out"), m("th", "Userid")),                    
+                    ),
+                    m("tbody", 
+                        t.clients.map( x => {
+                            const d = new Date(x.created);
+                            return m("tr", {class: (t.editMode && x.name===t.name() ? "selected" : null) }, [
+                                m("td", {title: pol.core.Time.formatDate(d)}, pol.core.Time.formatTime(d)),
+                                m("td", x.cid),
+                                m("td.n", x.in),     
+                                m("td.n", x.out),
+                                m("td", x.userid),     
+                            ])
+                        })
+                    )
+                )
+            }
+        }
+        
+        
+        
         
         this.widget = {
             view: function() {
+                const d = new Date(t.data.runsince);
                 return m("div", [       
                     m("h1", "Status Info"),
                     m("form.status", [  
                         m("div.field", 
-                            m("span.leftlab", "Server run since: "), t.data.runsince), 
+                            m("span.wleftlab", "Server run since: "), 
+                                pol.core.Time.formatDate(d)+" / "+pol.core.Time.formatTime(d)), 
                         m("div.field", 
-                            m("span.leftlab", "Server version: "), t.data.version), 
+                            m("span.wleftlab", "Server version: "), t.data.version), 
                         m("div.field", 
-                            m("span.leftlab", "Number of items: "), t.data.items ),
+                            m("span.wleftlab", "Number of items: "), t.data.items ),
                         m("div.field", 
-                            m("span.leftlab", "Own objects: "), t.data.ownobj ),
+                            m("span.wleftlab", "Own objects: "), t.data.ownobj ),
                         m("div.field", 
-                            m("span.leftlab", "Clients (logged in): "), t.data.clients+" ("+t.data.loggedin+")" ),    
+                            m("span.wleftlab", "Clients (logged in): "), t.data.clients+" ("+t.data.loggedin+")" ),    
                         m("div.field", 
-                            m("span.leftlab", "Memory used: "), toKbytes(t.data.usedmem) ),    
+                            m("span.wleftlab", "Memory used: "), toKbytes(t.data.usedmem) ),    
 
                         m("div.field", 
-                            m("span.leftlab", "Plugin modules: "), m("div#plugins", t.data.plugins.map( x=> {
+                            m("span.wleftlab", "Plugin modules: "), m("div#plugins", t.data.plugins.map( x=> {
                                     return showPlugin(x);
-                                }))),    
-                        m("div.field", 
-                            m("span.leftlab", "Channels: "), m("div#channels", t.data.channels.map( x=> {
-                                    return showChannel(x);
-                                }))),  
-                        m("div.field", 
-                            m("span.leftlab", "Remote control: "), t.data.remotectl ), 
-                        m("span.errmsg", t.errmsg),
-                    ])
+                                }))),     
+                        (t.data.remotectl != null && t.data.remotectl != "" ?
+                            m("div.field", 
+                                m("span.wleftlab", "Remote control: "), t.data.remotectl ):null), 
+                    ]),
+                    m(showClients),
                 ])
             }
         };
@@ -101,8 +127,22 @@ pol.psadmin.statusInfo = class extends pol.core.Widget {
         );
     }
     
+    getClients() {
+        CONFIG.server.GET( "/system/adm/clients", null, 
+            st => {
+                this.clients = JSON.parse(st);
+                console.log("CLIENTS", this.clients);
+                m.redraw();
+            },            
+            x=> { 
+                this.error("Cannot GET data (se browser log)", x);
+            }
+        );
+    }
+    
     onActivate() {
         this.getInfo();
+        this.getClients();
     }
 
 } /* class */
