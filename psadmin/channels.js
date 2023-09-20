@@ -70,12 +70,13 @@ pol.psadmin.Channels = class extends pol.core.Widget {
                         return m("tr", {class: (t.editMode && x.name===t.name() ? "selected" : null) }, [
                             m("td", 
                               m(removeEdit, {remove: apply(remove,i), edit: apply(edit, i++)})),
+                            m("td.flags", flags(x)),
                             m("td", x.ident),
-                            m("td", x.name),
+                            m("td.name", x.name), 
                             m("td", ( x.generic.state != 'OFF' ? 
                                     ( x.generic.state === 'RUNNING' ? m("img", {src:"images/16px/ok.png"}) 
                                         :  ( x.generic.state === 'FAILED' ? m("img", {src:"images/16px/warn.png"}) 
-                                                  : m("img", {src:"images/16px/maybe.png"} ) )) : null ))
+                                                  : m("img", {src:"images/16px/maybe.png"} ) )) : null )), 
                         ])
                     })
                 ))
@@ -108,7 +109,11 @@ pol.psadmin.Channels = class extends pol.core.Widget {
                     m("div.field", 
                         m("span.lleftlab", "Channel:"),
                         m(checkBox, {id: "activated", onclick: toggleAct, checked: t.activated}, 
-                            "Activate")),
+                            "Activate"), 
+                        m(checkBox, {id: "activated", onclick: togglePrim, checked: t.primary}, 
+                            "Primary"), 
+                      
+                    ),
                     m("div.field", 
                         m("span.lleftlab", "Serial port:"),
                         m(textInput, { id:"serport", value: t.serport, size: 15, 
@@ -129,7 +134,9 @@ pol.psadmin.Channels = class extends pol.core.Widget {
                     m("div.field", 
                         m("span.lleftlab", "Channel:"),
                         m(checkBox, {id: "activated", onclick: toggleAct, checked: t.activated}, 
-                            "Activate")),
+                            "Activate"),            
+                        m(checkBox, {id: "activated", onclick: togglePrim, checked: t.primary}, 
+                            "Primary"), ),
                     m("div.field", 
                         m("span.lleftlab", "Server addr:"),
                         m(textInput, { id:"host", value: t.host, size: 15, 
@@ -149,7 +156,9 @@ pol.psadmin.Channels = class extends pol.core.Widget {
                         m("div.field", 
                             m("span.lleftlab", "Channel:"),
                             m(checkBox, {id: "activated", onclick: toggleAct, checked: t.activated}, 
-                                "Activate")),
+                                "Activate"),                 
+                            m(checkBox, {id: "activated", onclick: togglePrim, checked: t.primary}, 
+                                "Primary"), ),
                         m("div.field", 
                             m("span.lleftlab", "Server addr:"),
                             m(textInput, { id:"host", value: t.host, size: 15, 
@@ -227,6 +236,15 @@ pol.psadmin.Channels = class extends pol.core.Widget {
         });
         
         
+        function flags(ch) {
+            let flags=""; 
+            if (ch.isaprs) flags+="a"; else flags+="-";
+            if (ch.isrf) flags+="r"; else flags+="-";
+            if (ch.rfchan || ch.inetchan) flags+='P'; else flags+="-";
+            return flags;
+        }
+        
+        
         function toggleAct() {
             t.activated = (t.activated ? false : true);
         }
@@ -234,6 +252,11 @@ pol.psadmin.Channels = class extends pol.core.Widget {
         
         function toggleVis() {
             t.loggedinonly = (t.loggedinonly ? false : true);
+        }
+        
+        
+        function togglePrim() {
+            t.primary = (t.primary ? false : true);
         }
         
         
@@ -320,6 +343,15 @@ pol.psadmin.Channels = class extends pol.core.Widget {
             t.ch.generic.restricted = t.restricted;
             t.ch.generic.tag = t.tag();
             
+            /* Selection of primary channels for RF and internet */
+            console.log("UPDATE: ", t.ch);
+            if (t.ch.isaprs) {
+                if (t.ch.isrf)
+                    t.ch.rfchan = t.primary;
+                else 
+                    t.ch.inetchan = t.primary; 
+            }
+            
             /* Type specific settings */
             if (t.type === 'TCPKISS' || t.type === 'APRSIS') {
                 t.ch.specific.host = t.host();
@@ -383,6 +415,7 @@ pol.psadmin.Channels = class extends pol.core.Widget {
         t.name = m.stream("");
         t.ch = null;
         t.activated = false;
+        t.primary = false; 
         t.host = m.stream("");
         t.port = m.stream("");
         t.serport = m.stream("");
@@ -420,6 +453,7 @@ pol.psadmin.Channels = class extends pol.core.Widget {
                 this.passcode(""+this.ch.specific.pass);
                 this.filter(this.ch.specific.filter);
                 this.activated = this.ch.active;
+                this.primary = this.ch.rfchan || this.ch.inetchan;
                 this.loggedinonly = this.ch.generic.restricted;
                 this.tag(this.ch.generic.tag);
                 m.redraw(); 
