@@ -37,6 +37,7 @@ pol.tracking.PolaricServer = class extends pol.core.Server {
            
         /* This is for the new Hmac-based authentication scheme */
         t.userid = "_NONE_";
+        t.temp_role = null;
         t.key = null;
         t.authOk = false;
         t.authCallbacks =  [];
@@ -69,7 +70,10 @@ pol.tracking.PolaricServer = class extends pol.core.Server {
     }
 
 
-    
+    /* 
+     * Generate authentication string (HMAC based) for use in REST API 
+     * requests (see also genHeaders function below). 
+     */
     async genAuthString(message) {
         const nonce = pol.security.getRandom(8);
         if (message==null) 
@@ -77,7 +81,11 @@ pol.tracking.PolaricServer = class extends pol.core.Server {
         const hmac = await this.getHmac(nonce+message);
         if (hmac == null)
             return null;
-        return this.userid+';'+nonce+';'+hmac;
+        
+        let xfield = "";
+        if (this.temp_role != null)
+            xfield = ";" + this.temp_role; 
+        return this.userid+';'+nonce+';'+hmac + xfield;
     }
     
         
@@ -189,7 +197,7 @@ pol.tracking.PolaricServer = class extends pol.core.Server {
     }
     
     /**
-     * add object to logged in user.
+     * add object on server (to logged in user).
      */  
     putObj(tag, obj, f) { 
         this.POST("objects/"+tag, 
@@ -238,10 +246,9 @@ pol.tracking.PolaricServer = class extends pol.core.Server {
     loginStatus() {
         this.GET("authStatus", "", 
             x => { 
-                if (this.authOk)
+                if (this.authOk && this.temp_role == null)
                     return;
                 this.auth = JSON.parse(x);
-                console.log("Authentication succcess (userid="+this.userid+").");
                 this.authOk = true;
 
                 for (x of this.auth.services)

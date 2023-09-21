@@ -71,10 +71,13 @@
                 () => WIDGET("tracking.Login", [320,30], true),
                 "Logged in as: '"+srv.auth.userid+"'. Click to log out");      
                 
-                /* Notifier is used only when logged in. 
-                 * FIXME: Do this after connection is restored.
-                 */
-                CONFIG.notifier = this.not = new pol.tracking.Notifier();
+            CONFIG.filt.getFilters();
+            CONFIG.tracks.reconnect();
+                
+            /* Notifier is used only when logged in. 
+             * FIXME: Do this after websocket connection is restored.
+             */
+             CONFIG.notifier = this.not = new pol.tracking.Notifier();
         }, 
         (err)=> {
             console.log("Authentication failed (not logged in): ", err); 
@@ -132,7 +135,6 @@
      * delayed to allow connection to server to be established first. 
      */
     setTimeout(()=> {
-        console.log("Server config: ", CONFIG.server);
         getWIDGET("core.AreaList");
         getWIDGET("layers.List");
     }, 1000);

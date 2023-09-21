@@ -193,7 +193,14 @@ pol.tracking.Tracking = class {
     } /* constructor */
 
     
+    
+    reconnect() {
+        this.producer.close(); 
+        setTimeout(()=>this.producer.open(), 1000);
+    }
 
+    
+    
     /**
      * Show list of points. Clickable to show info about each.
      */

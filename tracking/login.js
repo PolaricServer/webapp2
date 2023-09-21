@@ -203,9 +203,11 @@ pol.tracking.Login = class extends pol.core.Widget {
             CONFIG.server.GET("/authStatus" , "", 
                 x => {
                     t.info = JSON.parse(x);
-                    getLevel(); 
-                    m.redraw();
-                    setTimeout(()=>$("select#group").val(t.info.groupid).trigger("change"), 300);
+                    t.group = t.info.groupid;
+                    if (CONFIG.server.temp_role != null)
+                        t.group = CONFIG.server.temp_role;
+                    getLevel();
+                    setTimeout(()=>$("select#group").val(t.group).trigger("change"), 300);
                     m.redraw();
                 });
         }
@@ -249,27 +251,17 @@ pol.tracking.Login = class extends pol.core.Widget {
          * anymore. We must send info about role with each request (if a temporary role is set). 
          */
         function update() {
-            const data = {group: t.info.groupid};
-            CONFIG.server.PUT("/mygroup", JSON.stringify(data), 
-                x => {
-                    alert("Role changed to: "+t.info.groupid);
-                    console.log("Role changed to: ", t.info.groupid);
-                    CONFIG.filt.getFilters();
-                },
-                x => {
-                    console.log("Change role -> "+x.status+": "+x.statusText +
-                        " ("+x.responseText+")");
-                    alert("Cannot change role: " + t.info.groupid+
-                        '\n"' + x.responseText + '"');
-                }
-            );
-            
-            
+            const role = t.info.groupid;
+            console.log("Role changed to: ", role);
+            CONFIG.server.temp_role = role;
+            CONFIG.server.loginStatus();
         }
         
         
-        function logout() 
-            { CONFIG.server.clearAuth(); m.redraw(); }
+        function logout() { 
+            CONFIG.server.clearAuth(); 
+            m.redraw(); 
+        }
             
             
         getAuth();
@@ -277,6 +269,14 @@ pol.tracking.Login = class extends pol.core.Widget {
         
     } /* constructor */
 
+    
+    
+    onActivate() {
+        this.group = CONFIG.server.temp_role;      
+        setTimeout(()=>$("select#group").val(this.group).trigger("change"), 300);
+        m.redraw();
+    }
+    
     
     onclose() { 
         if (this.psclient != null)

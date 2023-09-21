@@ -78,7 +78,8 @@ pol.tracking.Filters = class {
         
     /* Get list of filter profiles from server */
     getFilters() {
-        CONFIG.server.GET("filters", "", x => { 
+        const uri=(CONFIG.server.isAuth() ? "myfilters" : "filters");
+        CONFIG.server.GET(uri, "", x => { 
             this.filterViews = JSON.parse(x);   
             
             /* Find index of default selection */

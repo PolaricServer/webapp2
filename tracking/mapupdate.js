@@ -67,7 +67,7 @@ pol.tracking.MapUpdate = class {
             /* Socket connected handler */
             t.websocket.onopen = function() { 
                 console.log("Connected to server (for tracking overlay).");
-                if (t.onopen != null && t.firstopen) 
+                if (t.onopen != null /* && t.firstopen */ ) 
                     t.onopen();
                 t.firstopen = false;      
                 t.retry = -1;  t.cretry = 0;
