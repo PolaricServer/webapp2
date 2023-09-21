@@ -123,7 +123,7 @@ pol.core.Widget = class {
         this.successmsg = null;
         this.errmsg = null;
         
-        this.pos = null;
+        this.winpos = null;
         this.saved = true;
         this.classname = null;
         this.domclass = null;
@@ -223,7 +223,7 @@ pol.core.Widget = class {
             pixPos = [20, 20];
             
         const t = this; 
-        this.pos = pixPos;        
+        this.winpos = pixPos;        
         t.saved = saved;
         t.active = true; 
         
@@ -243,7 +243,7 @@ pol.core.Widget = class {
         });           
 
         if (this.popup && this.popup != null && this.popup.adjustedPos) 
-            t.pos = this.popup.adjustedPos;
+            t.winpos = this.popup.adjustedPos;
         t.close = ()=> { this.popup.close(); }
         return this.popup; 
         
@@ -261,13 +261,13 @@ pol.core.Widget = class {
      
      
         function dragStop( event, ui ) {
-            t.pos = [ui.position.left, ui.position.top];
+            t.winpos = [ui.position.left, ui.position.top];
             save();
         }
      
      
         function save() {
-            CONFIG.store("core.widget."+id, t.pos, true);
+            CONFIG.store("core.widget."+id, t.winpos, true);
         
             if (!pol.widget._stored[id] || pol.widget._stored[id] == null) {
                 pol.widget._stored[id] = true;
@@ -277,7 +277,7 @@ pol.core.Widget = class {
      
      
         function unSave() {
-            CONFIG.remove("core.widget."+id, t.pos);
+            CONFIG.remove("core.widget."+id, t.winpos);
         
             if (pol.widget._stored[id] && pol.widget._stored[id] != null) {
                 delete pol.widget._stored[id];
@@ -294,7 +294,7 @@ pol.core.Widget = class {
      */
     setScrollTable(topdiv, searchresult) {
         let ht = $('#map').height() - 
-            ( $(topdiv).height() - $(searchresult).height()) - this.pos[1]- 8 ;
+            ( $(topdiv).height() - $(searchresult).height()) - this.winpos[1]- 8 ;
                         
         setTimeout( () => {
             if ($(searchresult).height() < ht) 
@@ -312,7 +312,7 @@ pol.core.Widget = class {
         setTimeout( () => {
             /* Calculate available space */
             let ht = $('#map').height() - 
-                ( $(topdiv).height() - elem.height()) - this.pos[1] - 20 ;
+                ( $(topdiv).height() - elem.height()) - this.winpos[1] - 20 ;
             
             /* If too little space left, set the height to activate the scroller */
             if (elem.height() > ht) {
