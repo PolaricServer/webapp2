@@ -238,6 +238,18 @@ pol.tracking.PolaricServer = class extends pol.core.Server {
     }
 
 
+    /*
+     * Return true if server supports the given service. 
+     * Services can be provided by plugins. 
+     */
+    hasService(service) {
+        for (const x of this.auth.services)
+            if (x===service) return true;
+        return false;
+    }
+    
+    
+    
     
     /* 
      * FIXME: Change to icons on toolbar could be handler-function? 
@@ -250,10 +262,7 @@ pol.tracking.PolaricServer = class extends pol.core.Server {
                     return;
                 this.auth = JSON.parse(x);
                 this.authOk = true;
-
-                for (x of this.auth.services)
-                    if (x=='database')
-                        this.hasDb = true;
+                this.hasDb = this.hasService('database');
                 
                 /* Close the pubsub channel to get a new which is authenticated 
                  * FIXME: We need to restore the connection after close is finished 
@@ -287,9 +296,7 @@ pol.tracking.PolaricServer = class extends pol.core.Server {
         this.GET("authStatus2", "", 
             x => { 
                 this.auth = JSON.parse(x);
-                for (x of this.auth.services)
-                    if (x=='database')
-                        this.hasDb = true;
+                this.hasDb = this.hasService('database');
             },
             null
         );

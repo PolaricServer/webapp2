@@ -47,7 +47,8 @@ pol.tracking.Login = class extends pol.core.Widget {
         const loginWidget = {
             view: function() {
                 return m("div#login", [
-                    m("h1", "Login"), 
+                    m("h1", "Server Login"), 
+                    m("img", {src:"images/PolaricServer.png"}),  
                     (t.errmsg != "" ? m("div#errmsg", t.errmsg) : null),
                     m("div.field", 
                         m("span.sleftlab", "Username:"),
@@ -77,7 +78,7 @@ pol.tracking.Login = class extends pol.core.Widget {
         const authInfo = {
             view: function() {
                 let i=0;
-                return m("div", [       
+                return m("div#authinfo", [       
                     m("h1", "Logged in"), 
                         
                     m("div.field", 
@@ -229,6 +230,7 @@ pol.tracking.Login = class extends pol.core.Widget {
          * Get available groups (possible roles) from server. 
          */
         function getGroups() {
+            t.groupList = [];
             CONFIG.server.GET("/groups" , "", 
                 x => {
                     let grps = JSON.parse(x);

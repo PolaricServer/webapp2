@@ -338,3 +338,7 @@ div#chanList {border-bottom: 2px solid #999; margin-bottom: 0.7em; padding-left:
 table.Clients {margin-left: 3em; margin-top: 1em; margin-bottom: 1em}
 table.Clients td, table.Clients th {text-align: left; padding-left: 0.2em; padding-right: 0.3em; border: 1px solid #bbb}
 table.Clients td.n {text-align: right}
+
+div#login img {margin-left: 3.4em; height: 2.9em}
+div#login div.butt {margin-top: 0.5em}
+div#login, div#authinfo {min-width: 18em}

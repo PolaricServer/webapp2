@@ -39,6 +39,13 @@ pol.psadmin.Channels = class extends pol.core.Widget {
         t.classname = "psadmin.Channels"; 
         t.type = "APRSIS";
         t.clearAllVars();
+        t.typelist = [
+            {label: "APRSIS"},
+            {label: "KISS"},
+            {label: "TCPKISS"},
+            {label: "TNC2"}
+        ];
+        
         
         /* Select Channel type */
         const typeSelect = {
@@ -50,13 +57,7 @@ pol.psadmin.Channels = class extends pol.core.Widget {
                     m(select, {
                         id: "ctypeSelect", 
                         onchange: onTypeSelect, 
-                        list: [
-                            {label: "APRSIS"},
-                            {label: "KISS"},
-                            {label: "TCPKISS"},
-                            {label: "TNC2"},
-                            {label: "AIS-TCP"}
-                        ]
+                        list: t.typelist
                     })
                 ])
             }
@@ -84,7 +85,7 @@ pol.psadmin.Channels = class extends pol.core.Widget {
         }
         
         /* Statistics */
-        const stats = {
+        const stats_aprs = {
             view: function() {
                 return m("div#stats", [
                     m("div.field", 
@@ -99,6 +100,24 @@ pol.psadmin.Channels = class extends pol.core.Widget {
                 ])
             }
         }
+        const stats_ais = {
+            view: function() {
+                return m("div#stats", [
+                    m("div.field", 
+                    m("span.lleftlab", "AIS packets:"),
+                        m("span", t.ch.specific.messages )), 
+                    m("div.field", 
+                        m("span.lleftlab", "Vessels:"),
+                        m("span", t.ch.specific.vessels )), 
+                ])
+            }
+        }
+        const stats = {
+            view: function() {
+                return (t.type === "AIS-TCP" ? m(stats_ais) : m(stats_aprs));
+            }
+        }
+        
         
         
         /* Config specific to chennel type */
@@ -129,7 +148,7 @@ pol.psadmin.Channels = class extends pol.core.Widget {
                             maxLength:3, regex: /[0-9]*/i })) : null), 
                 ]);
                     
-                else if (t.type === 'TCPKISS')
+                else if (t.type === 'TCPKISS' || t.type === 'AIS-TCP')
                     return m("div#config", [ 
                     m("div.field", 
                         m("span.lleftlab", "Channel:"),
@@ -145,10 +164,11 @@ pol.psadmin.Channels = class extends pol.core.Widget {
                         m("span.lleftlab", "Server port:"),
                         m(textInput, { id:"port", value: t.port, size: 6, 
                             maxLength:6, regex: /[0-9]*/i })),  
-                    m("div.field", 
-                        m("span.lleftlab", "KISS port:"),
-                        m(textInput, { id:"kissport", value: t.kissport, size: 3, 
-                            maxLength:3, regex: /[0-9]*/i })), 
+                    (t.type !== 'AIS-TCP' ? 
+                        m("div.field", 
+                            m("span.lleftlab", "KISS port:"),
+                            m(textInput, { id:"kissport", value: t.kissport, size: 3, 
+                                maxLength:3, regex: /[0-9]*/i })) : null), 
                 ]);
                     
                 else    
@@ -228,8 +248,13 @@ pol.psadmin.Channels = class extends pol.core.Widget {
         };
         
 
+        if (CONFIG.server.hasService('ais'))
+            t.typelist.push( {label: "AIS-TCP"});
         
         
+        /* 
+         * IF user is logged out, popup will be closed
+         */
         t.authCb = CONFIG.server.addAuthCb( ()=> {
             if (!CONFIG.server.isAuth())
                 t.closePopup();
@@ -305,6 +330,9 @@ pol.psadmin.Channels = class extends pol.core.Widget {
             else if (t.type==='APRSIS')
                 ch.specific = { host: t.host(), port: parseInt(t.port()), 
                                 pass: parseInt(t.passcode()), filter: t.filter() };
+            else if (t.type==='AIS-TCP')
+                ch.specific = { host: t.host(), port: parseInt(t.port()) };
+            
             ch.specific.type = t.type;
             
             srv.POST("system/adm/channels", JSON.stringify(ch), 
@@ -344,7 +372,6 @@ pol.psadmin.Channels = class extends pol.core.Widget {
             t.ch.generic.tag = t.tag();
             
             /* Selection of primary channels for RF and internet */
-            console.log("UPDATE: ", t.ch);
             if (t.ch.isaprs) {
                 if (t.ch.isrf)
                     t.ch.rfchan = t.primary;
@@ -353,7 +380,7 @@ pol.psadmin.Channels = class extends pol.core.Widget {
             }
             
             /* Type specific settings */
-            if (t.type === 'TCPKISS' || t.type === 'APRSIS') {
+            if (t.type === 'TCPKISS' || t.type === 'APRSIS' || t.type === 'AIS-TCP') {
                 t.ch.specific.host = t.host();
                 t.ch.specific.port = parseInt(t.port());
             }
