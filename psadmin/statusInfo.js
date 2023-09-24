@@ -140,9 +140,19 @@ pol.psadmin.statusInfo = class extends pol.core.Widget {
         );
     }
     
+    onclose() {
+        if (this.updates != null)
+            clearInterval(this.updates);
+    }
+
+    
     onActivate() {
         this.getInfo();
         this.getClients();
+        this.updates = setInterval( () => {
+            this.getInfo();
+            this.getClients();
+        }, 30000);
     }
 
 } /* class */

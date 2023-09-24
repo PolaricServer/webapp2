@@ -702,26 +702,15 @@ pol.tracking.Tracking = class {
      */
     goto_Point(ident) {
         console.assert(ident!=null && ident!="", "ident="+ident);
-
-        this.server.GET("/finditem", {ajax:true, id:ident}, info => {
+        const svc = (CONFIG.server.isAuth() ? "xpos" : "pos");
+        this.server.GET("item/"+ident+"/"+svc, null, info => {
             if (info == null) {
                 console.log("Goto point: Not found on server");
                 return;
             }
-            
-           /*
-            * The returned info should be three tokens delimited by commas:
-            * an id (string) and x and y coordinates (number)
-            */
-            const args = info.split(/\s*,\s*/g);
-            if (args == null || args.length < 3)
-                return;
-            const x = parseFloat(args[1]);
-            const y = parseFloat(args[2]);
-            if (isNaN(x) || isNaN(y))
-                return;
+            const pos = JSON.parse(info);
             CONFIG.mb.gui.removePopup();
-            CONFIG.mb.goto_Pos([x,y], false);
+            CONFIG.mb.goto_Pos(pos, false);
         });
     }
 

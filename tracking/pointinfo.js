@@ -2,7 +2,7 @@
  Map browser based on OpenLayers 5. Tracking. 
  Search historic data on tracker points on server.  
  
- Copyright (C) 2021 Øyvind Hanssen, LA7ECA, ohanssen@acm.org
+ Copyright (C) 2021-2023 Øyvind Hanssen, LA7ECA, ohanssen@acm.org
  
  This program is free software: you can redistribute it and/or modify
  it under the terms of the GNU Affero General Public License as published 
@@ -253,10 +253,16 @@ pol.tracking.PointInfo = class extends pol.core.Widget {
     
     getItem(id) {
         m.redraw();
-        this.srv.GET("item/"+id+"/info", null, 
-                x  => { this.info = JSON.parse(x); m.redraw()},
-                () => { console.warn("Item not found"); }
-            );
+        const svc = (CONFIG.server.isAuth() ? "xinfo" : "info");
+        this.srv.GET("item/"+id+"/"+svc, null, 
+            x  => { 
+                this.info = JSON.parse(x); 
+                m.redraw()
+            },
+            () => {
+                console.warn("Item not found"); 
+            }
+        );
     }
     
     onActivate() { 

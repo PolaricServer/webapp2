@@ -310,7 +310,7 @@ pol.tracking.BullBoard = class extends pol.core.Widget {
         
     /* Return true if we can send bulls */
     canSend() {
-        return this.server.auth.userid != null &&
+        return this.server.isAuth() &&
             this.server.auth.callsign != null &&
             this.server.auth.callsign != "";
     }
@@ -320,7 +320,7 @@ pol.tracking.BullBoard = class extends pol.core.Widget {
     updateScreen() {   
         m.redraw();
         setTimeout( () => { 
-            var ht = $('#map').height() - this.pos[1] -80; 
+            var ht = $('#map').height() - this.winpos[1] -80; 
             if ($('#bullboard .content').parent().is( "#bullboard .scroll" ) ) 
                 $('#bullboard .content').unwrap();
                 

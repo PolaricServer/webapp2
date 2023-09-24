@@ -43,6 +43,7 @@ pol.core.Popup = class {
         const t = this;
     
        // this.mb.view.on('change:center', onChangeCenter);
+        this.mb.map.on('movestart', onClick);
         this.mb.map.on('click', onClick);
         this.mb.map.on('change:view', onChangeView);
        

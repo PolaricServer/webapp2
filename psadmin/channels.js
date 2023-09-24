@@ -423,7 +423,7 @@ pol.psadmin.Channels = class extends pol.core.Widget {
     onActivate() {
         this.getObjects();        
         this.listUpd = setInterval( () => 
-            this.getObjects(), 10000)
+            this.getObjects(), 15000)
     }
     
     
