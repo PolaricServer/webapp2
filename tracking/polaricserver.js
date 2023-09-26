@@ -271,6 +271,7 @@ pol.tracking.PolaricServer = class extends pol.core.Server {
                 this.doAuthCb();
                 if (this.logincb != null)
                     this.logincb();
+                CONFIG.notifier = this.not = new pol.tracking.Notifier();
             },
             
             (xhr, st, err) => {

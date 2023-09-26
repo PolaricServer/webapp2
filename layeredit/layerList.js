@@ -79,7 +79,9 @@ pol.layers.List = class List extends pol.core.Widget {
                     ] ) ] );
             },
         };
-   
+
+        setTimeout( ()=>this.getMyLayers(), 100);
+        
         /* Get stored layers */
 
         t.authCb = CONFIG.server.addAuthCb( ()=> {
@@ -206,25 +208,22 @@ pol.layers.List = class List extends pol.core.Widget {
     
     
     /**
-     * Restore layers from local storage or from server.
+     * Restore layers from server.
      */
     getMyLayers() {
         const t = this;
-        if (t.suspendGet || !this.isActive()) 
+        if (t.suspendGet) 
             return;
                    
         /* lrs is a list of name,type pairs */
         let lrs = []; 
-        
-        const s = CONFIG.server;
-        if (s.isAuth() && s.hasDb) {
-            /* 
+        t._clearMyLayers(); 
+        const srv = CONFIG.server;
+        if (srv.isAuth() && srv.hasDb) {
+           /* 
             * If logged in, get layers stored on server.
-            * Duplicates from local storage are removed.
             */
-            const s = CONFIG.server; 
-            t._clearMyLayers(); 
-            s.getObj("layer", a => {
+            srv.getObj("layer", a => {
                 for (const obj of a) 
                     if (obj != null) {
                         const wr = obj.data;
@@ -248,7 +247,7 @@ pol.layers.List = class List extends pol.core.Widget {
  
     
     /**
-     * Remove layer from list 
+     * Remove layer from list and from server
      */
     removeLayer(id, noconfirm) {
         if (!noconfirm && noconfirm!=true && confirm("Remove - are you sure?") == false)

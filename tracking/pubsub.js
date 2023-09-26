@@ -54,7 +54,9 @@ pol.tracking.PubSub = class {
     open() {
         const t = this; 
         t.retry = -1;    
-        let url = t.server.wsurl; 
+        let url = t.server.wsurl;         
+        let kalive = null;
+        
         url += 'notify';  
         console.log("Opening Websocket. URL: "+url);
         CONFIG.server.genAuthString(null).then( x => {
@@ -68,6 +70,7 @@ pol.tracking.PubSub = class {
                 t.firstopen = false;
                 t.restoreSubs();
                 t.retry = -1;  t.cretry = 0;
+                kalive = setInterval(()=> t.websocket.send("*****"), 400000);
             };
             
             
@@ -112,12 +115,12 @@ pol.tracking.PubSub = class {
         
         
         function normalRetry() { 
-            retry=4;
+            t.retry = 5;
         }
         
         
         function errorRetry() {
-            t.retry = 6 + t.cretry * 3;
+            t.retry = (t.cretry==0 ? 2 : t.retry * 2);
             if (t.cretry < 10) 
                 t.cretry++;
             else {

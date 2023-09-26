@@ -117,12 +117,12 @@ pol.tracking.MapUpdate = class {
         
         
         function normalRetry() { 
-            retry=4;
+            t.retry = 5;
         }
         
         
         function errorRetry() {
-            t.retry = 6 + t.cretry * 3;
+            t.retry = (t.cretry==0 ? 2 : t.retry * 2);
             if (t.cretry < 10) 
                 t.cretry++;
             else {
