@@ -44,6 +44,17 @@ pol.core.MapBrowser = class {
         t.attribution = new ol.control.Attribution({collapsed: false}); 
         t.permaLink = false; 
         
+        let counter = t.config.get("_counter_", 0);
+        if (counter<=0 || counter > 500) {
+            console.log("Clear local storage");
+            t.config.clear(); 
+            counter = 0;
+        }
+        counter++;
+        t.config.store("_counter_", counter);
+        
+        
+        
         /* Get info about resolution, center of map, etc. from local storage */
         var resolution = t.config.get('core.resolution');
         var center = t.config.get('core.center');
@@ -135,15 +146,14 @@ pol.core.MapBrowser = class {
         });
         
         /* Set up handler for move and zoom. Store new center and scale */
-    //    t.map.on('movestart', ()=>t.gui.removePopup() );
         t.map.on('moveend', onMove);
         t.map.on('moveend', ()=> t.updatePermalink() );
         
         function onMove() {
             t.config.store("core.projection", t.view.getProjection().getCode());
             t.config.store('core.center', 
-                ol.proj.toLonLat(t.view.getCenter(), t.view.getProjection()), true); 
-            t.config.store('core.resolution', t.view.getResolution(), true);
+                ol.proj.toLonLat(t.view.getCenter(), t.view.getProjection())); 
+            t.config.store('core.resolution', t.view.getResolution());
         }
       
      
@@ -161,6 +171,9 @@ pol.core.MapBrowser = class {
 
     
     
+    reset() {
+        t.storage.clear(); 
+    }
 
     /** 
      * Turn permalink mode on/off (the browser url automatically reflects 
@@ -275,7 +288,7 @@ pol.core.MapBrowser = class {
         if (proj != this.view.getProjection())
             this.changeView(proj)
         
-        this.config.store('core.baselayer', this.baseLayerIdx = idx, true);
+        this.config.store('core.baselayer', this.baseLayerIdx = idx);
     }
  
  

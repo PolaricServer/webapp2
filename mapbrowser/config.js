@@ -2,7 +2,7 @@
  Map browser based on OpenLayers 5. 
  configuration support. 
  
- Copyright (C) 2017 Øyvind Hanssen, LA7ECA, ohanssen@acm.org
+ Copyright (C) 2017-2023 Øyvind Hanssen, LA7ECA, ohanssen@acm.org
  
  This program is free software: you can redistribute it and/or modify
  it under the terms of the GNU Affero General Public License as published 
@@ -145,13 +145,10 @@ pol.core.Config = class extends ol.Object {
     get(id) { 
         console.assert(id!=null, "id=null");
     
-        /* Look in session-storage first, if not found there, 
-        * look in local-storage. 
+       /* Look in local-storage first, if not found there, 
+        * look in in-memory properties. 
         */
-        let data = this.sstorage["polaric."+id]; 
-        if (data == null)
-            data = this.storage["polaric."+id + ":" + this.uid];
-    
+        let data = this.storage["polaric."+id + ":" + this.uid];
         const x = (data ? JSON.parse(data) : null );
         if (x==null && this.props[id] != null) 
             return this.props[id]; 
@@ -161,31 +158,28 @@ pol.core.Config = class extends ol.Object {
 
 
     /**
-     *  Store value in browser session storage. To be used in application.
-     *  If save=true, value will be persistent between browser sessions
+     *  Store value in browser storage. To be used in application.
+     *  The value will be persistent between browser sessions
      *  (saved in local-storage). 
+     * 
      *  @param {string} id - Key of setting.
      *  @param {*} value - Value of setting. 
-     *  @param {boolean|undefined} save - Set to true to make setting persistent.
      * 
      */
-    store(id, value, save) { 
+    store(id, value) { 
         console.assert(id != null && value != null, "id="+id+", value="+value); 
         const val = JSON.stringify(value);
-        this.sstorage["polaric." + id] = val; 
-        if (save)
             this.storage["polaric." + id + ":" + this.uid] = val;
     }
 
 
 
     /** 
-     *  Remove value from session/local storage. 
+     *  Remove value from local storage. 
      * @param {string} id - Key of setting. 
      */
     remove(id) {
         console.assert(id!=null, "id=null");
-        this.sstorage.removeItem("polaric."+id);
         this.storage.removeItem("polaric."+id+":"+this.uid);
     }
 
@@ -203,6 +197,14 @@ pol.core.Config = class extends ol.Object {
     }
     
 
+    /**
+     * Clear session storage and persistent storage 
+     */
+    clear() {
+        this.sstorage.clear();
+        this.storage.clear();
+    }
+    
     
     
 } /* class */

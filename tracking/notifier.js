@@ -130,7 +130,7 @@ pol.tracking.Notifier = class {
         this.audio.play();
         this.list.unshift(not);
         this.updateNumber();
-        CONFIG.store("tracking.Notifications", this.list, true);
+        CONFIG.store("tracking.Notifications", this.list);
     }
 
 
@@ -140,7 +140,7 @@ pol.tracking.Notifier = class {
     remove(idx) {
         this.list.splice(idx,1);
         this.updateNumber(); 
-        CONFIG.store("tracking.Notifications", this.list, true);
+        CONFIG.store("tracking.Notifications", this.list);
     }
 
 } /* class */

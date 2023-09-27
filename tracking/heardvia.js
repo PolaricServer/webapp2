@@ -209,7 +209,7 @@ pol.tracking.db.HeardVia = class extends pol.core.Widget {
         }
 
    
-        /* Get search parameters. Save them to localstorage as well */   
+        /* Get search parameters. */   
         function getSearch() {
             t.item.call(t.item.call().toUpperCase());
             t.item.fromdate = $('#hrd_start').val();
@@ -219,7 +219,7 @@ pol.tracking.db.HeardVia = class extends pol.core.Widget {
             else 
                 t.item.todate   = $('#hrd_end').val();    
             
-            CONFIG.store('tracking.db.hrd.item', JSON.stringify(t.item), false);
+            CONFIG.store('tracking.db.hrd.item', JSON.stringify(t.item));
         }
         
     
@@ -243,8 +243,8 @@ pol.tracking.db.HeardVia = class extends pol.core.Widget {
     
         /* Save list to local storage */
         function saveList() { 
-            CONFIG.store('tracking.db.hrd', JSON.stringify(t.list), false);
-            CONFIG.store('tracking.db.hrd.color', JSON.stringify(t.color), false); 
+            CONFIG.store('tracking.db.hrd', JSON.stringify(t.list));
+            CONFIG.store('tracking.db.hrd.color', JSON.stringify(t.color)); 
         }
  
     } /* constructor */
@@ -267,7 +267,7 @@ pol.tracking.db.HeardVia = class extends pol.core.Widget {
         const t = this;
       	if (item) {
             t.item = {call:m.stream(item), fromdate:null, todate:null};
-            CONFIG.store('tracking.db.hrd.item', JSON.stringify(t.item), false);
+            CONFIG.store('tracking.db.hrd.item', JSON.stringify(t.item));
             m.redraw();
         }
         else {

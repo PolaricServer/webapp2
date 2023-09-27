@@ -301,7 +301,7 @@ pol.tracking.BullBoard = class extends pol.core.Widget {
             this.edit[group].push(m.stream(""));
         }
         this.selectedGroup = group;
-        CONFIG.store('tracking.BullBoard.selgroup', this.groups[group], false);
+        CONFIG.store('tracking.BullBoard.selgroup', this.groups[group]);
         this.getMessages();
         if (this.canSend())
             this.getMyMessages(); 

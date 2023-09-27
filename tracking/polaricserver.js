@@ -118,9 +118,9 @@ pol.tracking.PolaricServer = class extends pol.core.Server {
     async setCredentials(userid, secret) {
         const x = await pol.security.hmac_getKey(secret)
         this.key = x;
-        CONFIG.store("api.key", secret, true);
+        CONFIG.store("api.key", secret);
         this.userid = userid;
-        CONFIG.store("api.userid", userid, true);
+        CONFIG.store("api.userid", userid);
     }
     
     

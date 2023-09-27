@@ -388,7 +388,7 @@ pol.tracking.db.History = class extends pol.core.Widget {
               const list = [];
               for (it of t.list)
                   list.push(t._saveItem(it));
-              CONFIG.store('tracking.db.hist', JSON.stringify(list), false);
+              CONFIG.store('tracking.db.hist', JSON.stringify(list));
         }
         
         
@@ -428,7 +428,7 @@ pol.tracking.db.History = class extends pol.core.Widget {
     
     
     saveItem() {
-        CONFIG.store('tracking.db.hist.item', JSON.stringify(this._saveItem(this.item)), false);
+        CONFIG.store('tracking.db.hist.item', JSON.stringify(this._saveItem(this.item)));
     }
        
        
