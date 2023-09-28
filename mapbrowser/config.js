@@ -137,18 +137,21 @@ pol.core.Config = class extends ol.Object {
    
    
     /**
-     *  Get a setting. If stored in browser local storage (store method) return this. 
-     *  If not, return the default setting (see set method). 
+     *  Get a setting. If stored in browser sesson storage, return this, if not try local storage. 
+     *  If still not found, return the default setting (see set method). 
      *  @param {string} id - key of setting. 
      *  @returns The value of the setting.
      */
     get(id) { 
         console.assert(id!=null, "id=null");
     
-       /* Look in local-storage first, if not found there, 
+       /* Look in session-storage first. if not found there, 
+        * look in local-storage, if not found there, 
         * look in in-memory properties. 
         */
-        let data = this.storage["polaric."+id + ":" + this.uid];
+        let data = this.sstorage["polaric."+id]; 
+        if (data==null)
+            data = this.storage["polaric."+id + ":" + this.uid];
         const x = (data ? JSON.parse(data) : null );
         if (x==null && this.props[id] != null) 
             return this.props[id]; 
@@ -159,7 +162,7 @@ pol.core.Config = class extends ol.Object {
 
     /**
      *  Store value in browser storage. To be used in application.
-     *  The value will be persistent between browser sessions
+     *  The value will be persistent and shared across different browser sessions
      *  (saved in local-storage). 
      * 
      *  @param {string} id - Key of setting.
@@ -169,8 +172,25 @@ pol.core.Config = class extends ol.Object {
     store(id, value) { 
         console.assert(id != null && value != null, "id="+id+", value="+value); 
         const val = JSON.stringify(value);
-            this.storage["polaric." + id + ":" + this.uid] = val;
+        this.storage["polaric." + id + ":" + this.uid] = val;
     }
+    
+    /**
+     *  Store value in browser storage. To be used in application.
+     *  The scope of this value is within one browser tab and one browser session.
+     *  (saved in session-storage). 
+     * 
+     *  @param {string} id - Key of setting.
+     *  @param {*} value - Value of setting. 
+     * 
+     */
+    storeSes(id, value) { 
+        console.assert(id != null && value != null, "id="+id+", value="+value); 
+        const val = JSON.stringify(value);
+        this.sstorage["polaric." + id] = val; 
+    }
+    
+    
 
 
 

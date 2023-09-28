@@ -72,7 +72,7 @@ pol.widget.restore = function() {
         if (!fact || !fact.create) {
             CONFIG.remove("core.widget."+x);
             delete pol.widget._stored[x];
-            CONFIG.store("core.widget._stored", pol.widget._stored, true);
+            CONFIG.storeSes("core.widget._stored", pol.widget._stored);
             continue;
         }
         if (fact.onRestore && fact.onRestore != null)
@@ -267,11 +267,11 @@ pol.core.Widget = class {
      
      
         function save() {
-            CONFIG.store("core.widget."+id, t.winpos, true);
+            CONFIG.storeSes("core.widget."+id, t.winpos);
         
             if (!pol.widget._stored[id] || pol.widget._stored[id] == null) {
                 pol.widget._stored[id] = true;
-                CONFIG.store("core.widget._stored", pol.widget._stored, true); 
+                CONFIG.storeSes("core.widget._stored", pol.widget._stored); 
             }
         }
      
@@ -281,7 +281,7 @@ pol.core.Widget = class {
         
             if (pol.widget._stored[id] && pol.widget._stored[id] != null) {
                 delete pol.widget._stored[id];
-                CONFIG.store("core.widget._stored", pol.widget._stored, true); 
+                CONFIG.storeSes("core.widget._stored", pol.widget._stored); 
             }
         }
     }

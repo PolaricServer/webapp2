@@ -57,6 +57,7 @@ pol.tracking.Filters = class {
                 return function() {
                     $("#filterChoice").html(t.filterViews[i][1]);
                     t.tracker.setFilter(t.filterViews[i][0]);
+                    CONFIG.storeSes('tracking.selectedfilt.'+group, t.filterViews[i][0]);
                     CONFIG.store('tracking.selectedfilt.'+group, t.filterViews[i][0]);
                 } 
             }

@@ -428,7 +428,7 @@ pol.tracking.db.History = class extends pol.core.Widget {
     
     
     saveItem() {
-        CONFIG.store('tracking.db.hist.item', JSON.stringify(this._saveItem(this.item)));
+        CONFIG.storeSes('tracking.db.hist.item', JSON.stringify(this._saveItem(this.item)));
     }
        
        

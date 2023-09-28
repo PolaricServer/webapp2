@@ -149,11 +149,8 @@ pol.core.MapBrowser = class {
         t.map.on('moveend', onMove);
         t.map.on('moveend', ()=> t.updatePermalink() );
         
-        function onMove() {
-            t.config.store("core.projection", t.view.getProjection().getCode());
-            t.config.store('core.center', 
-                ol.proj.toLonLat(t.view.getCenter(), t.view.getProjection())); 
-            t.config.store('core.resolution', t.view.getResolution());
+        function onMove() {   
+            t.saveView();
         }
       
      
@@ -169,6 +166,25 @@ pol.core.MapBrowser = class {
         }
     } /* constructor */
 
+    
+    
+    
+    saveView() {
+        const t=this;
+        
+        /* Store on tab/session */
+        t.config.storeSes("core.projection", t.view.getProjection().getCode());
+        t.config.storeSes('core.center', 
+            ol.proj.toLonLat(t.view.getCenter(), t.view.getProjection())); 
+        t.config.storeSes('core.resolution', t.view.getResolution());
+            
+        /* Store persistently */
+        t.config.store("core.projection", t.view.getProjection().getCode());
+        t.config.store('core.center', 
+            ol.proj.toLonLat(t.view.getCenter(), t.view.getProjection())); 
+        t.config.store('core.resolution', t.view.getResolution());
+    }
+    
     
     
     reset() {

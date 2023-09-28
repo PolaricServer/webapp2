@@ -219,7 +219,7 @@ pol.tracking.db.HeardVia = class extends pol.core.Widget {
             else 
                 t.item.todate   = $('#hrd_end').val();    
             
-            CONFIG.store('tracking.db.hrd.item', JSON.stringify(t.item));
+            CONFIG.storeSes('tracking.db.hrd.item', JSON.stringify(t.item));
         }
         
     
@@ -267,7 +267,7 @@ pol.tracking.db.HeardVia = class extends pol.core.Widget {
         const t = this;
       	if (item) {
             t.item = {call:m.stream(item), fromdate:null, todate:null};
-            CONFIG.store('tracking.db.hrd.item', JSON.stringify(t.item));
+            CONFIG.storeSes('tracking.db.hrd.item', JSON.stringify(t.item));
             m.redraw();
         }
         else {

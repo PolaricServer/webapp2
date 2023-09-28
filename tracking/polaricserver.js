@@ -118,9 +118,12 @@ pol.tracking.PolaricServer = class extends pol.core.Server {
     async setCredentials(userid, secret) {
         const x = await pol.security.hmac_getKey(secret)
         this.key = x;
-        CONFIG.store("api.key", secret);
+        /* FIXME: How can we store the key in a more secure way? 
+         * This is still vulnerable to CSS attacks 
+         */
+        CONFIG.storeSes("api.key", secret);
         this.userid = userid;
-        CONFIG.store("api.userid", userid);
+        CONFIG.storeSes("api.userid", userid);
     }
     
     

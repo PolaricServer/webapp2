@@ -19,7 +19,7 @@ pol.tracking.LabelStyle = class {
 
 
     setFont() {
-        CONFIG.store("tracking.labelStyle", ""+this.currentIndex);
+        CONFIG.storeSes("tracking.labelStyle", ""+this.currentIndex);
         var idx = this.currentIndex + this.start;
         this.setFontForClass(idx, 'lstill');
         this.setFontForClass(idx, 'lobject');
