@@ -32,6 +32,7 @@ pol.tracking.MapUpdate = class {
         t.retry = -1;
         t.cretry = 0;
         t.server = server;
+        t.kalive = null;
                 
         t.firstopen = true;
         t.onopen = null;
@@ -56,12 +57,14 @@ pol.tracking.MapUpdate = class {
         const t = this;
         t.retry = -1;
         let url = t.server.wsurl; 
-        let kalive = null;
-        
+
         url += 'jmapdata';
         console.log("Opening Websocket. URL: "+url);
         CONFIG.server.genAuthString(null).then( x => {
-            t.websocket = new WebSocket(url+(x==null ? "" : "?"+x));
+            t.websocket = new WebSocket(url 
+               + (CONFIG.server.phone ? "?_MOBILE_" + (x==null ? "" : "&"+x) 
+                                      : (x==null ? "" : "?"+x) )
+            );
 
    
             /* Socket connected handler */
@@ -71,7 +74,7 @@ pol.tracking.MapUpdate = class {
                     t.onopen();
                 t.firstopen = false;      
                 t.retry = -1;  t.cretry = 0;
-                kalive = setInterval(()=> t.websocket.send("*****"), 400000);
+                t.kalive = setInterval(()=> t.websocket.send("*****"), 400000);
             };
             
   
@@ -91,7 +94,7 @@ pol.tracking.MapUpdate = class {
             /* Socket close handler. Retry connection. */
             t.websocket.onclose = function(evt) {
                 console.log("Lost connection to server (for tracking overlay): ", evt.code, evt.reason);
-                clearInterval(kalive);
+                clearInterval(t.kalive);
                 closeHandler();
                 if (evt.code==1000)
                     normalRetry();
@@ -103,7 +106,7 @@ pol.tracking.MapUpdate = class {
             /** Socket error handler */
             t.websocket.onerror = function(evt) { 
                 console.log("Server connection error (tracking overlay)");
-                clearInterval(kalive);
+                clearInterval(t.kalive);
                 errorRetry();
                 closeHandler();
             };
@@ -158,7 +161,7 @@ pol.tracking.MapUpdate = class {
         this.websocket.close();
     }
 
-   
+    
     /** 
      * Subscribe to updates from the server 
      */

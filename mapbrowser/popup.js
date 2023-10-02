@@ -220,7 +220,7 @@ pol.core.Popup = class {
     imagePopup(title, href, props) 
     {
         props.html = '<h1 class="popupimg">'+title+'</h1>' +
-                      '<img class="popupimg" src="'+href.substring(2)+'"/>';
+                     '<img class="popupimg" src="'+href.substring(2)+'"/>';
         const d =  this.showPopup(props);
         return d;
     }

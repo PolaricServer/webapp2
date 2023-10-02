@@ -176,7 +176,7 @@ pol.core.AreaList = class extends pol.core.Widget {
         const srv = CONFIG.server; 
         t.myAreas = [];           
         m.redraw();
-        if (srv != null && srv.isAuth() && srv.hasDb) {
+        if (srv != null && srv.hasDb) {
             srv.getObj("area", a => {     
                 for (const obj of a) 
                     if (obj != null) {

@@ -201,6 +201,7 @@ pol.core.Config = class extends ol.Object {
     remove(id) {
         console.assert(id!=null, "id=null");
         this.storage.removeItem("polaric."+id+":"+this.uid);
+        this.sstorage.removeItem("polaric."+id);
     }
 
    

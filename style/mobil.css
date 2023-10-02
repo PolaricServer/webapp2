@@ -33,9 +33,12 @@
    .popup_close {width: 2.1em; height: 2.1em !important; margin-top: -0.35em}
    div#layerSwitcher {line-height: 1.3em !important} 
    
-   div#mySpeed>div {padding: 1em; padding-bottom: 0.5em; border: 1px solid red}
+   div#mySpeed>div {padding: 1em; padding-bottom: 0.5em;}
    div#mySpeed span.n {font-size: 3em; font-weight: bold}
    div#mySpeed span.kmh {font-size: 2.5em}
+   
+   h1.popupimg {font-size: 80%}
+   img.popupimg {max-width: 100% !important}
 }
 
 
@@ -54,6 +57,7 @@
    #toolbar_login {visibility: hidden; width: 0}
    #tb_measure {visibility: hidden; width: 0}
    .infopopup {min-width: 90% !important}
+   #imagepopup {margin-left: -1px; margin-right: -1px}
 }
 
 
@@ -64,6 +68,7 @@
   screen and (max-device-height: 35em) 
 {
     .infopopup {min-width: 23em !important}
+    img.popupimg {max-height : 290px !important}                                                                                                                         
 }
 
 

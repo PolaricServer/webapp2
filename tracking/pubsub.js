@@ -33,6 +33,7 @@ pol.tracking.PubSub = class {
         t.retry = -1;
         t.cretry = 0;
         t.firstopen = true;
+        t.kalive = null;
 
         t.onopen = null;
         t.onclose = null;
@@ -55,8 +56,7 @@ pol.tracking.PubSub = class {
         const t = this; 
         t.retry = -1;    
         let url = t.server.wsurl;         
-        let kalive = null;
-        
+
         url += 'notify';  
         console.log("Opening Websocket. URL: "+url);
         CONFIG.server.genAuthString(null).then( x => {
@@ -70,7 +70,7 @@ pol.tracking.PubSub = class {
                 t.firstopen = false;
                 t.restoreSubs();
                 t.retry = -1;  t.cretry = 0;
-                kalive = setInterval(()=> t.websocket.send("*****"), 400000);
+                t.kalive = setInterval(()=> t.websocket.send("*****"), 400000);
             };
             
             
@@ -91,7 +91,8 @@ pol.tracking.PubSub = class {
             /* Socket close handler. Retry connection. */
             t.websocket.onclose = function(evt) {
                 console.log("Lost connection to server (pubsub): ", evt.code, evt.reason);
-                closeHandler();
+                closeHandler(); 
+                clearInterval(t.kalive);
                 if (evt.code==1000)
                     normalRetry();
                 else
@@ -102,6 +103,7 @@ pol.tracking.PubSub = class {
             /** Socket error handler */
             t.websocket.onerror = function(evt) { 
                 console.log("Server connection error (pubsub)");
+                clearInterval(t.kalive);
                 errorRetry();
                 closeHandler();
             };
@@ -131,8 +133,6 @@ pol.tracking.PubSub = class {
         
     } 
 
-        
-    
 
     /** 
      * Suspend the updater for a given time 

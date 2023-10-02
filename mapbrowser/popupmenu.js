@@ -1,6 +1,6 @@
  
 /*
- Map browser based on OpenLayers 5. 
+ Map browser based on OpenLayers. 
  popup menus, context menus. 
  
  Copyright (C) 2017-2018 Øyvind Hanssen, LA7ECA, ohanssen@acm.org

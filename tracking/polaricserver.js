@@ -29,7 +29,7 @@ pol.tracking = pol.tracking || {};
 
 pol.tracking.PolaricServer = class extends pol.core.Server {
     
-    constructor() {
+    constructor(phone) {
         super();
         this.auth = { userid: "", groupid: "", callsign: "", servercall: "", admin: false, sar: false, services: "" }; 
         this.hasDb = false;
@@ -43,6 +43,7 @@ pol.tracking.PolaricServer = class extends pol.core.Server {
         t.authCallbacks =  [];
         t.onstartfunc = null;
         t.cbId = 0;
+        t.phone = phone;
         
         t.restoreCredentials().then( ()=> {
             t.pubsub = new pol.tracking.PubSub(this);
@@ -121,6 +122,7 @@ pol.tracking.PolaricServer = class extends pol.core.Server {
         /* FIXME: How can we store the key in a more secure way? 
          * This is still vulnerable to CSS attacks 
          */
+        CONFIG.remove("api.key");
         CONFIG.storeSes("api.key", secret);
         this.userid = userid;
         CONFIG.storeSes("api.userid", userid);
@@ -236,7 +238,7 @@ pol.tracking.PolaricServer = class extends pol.core.Server {
 
 
     getObj(tag, f) {
-        this.GET("objects/"+tag, "", 
+        this.GET((!this.isAuth() ? "open/" : "") + "objects/"+tag, "", 
                 x => f(JSON.parse(x)) );
     }
 
@@ -328,7 +330,7 @@ pol.tracking.PolaricServer = class extends pol.core.Server {
         if (pol.tracking.isSign(p)) {
             if (p.point.href.indexOf("P:") === 0)
                 CONFIG.mb.gui.imagePopup(p.point.title, p.point.href, 
-                {id: "imagepopup", geoPos: CONFIG.mb.pix2LonLat(pixel)});
+                {id: "imagepopup",  pixPos: (this.phone ? [0,0] : pixel)  });
             else
                 CONFIG.mb.gui.showPopup({
                     pixPos: pixel, 

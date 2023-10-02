@@ -1,5 +1,5 @@
 /*
- Map browser based on OpenLayers 5. Tracking.
+ Map browser based on OpenLayers. Tracking.
  Present tracking data from Polaric Server backend as a map-layer.
 
  Copyright (C) 2017-2023 Øyvind Hanssen, LA7ECA, ohanssen@acm.org
@@ -194,9 +194,14 @@ pol.tracking.Tracking = class {
 
     
     
+    isConnected() {
+        return this.producer.isConnected();
+    }
+    
+    
     reconnect() {
         this.producer.close(); 
-        setTimeout(()=>this.producer.open(), 1000);
+        setTimeout(()=>this.producer.open(), 1500);
     }
 
     

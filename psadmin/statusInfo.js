@@ -40,7 +40,7 @@ pol.psadmin.statusInfo = class extends pol.core.Widget {
             view: function() {
                 let i=0;
                 return m("table.Clients", m("thead",  
-                        m("tr", m("th", "Created"), m("th", "Client"), m("th", "In"), m("th", "Out"), m("th", "Userid")),                    
+                        m("tr", m("th", "Created"), m("th", "Client"), m("th", "M"), m("th", "In"), m("th", "Out"), m("th", "Userid")),                    
                     ),
                     m("tbody", 
                         t.clients.map( x => {
@@ -48,6 +48,7 @@ pol.psadmin.statusInfo = class extends pol.core.Widget {
                             return m("tr", {class: (t.editMode && x.name===t.name() ? "selected" : null) }, [
                                 m("td", {title: pol.core.Time.formatDate(d)}, pol.core.Time.formatTime(d)),
                                 m("td", x.cid),
+                                m("td", x.mobile),
                                 m("td.n", x.in),     
                                 m("td.n", x.out),
                                 m("td", x.userid),     
@@ -131,7 +132,7 @@ pol.psadmin.statusInfo = class extends pol.core.Widget {
         CONFIG.server.GET( "/system/adm/clients", null, 
             st => {
                 this.clients = JSON.parse(st);
-                console.log("CLIENTS", this.clients);
+                this.clients.sort( (x,y) => (x.cid < y.cid ? -1 : (x.cid===y.cid ? 0 : 1)));
                 m.redraw();
             },            
             x=> { 
@@ -152,7 +153,7 @@ pol.psadmin.statusInfo = class extends pol.core.Widget {
         this.updates = setInterval( () => {
             this.getInfo();
             this.getClients();
-        }, 30000);
+        }, 15000);
     }
 
 } /* class */

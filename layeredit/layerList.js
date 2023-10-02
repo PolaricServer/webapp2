@@ -219,7 +219,7 @@ pol.layers.List = class List extends pol.core.Widget {
         let lrs = []; 
         t._clearMyLayers(); 
         const srv = CONFIG.server;
-        if (srv.isAuth() && srv.hasDb) {
+        if (srv.hasDb) {
            /* 
             * If logged in, get layers stored on server.
             */
