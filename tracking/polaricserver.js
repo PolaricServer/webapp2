@@ -25,6 +25,23 @@ pol.core = pol.core || {};
 pol.tracking = pol.tracking || {}; 
 
 
+pol.tracking.ServerManager = class {
+    
+    constructor(phone, cb) {
+        const t = this;
+        t.phone = phone;
+        t.callback = cb;
+    }
+    
+    instantiate() {
+        const srv = new pol.tracking.PolaricServer(this.phone);
+        if (this.callback != null)
+            this.callback(srv);
+        return srv;
+    }
+    
+}
+
 
 
 pol.tracking.PolaricServer = class extends pol.core.Server {
@@ -41,10 +58,24 @@ pol.tracking.PolaricServer = class extends pol.core.Server {
         t.key = null;
         t.authOk = false;
         t.authCallbacks =  [];
-        t.onstartfunc = null;
+        t.startcb = null;
+        t.stopcb = null;
         t.cbId = 0;
         t.phone = phone;
         
+        t.init();
+        
+        /* Get login status. Periodic, interval: 6 minutes */
+        setInterval( ()=> {
+            this.loginStatus();
+        },360000);
+                
+    }
+
+    
+    
+    init() {
+        const t = this;
         t.restoreCredentials().then( ()=> {
             t.pubsub = new pol.tracking.PubSub(this);
             
@@ -59,27 +90,26 @@ pol.tracking.PolaricServer = class extends pol.core.Server {
             /* Callback when pubsub websocket is closed */
             t.pubsub.onclose = function() {
             }
-            
         });
-        
-        
-        /* Get login status. Periodic, interval: 6 minutes */
-        setInterval( ()=> {
-            this.loginStatus();
-        },360000);
-                
     }
-
-
+    
+    
+    stop() {
+        this.key = null;
+        if (this.stopcb != null)
+            this.stopcb();
+    }
+    
+    
+    
+    
     /* 
      * Generate authentication string (HMAC based) for use in REST API 
      * requests (see also genHeaders function below). 
      */
     async genAuthString(message) {
         const nonce = pol.security.getRandom(8);
-        if (message==null) 
-            message = "";
-        const hmac = await this.getHmac(nonce+message);
+        const hmac = await this.getHmac(nonce, message);
         if (hmac == null)
             return null;
         
@@ -105,13 +135,13 @@ pol.tracking.PolaricServer = class extends pol.core.Server {
      * If the message is non-empty, generate a SHA256 hash from it and use this 
      * in the generation of a HMAC
      */
-    async getHmac(message) {
+    async getHmac(nonce, message) {
         let msgHash = "";
         if (this.key==null)
             return null;
         if (message != null && message != "")
             msgHash = await pol.security.Sha256_B64(message)
-        return await pol.security.hmac_Sha256_B64(this.key, msgHash);
+        return await pol.security.hmac_Sha256_B64(this.key, nonce+msgHash);
     }
     
     
@@ -136,6 +166,8 @@ pol.tracking.PolaricServer = class extends pol.core.Server {
     async restoreCredentials() {
         const ktext = CONFIG.get("api.key");
         const userid = CONFIG.get("api.userid");
+        console.log("RESTORE CREDENTIALS ", userid, ktext);
+        
         if (userid != null)
             this.userid = userid;
 
@@ -151,6 +183,10 @@ pol.tracking.PolaricServer = class extends pol.core.Server {
      */
     onStart(f) {
         this.startcb = f;
+    }
+    
+    onStop(f) {
+        this.stopcb = f;
     }
     
     

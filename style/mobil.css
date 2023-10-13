@@ -39,6 +39,17 @@
    
    h1.popupimg {font-size: 80%}
    img.popupimg {max-width: 100% !important}
+   
+   #backend h3 {font-size: 105%; margin-bottom: 0.6em }
+   #backend div.butt {margin-top: 0.7em}
+   #backend div.butt {margin-top: 0.7em}
+   #backend table td {padding-left: 0.2em; padding-right: 0.2em; font-size: 98%}
+   
+   div#backend input[type="checkbox"]  { 
+     transform: scale(1.6);
+     margin: 0.3em; margin-left: 0.5em;
+     transform-origin: center;  
+  }
 }
 
 

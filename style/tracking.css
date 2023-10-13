@@ -342,3 +342,13 @@ table.Clients td.n {text-align: right}
 div#login img {margin-left: 3.4em; height: 2.9em}
 div#login div.butt {margin-top: 0.5em}
 div#login, div#authinfo {min-width: 18em}
+
+
+input[type="checkbox"] {transform: scale(1.15)}
+input[type="radio"] {transform: scale(1.15)}
+
+#backend input[type="checkbox"]  { 
+   transform: scale(1.3);
+   margin: 0.3em; margin-left: 0.5em;
+   transform-origin: center;  
+}

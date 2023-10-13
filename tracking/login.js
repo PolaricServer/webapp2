@@ -151,11 +151,12 @@ pol.tracking.Login = class extends pol.core.Widget {
                      * Here, we set the userid and key in the server object so 
                      * it can do Hmac based authentication. 
                      */
+                    console.log("LOGIN SUCCESS. KEY=", x);
                     CONFIG.server.setCredentials(t.username(), x)
                         .then( ()=> {
                             CONFIG.server.loginStatus();
-                            getAuth();         
-                            getGroups();
+                            t.getAuth();         
+                            t.getGroups();
                             // FIXME: This will generate two requests to /authStatus
                         });
                 },
@@ -182,38 +183,7 @@ pol.tracking.Login = class extends pol.core.Widget {
             m.redraw();
         }
         
-        
-        /* 
-         * Get authorization level. (SAR or ADMIN)
-         */
-        function getLevel() {
-            t.lvl = "";
-            if (t.info.sar) t.lvl = "SAR";
-            if (t.info.admin) {
-                if (t.lvl != "")
-                    t.lvl += ", ";
-                t.lvl += "ADMIN";
-            }
-        }
-        
-        
-        /*
-         * Get authorization information from server
-         */
-        function getAuth() {
-            CONFIG.server.GET("/authStatus" , "", 
-                x => {
-                    t.info = JSON.parse(x);
-                    t.group = t.info.groupid;
-                    if (CONFIG.server.temp_role != null)
-                        t.group = CONFIG.server.temp_role;
-                    getLevel();
-                    setTimeout(()=>$("select#group").val(t.group).trigger("change"), 300);
-                    m.redraw();
-                });
-        }
-        
-        
+  
         /*
          * Hanler that is called when a group is selected by user
          */
@@ -226,25 +196,7 @@ pol.tracking.Login = class extends pol.core.Widget {
         }
         
         
-        /*
-         * Get available groups (possible roles) from server. 
-         */
-        function getGroups() {
-            t.groupList = [];
-            CONFIG.server.GET("/groups" , "", 
-                x => {
-                    let grps = JSON.parse(x);
-                    for (x of grps)
-                        if (x.avail)
-                            t.groupList.push(x);
-                    m.redraw();
 
-                    if (t.psclient == null) 
-                        t.psclient = CONFIG.server.pubsub.subscribe("auth:"+t.info.userid, x => {
-                            CONFIG.filt.getFilters();
-                        }); 
-                });
-        }
         
         
         /* 
@@ -265,15 +217,77 @@ pol.tracking.Login = class extends pol.core.Widget {
             m.redraw(); 
         }
             
-            
-        getAuth();
-        getGroups();
         
     } /* constructor */
 
     
     
+    /* 
+     * Get authorization level. (SAR or ADMIN)
+     */
+    getLevel() {
+        const t = this;
+        t.lvl = "";
+        if (t.info.sar) t.lvl = "SAR";
+        if (t.info.admin) {
+            if (t.lvl != "")
+                t.lvl += ", ";
+            t.lvl += "ADMIN";
+        }
+    }
+     
+     
+     
+    /*
+     * Get available groups (possible roles) from server. 
+     */
+    getGroups() {
+        const t = this;
+        t.groupList = [];
+        CONFIG.server.GET("/groups" , "", 
+            x => {
+                let grps = JSON.parse(x);
+                for (x of grps)
+                    if (x.avail)
+                        t.groupList.push(x);
+                m.redraw();
+
+                if (t.psclient == null) 
+                    t.psclient = CONFIG.server.pubsub.subscribe("auth:"+t.info.userid, x => {
+                        CONFIG.filt.getFilters();
+                    }); 
+            });
+    }
+        
+        
+        
+    /*
+     * Get authorization information from server
+     */
+    getAuth() {
+        const t = this;
+        CONFIG.server.GET("/authStatus" , "", 
+            x => {
+                t.info = JSON.parse(x);
+                t.group = t.info.groupid;
+                if (CONFIG.server.temp_role != null)
+                    t.group = CONFIG.server.temp_role;
+                t.getLevel();
+                setTimeout(()=>$("select#group").val(t.group).trigger("change"), 300);
+                m.redraw();
+            });
+    }
+        
+        
+    reload() {
+        if (this.isActive())
+            this.onActivate();
+    }
+    
+    
     onActivate() {
+        this.getAuth();
+        this.getGroups();
         this.group = CONFIG.server.temp_role;      
         setTimeout(()=>$("select#group").val(this.group).trigger("change"), 300);
         m.redraw();

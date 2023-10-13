@@ -34,10 +34,6 @@ pol.tracking.Filters = class {
         t.filterViews = [];
         t.tracker = tr; 
         t.tbar = CONFIG.mb.toolbar;
-         
-        t.tbar.addIcon(1, "images/filter.png", "tb_filter", null, "Filter selector");
-        t.tbar.addDiv(1, "filterChoice", null);
-        CONFIG.mb.ctxMenu.addMenuId('tb_filter', 'FILTERSELECT', true);
    
         /* Set default or saved filter selection */   
         t.filt = CONFIG.mb.config.get('tracking.selectedfilt.' + group);
@@ -48,6 +44,7 @@ pol.tracking.Filters = class {
         
         /* Add callback to generate filter-menu */
         CONFIG.mb.ctxMenu.addCallback('FILTERSELECT', m => {
+            m.clear();
             for (const i in t.filterViews) {
                 m.add(t.filterViews[i][1], handleSelect(i));
             }
@@ -67,9 +64,15 @@ pol.tracking.Filters = class {
     }    
 
     
+    addToolbarMenu() {
+        this.tbar.addIcon(1, "images/filter.png", "tb_filter", null, "Filter selector");
+        this.tbar.addDiv(1, "filterChoice", null);
+        CONFIG.mb.ctxMenu.addMenuId('tb_filter', 'FILTERSELECT', true);
+    }
+    
     
     setDisabled(dis) {
-        if (dis==true) 
+        if (dis==true && t.tbar != null) 
             this.tbar.changeIcon("tb_filter", "images/filter.gray.png", null, "Too many points - overlay disabled");
         else
             this.tbar.changeIcon("tb_filter", "images/filter.png", null, "Filter selector");

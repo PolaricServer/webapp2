@@ -157,8 +157,15 @@ pol.core.Config = class extends ol.Object {
             return this.props[id]; 
         return x;
     }
-
-
+    
+    
+    getDefault(id) { 
+        console.assert(id!=null, "id=null");
+        return this.props[id]; 
+    }
+    
+    
+    
 
     /**
      *  Store value in browser storage. To be used in application.
