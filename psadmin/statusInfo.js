@@ -48,7 +48,7 @@ pol.psadmin.statusInfo = class extends pol.core.Widget {
                             return m("tr", {class: (t.editMode && x.name===t.name() ? "selected" : null) }, [
                                 m("td", {title: pol.core.Time.formatDate(d)}, pol.core.Time.formatTime(d)),
                                 m("td", x.cid),
-                                m("td", x.mobile),
+                                m("td", (x.mobile ? "M" : "")),
                                 m("td.n", x.in),     
                                 m("td.n", x.out),
                                 m("td", x.userid),     
@@ -131,7 +131,7 @@ pol.psadmin.statusInfo = class extends pol.core.Widget {
     getClients() {
         CONFIG.server.GET( "/system/adm/clients", null, 
             st => {
-                this.clients = JSON.parse(st);
+                this.clients = JSON.parse(st);             
                 this.clients.sort( (x,y) => (x.cid < y.cid ? -1 : (x.cid===y.cid ? 0 : 1)));
                 m.redraw();
             },            
