@@ -94,7 +94,7 @@ pol.tracking.Tracking = class {
         /*
          * Define the 'MAP' context as the default context used when right-clicking on the map.
          * We check if there are any tracking-points at the clicked positions and if this
-         * is the case, we create a context with name 'POINT'.
+         * is the case, we create a context with name 'POINT' or 'SIGN'.
          */
         CONFIG.mb.addContextMenu("MAP", e => {
             const pts = t.getPointsAt([e.clientX, e.clientY]);
@@ -107,6 +107,7 @@ pol.tracking.Tracking = class {
                 if (pts.length > 0) 
                     /* Just one point */
                     return { 
+                        sarAuth: pts[0].point.sarAuth,
                         name:  (pol.tracking.isSign(pts[0]) ? "SIGN" : "POINT"), 
                         ident: pts[0].getId(),
                         aprs:  pts[0].point.aprs,
@@ -205,6 +206,11 @@ pol.tracking.Tracking = class {
     }
 
     
+    close() {
+        this.clear();
+        this.producer.close(); 
+    }
+    
     
     /**
      * Show list of points. Clickable to show info about each.
@@ -231,8 +237,11 @@ pol.tracking.Tracking = class {
                 CONFIG.mb.ctxMenu.showOnPos( { 
                     sarAuth: x.point.sarAuth,
                     name: (pol.tracking.isSign(x) ? "SIGN" : "POINT"), 
+                    ident: x.getId(),
+                    aprs:  x.point.aprs,
+                    own:   x.point.own,
+                    telemetry: x.point.telemetry,                   
                     point: x,
-                    ident: x.getId()
                 }, pixel )
             }    
             else
@@ -414,7 +423,10 @@ pol.tracking.Tracking = class {
             const f = t.source.getFeatureById(ident);
             CONFIG.mb.ctxMenu.showOnPos(
               { name: "POINT", 
-                point: f,
+                point: f.point,
+                aprs:  f.point.aprs,
+                own:   f.point.own,
+                telemetry: f.point.telemetry,   
                 sarAuth: f.point.sarAuth,
                 ident: ident}, [e.clientX, e.clientY]); 
         }

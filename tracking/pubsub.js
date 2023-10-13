@@ -70,7 +70,9 @@ pol.tracking.PubSub = class {
                 t.firstopen = false;
                 t.restoreSubs();
                 t.retry = -1;  t.cretry = 0;
-                t.kalive = setInterval(()=> t.websocket.send("*****"), 400000);
+                if (t.kalive!=null)
+                    clearInterval(t.kalive);
+                t.kalive = setInterval(()=> t.websocket.send("****"), 400000);
             };
             
             
@@ -90,9 +92,15 @@ pol.tracking.PubSub = class {
             
             /* Socket close handler. Retry connection. */
             t.websocket.onclose = function(evt) {
-                console.log("Lost connection to server (pubsub): ", evt.code, evt.reason);
-                closeHandler(); 
                 clearInterval(t.kalive);
+                if (t.closed) {
+                    console.log("Connection closed");
+                    return;
+                }
+                else
+                    console.log("Lost connection to server (pubsub): ", evt.code, evt.reason);
+                
+                closeHandler(); 
                 if (evt.code==1000)
                     normalRetry();
                 else

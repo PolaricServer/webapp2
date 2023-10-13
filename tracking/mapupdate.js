@@ -33,7 +33,8 @@ pol.tracking.MapUpdate = class {
         t.cretry = 0;
         t.server = server;
         t.kalive = null;
-                
+        t.closed = false; 
+        
         t.firstopen = true;
         t.onopen = null;
         t.subscriber = null;
@@ -55,6 +56,7 @@ pol.tracking.MapUpdate = class {
     
     open() {
         const t = this;
+        t.closed = false;
         t.retry = -1;
         let url = t.server.wsurl; 
 
@@ -74,7 +76,9 @@ pol.tracking.MapUpdate = class {
                     t.onopen();
                 t.firstopen = false;      
                 t.retry = -1;  t.cretry = 0;
-                t.kalive = setInterval(()=> t.websocket.send("*****"), 400000);
+                if (t.kalive!=null)
+                    clearInterval(t.kalive);
+                t.kalive = setInterval(()=> t.websocket.send("****"), 400000);
             };
             
   
@@ -93,8 +97,13 @@ pol.tracking.MapUpdate = class {
             
             /* Socket close handler. Retry connection. */
             t.websocket.onclose = function(evt) {
-                console.log("Lost connection to server (for tracking overlay): ", evt.code, evt.reason);
                 clearInterval(t.kalive);
+                if (t.closed) {
+                    console.log("Connection closed");
+                    return;
+                }
+                else
+                    console.log("Lost connection to server (for tracking overlay): ", evt.code, evt.reason);
                 closeHandler();
                 if (evt.code==1000)
                     normalRetry();
@@ -158,6 +167,7 @@ pol.tracking.MapUpdate = class {
      * Close the map-updater 
      */
     close() {
+        this.closed = true;
         this.websocket.close();
     }
 
