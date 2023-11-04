@@ -123,7 +123,7 @@ pol.psadmin.statusInfo = class extends pol.core.Widget {
                 m.redraw();
             },            
             x=> { 
-                this.error("Cannot GET data (se browser log)", x);
+                console.log("Cannot GET data (se browser log)", x);
             }
         );
     }
@@ -136,7 +136,7 @@ pol.psadmin.statusInfo = class extends pol.core.Widget {
                 m.redraw();
             },            
             x=> { 
-                this.error("Cannot GET data (se browser log)", x);
+                console.log("Cannot GET data (se browser log)", x);
             }
         );
     }
@@ -153,7 +153,7 @@ pol.psadmin.statusInfo = class extends pol.core.Widget {
         this.updates = setInterval( () => {
             this.getInfo();
             this.getClients();
-        }, 15000);
+        }, 5000);
     }
 
 } /* class */

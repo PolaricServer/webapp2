@@ -139,7 +139,7 @@ pol.tracking.Search = class extends pol.core.Widget {
        
         /* Search using server API. Server returns HTML table (old API) */ 
         function searchItems(filt, tags) {
-            t.server.GET("items"+
+            t.server.GET( (CONFIG.server.isAuth() ? "xitems" : "items")+
                 '?srch='+(filt==null ? "*":filt)  + (tags!=null ? '&tags='+tags : ''), null, 
                 x => {
                     t.result = JSON.parse(x);

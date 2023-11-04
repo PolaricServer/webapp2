@@ -78,7 +78,7 @@ pol.tracking.MapUpdate = class {
                 t.retry = -1;  t.cretry = 0;
                 if (t.kalive!=null)
                     clearInterval(t.kalive);
-                t.kalive = setInterval(()=> t.websocket.send("****"), 400000);
+                t.kalive = setInterval(()=> t.websocket.send("****"), 120000);
             };
             
   
@@ -103,7 +103,7 @@ pol.tracking.MapUpdate = class {
                     return;
                 }
                 else
-                    console.log("Lost connection to server (for tracking overlay): ", evt.code, evt.reason);
+                    console.log("Lost connection to server (for tracking overlay): ", evt.code, evt);
                 closeHandler();
                 if (evt.code==1000)
                     normalRetry();
@@ -114,7 +114,7 @@ pol.tracking.MapUpdate = class {
    
             /** Socket error handler */
             t.websocket.onerror = function(evt) { 
-                console.log("Server connection error (tracking overlay)");
+                console.log("Server connection error (tracking overlay): ", evt.code);
                 clearInterval(t.kalive);
                 errorRetry();
                 closeHandler();

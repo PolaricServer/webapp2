@@ -151,7 +151,6 @@ pol.tracking.Login = class extends pol.core.Widget {
                      * Here, we set the userid and key in the server object so 
                      * it can do Hmac based authentication. 
                      */
-                    console.log("LOGIN SUCCESS. KEY=", x);
                     CONFIG.server.setCredentials(t.username(), x)
                         .then( ()=> {
                             CONFIG.server.loginStatus();

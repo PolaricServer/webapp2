@@ -128,7 +128,7 @@ pol.core.AreaList = class extends pol.core.Widget {
 
             /* IF server available and logged in, store on server as well */
             const srv = CONFIG.server; 
-            if (srv && srv != null && srv.loggedIn && srv.hasDb)
+            if (srv && srv != null && srv.isAuth() && srv.hasDb)
                 srv.putObj("area", area, i => { 
                     area.index = i;
                     area.server = true;    

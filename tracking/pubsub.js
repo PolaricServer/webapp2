@@ -72,7 +72,7 @@ pol.tracking.PubSub = class {
                 t.retry = -1;  t.cretry = 0;
                 if (t.kalive!=null)
                     clearInterval(t.kalive);
-                t.kalive = setInterval(()=> t.websocket.send("****"), 400000);
+                t.kalive = setInterval(()=> t.websocket.send("****"), 120000);
             };
             
             

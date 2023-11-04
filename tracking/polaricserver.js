@@ -150,10 +150,13 @@ pol.tracking.PolaricServer = class extends pol.core.Server {
         const x = await pol.security.hmac_getKey(secret)
         this.key = x;
         /* FIXME: How can we store the key in a more secure way? 
-         * This is still vulnerable to CSS attacks 
+         * This is still somewhat vulnerable to CSS attacks 
          */
         CONFIG.remove("api.key");
-        CONFIG.storeSes("api.key", secret);
+        if (this.phone)
+            CONFIG.store("api.key", secret);
+        else
+            CONFIG.storeSes("api.key", secret);
         this.userid = userid;
         CONFIG.storeSes("api.userid", userid);
     }
@@ -166,7 +169,6 @@ pol.tracking.PolaricServer = class extends pol.core.Server {
     async restoreCredentials() {
         const ktext = CONFIG.get("api.key");
         const userid = CONFIG.get("api.userid");
-        console.log("RESTORE CREDENTIALS ", userid, ktext);
         
         if (userid != null)
             this.userid = userid;
@@ -306,13 +308,11 @@ pol.tracking.PolaricServer = class extends pol.core.Server {
                 this.hasDb = this.hasService('database');
                 
                 /* Close the pubsub channel to get a new which is authenticated 
-                 * FIXME: We need to restore the connection after close is finished 
                  */
                 this.pubsub.close();
                 this.doAuthCb();
                 if (this.logincb != null)
                     this.logincb();
-                CONFIG.notifier = this.not = new pol.tracking.Notifier();
             },
             
             (xhr, st, err) => {

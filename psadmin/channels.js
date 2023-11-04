@@ -285,6 +285,7 @@ pol.psadmin.Channels = class extends pol.core.Widget {
         }
         
         
+        
         function onTypeSelect() {
             const typ = $('#ctypeSelect').val();
             t.type = typ; 
@@ -316,7 +317,7 @@ pol.psadmin.Channels = class extends pol.core.Widget {
                 ident: null, 
                 name: t.name(),
                 generic: {
-                    restricted: t.restricted,
+                    restricted: t.loggedinonly,
                     state: "OFF",
                     tag: ""
                 }
@@ -368,7 +369,7 @@ pol.psadmin.Channels = class extends pol.core.Widget {
         /* Update object on backend (on server) */
         function update() {
             t.ch.active = t.activated;
-            t.ch.generic.restricted = t.restricted;
+            t.ch.generic.restricted = t.loggedinonly;
             t.ch.generic.tag = t.tag();
             
             /* Selection of primary channels for RF and internet */
@@ -396,7 +397,7 @@ pol.psadmin.Channels = class extends pol.core.Widget {
             }
             srv.PUT("system/adm/channels/"+t.name(), JSON.stringify(t.ch), 
                     ()=> {
-                        console.log("Channel updated: "+t.name());
+                        console.log("Channel updated: "+t.name(), t.ch);
                         t.successMsg("Channel updated", 10000);
                         t.getObjects() 
                     }, 

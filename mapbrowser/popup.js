@@ -387,7 +387,7 @@ pol.core.Popup = class {
          * wider than the viewport, let popup be as wide as the viewport 
          */
         if (this.onDiv.clientWidth < 500 && elem.clientWidth > this.onDiv.clientWidth)
-            this.activepopup.style.minWidth = this.onDiv.clientWidth+'px'; 
+            this.activepopup.style.minWidth = this.onDiv.clientWidth-2+'px'; 
      
         /* Is the height of the content more than the available height?
          * Then we need a scroller 
@@ -405,7 +405,7 @@ pol.core.Popup = class {
         const pimg = t.image;
         setAdjustedPos(pd, pimg, x,y); 
         setTimeout( ()=> { setAdjustedPos(pd, pimg, x,y) }, 300);
-        setTimeout( ()=> { setAdjustedPos(pd, pimg, x,y) }, 2000);
+        setTimeout( ()=> { setAdjustedPos(pd, pimg, x,y) }, 1500);
 
      
         this.allowedPopups--;
