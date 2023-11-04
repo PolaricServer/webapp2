@@ -5,8 +5,8 @@ div.POPUP img.popup_pin {
 div.POPUP img.popup_close {
   position: inherit;
   top: 0.55em;
-  right: 0.3em;
-  height: 1.3em;
+  right: 0.4em;
+  height: 1.4em;
 }
 
 
@@ -25,7 +25,7 @@ div.POPUP {
   padding: 0.3em !important;
   min-width: 2em;
   border-radius: 4px;
-  max-height: 95%; 
+  max-height: 97%; 
   margin-left: 7px; 
   margin-right: 7px; 
 }

@@ -6,7 +6,7 @@ button, input {font-size: 90%}
 div.widget { overflow: hidden !important;}
 
 
-.leftlab, .wleftlab, .sleftlab, .xsleftlab, .lleftlab {
+.leftlab, .wleftlab, .sleftlab, .xsleftlab, .xxsleftlab, .lleftlab {
   float: left;
   width: 9.0em;
   text-align: right;
@@ -21,6 +21,10 @@ div.widget { overflow: hidden !important;}
 
 .xsleftlab {
   width: 4.5em;
+} 
+
+.xxsleftlab {
+  width: 3.0em;
 } 
 
 .lleftlab {

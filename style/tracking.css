@@ -83,26 +83,31 @@ div.own   { background: #ccffcc; color: #0000cc }
 #notifications tr, #mailbox tr {border-bottom: 1px dotted #555;}
 #notifications td div {margin-bottom: 1px }
 #notifications img.icon {height: 27px; width: 27px; margin-right: 6px}
-#mailbox img.icon {padding-left: 1px; margin-right: 10px; margin-top: -3px}
-#mailbox img.ticon {padding-left: 6px; margin-right: 7px; margin-top: -3px}
+
 #notifications div span.header, #mailbox div span.header {font-size: 0.9em; color: #262;}
 #notifications td+td, #mailbox td+td {padding-top: 3px; padding-bottom: 4px; padding-right: 10px}
 #notifications td div img { height: 13px; margin-bottom: -1px; margin-left: 10px; }
 #notifications .scroll {overflow-y: auto; margin-right: -6px}
 #notifications .txt, #mailbox .txt {font-size: 110% }
-#mailbox td+td {min-width: 25.5em; max-width: 27em}
-#mailbox div#sendMsg {padding: 0.3em;; padding-top: 0.4em; background: #eca}
 #notifications span.header {display: inline-block; min-width: 10em}
+#notifications div {min-width: 16em}
 #sendNot {background: #eca; margin-top: 0.2em; padding: 0.2em; padding-top: 0.3em}
 #sendNot input {width: 75%}
-#notifications div {min-width: 16em}
+
+#mailbox img.icon {padding-left: 1px; margin-right: 10px; margin-top: -3px}
+#mailbox img.ticon {padding-left: 6px; margin-right: 7px; margin-top: -3px}
+#mailbox td+td {min-width: 25.5em; max-width: 27em; padding-left: 0.4em}
+#mailbox div#sendMsg {padding: 0.3em;; padding-top: 0.6em; padding-bottom: 0.6em; background: #eca}
 #mailbox table, #notifications table {margin-top: -0.6em}
 #mailbox input#msg {width: 19em}
-#mailbox img.status {padding-left: 20px; margin-bottom: -3px}
-
+#mailbox img.status {margin-left: 1em; margin-bottom: -3px}
 #mailbox span.fromaddr {color: #049;}     
 #mailbox span.fromaddr:hover {font-weight: bold }
-
+#mailbox img#sendmsg {margin-left: 0.4em}
+#mailbox td.out {background: #edd}
+#mailbox td.out:hover {background: #fea}
+#mailbox td div {padding-bottom: 0.3em}
+   
 #bullboard div {max-width: 52em}
 #bullboard h4 {margin-bottom: 0.3em; margin-top: 0.6em}
 #bullboard .content>table>tr  {background: #eed; border: 2px solid #778; vertical-align: top; font-size: 1.1em}

@@ -12,6 +12,8 @@
   screen and (max-device-height: 500px),
   screen and (max-device-height: 35em)
 {
+   input, button {border-radius: 5px}
+   
    div.toolbar {background: #cecb }
    .ol-attribution, .logo {visibility: hidden}
       
@@ -50,6 +52,9 @@
      margin: 0.3em; margin-left: 0.5em;
      transform-origin: center;  
   }
+          
+   #mailbox span.txt {font-size: larger; display: inline-block; width: 95%}
+   #mailbox input {font-size: 99%}
 }
 
 
@@ -59,7 +64,7 @@
   screen and (max-device-width: 500px),
   screen and (max-device-width: 35em) 
 {
-   #msg {width: 15em !important}
+   #mailbox #msg {width: 17em !important}
    .widget {max-width: 98% !important; margin-left: -2px !important; margin-right: 2px !important}
    
    div#aprsObject input {max-width: 18em !important}
@@ -69,6 +74,8 @@
    #tb_measure {visibility: hidden; width: 0}
    .infopopup {min-width: 90% !important}
    #imagepopup {margin-left: -1px; margin-right: -1px}
+   #mailbox {margin-left: -4px}
+   .xxsleftlab {width: 2.8em;} 
 }
 
 

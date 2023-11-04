@@ -54,7 +54,7 @@ pol.tracking.Mailbox = class extends pol.core.Widget {
                 return m("div#sendMsg", [
                 
                     m("div.field", 
-                        m("span.xsleftlab", "To:"),
+                        m("span.xxsleftlab", "To:"),
                         m(textInput, 
                             { id: "recipient", value: t.recipient,
                                 maxLength: 40, regex: /.*/i }), 
@@ -66,11 +66,13 @@ pol.tracking.Mailbox = class extends pol.core.Widget {
  
                     
                     m("div.field", 
-                        m("span.xsleftlab", "Message:"),
+                        m("span.xxsleftlab", "Text:"),
                         m(textInput,
                             { id: "msg", value: t.msg,
                                 maxLength: 66, regex: /.*/i }), 
-                        m("button", { type: "button", onclick: send }, "Send"))
+                       m("img#sendmsg", {src:"images/sendmsg.png", 
+                                title:"Send message", onclick:send} ))
+                      // m("button", { type: "button", onclick: send }, "Send"))
                 ]);
             }
         }
@@ -87,7 +89,7 @@ pol.tracking.Mailbox = class extends pol.core.Widget {
                             {oncontextmenu: (e)=> msgMenu(e, x) }, [
                                 m("td", m("img", {"class":(x.outgoing ? "ticon" : "icon"), 
                                     src: (x.outgoing ? 'images/32px/chatt.png':'images/32px/chatf.png')})),
-                                m("td", m("div", [
+                                m("td"+(x.outgoing ? ".out" : ""), m("div", [
                                     m("span", {"class":"header"}, [ formatDTG(x.time)+": ", 
                                         ( x.outgoing ? x.from 
                                             : m("span.fromaddr", {onclick: ()=> {t.recipient(x.from);}}, x.from)), 
@@ -105,35 +107,14 @@ pol.tracking.Mailbox = class extends pol.core.Widget {
                         );            
                     })))),
                     m(t.showUsers),
-                    (CONFIG.server.auth ? m(t.sendMsg) : "")
+                    (CONFIG.server.isAuth() ? m(t.sendMsg) : "")
                 ]);  
             }
         };
 
-        getMsgs();
-        setInterval(getMsgs, 1200000);
-       
-        
-       /* 
-        * Subscribe to notifications from server using the pubsub service: 
-        * Related to user (if logged in). 
-        */
-        t.pscli1 = t.server.pubsub.subscribe("messages:" + t.server.auth.userid, 
-            x => { 
-                t.msglist.push(x); 
-                m.redraw();
-                addScroll(true); 
-            }
-        );   
-        t.pscli2 = t.server.pubsub.subscribe("msgstatus:" + t.server.auth.userid, 
-            x => { 
-                setStatus(x);
-                m.redraw();
-            }
-        );             
-        t.resizeObserve( ()=>addScroll(true) );
-        
-        setInterval(()=>getUsers(), 180000);
+        t.getMsgs();
+        t.resizeObserve( ()=>t.addScroll(true) );
+        setInterval(()=>getUsers(), 120000);
         
         
         
@@ -150,16 +131,16 @@ pol.tracking.Mailbox = class extends pol.core.Widget {
         
         
         function toggleUsers() {
-            getUsers();
             if (t.uvisible) {
                 t.uvisible=false;
                 $('div#recipients').css('display','none');
+                setTimeout(()=>t.addScroll(true), 200);
             }
             else {
+                getUsers();
                 t.uvisible=true;
                 $('div#recipients').css('display','block');
             }
-            addScroll(true); 
         }
         
         
@@ -172,39 +153,11 @@ pol.tracking.Mailbox = class extends pol.core.Widget {
             t.server.GET("loginusers", "", x => { 
                 t.users = JSON.parse(x);
                 m.redraw();
+                setTimeout(()=>t.addScroll(true), 200);
             } );
         }
-        
-        
-        function setStatus(st) {
-            console.log("Message status (msgid="+st.msgId+", status="+st.status+"): "+st.info);
-            for (const i in t.msglist)
-                if (t.msglist[i].msgId == st.msgId) {
-                    t.msglist[i].status = st.status;
-                    t.msglist[i].stinfo = st.info;
-                    break;
-                }
-        }
-        
-        
-        function addScroll(moveend) {
-            t.setScroll("div#mailbox", "div#msglist tbody", moveend); 
-        }
-        
-        
-        
-        /* Get list of messages from server */
-        function getMsgs() {
-            const userid = t.server.auth.userid;
-            console.assert(userid && userid!=null, "userid="+userid);
-            if (userid == null)
-                return;
-            t.server.GET("mailbox", "", x => { 
-                t.msglist = JSON.parse(x);
-                m.redraw();
-                addScroll(true);
-            } );
-        }
+
+
         
         
         /* Send message */
@@ -219,7 +172,7 @@ pol.tracking.Mailbox = class extends pol.core.Widget {
                     console.log("Sent message to: "+msg.to);
                     t.msg("");
                     m.redraw();
-                    addScroll(true);
+                    t.addScroll(true);
                 },
                 x => {
                     console.log("Send message -> "+x.status+": "+x.statusText +
@@ -246,6 +199,7 @@ pol.tracking.Mailbox = class extends pol.core.Widget {
                     if (this.msglist[i].msgId == id) 
                         this.msglist.splice(i,1);
                 m.redraw();
+                this.setScroll(false);
             },
             x => {
                 console.log("Remove message -> "+x.status+": "+x.statusText +
@@ -253,7 +207,24 @@ pol.tracking.Mailbox = class extends pol.core.Widget {
             }  
         );
     }
-    
+            
+        
+        
+    /* Get list of messages from server */
+    getMsgs() {
+        const userid = this.server.auth.userid;
+        console.assert(userid && userid!=null, "userid="+userid);
+        if (userid == null)
+            return;
+        this.server.GET("mailbox", "", x => { 
+            this.msglist = JSON.parse(x);
+            m.redraw();
+            this.addScroll(true);
+        } );
+    }
+        
+        
+        
     /* Reply to message (fill in recipient field) */
     reply(msg) {
         if (msg.outgoing)
@@ -262,7 +233,42 @@ pol.tracking.Mailbox = class extends pol.core.Widget {
             this.recipient(msg.from);
         m.redraw();
     }
-
+    
+            
+    addScroll(moveend) {
+        this.setScroll("div#mailbox", "div#msglist tbody", moveend); 
+    }
+            
+        
+    setStatus(st) {
+        for (const i in this.msglist)
+            if (this.msglist[i].msgId == st.msgId) {
+                this.msglist[i].status = st.status;
+                this.msglist[i].stinfo = st.info;
+                break;
+            }
+        }
+        
+    
+    onActivate() { 
+       /* 
+        * Subscribe to notifications from server using the pubsub service: 
+        * Related to user (if logged in). 
+        */
+        this.pscli1 = this.server.pubsub.subscribe("messages:" + this.server.auth.userid, 
+            x => { 
+                this.msglist.push(x); 
+                setTimeout(()=>this.addScroll(true). 300):
+            }
+        );   
+        this.pscli2 = this.server.pubsub.subscribe("msgstatus:" + this.server.auth.userid, 
+            x => { 
+                this.setStatus(x);
+            }
+        );  
+        this.getMsgs();
+    }
+    
     
     onclose() { 
         if (this.pscli1 != null)
