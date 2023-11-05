@@ -117,6 +117,14 @@ pol.tracking.Mailbox = class extends pol.core.Widget {
         setInterval(()=>getUsers(), 120000);
         
         
+        /* 
+         * IF user is logged out, popup will be closed
+         */
+        t.authCb = CONFIG.server.addAuthCb( ()=> {
+            if (!CONFIG.server.isAuth())
+                t.closePopup();
+        });
+        
         
         function msgMenu(e, x) {
             console.log(x.msgId);
@@ -146,7 +154,6 @@ pol.tracking.Mailbox = class extends pol.core.Widget {
         
         function getUsers() {
             const userid = t.server.auth.userid;
-            console.assert(userid && userid!=null, "userid="+userid);
             if (userid == null)
                 return;
             
@@ -258,12 +265,14 @@ pol.tracking.Mailbox = class extends pol.core.Widget {
         this.pscli1 = this.server.pubsub.subscribe("messages:" + this.server.auth.userid, 
             x => { 
                 this.msglist.push(x); 
-                setTimeout(()=>this.addScroll(true). 300):
+                m.redraw();
+                setTimeout(()=> this.addScroll(true), 300);
             }
         );   
         this.pscli2 = this.server.pubsub.subscribe("msgstatus:" + this.server.auth.userid, 
             x => { 
                 this.setStatus(x);
+                m.redraw();
             }
         );  
         this.getMsgs();

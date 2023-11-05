@@ -96,6 +96,18 @@ pol.psadmin.statusInfo = class extends pol.core.Widget {
         };
         
         
+                
+        
+        /* 
+         * IF user is logged out, popup will be closed
+         */
+        t.authCb = CONFIG.server.addAuthCb( ()=> {
+            if (!CONFIG.server.isAuth())
+                t.closePopup();
+        });
+        
+        
+        
         function toKbytes(x) {
             return Math.round(x / 100)/10 + " kB"; 
         }

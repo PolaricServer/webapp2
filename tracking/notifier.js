@@ -29,7 +29,6 @@
   *     - text: Text of notification. 
   * 
   * FIXME: Open another window if clicking on certain types of notifications (messages). 
-  *        Scrollbar
   */
 
 
@@ -47,7 +46,7 @@ pol.tracking.Notifier = class {
         var t = this;
         this.audio = new Audio('sound/sound2.wav');
             
-        /* Get stored notifications */
+        /* Get stored notifications from local storage */
         t.list = CONFIG.get("tracking.Notifications");
         if (t.list == null)
             t.list = [];
@@ -77,7 +76,7 @@ pol.tracking.Notifier = class {
         if (t.server.auth.admin) 
             t.server.pubsub.subscribe("notify:ADMIN", 
                 x => t.add(x) );
-    
+        
         /* Remove notifications older than ttl. Skip if ttl is 0 */
         /* TTL is in minutes */
         t.setInt = setInterval( () => {
@@ -100,14 +99,14 @@ pol.tracking.Notifier = class {
         if (t.setInt != null) 
             clearInterval(t.setInt);
         /* 
-         * This can be called AFTER a login has been invalidated, så we 
+         * This can be called AFTER a login has been invalidated, so we 
          * have to jsut unsubscribe the rooms 
          */
         t.server.pubsub.unsubscribeAll("notify:" + t.server.userid);   
         t.server.pubsub.unsubscribeAll("notify:SYSTEM");
         t.server.pubsub.unsubscribeAll("notify:ADMIN");
             
-         if (CONFIG.mb.toolbar.divExists("toolbar_not")); 
+        if (CONFIG.mb.toolbar.divExists("toolbar_not")); 
             CONFIG.mb.toolbar.hideDiv("toolbar_not", true);
     }
     
@@ -131,6 +130,7 @@ pol.tracking.Notifier = class {
         this.list.unshift(not);
         this.updateNumber();
         CONFIG.store("tracking.Notifications", this.list);
+        m.redraw();
     }
 
 
@@ -141,6 +141,7 @@ pol.tracking.Notifier = class {
         this.list.splice(idx,1);
         this.updateNumber(); 
         CONFIG.store("tracking.Notifications", this.list);
+        m.redraw();
     }
 
 } /* class */
@@ -179,7 +180,7 @@ pol.tracking.NotifyList = class extends pol.core.Widget {
                 var i=0;
                 return m("div#notifications", [
                     m("h1", "My Notifications"),
-                    m("table", m("tbody", (t.notifier ? t.notifier.list : []).map( x => {
+                    m("table", m("tbody", (CONFIG.notifier ? CONFIG.notifier.list : []).map( x => {
                         return m("tr", [
                             m("td", m("img", {onclick: (x.type==='chat' 
                                 ?  ()=> WIDGET("tracking.Mailbox",[50,70], true) : null), 
