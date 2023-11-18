@@ -251,7 +251,7 @@ span#objname {
 }
    
 
-select#group,select#agroup {width: 9em; height: 1.9em}
+select#pgroup,select#agroup {width: 9em; height: 1.9em}
 
 span#selGroup, span#selAGroup {
     margin-left: 0.6em; color: #050; 

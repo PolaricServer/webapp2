@@ -40,6 +40,9 @@ function SECURE(sec)
 function SERVER(url) 
  { CONFIG.set('server', url); }
 
+ function PORT(port) 
+ { CONFIG.set('port', port); }
+ 
 function WSPREFIX(p)
  { CONFIG.set('wsprefix', p); }
  
@@ -274,7 +277,7 @@ function SCALE_GT (sc)
    
    
 function LOGIN()
-   { return function() {return CONFIG.server && CONFIG.server.loggedIn; }}
+   { return function() {return CONFIG.server != null && CONFIG.server.isAuth(); }}
    
    
 function AND(a, b)

@@ -234,6 +234,7 @@ pol.core.Widget = class {
             vnode: this.widget,
             pixPos: pixPos,
             draggable: true,
+            resizable: true,
             dragStop: dragStop,
             pin: saveCb,
             pinned: pinned,

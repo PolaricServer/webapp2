@@ -75,7 +75,7 @@ install: mapbrowser-min.js
 	install -m 644 sound/*.wav $(INSTALL_WEB)/sound
 	
 	install -m 644 	mapbrowser-min.js layeredit-min.js featureedit-min.js \
-			tracking-min.js application.js $(INSTALL_WEB)
+			tracking-min.js psadmin-min.js application.js $(INSTALL_WEB)
 	install -m 644 index.html $(INSTALL_WEB)
 	
         # Config files are placed in /etc and should be symlinked from the webapp directory     

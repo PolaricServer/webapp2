@@ -82,7 +82,7 @@ pol.psadmin.Users = class extends pol.core.Widget {
                 
         t.groups = {    
             view: function() {
-                return m("select#group", {onchange: selectHandler }, t.groupList
+                return m("select#pgroup", {onchange: selectHandler }, t.groupList
                     .map( x => m("option", {value: x.ident }, x.ident) ));
             }
         }
@@ -189,10 +189,11 @@ pol.psadmin.Users = class extends pol.core.Widget {
         
         
         function selectHandler() {
-            t.group = $("select#group").val();
+            t.group = $("select#pgroup").val();
             for (const x of t.groupList)
                 if (x.ident==t.group)
                     t.selGroup = x.name;
+            console.log("GROUP/SELGROUP: ", t.group, t.selGroup);
             m.redraw();
         }
         
@@ -203,6 +204,8 @@ pol.psadmin.Users = class extends pol.core.Widget {
             for (const x of t.groupList)
                 if (x.ident==t.altgroup)
                     t.selAGroup = x.name;
+            
+            console.log("GROUP/SELGROUP: ", t.altgroup, t.selAGroup);
             m.redraw();
         }
         
@@ -295,7 +298,7 @@ pol.psadmin.Users = class extends pol.core.Widget {
             t.admin = u.admin;
             t.suspend = u.suspend;
             setTimeout(()=> {
-                $("select#group").val(t.group).trigger("change");
+                $("select#pgroup").val(t.group).trigger("change");
                 $("select#agroup").val(t.altgroup).trigger("change");
             }, 100);
         }
@@ -329,7 +332,7 @@ pol.psadmin.Users = class extends pol.core.Widget {
         this.suspend = false;
         m.redraw();          
         setTimeout(()=> {
-            $("select#group").val(this.group).trigger("change");
+            $("select#pgroup").val(this.group).trigger("change");
             $("select#agroup").val(this.altgroup).trigger("change");
         }, 100);
     }
