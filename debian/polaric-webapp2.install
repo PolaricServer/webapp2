@@ -1,1 +1,1 @@
- debian/misc/aprs.conf  etc/apache2/sites-available
+ debian/misc/aprs_ssl.conf  etc/apache2/sites-available

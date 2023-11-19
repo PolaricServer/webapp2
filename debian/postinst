@@ -15,9 +15,17 @@ case "$1" in
         
         a2enmod expires > /dev/null 2>&1
         a2enmod deflate > /dev/null 2>&1
+        a2enmod ssl > /dev/null 2>&1
+        a2enmod proxy > /dev/null 2>&1
+        a2enmod proxy_http > /dev/null 2>&1
+        a2enmod proxy_wstunnel > /dev/null 2>&1
         
-        if [[ ! -f "/etc/apache2/sites-enabled/aprs.conf" ]]; then
-            a2ensite aprs.conf > /dev/null 2>&1 
+        if [[ -f "/etc/apache2/sites-enabled/aprs.conf" ]]; then
+            a2dissite aprs.conf > /dev/null 2>&1
+        fi
+        
+        if [[ ! -f "/etc/apache2/sites-enabled/aprs_ssl.conf" ]]; then
+            a2ensite aprs_ssl.conf > /dev/null 2>&1 
         fi
         if [ ! "$DOCKER_BUILD" = true ]; then
             apache2ctl restart

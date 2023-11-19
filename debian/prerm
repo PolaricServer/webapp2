@@ -6,7 +6,7 @@ set -e
 case "$1" in
 
     remove|purge)
-        a2dissite aprs.conf > /dev/null 2>&1
+        a2dissite aprs_ssl.conf > /dev/null 2>&1
         apache2ctl reload > /dev/null 2>&1 || true
 
         if [[ -L "/usr/share/polaric/icons" ]]; then
