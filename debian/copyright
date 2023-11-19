@@ -9,15 +9,15 @@ Copyright: 2019 Øyvind hanssen <ohanssen@acm.org>
 License: AGPL version 3
 (see https://www.gnu.org/licenses/agpl-3.0.html)
 
-Files: lib/jquery.min.js
-Copyright: jQuery Foundation and other contributors
-License: MIT license
-(see https://github.com/jquery/jquery/blob/master/LICENSE.txt)
-
 Files: lib/ol.js
 Copyright: 2005-present, OpenLayers Contributors All rights reserved.
 Licence: BSD 2-Clause License
 (see https://github.com/openlayers/openlayers/blob/master/LICENSE.md)
+
+Files: lib/jquery.min.js
+Copyright: jQuery Foundation and other contributors
+License: MIT license
+(see https://github.com/jquery/jquery/blob/master/LICENSE.txt)
 
 Files: lib/jquery-ui.min.js
 Copyright: jQuery Foundation and other contributors
