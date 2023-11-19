@@ -12,10 +12,18 @@
  * Uncomment to use aprs.no as a backend. 
  * Default is to use the location of the webapp. 
  */
-//SERVER("https://aprs.no");
+// SERVER("https://aprs.no");
+
+
+/*
+ * Port number if different from the standard port 80. 
+ * Uncomment this if using the backend-server directly on port 8081
+ */
+// PORT(8081);
+
 
 /* 
- * If backend server is using HTTPS, uncomment this
+ * If using backend server directly with HTTPS, uncomment this
  */
 // SECURE(true);
 
@@ -28,8 +36,8 @@
  * aprs.no uses "ws" and "srv" through a proxy. Default is to use a separate port: 8081. 
  * Uncomment the following two lines to use a backend with a proxy. 
  */
-// WSPREFIX("ws");
-// AJAXPREFIX("srv");
+WSPREFIX("ws");
+AJAXPREFIX("srv");
 
 
 /* Location of aprsd icons */
