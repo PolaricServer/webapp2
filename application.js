@@ -42,7 +42,6 @@
     setTimeout(pol.widget.restore, 1500);
     $('#map').append('<img class="logo" src="'+CONFIG.get('logo')+'">"');
 
-
     
     /* Instantiation of server - we use the server-manager so we more easily can 
      * replace the instance. 
@@ -55,12 +54,17 @@
             srv.onStart( ()=> {
                 CONFIG.tracks = new pol.tracking.Tracking(srv, (hires? 1.4 : 1) );  
                 CONFIG.filt = new pol.tracking.Filters(CONFIG.tracks);
-        
+                
+                /* Log base layer selection */ 
+               //  setTimeout(()=> CONFIG.tracks.reportLayer(CONFIG.mb.baseLayerName), 2000);
+                CONFIG.mb.setBaseLayerCb( (x)=> { CONFIG.tracks.reportLayer(x) } ) ;
+
                 /* Add items to toolbar */
                 if (!tbar) { 
                     CONFIG.filt.addToolbarMenu();
                     CONFIG.mb.toolbar.addSection(3);
-                    CONFIG.mb.toolbar.addIcon(3, "images/locked.png", "toolbar_login", null, "Log in");
+                    CONFIG.mb.toolbar.addIcon(3, "images/locked.png", "toolbar_login", 
+                       ()=> WIDGET("tracking.Login", [230,30], true) , "Click to log in");
                     CONFIG.mb.toolbar.addIcon(3, "images/sar.png", "sarmode");
                     tbar = true; 
                 }
@@ -85,7 +89,6 @@
                     /* Notifier is used only when logged in. 
                     * FIXME: Do this after websocket connection is restored.
                     */
-                    console.log("ADDING NOTIFIER");
                     CONFIG.notifier = this.not = new pol.tracking.Notifier();
                 }, 
                 (err)=> {
@@ -220,7 +223,6 @@
     
     browser.ctxMenu.addCallback("SYSADMIN", (m, ctxt)=> {  
         if (srv.auth.admin) {
-            m.add('Backend server',  () => WIDGET("psadmin.backendServer", [50,70], true));
             m.add("Status info", () => WIDGET("psadmin.StatusInfo", [50, 70], true));
             m.add(null);
             m.add("User admin..", () => WIDGET("psadmin.Users", [50, 70], true));
