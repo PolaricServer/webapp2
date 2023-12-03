@@ -316,10 +316,12 @@ pol.tracking.PolaricServer = class extends pol.core.Server {
             },
             
             (xhr, st, err) => {
-                this.authOk = false;
-                this.doAuthCb();
-                if (this.logoutcb != null)
-                    this.logoutcb(err);
+                if (this.authOk) {
+                    this.authOk = false;
+                    this.doAuthCb();
+                    if (this.logoutcb != null)
+                        this.logoutcb(err);
+                }
                 this.loginStatus2();
             });
     }

@@ -206,6 +206,12 @@ pol.tracking.Tracking = class {
     }
 
     
+    reportLayer(ly) {
+        if (this.isConnected())
+            this.producer.reportLayer(ly);
+    }
+    
+    
     close() {
         this.clear();
         this.producer.close(); 

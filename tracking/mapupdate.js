@@ -1,5 +1,5 @@
 /*
- Map browser based on OpenLayers 5. Tracking. 
+ Map browser based on OpenLayers. Tracking. 
  Websocket connection with Polaric Server backend. 
  
  Copyright (C) 2017-2023 Øyvind Hanssen, LA7ECA, ohanssen@acm.org
@@ -78,7 +78,10 @@ pol.tracking.MapUpdate = class {
                 t.retry = -1;  t.cretry = 0;
                 if (t.kalive!=null)
                     clearInterval(t.kalive);
-                t.kalive = setInterval(()=> t.websocket.send("****"), 120000);
+                t.reportLayer(CONFIG.mb.baseLayerName);
+                t.kalive = setInterval(()=> { 
+                    t.websocket.send("****");
+                }, 120000);
             };
             
   
@@ -99,11 +102,11 @@ pol.tracking.MapUpdate = class {
             t.websocket.onclose = function(evt) {
                 clearInterval(t.kalive);
                 if (t.closed) {
-                    console.log("Connection closed");
+                    console.log("Connection closed", new Date());
                     return;
                 }
                 else
-                    console.log("Lost connection to server (for tracking overlay): ", evt.code, evt);
+                    console.log("Lost connection to server (for tracking overlay): ", evt.code);
                 closeHandler();
                 if (evt.code==1000)
                     normalRetry();
@@ -114,7 +117,7 @@ pol.tracking.MapUpdate = class {
    
             /** Socket error handler */
             t.websocket.onerror = function(evt) { 
-                console.log("Server connection error (tracking overlay): ", evt.code);
+                console.log("Server connection error (tracking overlay): ");
                 clearInterval(t.kalive);
                 errorRetry();
                 closeHandler();
@@ -160,7 +163,7 @@ pol.tracking.MapUpdate = class {
     
     isConnected() {
         return (this.websocket != null 
-            && this.websocket.readyState === Websocket.OPEN);
+            && this.websocket.readyState === WebSocket.OPEN);
     }
     
     /** 
@@ -171,6 +174,14 @@ pol.tracking.MapUpdate = class {
         this.websocket.close();
     }
 
+    
+    
+    reportLayer(ly) {
+        var msg = 'BASELAYER,'+ly;
+        this.websocket.send(msg);
+    }
+    
+    
     
     /** 
      * Subscribe to updates from the server 

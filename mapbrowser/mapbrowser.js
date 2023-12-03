@@ -1,5 +1,5 @@
  /*
-    Map browser based on OpenLayers 5. 
+    Map browser based on OpenLayers. 
     Copyright (C) 2017-2023 Øyvind Hanssen, LA7ECA, ohanssen@acm.org
     
     This program is free software: you can redistribute it and/or modify
@@ -43,9 +43,11 @@ pol.core.MapBrowser = class {
         t.toolbar = new pol.core.Toolbar({}, t);
         t.attribution = new ol.control.Attribution({collapsed: false}); 
         t.permaLink = false; 
+        t.baseLayerCb = null;
+        t.baseLayerName = null;
         
         let counter = t.config.get("_counter_", 0);
-        if (counter<=0 || counter > 500) {
+        if (counter<=0 || counter > 600) {
             console.log("Clear local storage");
             t.config.clear(); 
             counter = 0;
@@ -55,12 +57,24 @@ pol.core.MapBrowser = class {
         
         
         
-        /* Get info about resolution, center of map, etc. from local storage */
-        var resolution = t.config.get('core.resolution');
-        var center = t.config.get('core.center');
-        var rotation = 0;       
-        t.config.set('core.baselayer', 0);
-        t.baseLayerIdx = t.config.get('core.baselayer');
+        /* Get info about resolution, center of map, etc. from session/local storage */
+   
+        let prefix = 'core';
+//        t.config.set(prefix+'.baselayer', -1);
+        t.baseLayerIdx = t.config.get(prefix+'.baselayer');
+//        t.config.set(prefix+'.baselayer', 0);
+        if (t.baseLayerIdx == null)
+            prefix = 'core.p';
+        t.baseLayerIdx = t.config.get(prefix+'.baselayer');
+        if (t.baseLayerIdx == null)
+            t.baseLayerIdx = 0;
+        t.baseLayerName = this.config.baseLayers[t.baseLayerIdx].values_.name;
+        prefix = "core";
+        
+        var resolution = t.config.get(prefix+'.resolution');
+        var center = t.config.get(prefix+'.center');
+        var rotation = 0;    
+        
         
         if (window.location.hash !== '') {
             // try to restore center, zoom-level and rotation from the URL
@@ -80,7 +94,7 @@ pol.core.MapBrowser = class {
         }
         
         /* OpenLayers view */
-        const proj = t.config.get('core.projection');
+        let proj = t.config.get(prefix+'.projection');
         
         console.log("PROJ=", proj);
         
@@ -179,10 +193,10 @@ pol.core.MapBrowser = class {
         t.config.storeSes('core.resolution', t.view.getResolution());
             
         /* Store persistently */
-        t.config.store("core.projection", t.view.getProjection().getCode());
-        t.config.store('core.center', 
+        t.config.store("core.p.projection", t.view.getProjection().getCode());
+        t.config.store('core.p.center', 
             ol.proj.toLonLat(t.view.getCenter(), t.view.getProjection())); 
-        t.config.store('core.resolution', t.view.getResolution());
+        t.config.store('core.p.resolution', t.view.getResolution()); 
     }
     
     
@@ -287,6 +301,8 @@ pol.core.MapBrowser = class {
     changeBaseLayer(idx) {
         console.assert(idx >= 0 && idx <= this.config.baseLayers.length, "idx="+idx);
         const ls = this.config.baseLayers[idx];
+        this.baseLayerName = ls.values_.name;
+        
         if ( !ls || ls==null)
             return;
 
@@ -304,10 +320,17 @@ pol.core.MapBrowser = class {
         if (proj != this.view.getProjection())
             this.changeView(proj)
         
-        this.config.store('core.baselayer', this.baseLayerIdx = idx);
+        if (this.baseLayerCb != null)
+            this.baseLayerCb(ls.values_.name);
+        this.config.storeSes('core.baselayer', this.baseLayerIdx = idx);
+        this.config.store('core.p.baselayer', this.baseLayerIdx);
     }
  
  
+    setBaseLayerCb(f) {
+        this.baseLayerCb = f;
+    }
+    
  
  
     /**
