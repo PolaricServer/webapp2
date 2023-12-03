@@ -179,7 +179,7 @@ pol.psadmin.ServerConfig = class extends pol.core.Widget {
             t.server.PUT("system/adm/server", JSON.stringify(data), 
                 x => {
                     console.log("Update succeeded");
-                    t.successMsg("Update succeeded. Reboot may be necessary", 10000);
+                    t.successMsg("Update succeeded. Restart of aprsd may be necessary", 10000);
                     m.redraw();
                     
                 },
