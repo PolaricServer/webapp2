@@ -398,25 +398,14 @@ STYLES ([
  * Extents are upper left corner (1) and lower right corner (2) in decimal degrees
  * [longitude-1, latitude-1, longitude-2, latitude-2]
  * 
- * This example lists the norwegian counties. Change to satisfy your own need.
+ * This is an example with 3 areas in Scandinavia
  ***************************************************************************************/
 
 var defaultView = 'default';
 VIEWS ([
-   { name: 'finnm',     title: 'Finnmark',        extent: [19.006, 68.064, 33.848, 71.662] },
-   { name: 'troms',     title: 'Troms',           extent: [15.549, 68.641, 22.454, 70.196]  },
-   { name: 'nordl',     title: 'Nordland',        extent: [8.242, 65.462, 20.91, 68.301] },
-   { name: 'ntrond',    title: 'Trøndelag',       extent: [ 9.0436, 62.1, 15.3995, 64.8541] },
-   { name: 'moreroms',  title: 'Møre og Romsdal', extent: [ 3.5993, 61.5234,  9.7916, 63.3084] },
-   { name: 'sognf',     title: 'Sogn og fjordane',extent: [ 2.8448, 60.4411,  8.8474, 62.2549] },
-   { name: 'hordal',    title: 'Hordaland',       extent: [ 3.1295, 59.3777,  8.9257, 61.1814] },
-   { name: 'agrog',     title: 'Agder/Rogaland',  extent: [4.508,57.965,9.311,59.645]},
-   { name: 'tele',      title: 'Telemark',        extent: [ 7.4777, 58.7404, 10.2363, 59.5893] },
-   { name: 'hardanger', title: 'Hardangervidda/Buskerud', extent: [ 6.4033, 59.3222, 12.0772, 61.0049] },
-   { name: 'oslofj',    title: 'Østfold/Vestfold (Viken)',extent: [ 7.8612, 58.8272, 13.3971, 60.4553] },
-   { name: 'osloaker',  title: 'Oslo/Akershus',   extent: [ 9.3833, 59.3858, 12.161,  60.1985] },
-   { name: 'hedopp',    title: 'Hedmark/Oppland', extent: [ 8.2261, 59.8479, 13.9201, 61.4599] },
-   { name: 'default',   title: 'Default',         extent: [ -16.0421, 56.929, 43.2233, 67.989], hidden: true }
+   { name: 'oslo',       title: 'Oslo',       extent: [ 9.3833, 59.3858, 12.161,  60.1985] },
+   { name: 'stockholm',  title: 'Stockholm',  extent: [15.181, 58.599, 19.942, 59.956]},
+   { name: 'copenhagen', title: 'Copenhagen', extent: [11.321, 55.349, 13.379, 55.996] }
 ]);
 
 
