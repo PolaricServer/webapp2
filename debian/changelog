@@ -1,3 +1,18 @@
+polaric-webapp2 (3.0) stable; urgency=medium
+
+  * Some minor icon updates
+  * Improve support for mobile devices
+  * New Authentication scheme (HMAC based)
+  * Improvements to websocket clients
+  * Client code for server-admin (based on new API)
+  * Allow setting alternative servers dynamically
+  * OpenLayers to 7.5.2, proj4.js to 2.9.2
+  * Use jquery libs from deb packages
+  * Move default app-setup out of examples directory
+  * Many updates and fixes...
+
+ -- Oyvind Hanssen <ohanssen@acm.org>  Mon, 04 Dec 2023 21:50:00 +0100
+
 polaric-webapp2 (1.11) stable; urgency=medium
 
   * Update libraries (OL to version 7.3, etc)
