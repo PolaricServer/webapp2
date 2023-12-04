@@ -397,7 +397,7 @@ pol.psadmin.Channels = class extends pol.core.Widget {
             }
             srv.PUT("system/adm/channels/"+t.name(), JSON.stringify(t.ch), 
                     ()=> {
-                        console.log("Channel updated: "+t.name(), t.ch);
+                        console.log("Channel updated: "+t.name());
                         t.successMsg("Channel updated", 10000);
                         t.getObjects() 
                     }, 

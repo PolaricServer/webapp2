@@ -1,7 +1,7 @@
 /*
  Map browser based on OpenLayers 5. 
  
- Copyright (C) 2017-2018 Øyvind Hanssen, LA7ECA, ohanssen@acm.org
+ Copyright (C) 2017-2023 Øyvind Hanssen, LA7ECA, ohanssen@acm.org
  
  This program is free software: you can redistribute it and/or modify
  it under the terms of the GNU Affero General Public License as published 
@@ -130,13 +130,10 @@ pol.core.AreaList = class extends pol.core.Widget {
             const srv = CONFIG.server; 
             if (srv != null && srv.isAuth() && srv.hasDb)
                 srv.putObj("area", area, i => { 
-                    area.index = i;
-                    area.server = true;    
-                    t.myAreas.push(area);
-                    m.redraw();
+                    t.getMyAreas();
                 });
             else
-                console.warn("Not logged in or server doesn't support storage");
+                console.warn("Not logged in to server");
         }
    
     
@@ -187,13 +184,12 @@ pol.core.AreaList = class extends pol.core.Widget {
                         x.noremove = obj.noRemove;
                         t.myAreas.push(x);  
                     }
+                t.myAreas.sort((x,y)=> {return  (x.name < y.name ? -1 : 1) });
                 m.redraw();
             }); 
         }
         else
-            console.warn("Not logged in or server doesn't support storage");
-
-        
+            console.warn("Not logged in to server");
     }
     
     

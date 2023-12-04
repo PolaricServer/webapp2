@@ -106,7 +106,7 @@ pol.core.Toolbar = class extends ol.control.Control  {
       
                 if (w.myAreas.length > 0)
                     m.add(null);
-                if (CONFIG.server!=null && CONFIG.server.isAuth() ) {
+                if (CONFIG.server!=null && CONFIG.server.isAuth() && CONFIG.server.hasDb) {
                     m.add("Edit YOUR areas..", ()=> WIDGET("core.AreaList", [90,70], true)); 
                     m.add(null);
                 }

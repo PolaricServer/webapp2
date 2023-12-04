@@ -84,10 +84,10 @@ const textInput = {
  
     view: function(vn) {
         var t = this;
-        var type = (!vn.attrs.passwd || vn.attrs.passwd==false ? "text" : "password");
+        var ttype = (vn.attrs.passwd==true ? "password" : "text");
  
         return m("input#"+vn.attrs.id, 
-        { type: type, list: vn.attrs.list, config: vn.attrs.config, size: vn.attrs.size, maxLength: vn.attrs.maxLength, 
+        { type: ttype, list: vn.attrs.list, config: vn.attrs.config, size: vn.attrs.size, maxLength: vn.attrs.maxLength, 
           contentEditable: (vn.attrs.contentEditable ? vn.attrs.contentEditable : true),
                 
             oninput: function(ev) {

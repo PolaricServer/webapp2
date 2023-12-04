@@ -225,7 +225,7 @@ pol.tracking.NotifyList = class extends pol.core.Widget {
         
         /* 
          * Select the icon from the type of notification. 
-         * Type can be 'loc', 'check', 'chat', 'mail, 'system', 'error', 'alert' or 'info' (default) 
+         * Type can be 'loc', 'check', 'chat', 'mail', 'system', 'error', 'alert' or 'info' (default) 
          */
         function icon(type) {
             if (type==='loc') return 'images/32px/loc.png';

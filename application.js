@@ -30,9 +30,7 @@
     * Read the URL GET parameters
     */
     var urlArgs = getParams(window.location.href);
-    if (urlArgs['car'] != null) 
-        CONFIG.store('display.in-car', true);
-      
+
    
     /* 
      * Instantiate the map browser and try to restore widgets from a previous session. 
@@ -56,7 +54,6 @@
                 CONFIG.filt = new pol.tracking.Filters(CONFIG.tracks);
                 
                 /* Log base layer selection */ 
-               //  setTimeout(()=> CONFIG.tracks.reportLayer(CONFIG.mb.baseLayerName), 2000);
                 CONFIG.mb.setBaseLayerCb( (x)=> { CONFIG.tracks.reportLayer(x) } ) ;
 
                 /* Add items to toolbar */
@@ -183,7 +180,7 @@
     browser.ctxMenu.addCallback("MAP", (m, ctxt)=> {
         
         m.add('Show map reference', () => browser.show_MaprefPix( [m.x, m.y] ) );  
-        if (!phone && srv.auth.sar) {
+        if (!phone && (srv.auth.sar || srv.auth.admin)) {
             m.add('Add APRS object', () => 
                 WIDGET("tracking.OwnObjects", [50,70], true, x=> x.setPosPix([m.x, m.y]))); 
                         
@@ -244,7 +241,10 @@
    
     browser.ctxMenu.addCallback("TOOLBAR", (m, ctxt)=> {   
         
-        
+        if (developer_mode) {
+            m.add('Test REST API',  () => WIDGET("psadmin.TestRest", [50,70], true));
+            m.add(null);
+        } 
         if (developer_mode) {
             m.add('Test REST API',  () => WIDGET("psadmin.TestRest", [50,70], true));
             m.add(null);
@@ -259,7 +259,7 @@
                 WIDGET("tracking.OwnObjects", [50,70], true)); 
         }
         if (!phone) {
-            if (srv.isAuth()) {
+            if (srv.isAuth() && srv.hasDb) {
                 m.add('Area List',  () => WIDGET("core.AreaList", [50,70], true)); 
                 m.add('Layer List', () => WIDGET("layers.List", [50,70], true));
             }    
@@ -274,19 +274,14 @@
         m.add(null);
      
         if (!phone && srv.auth.admin) {
-            m.add("System Admin...   >>", ()=>  
+            m.add("System Admin:   ->>", ()=>  
                 CONFIG.mb.ctxMenu.showOnPos(
                 { name: "SYSADMIN"}, [40,30])); 
         }
         
         if (srv.isAuth()) {
             m.add("Set/change password..", () => WIDGET("psadmin.Passwd", [50,70], true));
-        }
-        
-        if (srv.auth.admin || srv.auth.sar) {
             m.add(null);
-            m.add("SAR mode..", () => WIDGET("tracking.SarMode", [50,70], false)); 
-                m.add(null);
         }
         
         if (srv.isAuth()) {
@@ -296,7 +291,8 @@
         
         if (srv.hasDb) {
             if (!phone) {
-                m.add("Signs...", () => WIDGET("tracking.db.Signs", [50,70], true));
+                if (srv.auth.sar || srv.auth.admin)
+                    m.add("Signs...", () => WIDGET("tracking.db.Signs", [50,70], true));
                 m.add("History...", () => WIDGET("tracking.db.History", [50,70], true)); 
                 m.add("Heard points via..", () => WIDGET("tracking.db.HeardVia", [50,70], true));
             }    
@@ -464,7 +460,3 @@
         return params;
     };
 
-    function startKodi() { fetch('/cgi-bin/kodi'); }
-    function chromeExit() { fetch('/cgi-bin/exit'); }
-    function adjustBacklight() { fetch('/cgi-bin/backlight'); }
-    

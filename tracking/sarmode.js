@@ -39,11 +39,13 @@ pol.tracking.SarMode = class extends pol.core.Widget {
         t.prefix = m.stream("");
         t.descr = m.stream("");
         t.conf = ""; 
-        
+        let errmsg = null;
+                
         this.widget = {
             view: ()=> {
                 return m("div", [
                     m("h1", "Search and Rescue mode"),
+                    (t.errmsg != null ? m("div#errmsg", t.errmsg) : null),
                     m("form.sar", [ 
                         m("div.field", 
                             m("span.sleftlab", "Sar mode: "),
@@ -73,7 +75,8 @@ pol.tracking.SarMode = class extends pol.core.Widget {
             }
         };
             
-        
+        t.errMsg("Deprecated - Sar mode will be removed soon", 60000); 
+         
         t.authCb = CONFIG.server.addAuthCb( ()=> {
             if (!CONFIG.server.isAuth())
                 t.closePopup();

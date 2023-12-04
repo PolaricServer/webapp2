@@ -47,7 +47,7 @@ pol.core.MapInfo = class extends pol.core.Widget {
                     m("div.field", 
                         m("span.sleftlab", "Resolution:"),
                         m("span", round3d(CONFIG.mb.getResolution())), nbsp,
-                        m("span", "(zoom "+CONFIG.mb.view.getZoom()+")" )
+                        m("span", "(zoom "+ Math.round(CONFIG.mb.view.getZoom()*1000)/1000+")" )
                     ),
                     m("div.field", 
                         m("span.sleftlab", "Scale:"),
@@ -99,6 +99,8 @@ pol.core.MapInfo = class extends pol.core.Widget {
                          ()=> alert("Couldn't start tile downloading on server") ); 
             }
         }
+        
+        getWIDGET("core.LayerSwitcher");
         
         function res_limit() {
             return CONFIG.mb.getBaseLayer().values_.max_res;

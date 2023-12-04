@@ -102,7 +102,7 @@ pol.tracking.MapUpdate = class {
             t.websocket.onclose = function(evt) {
                 clearInterval(t.kalive);
                 if (t.closed) {
-                    console.log("Connection closed", new Date());
+                    console.log("Connection closed (for tracking overlay)");
                     return;
                 }
                 else

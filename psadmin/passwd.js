@@ -2,7 +2,7 @@
  Map browser based on OpenLayers 5. Tracking. 
  Search historic data on tracker points on server.  
  
- Copyright (C) 2020 Øyvind Hanssen, LA7ECA, ohanssen@acm.org
+ Copyright (C) 2020-2023 Øyvind Hanssen, LA7ECA, ohanssen@acm.org
  
  This program is free software: you can redistribute it and/or modify
  it under the terms of the GNU Affero General Public License as published 
@@ -32,7 +32,7 @@ pol.psadmin.Passwd = class extends pol.core.Widget {
         var t = this;
         t.server = CONFIG.server;
         t.classname = "psadmin.Passwd"; 
-        t.passwd = m.stream("");
+        t.passwd1 = m.stream("");
         t.passwd2 = m.stream("");
         
         
@@ -43,13 +43,13 @@ pol.psadmin.Passwd = class extends pol.core.Widget {
                     m("h1", "Change your password"), 
                     m("div.field", 
                         m("span.xsleftlab", "Password:"),
-                        m(textInput, { id:"passwd", value: t.passwd, size: 16, 
-                            maxLength:25, regex: /.*/i, passwd: true })),
+                        m(textInput, { id:"passwd1", value: t.passwd1, size: 16, 
+                            maxLength:32, regex: /.*/i, passwd: true })),
                     
                     m("div.field", 
                         m("span.xsleftlab", "Repeat it:"),
                         m(textInput, { id: "passwd2", value: t.passwd2, size: 16,
-                            maxLength: 32, regex: /.*/i, passwd: true })),
+                            maxLength: 32, regex: /.*/i, passwd: false })),
         
                          
                     m("div.butt", [
@@ -59,7 +59,6 @@ pol.psadmin.Passwd = class extends pol.core.Widget {
             }
         };
         
- 
         
         /* Apply a function to an argument. Returns a new function */
         function apply(f, id) {return function() { f(id); }};  
@@ -68,12 +67,12 @@ pol.psadmin.Passwd = class extends pol.core.Widget {
         
         /* Update a user (on server) */
         function update() {
-            if (t.passwd() != t.passwd2()) {
+            if (t.passwd1() != t.passwd2()) {
                 alert("Passwords do not match.");
                 return; 
             }
             const data = {
-                passwd: t.passwd()
+                passwd: t.passwd1()
             };
 
             t.server.PUT("mypasswd", JSON.stringify(data), 
@@ -91,7 +90,14 @@ pol.psadmin.Passwd = class extends pol.core.Widget {
  
     } /* constructor */
 
- 
+    
+    onActivate() {
+        this.passwd1("");
+        this.passwd2("");
+        setTimeout(()=>$("#passwd1").val(""), 100);
+        // Strange bug workaround 
+        m.redraw();
+    }
 
 } /* class */
 
