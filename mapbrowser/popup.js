@@ -206,6 +206,23 @@ pol.core.Popup = class {
             if (props.pin)
                 props.pin(pdiv._pinned); // Pin callback
         }
+        
+        /* If popup moves outside viewport, move it */
+        const observer = new IntersectionObserver(entries => {
+            entries.forEach(entry => {
+                if (!entry.isIntersecting) {
+                    let x = entry.boundingClientRect.x;
+                    let y =  entry.boundingClientRect.y;
+                    if (x > this.onDiv.clientWidth)
+                        x = this.onDiv.clientWidth - pdiv.clientWidth;
+                    if (y > this.onDiv.clientHeight)
+                        y = this.onDiv.clientHeight - pdiv.clientHeight;
+                    setTimeout(()=>this.setPosition_(pdiv, this.image, x, y), 500);
+
+                }
+            });
+        });
+        observer.observe(pdiv);
         return pdiv;
     }
     
