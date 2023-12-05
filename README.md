@@ -1,33 +1,25 @@
 # webapp2
-A re-write of client webapp for Polaric Server. It is mainly dsesigned as a library/application framework that can be instantiated as specific applications, not necessarily only with a "Polaric" backend server. It comes with an example setup as a tracking-application using a Polaric Server backend. Currently, the following modules are being implemented. 
+A client webapp for Polaric Server. It mainly designed as a library/application framework that can be instantiated as specific applications, though it is mainly configured as a tracking-application using a Polaric Server backend. Currently, the following modules are being implemented. 
 
 * Core (mapbrowser). A basic map-browser that can be set up with map layers and with a framework for popup widgets. 
 * Layer Editor. Widgets for letting the user edit his/her own map-layers (currently supporting WFS, WMS and GPX file upload). 
 * Feature Editor. Drawing polygons, lines and circles. Icon markings. Uses aprsd w/database-plugin to store features.
-* Trackers/objects as features in a map-layer. It uses the aprsd backend to get updates wia websocket and JSON. 
+* Trackers/objects as features in a map-layer. It uses the Polaric-aprsd backend to get updates wia websocket and JSON.
+* System-admin utilities for the Polaric-aprsd backend. 
 
-This software is currently running on http://aprs.no. 
+This software is currently running on http://aprs.no. A mobile-app 'Arctic Mapper' is based on the webapp2 code and available on Goggle Play.
 
-## Example applications/setups
+## Example application setup
 
-In the subdirectory 'examples' you find example setups. 'application.js' is used to compose a running application. 'config.js' is used to configure it with map layers, etc. 'index.html' is a starting-point for a minified version. Use 'index-dev.html' for development-mode (and include the source code). 
+The Javscript code in 'application.js' is used to compose a running application. 'config.js' is used to configure it with map layers, etc. 'index.html' is a starting-point for a minified version. Use 'index-dev.html' for development-mode (and include the source code). 
 
-* The 'minimal' directory is a minimal setup with OSM only. 
-* The 'basic' directory is a basic setup with just map browsing. OSM + norwegian map. 
-* The 'polaricserver-nordic' uses a polaric server backend, OSM and norwegian maps. This is rather close to the setup on aprs.no. 
-
-Feel free to experiment with setups.. You may use the script setup.sh to copy files to/from the example directories. 
-
-    ./setup.sh save minimal 
-    
-will save the current application setup in root directory to examples/minimal
+Feel free to experiment with setups. The directory examples may contain alternative applicatiopn configurations. Currently very simple ones without using the Polaric-Server backend. 
   
   
 ## Installing and running 
 
 ### Deb package
-A binary deb package (built on Debian buster) is available. It installs the software assuming that a Polaric-aprsd backend is installed on the same machine. The config files for the webapp and mapcache are placed in /etc/polaric-webapp2. 
-See https://polaricserver.readthedocs.io/en/latest/install.html
+A binary deb package (built on Debian bookworm) is available. It installs the software assuming that a Polaric-aprsd backend is installed on the same machine. The config files for the webapp and mapcache are placed in /etc/polaric-webapp2. See https://polaricserver.readthedocs.io/en/latest/install.html
 
 ### Makefile
 The Makefile is used in building Debian packages, but could be used to install the software directly on your system for use with a Polaric Server backend. Modify the Makefile too your needs first, then type 'make' and 'sudo make install'.
@@ -45,7 +37,7 @@ Edit the file 'config.js' to suit your needs. Here you can set up various map so
 
 ## Hacking
 
-Contributions and hacks are welcome. Or fell free to tell us what you think. It is based on OpenLayers 6 and Ecmascript 6 (2015) version of Javascript and uses namespaces. We hope to migrate to ES6 modules at a later stage. 
+Contributions and hacks are welcome. Or fell free to tell us what you think. It is based on OpenLayers 7 and Ecmascript 6 (2015) version of Javascript and uses namespaces. We hope to migrate to ES6 modules in not too long time. 
   
 ## Licence
 This is free software. License is GNU Affero General Public License. See <http://www.gnu.org/licenses/>.
