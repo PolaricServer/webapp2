@@ -13,7 +13,7 @@ This software is currently running on http://aprs.no. A mobile-app 'Arctic Mappe
 
 The Javscript code in 'application.js' is used to compose a running application. 'config.js' is used to configure it with map layers, etc. 'index.html' is a starting-point for a minified version. Use 'index-dev.html' for development-mode (and include the source code). 
 
-Feel free to experiment with setups. The directory examples may contain alternative applicatiopn configurations. Currently very simple ones without using the Polaric-Server backend. 
+Feel free to experiment with setups. The directory 'examples' may contain alternative application configurations. Currently very simple ones without using the Polaric-Server backend. Feel free to contribute.
   
   
 ## Installing and running 
