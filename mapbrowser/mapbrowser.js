@@ -18,6 +18,36 @@
  
 
 
+pol.core.RotateNorth = class extends ol.control.Control {
+  /**
+   * @param {Object} [opt_options] Control options.
+   */
+  constructor(opt_options) {
+    const options = opt_options || {};
+
+    const button = document.createElement('button');
+    button.innerHTML = 'N';
+
+    const element = document.createElement('div');
+    element.className = 'rotate-north ol-unselectable ol-control';
+    element.appendChild(button);
+
+    super({
+      element: element,
+      target: options.target,
+    });
+
+    button.addEventListener('click', this.handleRotateNorth.bind(this), false);
+  }
+
+  handleRotateNorth() {
+    this.getMap().getView().setRotation(0);
+  }
+}
+
+
+
+
  /**
   * Map browser class. Creates a map browser in the given div element. 
   */
@@ -60,9 +90,7 @@ pol.core.MapBrowser = class {
         /* Get info about resolution, center of map, etc. from session/local storage */
    
         let prefix = 'core';
-//        t.config.set(prefix+'.baselayer', -1);
         t.baseLayerIdx = t.config.get(prefix+'.baselayer');
-//        t.config.set(prefix+'.baselayer', 0);
         if (t.baseLayerIdx == null)
             prefix = 'core.p';
         t.baseLayerIdx = t.config.get(prefix+'.baselayer');
@@ -125,6 +153,7 @@ pol.core.MapBrowser = class {
                 new ol.control.ScaleLine({}),
                 t.mousepos,
                 new ol.control.Zoom({}),
+                new pol.core.RotateNorth(),
                 t.toolbar,
                 t.attribution
             ],
@@ -662,18 +691,33 @@ pol.core.MapBrowser = class {
     }
     
     
-       
+
+    
     /**
      * Show map reference on map. 
      * @param {ol.Coordinate} coord - position to be shown (in latlong projection).
      */
     show_Mapref(coord) {
-        let h = '<div class="field"><span class="sleftlab">UTM:</span>' + pol.mapref.formatUTM(coord) +'</div>' +
-                  '<div class="field"><span class="sleftlab">Latlong:</span>' + pol.mapref.formatDM(coord) +'</div>'  + 
-                  '<div class="field"><span class="sleftlab">Loc:</span>' + pol.mapref.formatMaidenhead(coord)+"</div>"; 
+        let showDD = false;
+               
+        const mapRef = {
+            view: () => {
+                return m("div", [
+                    m("div.field", m("span.sleftlab", "UTM: "), m.trust( pol.mapref.formatUTM(coord))),
+                    m("div.field", 
+                       m("span.sleftlab", {onclick:()=>{showDD = !showDD; m.redraw()}}, "LatLong: " ),
+                       (showDD ? m.trust(pol.mapref.formatDD(coord)) : m.trust(pol.mapref.formatDM(coord)) )
+                    ),
+                    m("div.field", m("span.sleftlab", "Loc: "), m.trust( pol.mapref.formatMaidenhead(coord))),
+                ] );
+            }
+        }
+        
+        let h = '<div id="mapref"></div>';
         this.gui.removePopup();       
         this.gui.showPopup( 
             {html: h, geoPos: coord, image: true} );
+        m.mount(document.getElementById("mapref"), mapRef);
     }
 
 

@@ -49,11 +49,12 @@
 .toolbar>div {height: 32px;float: left; display: inline; margin-right: 11px}
 
 
-.ol-zoom {
-    top:60px;
+.ol-zoom, .rotate-north {
+    top:4em;
     left: 10px;
     background: #aaa;
     box-shadow: 1px 1px 12px #797;
+    z-index: +1;
 }
 
 .ol-zoom:hover {
@@ -62,6 +63,16 @@
 
 .ol-zoom button {
     color: blue !important;
+}
+
+.rotate-north {
+    top: 8.9em;
+    border: none;
+}
+      
+.rotate-north button {
+    color: blue !important;
+    border-radius: 3px;
 }
 
 
