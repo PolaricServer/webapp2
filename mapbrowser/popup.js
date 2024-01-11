@@ -234,9 +234,10 @@ pol.core.Popup = class {
      * @param {string} title - heading text. 
      * @param {string} href - URL of image
      */
-    imagePopup(title, href, props) 
+    imagePopup(title, href, props, heading) 
     {
         props.html = '<h1 class="popupimg">'+title+'</h1>' +
+                     (heading!=null ? heading : "") + 
                      '<img class="popupimg" src="'+href.substring(2)+'"/>';
         const d =  this.showPopup(props);
         return d;

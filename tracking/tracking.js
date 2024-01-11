@@ -226,12 +226,21 @@ pol.tracking.Tracking = class {
         
         const widget =  {
             view: function() {
-                return m("div", [
+                return m("div.pointlist", [
                     m("table.items", points.map( x => { 
-                        return m("tr", [ m("td", { 
-                            onclick: function(e) 
-                                {t.redrawFeature(x.getId()); showContext(e, x); }
-                        }, x.alias), m("td", m.trust(x.point.title)) ] ); }))
+                        let lbl = (x.alias != null ? x.alias : 
+                            (x.point.href[0]=='P' ? "(image)" : "(point)"));
+                        if (x.point.type != null)
+                            lbl = x.point.type;
+                        let title = x.point.title.substring(0, 64);
+                        if (title.length==64)
+                            title += "..";
+                        
+                        return m("tr", { onclick: e => 
+                               { t.redrawFeature(x.getId()); showContext(e, x); } },
+                            [ m("td", lbl ), 
+                              m("td", m.trust(title)) 
+                            ] ); }))
                 ])
             }
         }

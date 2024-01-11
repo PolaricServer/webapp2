@@ -354,6 +354,15 @@ pol.tracking.PolaricServer = class extends pol.core.Server {
    
    
    
+    getPhoto(ident, func) {
+        this.GET("photos/"+ident, "", x => { 
+            const photo = JSON.parse(x);
+            func(photo);
+        } );
+    }
+    
+   
+   
     /** 
      * Get info about point from server and show in popup.  
      * FIXME: Move this somewhere else? 
@@ -361,10 +370,20 @@ pol.tracking.PolaricServer = class extends pol.core.Server {
     infoPopup(p, pixel) {
         console.assert(p!=null, "Assertion failed");
         CONFIG.mb.gui.removePopup();
+        
         if (pol.tracking.isSign(p)) {
+            console.log("INFO POPUP: ", p.point);
             if (p.point.href.indexOf("P:") === 0)
+                /* Show image */
                 CONFIG.mb.gui.imagePopup(p.point.title, p.point.href, 
-                {id: "imagepopup",  pixPos: (this.phone ? [0,0] : pixel)  });
+                {draggable: true, id: "imagepopup",  pixPos: (this.phone ? [0,0] : pixel)  });
+            
+            else if (p.point.type === "photo")
+                /* Show user uploaded image */
+                this.getPhoto(p.point.ident.substring(5), (ph) => {
+                    CONFIG.mb.gui.imagePopup(ph.descr+" - "+formatDTG(ph.time), "  data:image/jpeg;base64, "+ph.image, 
+                      {draggable: true,  id: "imagepopup",  pixPos: (this.phone ? [0,0] : pixel)  } );
+                });
             else
                 CONFIG.mb.gui.showPopup({
                     pixPos: pixel, 

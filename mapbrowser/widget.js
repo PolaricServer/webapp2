@@ -3,7 +3,7 @@
  Map browser based on OpenLayers 5. 
  Superclass for widgets in draggable popup windows. 
  
- Copyright (C) 2017-2023 Øyvind Hanssen, LA7ECA, ohanssen@acm.org
+ Copyright (C) 2017-2024 Øyvind Hanssen, LA7ECA, ohanssen@acm.org
  
  This program is free software: you can redistribute it and/or modify
  it under the terms of the GNU Affero General Public License as published 
@@ -134,6 +134,7 @@ pol.core.Widget = class {
         this.rs_to = null;
         this.rs_func = null;
         this.rs_first = true; 
+        
         this.rs_ro = new ResizeObserver( entries => {
             for (let entry of entries) {
                 if (this.rs_running && this.rs_to!=null)
@@ -157,6 +158,7 @@ pol.core.Widget = class {
     
     successMsg(msg, time) {
         this.successmsg = msg;
+        // this.waitmsg = this.errmsg = null;
         if (time > 0) 
             setTimeout(()=>{this.successmsg = null}, time);
         m.redraw();
@@ -164,11 +166,19 @@ pol.core.Widget = class {
     
     errMsg(msg, time) {
         this.errmsg = msg;
+        this.waitmsg = this.successmsg = null;
         if (time > 0) 
             setTimeout(()=>{this.errmsg = null}, time);
         m.redraw();
     }
     
+    waitMsg(msg, time) {
+        this.waitmsg = msg;
+        this.errmsg = this.successmsg = null;
+        if (time > 0) 
+            setTimeout(()=>{this.waitmsg = null}, time);
+        m.redraw();
+    }
     
     resizeObserve(func) {
         this.rs_ro.observe($("#map").get(0));

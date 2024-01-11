@@ -327,9 +327,11 @@ select#group {width: 9em}
 .headerEdit {margin-top: 0.1em; margin-bottom: 0.1em}
 span.plus {font-weight: bold; font-size: 140%; color: blue}
 
+div#waitmsg {color: #500; margin-left:1em; margin-right: 1em; margin-bottom: 0.6em; background: #fe7}
 div#errmsg {color: #500; margin-left:1em; margin-right: 1em; margin-bottom: 0.6em; background: #fdd}
 div#successmsg {color: #040; margin-left:1em; margin-right: 1em; margin-bottom: 0.6em; background: #cfc}
-div#errmsg, div#successmsg {border: 2px dotted; padding: 0.5em; padding-top: 0.3em}
+
+div#errmsg, div#successmsg, div#waitmsg {border: 2px dotted; padding: 0.5em; padding-top: 0.3em}
 div#serverConfig, div#ownposConfig {min-width: 30em}
 div#channels {min-width: 25em}
 span.symselect {display: contents}
@@ -357,3 +359,6 @@ input[type="radio"] {transform: scale(1.15)}
    margin: 0.3em; margin-left: 0.5em;
    transform-origin: center;  
 }
+
+.pointlist {margin: -0.4em}
+.pointlist td {border: solid 2px #aca;}

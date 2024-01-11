@@ -32,7 +32,11 @@ pol.mapref.formatDM = function(ref) {
               lonD+"\u00B0 " + Math.round((Math.abs(ref[0])-lonD)*6000)/100+"\' " + 
                 (ref[0]<0 ? "W" : "E") ;
 }
-  
+
+pol.mapref.formatDD = function(ref) {
+       return Math.round(ref[1]*10000)/10000 + ",&nbsp;" + 
+              Math.round(ref[0]*10000)/10000 ;
+} 
   
   
 /**
