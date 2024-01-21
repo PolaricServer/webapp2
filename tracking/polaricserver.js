@@ -101,6 +101,11 @@ pol.tracking.PolaricServer = class extends pol.core.Server {
     }
     
     
+    getRole() {
+        if (this.temp_role != null)
+            return this.temp_role; 
+        return this.auth.groupid;
+    }
     
     
     /* 
@@ -355,7 +360,7 @@ pol.tracking.PolaricServer = class extends pol.core.Server {
    
    
     getPhoto(ident, func) {
-        this.GET("photos/"+ident, "", x => { 
+        this.GET((this.isAuth() ? "" : "open/") + "photos/"+ident, "", x => { 
             const photo = JSON.parse(x);
             func(photo);
         } );
@@ -372,18 +377,20 @@ pol.tracking.PolaricServer = class extends pol.core.Server {
         CONFIG.mb.gui.removePopup();
         
         if (pol.tracking.isSign(p)) {
-            console.log("INFO POPUP: ", p.point);
             if (p.point.href.indexOf("P:") === 0)
                 /* Show image */
                 CONFIG.mb.gui.imagePopup(p.point.title, p.point.href, 
                 {draggable: true, id: "imagepopup",  pixPos: (this.phone ? [0,0] : pixel)  });
             
-            else if (p.point.type === "photo")
+            else if (p.point.type === "photo") {
                 /* Show user uploaded image */
                 this.getPhoto(p.point.ident.substring(5), (ph) => {
-                    CONFIG.mb.gui.imagePopup(ph.descr+" - "+formatDTG(ph.time), "  data:image/jpeg;base64, "+ph.image, 
+                    CONFIG.mb.gui.imagePopup(ph.descr+" - "+formatDTG(ph.time) + 
+                      (!this.isAuth() || this.userid !== ph.userid ? " (by "+ph.userid+")" : "") , 
+                      "  data:image/jpeg;base64, "+ph.image, 
                       {draggable: true,  id: "imagepopup",  pixPos: (this.phone ? [0,0] : pixel)  } );
                 });
+            }
             else
                 CONFIG.mb.gui.showPopup({
                     pixPos: pixel, 

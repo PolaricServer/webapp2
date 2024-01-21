@@ -158,7 +158,7 @@ pol.core.Widget = class {
     
     successMsg(msg, time) {
         this.successmsg = msg;
-        // this.waitmsg = this.errmsg = null;
+        this.waitmsg = this.errmsg = null;
         if (time > 0) 
             setTimeout(()=>{this.successmsg = null}, time);
         m.redraw();

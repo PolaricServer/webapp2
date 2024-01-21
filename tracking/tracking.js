@@ -27,8 +27,25 @@ pol.tracking.isSign = function(p) {
     return (p.getId().indexOf("__") === 0);
 }
 
+        
+/*
+ * Return a name of the context to be used when
+ * generating context-menu.
+ */
+pol.tracking.ctxName = function (x) {
+    if (pol.tracking.isSign(x)) {
+        if (x.point.type === "photo")
+            return "PHOTO"
+        else
+            return "SIGN";
+    }
+    else
+        return "POINT";
+}
 
-     
+
+
+
 /**
  * Tracking layer class.
  */
@@ -108,7 +125,7 @@ pol.tracking.Tracking = class {
                     /* Just one point */
                     return { 
                         sarAuth: pts[0].point.sarAuth,
-                        name:  (pol.tracking.isSign(pts[0]) ? "SIGN" : "POINT"), 
+                        name:  pol.tracking.ctxName(pts[0]),
                         ident: pts[0].getId(),
                         aprs:  pts[0].point.aprs,
                         own:   pts[0].point.own,
@@ -251,7 +268,7 @@ pol.tracking.Tracking = class {
                 CONFIG.mb.gui.removePopup();
                 CONFIG.mb.ctxMenu.showOnPos( { 
                     sarAuth: x.point.sarAuth,
-                    name: (pol.tracking.isSign(x) ? "SIGN" : "POINT"), 
+                    name:  pol.tracking.ctxName(x), 
                     ident: x.getId(),
                     aprs:  x.point.aprs,
                     own:   x.point.own,
@@ -262,6 +279,9 @@ pol.tracking.Tracking = class {
             else
                 t.server.infoPopup(x, pixel)
         }
+        
+
+        
     }
  
  

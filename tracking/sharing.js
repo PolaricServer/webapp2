@@ -2,7 +2,7 @@
  Map browser based on OpenLayers 5. Tracking. 
  Search historic data on tracker points on server.  
  
- Copyright (C) 2021-2023 Øyvind Hanssen, LA7ECA, ohanssen@acm.org
+ Copyright (C) 2021-2024 Øyvind Hanssen, LA7ECA, ohanssen@acm.org
  
  This program is free software: you can redistribute it and/or modify
  it under the terms of the GNU Affero General Public License as published 
@@ -54,6 +54,7 @@ pol.tracking.db.Sharing = class extends pol.core.Widget {
         t.userList = [];
         t.groupList = [];
         t.readonly = true; 
+        t.photo = false;
         t.classname = "tracking.db.Sharing"; 
         
         
@@ -62,7 +63,8 @@ pol.tracking.db.Sharing = class extends pol.core.Widget {
                 var i=0;
                 return m("div#sharing", [       
                     m("h1", "User access/sharing"), 
-                    (t.name!=null && t.name!="" ? m("span#objname", t.tag+": "+t.name) : ""),
+                    (t.name!=null && t.name!="" ? m("span#objname", t.tag+": " + 
+                        (t.photo? t.ident : t.name)) : ""),
                     m("div.tagList", t.shareList.map( x=> {
                         return [ m("span.box", [ 
                             m("img",  {src: "images/edit-delete.png", onclick: apply((x)=>t.remove(x), x.userid)}),
@@ -122,17 +124,17 @@ pol.tracking.db.Sharing = class extends pol.core.Widget {
             }
 
             let arg = {userid: t.user(), readOnly: t.readonly}; 
-            t.server.POST("objects/"+t.tag+"/"+t.ident+"/share", JSON.stringify(arg),
+            t.server.POST((t.photo ? "photos/" : "objects/"+t.tag+"/")  +t.ident+"/share", JSON.stringify(arg),
                 ()=> { t.getShares(); },
                 (x)=> { console.warn("Couldn't add user: "+x); }
             );
              
             /* Add sharing to features/sublayers as well */
-            if (t.tag=="layer" && (t.type=="drawing" || t.type=="gpx")) {
+            if (!t.photo && t.tag=="layer" && (t.type=="drawing" || t.type=="gpx")) {
                 const tag = encodeURIComponent(
                     (t.type=="gpx" ? "gpx." : "feature.") + t.name
                 );
-
+            
                 t.server.POST("objects/"+tag+"/_ALL_/share", JSON.stringify(arg),
                     ()=> {},
                     (x)=> { console.warn("Couldn't add user: "+x); }
@@ -159,12 +161,12 @@ pol.tracking.db.Sharing = class extends pol.core.Widget {
     
     remove(uid) {
         uid = encodeURIComponent(uid);
-        CONFIG.server.DELETE("objects/"+this.tag+"/"+this.ident+"/share/"+uid,
+        CONFIG.server.DELETE((this.photo ? "photos/" : "objects/"+this.tag+"/") + this.ident+"/share/"+uid,
             ()=>  { this.getShares(); }, 
             (x)=> { console.warn("Couldn't delete object: ", x.statusText); })
                     
         /* For drawing-layers remove sharings of features as well */
-        if (this.tag=="layer" && (this.type=="drawing" || this.type=="gpx")) {
+        if (!this.photo && this.tag=="layer" && (this.type=="drawing" || this.type=="gpx")) {
             const tag = encodeURIComponent(
                 (this.type=="gpx" ? "gpx.": "feature.") + this.name
             );
@@ -181,6 +183,8 @@ pol.tracking.db.Sharing = class extends pol.core.Widget {
         this.name = name;
         this.tag = tag;
         this.type = type;
+        if (tag === 'Photo')
+            this.photo = true;
         console.log("setIdent", this.ident, this.tag, this.type);
         this.getShares();
     }
@@ -189,7 +193,7 @@ pol.tracking.db.Sharing = class extends pol.core.Widget {
     /* Get list of shares from backend server */
     getShares() {
         console.log("this.tag/ident: ", this.tag, this.ident);
-        CONFIG.server.GET(encodeURI("objects/"+this.tag+"/"+this.ident+"/share"), null,
+        CONFIG.server.GET(encodeURI((this.photo ? "photos/" : "objects/"+this.tag+"/") + this.ident+"/share"), null,
             x=> { 
                 this.shareList=JSON.parse(x);
                 this.shareList.sort((x,y)=> {return x.userid > y.userid});
@@ -206,7 +210,7 @@ pol.tracking.db.Sharing = class extends pol.core.Widget {
 } /* class */
 
 
-// pol.widget.setFactory( "tracking.db.Sharing", {
-//         create: () => new pol.tracking.db.Sharing()
-//    });
+pol.widget.setFactory( "tracking.db.Sharing", {
+         create: () => new pol.tracking.db.Sharing()
+   });
 

@@ -21,7 +21,7 @@
     var mobile = mobplatform | phone | tablet;
     
     /* Set to true to incldue REST API testbench in menu */
-    var developer_mode = false; 
+    var developer_mode = true; 
     
     
     
@@ -240,11 +240,7 @@
      *********************************************************/
    
     browser.ctxMenu.addCallback("TOOLBAR", (m, ctxt)=> {   
-        
-        if (developer_mode) {
-            m.add('Test REST API',  () => WIDGET("psadmin.TestRest", [50,70], true));
-            m.add(null);
-        } 
+         
         if (developer_mode) {
             m.add('Test REST API',  () => WIDGET("psadmin.TestRest", [50,70], true));
             m.add(null);
@@ -400,7 +396,16 @@
     });
      
     
+    /*********************************************************
+     * Photo menu
+     *********************************************************/
     
+    browser.ctxMenu.addCallback("PHOTO", (m, ctxt)=> {
+        m.add('Show image', () => srv.infoPopup(ctxt.point, [m.x, m.y]) );
+        m.add('Delete photo', () => rmPhoto(ctxt.ident) );
+        m.add('Share photo', () => WIDGET("tracking.db.Sharing", [m.x, m.y], true, 
+            x=> x.setIdent( ctxt.ident.replace(/^(__db\.)/, ""), "name", "Photo", "type")));
+    });
 
 
     /* 
@@ -411,6 +416,19 @@
     function histList_hover() {}
 
 
+    
+    function rmPhoto(ident) {
+        ident = ident.replace(/^(__db\.)/, "");
+        if (confirm("Remove photo "+ident+" - are you sure?") == false)
+            return;
+        
+        srv.DELETE("/photos/"+ident, 
+            () => console.log("Photo removed: "+ident),
+            x => console.log("Removing photo failed: "+x)
+        );
+    }
+    
+    
         
     // FIXME: maybe an "are you sure" dialog?     
     function resetInfo(ident) {
