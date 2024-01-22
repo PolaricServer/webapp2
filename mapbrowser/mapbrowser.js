@@ -1,6 +1,6 @@
  /*
     Map browser based on OpenLayers. 
-    Copyright (C) 2017-2023 Øyvind Hanssen, LA7ECA, ohanssen@acm.org
+    Copyright (C) 2017-2024 Øyvind Hanssen, LA7ECA, ohanssen@acm.org
     
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU Affero General Public License as published 
@@ -67,6 +67,14 @@ pol.core.MapBrowser = class {
     constructor(targ, config) {
         console.assert(targ && targ != null && config && config != null, "targ="+targ+", config="+config);
      
+        this._init(targ, config); 
+        
+
+    } /* constructor */
+
+    
+    
+    async _init(targ, config) {
         const t = this;
         config.mb = this;
         t.config = config; 
@@ -76,7 +84,7 @@ pol.core.MapBrowser = class {
         t.baseLayerCb = null;
         t.baseLayerName = null;
         
-        let counter = t.config.get("_counter_", 0);
+        let counter = await t.config.get("_counter_", 0)
         if (counter<=0 || counter > 600) {
             console.log("Clear local storage");
             t.config.clear(); 
@@ -85,22 +93,22 @@ pol.core.MapBrowser = class {
         counter++;
         t.config.store("_counter_", counter);
         
-        
-        
-        /* Get info about resolution, center of map, etc. from session/local storage */
+        /*
+         * Get info about resolution, center of map, etc. from session/local storage 
+         */
    
         let prefix = 'core';
-        t.baseLayerIdx = t.config.get(prefix+'.baselayer');
+        t.baseLayerIdx = await t.config.get(prefix+'.baselayer');
         if (t.baseLayerIdx == null)
             prefix = 'core.p';
-        t.baseLayerIdx = t.config.get(prefix+'.baselayer');
+        t.baseLayerIdx = await t.config.get(prefix+'.baselayer');
         if (t.baseLayerIdx == null)
             t.baseLayerIdx = 0;
         t.baseLayerName = this.config.baseLayers[t.baseLayerIdx].values_.name;
         prefix = "core";
         
-        var resolution = t.config.get(prefix+'.resolution');
-        var center = t.config.get(prefix+'.center');
+        var resolution = await t.config.get(prefix+'.resolution');
+        var center = await t.config.get(prefix+'.center');
         var rotation = 0;    
         
         
@@ -122,7 +130,7 @@ pol.core.MapBrowser = class {
         }
         
         /* OpenLayers view */
-        let proj = t.config.get(prefix+'.projection');
+        let proj = await t.config.get(prefix+'.projection');
         
         console.log("PROJ=", proj);
         
@@ -181,8 +189,9 @@ pol.core.MapBrowser = class {
         window.addEventListener('popstate', event => {
             if (event.state === null)
                 return;
-            map.getView().setCenter(ol.proj.fromLonLat
-                (event.state.center, t.config.get('core.projection')));
+            t.config.get('core.projection').then( pp=> {
+                map.getView().setCenter(ol.proj.fromLonLat(event.state.center, pp) ) 
+            });
             map.getView().setResolution(event.state.resolution);
             map.getView().setRotation(event.state.rotation);
             shouldUpdate = false;
@@ -191,6 +200,7 @@ pol.core.MapBrowser = class {
         /* Set up handler for move and zoom. Store new center and scale */
         t.map.on('moveend', onMove);
         t.map.on('moveend', ()=> t.updatePermalink() );
+        
         
         function onMove() {   
             t.saveView();
@@ -207,8 +217,8 @@ pol.core.MapBrowser = class {
             body.removeChild(div); 
             return parseFloat(ppi);
         }
-    } /* constructor */
-
+    }
+    
     
     
     
@@ -327,7 +337,7 @@ pol.core.MapBrowser = class {
      * @param {number} idx - index of base layer to select. 
      * 
      */
-    changeBaseLayer(idx) {
+    async changeBaseLayer(idx) {
         console.assert(idx >= 0 && idx <= this.config.baseLayers.length, "idx="+idx);
         const ls = this.config.baseLayers[idx];
         this.baseLayerName = ls.values_.name;
@@ -343,7 +353,7 @@ pol.core.MapBrowser = class {
         /* Change projection if requested */
         let proj = ls.projection; 
         if (!proj)
-            proj = this.config.get('core.projection');
+            proj = await this.config.get('core.projection');
         if (!proj)
             proj = this.view.getProjection();
         if (proj != this.view.getProjection())
@@ -412,10 +422,10 @@ pol.core.MapBrowser = class {
 
 
 
-    addConfiguredLayer(layer, name, v) {
+    async addConfiguredLayer(layer, name, v) {
         console.assert(layer != null && name != null, "layer="+layer+", name="+name);
         const i = this.config.addLayer(layer, name);
-        let visible = this.config.get('core.olayer.'+name)
+        let visible = await this.config.get('core.olayer.'+name)
          
         if (visible == null) {
             visible = false; 

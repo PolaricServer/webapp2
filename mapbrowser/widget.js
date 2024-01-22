@@ -1,6 +1,6 @@
  
 /*
- Map browser based on OpenLayers 5. 
+ Map browser based on OpenLayers. 
  Superclass for widgets in draggable popup windows. 
  
  Copyright (C) 2017-2024 Øyvind Hanssen, LA7ECA, ohanssen@acm.org
@@ -53,8 +53,8 @@ pol.widget.setFactory = function(id, arg) {
 /**
  * Restore widgets that were saved in local storage as active. 
  */
-pol.widget.restore = function() {
-    pol.widget._stored = CONFIG.get("core.widget._stored");
+pol.widget.restore = async function() {
+    pol.widget._stored = await CONFIG.get("core.widget._stored");
     if (pol.widget._stored == null)
         pol.widget._stored = {};
     
@@ -64,7 +64,7 @@ pol.widget.restore = function() {
         
         const w = pol.widget.get(x); 
         pol.widget._active[x] = w;
-        const pos = CONFIG.get("core.widget."+x);
+        const pos = await CONFIG.get("core.widget."+x);
         if (w!=null) 
             w.activatePopup(x, pos, true);
         

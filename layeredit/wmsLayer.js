@@ -1,8 +1,8 @@
 /*
- Map browser based on OpenLayers 5. Layer editor. 
+ Map browser based on OpenLayers. Layer editor. 
  WMS layer. 
  
- Copyright (C) 2018 Øyvind Hanssen, LA7ECA, ohanssen@acm.org
+ Copyright (C) 2018-2024 Øyvind Hanssen, LA7ECA, ohanssen@acm.org
  
  This program is free software: you can redistribute it and/or modify
  it under the terms of the GNU Affero General Public License as published 
@@ -32,9 +32,9 @@ pol.layers.Wms = class extends pol.layers.Edit {
         t.cap = null;   
         t.layers = [];
         t.sLayers = [];
-        t.srs = CONFIG.get('core.supported_proj');
-        if (t.srs == null)
-            t.srs = CONFIG.get('core.projection');
+        t.srs = '';
+        
+
         
         t.selected = this.srs[0];
         t.url = m.stream("");
@@ -73,7 +73,8 @@ pol.layers.Wms = class extends pol.layers.Edit {
                 ]);
             }
         }
-       
+ 
+        restoreSRS();
    
         /* Apply a function to an argument. Returns a new function */
         function apply(f, id) {return function() {f(id); }};  
@@ -83,7 +84,12 @@ pol.layers.Wms = class extends pol.layers.Edit {
             t.getCapabilities(m.redraw);
         }
     
-    
+        async function restoreSRS() {
+            t.srs = await CONFIG.get('core.supported_proj');
+            if (t.srs == null)
+                t.srs = await CONFIG.get('core.projection');
+        }
+        
         function selectSRS() {
             t.selected = $("#sel_srs").val();
             if (t.cap != null)

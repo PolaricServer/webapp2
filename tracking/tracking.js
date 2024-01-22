@@ -2,7 +2,7 @@
  Map browser based on OpenLayers. Tracking.
  Present tracking data from Polaric Server backend as a map-layer.
 
- Copyright (C) 2017-2023 Øyvind Hanssen, LA7ECA, ohanssen@acm.org
+ Copyright (C) 2017-2024 Øyvind Hanssen, LA7ECA, ohanssen@acm.org
 
  This program is free software: you can redistribute it and/or modify
  it under the terms of the GNU Affero General Public License as published
@@ -62,13 +62,18 @@ pol.tracking.Tracking = class {
         t.ready = false;
         t.server = srv;
         t.srch = false; 
-        t.tracked = CONFIG.get("tracking.tracked");
-        if (t.tracked == "null")
-            t.tracked = null;
-	
-        t.iconpath = CONFIG.get('iconpath');
-        if (t.iconpath == null)
-            t.iconpath = '';
+        t.tracked = null;
+        CONFIG.get("tracking.tracked").then( x=> {
+            t.tracked = x;
+            if (t.tracked == "null")
+                t.tracked = null;
+        });
+        t.iconpath = '';
+        CONFIG.get('iconpath').then( x=> {
+            t.iconpath=x;
+            if (t.iconpath == null)
+                t.iconpath = '';
+        });
         
         t.iconscale = scale;
         if (t.iconscale == null)
@@ -78,15 +83,21 @@ pol.tracking.Tracking = class {
         t.producer = new pol.tracking.MapUpdate(t.server);
 
         /* Show label for point or not */
-        t.showLabel = CONFIG.get("tracking.showlabel");
-        if (t.showLabel == null)
-            t.showLabel = {};
+        t.showLabel = {};
+        CONFIG.get("tracking.showlabel").then( x=> {
+            t.showLabel = x;
+            if (t.showLabel == null)
+                t.showLabel = {};
+        });
 	
         /* Show trail for point or not */
-        t.showTrail = CONFIG.get("tracking.showtrail");
-        if (t.showTrail == null)
-            t.showTrail = {};
-	
+        t.showTrail = {};
+        CONFIG.get("tracking.showtrail").then( x=> {
+            t.showTrail = x;
+            if (t.showTrail == null)
+                t.showTrail = {};
+        });
+        
         /* Set up vector layer and source */
         t.layer = CONFIG.mb.addVectorLayer(
             /* 

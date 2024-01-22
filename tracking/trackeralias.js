@@ -1,8 +1,8 @@
 /*
- Map browser based on OpenLayers 5. Tracking. 
+ Map browser based on OpenLayers. Tracking. 
  Search historic data on tracker points on server.  
  
- Copyright (C) 2019 Øyvind Hanssen, LA7ECA, ohanssen@acm.org
+ Copyright (C) 2019-2024 Øyvind Hanssen, LA7ECA, ohanssen@acm.org
  
  This program is free software: you can redistribute it and/or modify
  it under the terms of the GNU Affero General Public License as published 
@@ -34,8 +34,10 @@ pol.tracking.TrackerAlias = class extends pol.core.Widget {
         t.server = CONFIG.server;
         t.edit = {id:m.stream(""), alias:m.stream(""), icon: "", auto: true};
         t.icons = [];
-        t.iconpath = CONFIG.get("iconpath");
-        t.dfl = CONFIG.get("default_icon");
+        t.iconpath = "";
+        CONFIG.get("iconpath").then( x=> {t.iconpath = x});
+        t.dfl = "";
+        CONFIG.get("default_icon").then( x=> {t.dfl = x});
         
         this.aliasWidget = {
             view: function() {

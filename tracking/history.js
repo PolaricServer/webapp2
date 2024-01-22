@@ -3,7 +3,7 @@
  Map browser based on OpenLayers. Tracking. 
  Search historic data on tracker points on server.  
  
- Copyright (C) 2018-2023 Øyvind Hanssen, LA7ECA, ohanssen@acm.org
+ Copyright (C) 2018-2024 Øyvind Hanssen, LA7ECA, ohanssen@acm.org
  
  This program is free software: you can redistribute it and/or modify
  it under the terms of the GNU Affero General Public License as published 
@@ -392,8 +392,8 @@ pol.tracking.db.History = class extends pol.core.Widget {
         }
         
         
-        function restoreList() {
-            let list = JSON.parse(CONFIG.get('tracking.db.hist'));
+        async function restoreList() {
+            let list = JSON.parse(await CONFIG.get('tracking.db.hist'));
             if (Array.isArray(list)==false)
                 list = [];
             if (list==null || list==[])
@@ -432,8 +432,8 @@ pol.tracking.db.History = class extends pol.core.Widget {
     }
        
        
-    restoreItem() {
-        const it = JSON.parse(CONFIG.get('tracking.db.hist.item'));
+    async restoreItem() {
+        const it = JSON.parse(await CONFIG.get('tracking.db.hist.item'));
         this.item = this._restoreItem(it); 
     }
     

@@ -6,8 +6,10 @@ pol.tracking.LabelStyle = class {
         this.currentIndex = 0; 
         this.start = 5;
         this.styles = ["40%", "50%", "60%", "70%", "80%", "90%", "100%", "110%", "120%", "130%", "140%", "150%"];
-        const x = parseInt(CONFIG.get("tracking.labelStyle"));
-        if (x) this.currentIndex = x; 
+        CONFIG.get("tracking.labelStyle").then( x=> {
+            const xx = parseInt(x);
+            if (xx) this.currentIndex = xx; 
+        });
     }
 
 

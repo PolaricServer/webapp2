@@ -37,9 +37,13 @@
      */  
     const browser = new pol.core.MapBrowser('map', CONFIG);
     CONFIG.browser = browser;
-    setTimeout(pol.widget.restore, 1500);
-    $('#map').append('<img class="logo" src="'+CONFIG.get('logo')+'">"');
+    CONFIG.get('logo', x=> {
+        $('#map').append('<img class="logo" src="'+x+'">"');
+    });
 
+    setTimeout(pol.widget.restore, 1500);
+    setTimeout( ()=> { CONFIG.server = CONFIG.srvManager.instantiate()}, 800 );
+    
     
     /* Instantiation of server - we use the server-manager so we more easily can 
      * replace the instance. 
@@ -48,7 +52,6 @@
     
     CONFIG.srvManager = new pol.tracking.ServerManager( false, 
         (srv)=> {
-            
             srv.onStart( ()=> {
                 CONFIG.tracks = new pol.tracking.Tracking(srv, (hires? 1.4 : 1) );  
                 CONFIG.filt = new pol.tracking.Filters(CONFIG.tracks);
@@ -106,24 +109,22 @@
         });
     
     
-    const srv = CONFIG.srvManager.instantiate();
-    CONFIG.server = srv;
+
     
     
     setTimeout( () => {
-
         if (urlArgs['track'] != null) 
         	CONFIG.tracks.setTracked(urlArgs['track']);
                 
         /* Get updates when sharing of objects are changed */ 
-        srv.pubsub.subscribe("sharing", x => {
+        CONFIG.server.pubsub.subscribe("sharing", x => {
             console.log("Change to object sharing");
             getWIDGET("layers.List").getMyLayers();
             getWIDGET("core.AreaList").getMyAreas();
             getWIDGET("tracking.db.Sharing").getShares();
         });
         
-        srv.pubsub.subscribe("object", x => {
+        CONFIG.server.pubsub.subscribe("object", x => {
             console.log("Change to object:", x);
             if (x=="area")
                 getWIDGET("core.AreaList").getMyAreas();
@@ -133,23 +134,24 @@
                 getWIDGET("features.Edit").reload();
         });
          
-        srv.pubsub.subscribe("sign", x => {
+        CONFIG.server.pubsub.subscribe("sign", x => {
             console.log("Change to signs:", x);
             getWIDGET("tracking.db.Signs").getSigns();
         });
         
+        /* FIXME: May put init into Edit class constructor */
+        pol.features.init(CONFIG.browser.map);
+        
+        CONFIG.mb.toolbar.addIcon(2, "images/draw.png", "tb_draw", 
+            ()=> WIDGET("features.Edit", [50, 70], true), 
+            null, "Draw tool");
     }, 5000); 
    
     CONFIG.labelStyle = new pol.tracking.LabelStyle();
 
       
     
-    /* FIXME: May put init into Edit class constructor */
-    pol.features.init(CONFIG.browser.map);
-    
-    CONFIG.mb.toolbar.addIcon(2, "images/draw.png", "tb_draw", 
-        ()=> WIDGET("features.Edit", [50, 70], true), 
-        null, "Draw tool");
+
     
     
     
@@ -160,7 +162,7 @@
     setTimeout(()=> {
         getWIDGET("core.AreaList");
         getWIDGET("layers.List");
-    }, 1000);
+    }, 5000);
     
     
     
@@ -172,7 +174,9 @@
     * activate the menu. Use it to add menu items. Adding null means adding a separator. 
     */ 
    
-      
+    setTimeout( () => {
+        // FIXME: This should be called when ctxMenu is ready
+   
     /*********************************************************
      * Map menu
      *********************************************************/
@@ -309,13 +313,7 @@
         
     });
 
-    /*
-     * Using a Raspberry pi display in a car it can be useful to dim the display
-     */
-    if (!phone && CONFIG.get('display.in-car') != null) 
-      	    CONFIG.mb.toolbar.addIcon(3, "images/brightness.ico", null, adjustBacklight, "Change backlight level");
-   
-   
+
       
     /*********************************************************
      * Point menu
@@ -407,7 +405,10 @@
             x=> x.setIdent( ctxt.ident.replace(/^(__db\.)/, ""), "name", "Photo", "type")));
     });
 
-
+    }, 2000);
+    
+    
+    
     /* 
      * Helper functions used by menus. 
      */

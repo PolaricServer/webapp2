@@ -1,9 +1,9 @@
  
 /*
- Map browser based on OpenLayers 5. Tracking. 
+ Map browser based on OpenLayers. Tracking. 
  Search historic data on heard tracker points on server.  
  
- Copyright (C) 2018-19 Øyvind Hanssen, LA7ECA, ohanssen@acm.org
+ Copyright (C) 2018-24 Øyvind Hanssen, LA7ECA, ohanssen@acm.org
  
  This program is free software: you can redistribute it and/or modify
  it under the terms of the GNU Affero General Public License as published 
@@ -96,14 +96,18 @@ pol.tracking.db.HeardVia = class extends pol.core.Widget {
         };
     
     
-    
-        t.list = JSON.parse(CONFIG.get('tracking.db.hrd'));
-        t.color = JSON.parse(CONFIG.get('tracking.db.hrd.color'));
-        if (!t.color || t.color==null)
-            t.color = 0;
-	
-        if (t.list==null)
-            t.list=[];
+        CONFIG.get('tracking.db.hrd').then( x=> { 
+            t.list = JSON.parse(x);
+            if (t.list == null)
+                t.list = []; 
+        });
+        
+        CONFIG.get('tracking.db.hrd.color').then( x=> {
+            t.color = JSON.parse(x);
+            if (!t.color || t.color==null)
+                t.color = 0;
+        });
+
         t.setItem(item);
     
         setTimeout( 
@@ -263,7 +267,7 @@ pol.tracking.db.HeardVia = class extends pol.core.Widget {
     }
     
     
-    setItem(item) {
+    async setItem(item) {
         const t = this;
       	if (item) {
             t.item = {call:m.stream(item), fromdate:null, todate:null};
@@ -271,7 +275,7 @@ pol.tracking.db.HeardVia = class extends pol.core.Widget {
             m.redraw();
         }
         else {
-            t.item = JSON.parse(CONFIG.get('tracking.db.hrd.item'));
+            t.item = JSON.parse(await CONFIG.get('tracking.db.hrd.item'));
             if (t.item != null)
                 t.item.call = m.stream(item);
         }

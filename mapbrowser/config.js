@@ -1,8 +1,8 @@
 /*
- Map browser based on OpenLayers 5. 
+ Map browser based on OpenLayers. 
  configuration support. 
  
- Copyright (C) 2017-2023 Øyvind Hanssen, LA7ECA, ohanssen@acm.org
+ Copyright (C) 2017-2024 Øyvind Hanssen, LA7ECA, ohanssen@acm.org
  
  This program is free software: you can redistribute it and/or modify
  it under the terms of the GNU Affero General Public License as published 
@@ -142,7 +142,7 @@ pol.core.Config = class extends ol.Object {
      *  @param {string} id - key of setting. 
      *  @returns The value of the setting.
      */
-    get(id) { 
+    async get(id) { 
         console.assert(id!=null, "id=null");
     
        /* Look in session-storage first. if not found there, 
@@ -181,6 +181,7 @@ pol.core.Config = class extends ol.Object {
         const val = JSON.stringify(value);
         this.storage["polaric." + id + ":" + this.uid] = val;
     }
+    
     
     /**
      *  Store value in browser storage. To be used in application.

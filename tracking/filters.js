@@ -1,8 +1,8 @@
 /*
- Map browser based on OpenLayers 5. Tracking. 
+ Map browser based on OpenLayers. Tracking. 
  Configure filters and filter-menu. 
  
- Copyright (C) 2017-2018 Øyvind Hanssen, LA7ECA, ohanssen@acm.org
+ Copyright (C) 2017-2024 Øyvind Hanssen, LA7ECA, ohanssen@acm.org
  
  This program is free software: you can redistribute it and/or modify
  it under the terms of the GNU Affero General Public License as published 
@@ -35,13 +35,6 @@ pol.tracking.Filters = class {
         t.tracker = tr; 
         t.tbar = CONFIG.mb.toolbar;
    
-        /* Set default or saved filter selection */   
-        t.filt = CONFIG.mb.config.get('tracking.selectedfilt.' + group);
-        if (t.filt == null || t.filt == "")
-            t.filt = CONFIG.get('default_filter.' + group);
-        if (t.filt == null || t.filt == "")
-            t.filt = CONFIG.get('default_filter');
-        
         /* Add callback to generate filter-menu */
         CONFIG.mb.ctxMenu.addCallback('FILTERSELECT', m => {
             m.clear();
@@ -61,8 +54,20 @@ pol.tracking.Filters = class {
         });
         
         t.getFilters();
+        initFilt();
+        
+        async function initFilt() {
+            t.filt = await CONFIG.get('tracking.selectedfilt.' + group);
+            if (t.filt == null || t.filt == "")
+                t.filt = await CONFIG.get('default_filter.' + group);
+            if (t.filt == null || t.filt == "")
+                t.filt = await CONFIG.get('default_filter');
+        }
+        
+        
     }    
 
+    
     
     addToolbarMenu() {
         this.tbar.addIcon(1, "images/filter.png", "tb_filter", null, "Filter selector");

@@ -1,7 +1,7 @@
 /*
- Map browser based on OpenLayers 5. 
+ Map browser based on OpenLayers. 
  
- Copyright (C) 2017-2023 Øyvind Hanssen, LA7ECA, ohanssen@acm.org
+ Copyright (C) 2017-2024 Øyvind Hanssen, LA7ECA, ohanssen@acm.org
  
  This program is free software: you can redistribute it and/or modify
  it under the terms of the GNU Affero General Public License as published 
@@ -43,9 +43,16 @@ pol.core.Server = class {
      * Constructor.
      */
     constructor() {
-        let host = CONFIG.get('server');
-        let port = CONFIG.get('port');
-        let secure = CONFIG.get('secure');
+        this.origin = window.location.href; 
+        this.host = null;
+    }
+
+    
+    async _init() {
+        console.log("SERVER _INIT");
+        let host   = await CONFIG.get('server');
+        let port   = await CONFIG.get('port');
+        let secure = await CONFIG.get('secure');
         
         /* Default is to use window.location as host, and port 8081 */
         if (host == null) {
@@ -71,7 +78,7 @@ pol.core.Server = class {
             host += '/';
     
         /* Compute URL base (for ordinary Ajax/REST) */
-        let prefix = CONFIG.get('ajaxprefix');
+        let prefix = await CONFIG.get('ajaxprefix');
         if (prefix == null)
             prefix = '';
         if (prefix.charAt(prefix.length != '/'))
@@ -79,19 +86,18 @@ pol.core.Server = class {
         this.url = host + prefix;
     
         /* Compute Websocket URL base */
-        prefix = CONFIG.get('wsprefix');
+        prefix = await CONFIG.get('wsprefix');
         if (prefix == null)
             prefix = '';
         if (prefix.charAt(prefix.length != '/'))
             prefix += '/';
         const uparts = host.split(/:\/\//);
+        
         this.wsurl = (uparts[0] === 'https' ? 'wss' : 'ws'); 
-        this.wsurl = this.wsurl + "://"+ uparts[1] + prefix
-   
-        this.origin = window.location.href; 
+        this.wsurl = this.wsurl + "://"+ uparts[1] + prefix;
+        this.host = host;
     }
-
-
+    
 
     /** Full (browser) popup window */
     popup(name, url, width, height) {

@@ -1,8 +1,8 @@
 /*
- Map browser based on OpenLayers 5.
+ Map browser based on OpenLayers.
  Polaric Server connection.
  
- Copyright (C) 2017-2023 Øyvind Hanssen, LA7ECA, ohanssen@acm.org
+ Copyright (C) 2017-2024 Øyvind Hanssen, LA7ECA, ohanssen@acm.org
  
  This program is free software: you can redistribute it and/or modify
  it under the terms of the GNU Affero General Public License as published 
@@ -74,23 +74,25 @@ pol.tracking.PolaricServer = class extends pol.core.Server {
 
     
     
-    init() {
+    async init() {
         const t = this;
-        t.restoreCredentials().then( ()=> {
-            t.pubsub = new pol.tracking.PubSub(this);
+        await super._init();
+        await t.restoreCredentials(); 
+        
+        t.pubsub = new pol.tracking.PubSub(this);
             
-            if (t.startcb != null)
-                t.startcb();
+        if (t.startcb != null)
+            t.startcb();
 
-            t.loginStatus();
+        t.loginStatus();
             
-            /* Callback when pubsub websocket is opened for the first time */
-            t.pubsub.onopen = function() {
-            };    
-            /* Callback when pubsub websocket is closed */
-            t.pubsub.onclose = function() {
-            }
-        });
+        /* Callback when pubsub websocket is opened for the first time */
+        t.pubsub.onopen = function() {
+        };    
+        /* Callback when pubsub websocket is closed */
+        t.pubsub.onclose = function() {
+        }
+ 
     }
     
     
@@ -172,8 +174,8 @@ pol.tracking.PolaricServer = class extends pol.core.Server {
      * local store. 
      */ 
     async restoreCredentials() {
-        const ktext = CONFIG.get("api.key");
-        const userid = CONFIG.get("api.userid");
+        const ktext = await CONFIG.get("api.key");
+        const userid = await CONFIG.get("api.userid");
         
         if (userid != null)
             this.userid = userid;

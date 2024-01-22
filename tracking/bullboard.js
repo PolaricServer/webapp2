@@ -1,9 +1,9 @@
 
 /*
- Map browser based on OpenLayers 5. Tracking. 
+ Map browser based on OpenLayers. Tracking. 
  Bulletin board.  
  
- Copyright (C) 2021 Øyvind Hanssen, LA7ECA, ohanssen@acm.org
+ Copyright (C) 2021-2024 Øyvind Hanssen, LA7ECA, ohanssen@acm.org
  
  This program is free software: you can redistribute it and/or modify
  it under the terms of the GNU Affero General Public License as published 
@@ -238,12 +238,12 @@ pol.tracking.BullBoard = class extends pol.core.Widget {
             t.groups.unshift('APRS');
             t.groups.unshift('Announcements');
         
-            var grp = CONFIG.get('tracking.BullBoard.selgroup');
-            t.selectedGroup = t.groupIndex(grp);
-                        
-            if (!t.selectedGroup)
-                t.selectedGroup = 0;
-            t.selectGroup(t.selectedGroup);
+            CONFIG.get('tracking.BullBoard.selgroup').then( grp=> {     
+                t.selectedGroup = t.groupIndex(grp);
+                if (!t.selectedGroup)
+                    t.selectedGroup = 0;
+                t.selectGroup(t.selectedGroup);
+            });
         } );
     }
         

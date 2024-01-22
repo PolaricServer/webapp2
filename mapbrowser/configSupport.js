@@ -1,8 +1,8 @@
 /*
- Map browser based on OpenLayers 5. 
+ Map browser based on OpenLayers. 
  configuration support. 
  
- Copyright (C) 2017-2018 Øyvind Hanssen, LA7ECA, ohanssen@acm.org
+ Copyright (C) 2017-2024 Øyvind Hanssen, LA7ECA, ohanssen@acm.org
  
  This program is free software: you can redistribute it and/or modify
  it under the terms of the GNU Affero General Public License as published 
@@ -126,21 +126,24 @@ function TILEGRID_WMTS(proj, start, end, prefix, siz, origin) {
 }   
  
 
- function createLayer_MapCache(opt) {
+function createLayer_MapCache(opt) {
      
-    /* FIXME: Move this to a function or method */ 
-    let host = CONFIG.get('server');
-    if (host == null) {
-        let hh = window.location.host; 
-        let pp = window.location.protocol;
-        host = "";
-        if (pp)
-            host += pp+"//"
-        if (hh)
-            host +=hh;
-        else
-            host += "localhost";
-    }
+    /* FIXME: when server host is ready and when host is changed */ 
+    setTimeout( ()=> {
+        let host = CONFIG.server.host;
+        if (host == null) {
+            let hh = window.location.host; 
+            let pp = window.location.protocol;
+            host = "";
+            if (pp)
+                host += pp+"//"
+            if (hh)
+                host +=hh;
+            else
+                host += "localhost";
+        }
+        layer.getSource().setUrl(opt.url? opt.url : host + "/mapcache/wms?");
+    }, 1000);
     
     const layer = new ol.layer.Tile({
           name: (opt.name ? opt.name : "noname"), 
@@ -149,7 +152,7 @@ function TILEGRID_WMTS(proj, start, end, prefix, siz, origin) {
           max_res: opt.seed_max_res,
           
           source: new ol.source.TileWMS({
-              url: (opt.url? opt.url : host + "/mapcache/wms?"),
+              url: (opt.url? opt.url : "/mapcache/wms?"),
               projection: utmproj,
               params: {'LAYERS': opt.layers, VERSION: "1.1.1", TRANSPARENT: true},
               tilegrid: opt.tilegrid,
@@ -160,32 +163,34 @@ function TILEGRID_WMTS(proj, start, end, prefix, siz, origin) {
     return layer; 
 }
 
+
    
 /**
  * Configure some layers. 
  */
-function LAYERS (attrs, layers) 
+async function LAYERS (attrs, layers) 
 {
-   if (layers != null && layers.length > 0) 
-   {
-      for (var i=0; i < layers.length; i++) 
-      {     	 
-  	     var x = layers[i];
-         if ( !x.attribution && attrs.attribution) 
-             x.attribution = attrs.attribution;     
- 	     if (!x.predicate && attrs.predicate)
-	         x.predicate = attrs.predicate;
-	     if (!x.projection && attrs.projection)
-             x.projection = attrs.projection;
+    if (layers != null && layers.length > 0) 
+    {
+        for (var i=0; i < layers.length; i++) 
+        {     	 
+            var x = layers[i];
+            if ( !x.attribution && attrs.attribution) 
+                x.attribution = attrs.attribution;     
+            if (!x.predicate && attrs.predicate)
+                x.predicate = attrs.predicate;
+            if (!x.projection && attrs.projection)
+                x.projection = attrs.projection;
          
-         if (attrs.base) 
-	         CONFIG.baseLayers.push( x );
-	     else {
-             x.setVisible(CONFIG.get('core.olayer.'+x.get("name")));
-	         CONFIG.oLayers.push( x ); 
-         }
-      } 
-   }  
+            if (attrs.base) 
+                CONFIG.baseLayers.push( x );
+            else {
+                const la = await CONFIG.get('core.olayer.'+x.get("name"));
+                x.setVisible(la);
+                CONFIG.oLayers.push( x ); 
+            }
+        } 
+    }  
 }
 
  
@@ -456,7 +461,6 @@ function GETSTYLE(id) {
 
   return function(f,r) {
      if (gotit==false) {
-        console.log("FEATURE PROPERTIES: ", f.getProperties());
         gotit = true;
      }
      return getStyle(id);
