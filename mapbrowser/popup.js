@@ -40,6 +40,7 @@ pol.core.Popup = class {
         this.onCallback    = null; 
         this.offCallback   = null;
         this.image         = null;
+        this.ready         = true;
         const t = this;
     
        // this.mb.view.on('change:center', onChangeCenter);
@@ -49,7 +50,10 @@ pol.core.Popup = class {
        
         
         function onClick() {
-           t.removePopup(); 
+            if (t.ready)
+                t.removePopup();
+            else
+                console.log("NOT READY");
         }
        
         function onChangeView() {
@@ -430,6 +434,8 @@ pol.core.Popup = class {
         if (this.onCallback != null)
             this.onCallback(); 
         
+        t.ready = false; 
+        setTimeout(()=> {t.ready=true}, 500);
         
         function setAdjustedPos(pd, pimg, x,y) {
             if (pd != null) 

@@ -57,6 +57,7 @@ pol.tracking.Tracking = class {
         const t = this;
 
         t.zoom = 0;
+        t.contextOn = false;
         t.filter = null;
         t.tag = null;
         t.ready = false;
@@ -134,6 +135,10 @@ pol.tracking.Tracking = class {
                 }
                 if (pts.length > 0) 
                     /* Just one point */
+                    t.contextOn=true;
+                    setTimeout(()=>{t.contextOn=false}, 3000);
+                    if (pts[0] == null)
+                        return null;
                     return { 
                         sarAuth: pts[0].point.sarAuth,
                         name:  pol.tracking.ctxName(pts[0]),
@@ -150,10 +155,15 @@ pol.tracking.Tracking = class {
    
         /* Add click handler for tracking-features. Click on icons and pop up some info... */
         CONFIG.mb.map.on("click", e => {
+            if (t.contextOn)
+                return;
             const points = t.getPointsAt(e.pixel);
             if (points != null && points.length > 0) {
-                if (points.length == 1)
+                if (points.length == 1) {
+                    const pix = CONFIG.mb.lonLat2Pix(points[0].point.pos);
+                    t.createFeedback(pix, 1300);
                     t.server.infoPopup(points[0], e.pixel);
+                }
                 else
                     t.showList(points, e.pixel);
             }
@@ -246,6 +256,26 @@ pol.tracking.Tracking = class {
     }
     
     
+
+    createFeedback(pos, timeout) {
+        let root = document.getElementById("map");
+        let element = document.createElement('div');
+        root.appendChild(element);
+        element.className = "indicator";
+        
+        element.style.position = "absolute";
+        element.style.top = (pos[1])-13+"px";
+        element.style.left = (pos[0]-13)+"px";
+        console.log("ELEMENT: ", element);
+        
+        /* Mouse event handlers */
+        setTimeout(()=> {
+            element.remove();
+        }, timeout);       
+    }
+    
+    
+    
     /**
      * Show list of points. Clickable to show info about each.
      */
@@ -310,10 +340,19 @@ pol.tracking.Tracking = class {
         if (feature==null)
             return; 
         const pt = feature.point;
-        pt.redraw = true;
-        t.addPoint(pt);
+        if (pt != null) {
+            pt.redraw = true;
+            t.addPoint(pt);
+        }
     }
    
+   
+    updateIconStyle() {
+        const ft = this.source.getFeatures()
+        for (const x of ft) 
+            this.setStyle(x);
+    }
+    
        
     /**
      * Remove all features from map.
@@ -374,20 +413,8 @@ pol.tracking.Tracking = class {
         if (p.label != null) 
             feature.alias = p.label.id;
         feature.point = p;
+        this.setStyle(feature);
         
-        /* Update style (icon) */
-        const style = new ol.style.Style({
-            image:
-                new ol.style.Icon( ({
-                    scale: this.iconscale,
-                    anchor: [0.5, 0.5],
-                    src: this.iconpath + p.icon, 
-                    opacity: ((p.label != null && p.label.style.includes("lstill")) 
-                        ? 0.8 : 1)
-                }))
-        });
-        feature.setStyle(style);
-
         /* Update label. Just replace it. */
         if (p.label != null && !this._labelHidden(p.ident, p.label.hidden)) {
             if (feature.label)
@@ -398,7 +425,25 @@ pol.tracking.Tracking = class {
             CONFIG.mb.map.removeOverlay(feature.label);
     } /* AddPoint */
 
-
+    
+    
+    setStyle(feature) {
+        const p = feature.point;
+        if (p == null)
+            return;
+        const style = new ol.style.Style({
+        image:
+            new ol.style.Icon( ({
+                scale: this.iconscale * CONFIG.labelStyle.getIconScale(),
+                anchor: [0.5, 0.5],
+                src: this.iconpath + p.icon, 
+                opacity: ((p.label != null && p.label.style.includes("lstill")) 
+                    ? 0.8 : 1)
+            }))
+        });
+        feature.setStyle(style);
+    }
+    
     
     createPopupLabel(pos, text, xtext) {
         const t = this;
@@ -750,7 +795,7 @@ pol.tracking.Tracking = class {
     getPointsAt(pix) {
         console.assert(pix!=null && pix[0]>=0 && pix[1]>=null, "Assertion failed");
         const pp = CONFIG.mb.map.getFeaturesAtPixel( pix,
-            {hitTolerance: 3, layerFilter: x => {return (x == this.layer)}});
+            {hitTolerance: (CONFIG.server.mobile ? 15 : 6), layerFilter: x => {return (x == this.layer)}});
         if (pp == null)
             return null;
         else return pp.filter(x => x.point);

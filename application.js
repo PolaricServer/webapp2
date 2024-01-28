@@ -11,8 +11,6 @@
         
     var tablet = 
         window.matchMedia('(min-device-width: 50em) and (-webkit-min-device-pixel-ratio: 2.0)').matches;
-        
-    var mobile = mobplatform | phone | tablet;
     
     var hires = 
         window.matchMedia('screen and (min-resolution: 190dpi) and (-webkit-max-device-pixel-ratio: 2.0), '+
@@ -41,9 +39,10 @@
         $('#map').append('<img class="logo" src="'+x+'">"');
     });
 
+
+    let srv=null;
+    setTimeout( ()=> { srv = CONFIG.server = CONFIG.srvManager.instantiate()}, 800 );
     setTimeout(pol.widget.restore, 1500);
-    setTimeout( ()=> { CONFIG.server = CONFIG.srvManager.instantiate()}, 800 );
-    
     
     /* Instantiation of server - we use the server-manager so we more easily can 
      * replace the instance. 
@@ -109,7 +108,8 @@
         });
     
     
-
+//    const srv = CONFIG.srvManager.instantiate();
+//    CONFIG.server = srv;
     
     
     setTimeout( () => {
@@ -145,7 +145,7 @@
         CONFIG.mb.toolbar.addIcon(2, "images/draw.png", "tb_draw", 
             ()=> WIDGET("features.Edit", [50, 70], true), 
             null, "Draw tool");
-    }, 5000); 
+    }, 4000); 
    
     CONFIG.labelStyle = new pol.tracking.LabelStyle();
 
@@ -304,13 +304,6 @@
         if (srv.isAuth())
             m.add('Short messages', () => WIDGET("tracking.Mailbox", (phone ? [0,1] : [50,70]), true));
         
-        if (!phone && CONFIG.get('display.in-car') != null) {
-            m.add("Kodi", startKodi);
-            m.add(null);
-            m.add("Exit", chromeExit);
-        }
-
-        
     });
 
 
@@ -429,7 +422,19 @@
         );
     }
     
+        
     
+    function setPasswd()
+        { srv.popup('Password', 'passwd', 430, 250); }
+  
+    function webConfig()
+        { srv.popup('Config', 'config_menu'+'?inapp=true', 900, 700); }
+ 
+    function setTags(ident)
+        { srv.popup('editTags', 'addtag?objid='+ident, 560, 300); }
+        
+        
+        
         
     // FIXME: maybe an "are you sure" dialog?     
     function resetInfo(ident) {

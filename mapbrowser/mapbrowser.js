@@ -98,17 +98,23 @@ pol.core.MapBrowser = class {
          */
    
         let prefix = 'core';
+        let persistent = false;
         t.baseLayerIdx = await t.config.get(prefix+'.baselayer');
-        if (t.baseLayerIdx == null)
-            prefix = 'core.p';
-        t.baseLayerIdx = await t.config.get(prefix+'.baselayer');
+        if (t.baseLayerIdx == null) 
+            t.baseLayerIdx = await t.config.get(prefix+'.p.baselayer');
         if (t.baseLayerIdx == null)
             t.baseLayerIdx = 0;
+        else
+            persistent = true
         t.baseLayerName = this.config.baseLayers[t.baseLayerIdx].values_.name;
-        prefix = "core";
+    
+        let resolution = await t.config.get(prefix+'.resolution');
+        if (resolution==null || persistent)
+            resolution = await t.config.get(prefix+'.p.resolution');
         
-        var resolution = await t.config.get(prefix+'.resolution');
-        var center = await t.config.get(prefix+'.center');
+        let center = await t.config.get(prefix+'.center');
+        if (center == null || persistent)
+            center = await t.config.get(prefix+'.p.center');
         var rotation = 0;    
         
         
@@ -125,14 +131,13 @@ pol.core.MapBrowser = class {
                 ];
                 rotation = parseFloat(parts[3]);
                 t.baseLayerIdx = parseInt(parts[4], 10);
-                console.log("resolution="+resolution);
             }
         }
         
         /* OpenLayers view */
         let proj = await t.config.get(prefix+'.projection');
-        
-        console.log("PROJ=", proj);
+        if (proj == null || persistent)
+            proj = await t.config.get(prefix+'.p.projection');
         
         t.view = new ol.View({   
             projection: proj,                         
@@ -344,7 +349,7 @@ pol.core.MapBrowser = class {
         
         if ( !ls || ls==null)
             return;
-
+        
         if (this.map.getLayers().getLength() == 0)
             this.map.addLayer(ls);
         else
@@ -382,11 +387,13 @@ pol.core.MapBrowser = class {
   
         /* Base layer */
         this.changeBaseLayer(this.baseLayerIdx);
-  
+        
         /* Overlay layers */
         if (config.oLayers.length > 0) 
             for (var i=0; i < config.oLayers.length; i++) {
                 const layer = config.oLayers[i]
+                if (layer==null)
+                    continue;
                 this.featureInfo.registerRecursive(layer);
                 this.map.addLayer(layer);
             }

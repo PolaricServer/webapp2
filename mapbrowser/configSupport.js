@@ -143,7 +143,7 @@ function createLayer_MapCache(opt) {
                 host += "localhost";
         }
         layer.getSource().setUrl(opt.url? opt.url : host + "/mapcache/wms?");
-    }, 1000);
+    }, 2000);
     
     const layer = new ol.layer.Tile({
           name: (opt.name ? opt.name : "noname"), 

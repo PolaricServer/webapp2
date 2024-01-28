@@ -27,14 +27,14 @@ pol.tracking = pol.tracking || {};
 
 pol.tracking.ServerManager = class {
     
-    constructor(phone, cb) {
+    constructor(mobile, cb) {
         const t = this;
-        t.phone = phone;
+        t.mobile = mobile;
         t.callback = cb;
     }
     
     instantiate() {
-        const srv = new pol.tracking.PolaricServer(this.phone);
+        const srv = new pol.tracking.PolaricServer(this.mobile);
         if (this.callback != null)
             this.callback(srv);
         return srv;
@@ -46,7 +46,7 @@ pol.tracking.ServerManager = class {
 
 pol.tracking.PolaricServer = class extends pol.core.Server {
     
-    constructor(phone) {
+    constructor(mobile) {
         super();
         this.auth = { userid: "", groupid: "", callsign: "", servercall: "", admin: false, sar: false, services: "" }; 
         this.hasDb = false;
@@ -61,7 +61,7 @@ pol.tracking.PolaricServer = class extends pol.core.Server {
         t.startcb = null;
         t.stopcb = null;
         t.cbId = 0;
-        t.phone = phone;
+        t.mobile = mobile;
         
         t.init();
         
@@ -159,13 +159,16 @@ pol.tracking.PolaricServer = class extends pol.core.Server {
         /* FIXME: How can we store the key in a more secure way? 
          * This is still somewhat vulnerable to CSS attacks 
          */
-        CONFIG.remove("api.key");
-        if (this.phone)
-            CONFIG.store("api.key", secret);
-        else
+        await CONFIG.remove("api.key");
+        if (this.mobile) {
+            await CONFIG.store("api.key", secret);
+            await CONFIG.store("api.userid", userid);
+        }
+        else {
             CONFIG.storeSes("api.key", secret);
+            CONFIG.storeSes("api.userid", userid);
+        }
         this.userid = userid;
-        CONFIG.storeSes("api.userid", userid);
     }
     
     
@@ -382,7 +385,7 @@ pol.tracking.PolaricServer = class extends pol.core.Server {
             if (p.point.href.indexOf("P:") === 0)
                 /* Show image */
                 CONFIG.mb.gui.imagePopup(p.point.title, p.point.href, 
-                {draggable: true, id: "imagepopup",  pixPos: (this.phone ? [0,0] : pixel)  });
+                {draggable: true, id: "imagepopup",  pixPos: (this.mobile ? [0,0] : pixel)  });
             
             else if (p.point.type === "photo") {
                 /* Show user uploaded image */
@@ -390,7 +393,7 @@ pol.tracking.PolaricServer = class extends pol.core.Server {
                     CONFIG.mb.gui.imagePopup(ph.descr+" - "+formatDTG(ph.time) + 
                       (!this.isAuth() || this.userid !== ph.userid ? " (by "+ph.userid+")" : "") , 
                       "  data:image/jpeg;base64, "+ph.image, 
-                      {draggable: true,  id: "imagepopup",  pixPos: (this.phone ? [0,0] : pixel)  } );
+                      {draggable: true,  id: "imagepopup",  pixPos: (this.mobile ? [0,0] : pixel)  } );
                 });
             }
             else
