@@ -45,6 +45,7 @@ pol.core.Config = class extends ol.Object {
         this.uid = (uid ? uid : "0");
         this.mb = null;  
         this.server = null;
+        this.xstorage = null;
         this.storage = window.localStorage;
         this.sstorage = window.sessionStorage;
         this.baseLayers = [];
@@ -62,6 +63,8 @@ pol.core.Config = class extends ol.Object {
     }
 
 
+    
+    
     
     getStyles(tag) {
         let st = {};
@@ -134,7 +137,13 @@ pol.core.Config = class extends ol.Object {
         { this.uid = uid; }
 
    
-   
+    /*
+     * Set external storage. 
+     */   
+    setXStorage(storage) {
+        this.xstorage = storage;
+    }
+    
    
     /**
      *  Get a setting. If stored in browser sesson storage, return this, if not try local storage. 
@@ -150,8 +159,13 @@ pol.core.Config = class extends ol.Object {
         * look in in-memory properties. 
         */
         let data = this.sstorage["polaric."+id]; 
-        if (data==null)
-            data = this.storage["polaric."+id + ":" + this.uid];
+        if (data==null) {
+            const key = "polaric."+id + ":" + this.uid;
+            if (this.xstorage != null)
+                data = await this.xstorage.get(key);
+            else
+                data = this.storage[key];
+        }
         const x = (data ? JSON.parse(data) : null );
         if (x==null && this.props[id] != null) 
             return this.props[id]; 
@@ -164,7 +178,7 @@ pol.core.Config = class extends ol.Object {
         return this.props[id]; 
     }
     
-    
+
     
 
     /**
@@ -179,7 +193,12 @@ pol.core.Config = class extends ol.Object {
     store(id, value) { 
         console.assert(id != null && value != null, "id="+id+", value="+value); 
         const val = JSON.stringify(value);
-        this.storage["polaric." + id + ":" + this.uid] = val;
+        const key = "polaric." + id + ":" + this.uid;
+
+        if (this.xstorage != null)
+            this.xstorage.put(key, val);
+        else
+            this.storage[key] = val;
     }
     
     
@@ -200,16 +219,18 @@ pol.core.Config = class extends ol.Object {
     
     
 
-
-
     /** 
      *  Remove value from local storage. 
      * @param {string} id - Key of setting. 
      */
     remove(id) {
         console.assert(id!=null, "id=null");
-        this.storage.removeItem("polaric."+id+":"+this.uid);
         this.sstorage.removeItem("polaric."+id);
+        const key = "polaric." + id + ":" + this.uid;
+        if (this.xstorage != null)
+            this.xstorage.remove(key);
+        else
+            this.storage.removeItem(key);
     }
 
    
