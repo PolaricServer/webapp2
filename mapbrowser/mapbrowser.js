@@ -138,6 +138,8 @@ pol.core.MapBrowser = class {
         let proj = await t.config.get(prefix+'.projection');
         if (proj == null || persistent)
             proj = await t.config.get(prefix+'.p.projection');
+        if (proj == null)
+            proj = 'EPSG:900913';
         
         t.view = new ol.View({   
             projection: proj,                         

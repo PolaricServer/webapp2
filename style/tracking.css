@@ -321,7 +321,7 @@ select#group {width: 9em}
 
 #methodSelect {width: 6em}
 #testrest textarea{width: 26.6em}
-#testResp {padding: 0.6em; background: #ccc; border: dotted 1px; #aaa; max-width:35em; overflow-wrap: anywhere}
+#testResp {padding: 0.6em; background: #ccc; border: dotted 1px #aaa; max-width:35em; overflow-wrap: anywhere}
 #testResp.success {background: #afa; color: #030}
 #testResp.err {background: #fbb; color: #300}
 .headerEdit {margin-top: 0.1em; margin-bottom: 0.1em}

@@ -160,7 +160,7 @@ pol.core.Widget = class {
         this.successmsg = msg;
         this.waitmsg = this.errmsg = null;
         if (time > 0) 
-            setTimeout(()=>{this.successmsg = null}, time);
+            setTimeout(()=>{this.successmsg = null; m.redraw()}, time);
         m.redraw();
     }
     
@@ -168,7 +168,7 @@ pol.core.Widget = class {
         this.errmsg = msg;
         this.waitmsg = this.successmsg = null;
         if (time > 0) 
-            setTimeout(()=>{this.errmsg = null}, time);
+            setTimeout(()=>{this.errmsg = null; m.redraw()}, time);
         m.redraw();
     }
     
@@ -176,7 +176,7 @@ pol.core.Widget = class {
         this.waitmsg = msg;
         this.errmsg = this.successmsg = null;
         if (time > 0) 
-            setTimeout(()=>{this.waitmsg = null}, time);
+            setTimeout(()=>{this.waitmsg = null; m.redraw()}, time);
         m.redraw();
     }
     

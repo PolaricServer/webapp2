@@ -189,12 +189,11 @@ div#tags span {display: block}
 #layerSwitcher form {margin-left: 0.3em}
 
 
-img.popupimg {max-width: 700px; max-height: 700px;}
-
-
 #infopopup {
   min-width: 26em;
 }
+
+img.popupimg {max-width: 700px; max-height: 700px;}
 
 div#imagepopup img {
   border: 1px dotted; margin: -2px; margin-bottom: -4px; margin-top: -0.7em; overflow: clip 
