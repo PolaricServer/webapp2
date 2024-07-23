@@ -76,7 +76,7 @@
    div#aprsObject input {max-width: 18em !important}
    div#aprsObject select {max-width: 12em !important}
 
-   #toolbar_login {visibility: hidden; width: 0 !important}
+   #toolbar_login, #toolbar_not, #toolbar_not>img {visibility: hidden; width: 0 !important}
    #tb_measure {visibility: hidden; width: 0 !important}
    #tb_draw {visibility: hidden; width: 0 !important}
    .infopopup {min-width: 90% !important}

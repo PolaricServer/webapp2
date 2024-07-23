@@ -145,14 +145,12 @@
         CONFIG.mb.toolbar.addIcon(2, "images/draw.png", "tb_draw", 
             ()=> WIDGET("features.Edit", [50, 70], true), 
             null, "Draw tool");
+        
     }, 4000); 
    
     CONFIG.labelStyle = new pol.tracking.LabelStyle();
 
-      
-    
-
-    
+  
     
     
     /* 
@@ -392,11 +390,19 @@
      *********************************************************/
     
     browser.ctxMenu.addCallback("PHOTO", (m, ctxt)=> {
+        console.log(ctxt.point);
         m.add('Show image', () => srv.infoPopup(ctxt.point, [m.x, m.y]) );
-        m.add('Delete photo', () => rmPhoto(ctxt.ident) );
+ 
         m.add('Share photo', () => WIDGET("tracking.db.Sharing", [m.x, m.y], true, 
             x=> x.setIdent( ctxt.ident.replace(/^(__db\.)/, ""), "name", "Photo", "type")));
+            
+        if (ctxt.point.point.own || srv.auth.admin) {
+            m.add('Delete photo', () => rmPhoto(ctxt.ident) );
+            m.add('Edit photo title', ()=> WIDGET("tracking.db.PhotoDescr", [m.x, m.y], true, 
+                x=> x.setIdent(ctxt.ident, ctxt.point.point.title)));
+        }
     });
+    
 
     }, 2000);
     
