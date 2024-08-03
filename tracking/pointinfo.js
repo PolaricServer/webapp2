@@ -49,23 +49,29 @@ pol.tracking.PointInfo = class extends pol.core.Widget {
                 if (vn.attrs.speed <= 0 || vn.attrs.course < 0)
                     return null;
                 
+                let speed = "";
+                if (vn.attrs.speed > 0)
+                    speed += vn.attrs.speed + " km/h";
+                    
                 const crs = vn.attrs.course;
+                let cview = null;
                 if (crs > 22 && crs <= 67)
-                    return m("span", m("img", {src:"images/16px/dNE.png"}), " NE"); 
+                    cview = m("span", m("img", {src:"images/16px/dNE.png"}), " NE"); 
                 if (crs > 67 && crs <= 112)
-                    return m("span", m("img", {src:"images/16px/dE.png"}), " E");
+                    cview = m("span", m("img", {src:"images/16px/dE.png"}), " E");
                 if (crs > 112 && crs <= 157)
-                    return m("span", m("img", {src:"images/16px/dSE.png"}), " SE");
+                    cview = m("span", m("img", {src:"images/16px/dSE.png"}), " SE");
                 if (crs > 157 && crs <= 202)
-                    return m("span", m("img", {src:"images/16px/dS.png"}), " S");
+                    cview = m("span", m("img", {src:"images/16px/dS.png"}), " S");
                 if (crs > 202 && crs <= 247)
-                    return m("span", m("img", {src:"images/16px/dSW.png"}), " SW");
+                    cview = m("span", m("img", {src:"images/16px/dSW.png"}), " SW");
                 if (crs > 247 && crs <= 292)
-                    return m("span", m("img", {src:"images/16px/dW.png"}), " W");
+                    cview = m("span", m("img", {src:"images/16px/dW.png"}), " W");
                 if (crs > 292 && crs <= 337)
-                    return m("span", m("img", {src:"images/16px/dNW.png"}), " W");
+                    cview = m("span", m("img", {src:"images/16px/dNW.png"}), " W");
                 else
-                    return m("span", m("img", {src:"images/16px/dN.png"}), " N");
+                    cview = m("span", m("img", {src:"images/16px/dN.png"}), " N");
+                return m("span", speed,nbsp, cview)
             }
         }
         

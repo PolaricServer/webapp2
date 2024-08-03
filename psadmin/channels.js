@@ -2,7 +2,7 @@
  Map browser based on OpenLayers. System admin. 
  Channel management.  
  
- Copyright (C) 2023 Øyvind Hanssen, LA7ECA, ohanssen@acm.org
+ Copyright (C) 2023-2024 Øyvind Hanssen, LA7ECA, ohanssen@acm.org
  
  This program is free software: you can redistribute it and/or modify
  it under the terms of the GNU Affero General Public License as published 
@@ -306,7 +306,7 @@ pol.psadmin.Channels = class extends pol.core.Widget {
            
            if (t.chanUpd != null)
                clearInterval(t.chanUpd);
-            t.chanUpd = setInterval(()=> t.getChannel(ch.name), 10000);
+           t.chanUpd = setInterval(()=> t.getChannel(ch.name, true), 10000);
         }
                 
         
@@ -470,10 +470,12 @@ pol.psadmin.Channels = class extends pol.core.Widget {
     
     
     /* Get a specific channel from server */
-    getChannel(name) {
+    getChannel(name, timed) {
         CONFIG.server.GET("system/adm/channels/"+name, null,
             x=> { 
                 this.ch=JSON.parse(x); 
+                if (timed)
+                    return;
                 this.type = this.ch.specific.type;
                 this.host(this.ch.specific.host);
                 this.port(""+this.ch.specific.port);
