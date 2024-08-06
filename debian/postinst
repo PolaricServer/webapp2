@@ -28,6 +28,7 @@ case "$1" in
             a2ensite aprs_ssl.conf > /dev/null 2>&1 
         fi
         if [ ! "$DOCKER_BUILD" = true ]; then
+            a2enconf javascript-common
             apache2ctl restart
         fi
     ;;
