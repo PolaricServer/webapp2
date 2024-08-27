@@ -1,8 +1,13 @@
-polaric-webapp2 (3.0+) UNRELEASED; urgency=medium
+polaric-webapp2 (3.1) stable; urgency=medium
 
-  * Hacking.. 
+  * Support photo API (Database plugin)
+  * Configurable persistent storage
+  * Fix issues with jquery js library
+  * Allow CONFIG.get to asynchronous
+  * Rotate north button
+  * Various fixes and updates
 
- -- Oyvind Hanssen <ohanssen@acm.org>  Tue, 05 Dec 2023 21:39:55 +0100
+ -- Oyvind Hanssen <ohanssen@acm.org>  Tue, 27 Aug 2024 22:56:43 +0200
 
 polaric-webapp2 (3.0) stable; urgency=medium
 
