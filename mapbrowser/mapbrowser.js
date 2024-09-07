@@ -404,8 +404,10 @@ pol.core.MapBrowser = class {
 
 
     addLayer(layer) {
-        this.map.addLayer(layer);
-        this.xLayers.push(layer);
+        if (this.map != null) 
+            this.map.addLayer(layer);
+        if (this.xLayers != null)
+            this.xLayers.push(layer);
     }
 
 

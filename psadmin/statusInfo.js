@@ -36,10 +36,10 @@ pol.psadmin.statusInfo = class extends pol.core.Widget {
         t.clients = []; 
         
         
-        const showClients = {
+        this.showClients = {
             view: function() {
                 let i=0;
-                return m("table.Clients", m("thead",  
+                return m("table", m("thead",  
                         m("tr", m("th", "Created"), m("th", "Client"), m("th", "M"), m("th", "In"), m("th", "Out"), m("th", "Userid")),                    
                     ),
                     m("tbody", 
@@ -65,12 +65,16 @@ pol.psadmin.statusInfo = class extends pol.core.Widget {
         this.widget = {
             view: function() {
                 const d = new Date(t.data.runsince);
-                return m("div", [       
+                return m("div#statusinfo", [       
                     m("h1", "Status Info"),
                     m("form.status", [  
                         m("div.field", 
                             m("span.wleftlab", "Server run since: "), 
                                 pol.core.Time.formatDate(d)+" / "+pol.core.Time.formatTime(d)), 
+                        m("div.field", 
+                            m("span.wleftlab", "Server address: "), CONFIG.server.host), 
+                        m("div.field", 
+                            m("span.wleftlab", "Server callsign: "), CONFIG.server.auth.servercall), 
                         m("div.field", 
                             m("span.wleftlab", "Server version: "), t.data.version), 
                         m("div.field", 
@@ -79,8 +83,6 @@ pol.psadmin.statusInfo = class extends pol.core.Widget {
                             m("span.wleftlab", "Own objects: "), t.data.ownobj ),
                         m("div.field", 
                             m("span.wleftlab", "Clients (logged in): "), t.data.clients+" ("+t.data.loggedin+")" ),    
-                        m("div.field", 
-                            m("span.wleftlab", "Memory used: "), toKbytes(t.data.usedmem) ),    
 
                         m("div.field", 
                             m("span.wleftlab", "Plugin modules: "), m("div#plugins", t.data.plugins.map( x=> {
@@ -90,7 +92,8 @@ pol.psadmin.statusInfo = class extends pol.core.Widget {
                             m("div.field", 
                                 m("span.wleftlab", "Remote control: "), t.data.remotectl ):null), 
                     ]),
-                    m(showClients),
+                    m("div#clientList"),
+                    // m(showClients),
                 ])
             }
         };
@@ -143,9 +146,13 @@ pol.psadmin.statusInfo = class extends pol.core.Widget {
     getClients() {
         CONFIG.server.GET( "/system/adm/clients", null, 
             st => {
-                this.clients = JSON.parse(st);             
+                this.clients = JSON.parse(st);           
                 this.clients.sort( (x,y) => (x.cid < y.cid ? -1 : (x.cid===y.cid ? 0 : 1)));
-                m.redraw();
+                if (this.nclients != this.clients.length)
+                    setTimeout(()=> this.mountList(), 400);
+                else
+                    m.redraw();
+                this.nclients = this.clients.length;
             },            
             x=> { 
                 console.log("Cannot GET data (se browser log)", x);
@@ -160,6 +167,7 @@ pol.psadmin.statusInfo = class extends pol.core.Widget {
 
     
     onActivate() {
+        this.resizable = true;
         this.getInfo();
         this.getClients();
         this.updates = setInterval( () => {
@@ -168,6 +176,14 @@ pol.psadmin.statusInfo = class extends pol.core.Widget {
         }, 5000);
     }
 
+    
+    mountList() {
+        m.mount($("div#clientList").get(0), this.showClients);
+        this.setScrollTable("#statusinfo", "div#clientList");
+    }
+    
+    
+    
 } /* class */
 
 

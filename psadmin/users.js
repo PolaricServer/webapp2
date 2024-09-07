@@ -347,7 +347,7 @@ pol.psadmin.Users = class extends pol.core.Widget {
         } );
     }
             
-    /* Mount or remout the table that represents the list of users 
+    /* Mount or remount the table that represents the list of users 
      * make it scrollable. 
      */        
     mountList() {
@@ -364,6 +364,7 @@ pol.psadmin.Users = class extends pol.core.Widget {
         
     
     onActivate() {
+        this.resizable = true;
         this.getUsers();
     }
     

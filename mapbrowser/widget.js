@@ -123,6 +123,7 @@ pol.core.Widget = class {
         this.successmsg = null;
         this.errmsg = null;
         
+        this.resizable = false;
         this.winpos = null;
         this.saved = true;
         this.classname = null;
@@ -244,7 +245,7 @@ pol.core.Widget = class {
             vnode: this.widget,
             pixPos: pixPos,
             draggable: true,
-        //    resizable: true,
+            resizable: this.resizable,
             dragStop: dragStop,
             pin: saveCb,
             pinned: pinned,
