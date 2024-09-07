@@ -39,7 +39,7 @@ pol.tracking.BullBoard = class extends pol.core.Widget {
         t.selectedGroup = 0;
         t.edit = [[]]; 
         
-        let sentText = [];
+        t.sentText = [];
         let addgrp = m.stream("");
         
         
@@ -105,7 +105,7 @@ pol.tracking.BullBoard = class extends pol.core.Widget {
         };
 
         for (var i=0;i<26;i++)
-            sentText[i] = false;
+            t.sentText[i] = false;
         
         setInterval(()=> m.redraw(), 60000);
         
@@ -118,15 +118,18 @@ pol.tracking.BullBoard = class extends pol.core.Widget {
         
         /* Add group locally */
         function grpAdd() {
+            console.log("grpAdd", addgrp());
             if (addgrp() == "")
                 return;
-            for (i in groups)
-                if (groups[i] == addgrp()) {
+            for (i in t.groups)
+                if (t.groups[i] == addgrp()) {
                     t.selectGroup(i);
+                    m.redraw();
                     return;
                 }
-            groups.push(addgrp().toUpperCase());
-            t.selectGroup(groups.length-1);
+            console.log("grpAdd - push James");
+            t.groups.push(addgrp().toUpperCase());
+            t.selectGroup(t.groups.length-1);
             t.messages = [];
             addgrp(""); 
             t.updateScreen();
@@ -185,24 +188,24 @@ pol.tracking.BullBoard = class extends pol.core.Widget {
             for (const i in msgs) {
                 if (msgs[i]() == "" && sentText[i]==false) 
                     continue;
-                sentText[i] = (msgs[i]() != "");
+                t.sentText[i] = (msgs[i]() != "");
                 
                 var bid = (t.selectedGroup==0 ? String.fromCharCode(Number(i) + ('A'.charCodeAt(0))) : '' + i);
                 var msg = { 
                     bullid: bid,
-                    groupid: group(),  
+                    groupid: t.group(),  
                     text: msgs[i]()
                 }
 
                 /* Perform the REST call to the server */
-                t.server.POST("bullboard/"+group()+"/messages", JSON.stringify(msg),
+                t.server.POST("bullboard/"+t.group()+"/messages", JSON.stringify(msg),
                     x => {
                         console.log("Sent bulletin to: "+msg.groupid+": "+msg.text);
                     },
                     x => {
-                        console.log("Send message -> "+x.status+": "+x.statusText +
+                        console.log("Send bulletin -> "+x.status+": "+x.statusText +
                             " ("+x.responseText+")");
-                        alert("Cannot send message:" + 
+                        alert("Cannot send bulletin:" + 
                             '\n"' + x.responseText + '"');
                     }  
                 );
@@ -266,8 +269,8 @@ pol.tracking.BullBoard = class extends pol.core.Widget {
             var msgs = JSON.parse(x);
             for (const i in msgs) 
                 if (msgs[i] != null) {
-                    sentText[i] = true;
-                    this.edit[t.selectedGroup][i] = m.stream(msgs[i].text);
+                    this.sentText[i] = true;
+                    this.edit[this.selectedGroup][i] = m.stream(msgs[i].text);
                 }
         } );  
     }
@@ -293,15 +296,15 @@ pol.tracking.BullBoard = class extends pol.core.Widget {
     
     
     /* Select the bulletin group to be shown */
-    selectGroup(group) {
-        if (group >= this.groups.length)
-            group = 0;
-        if (!this.edit[group] || this.edit[group].length == 0) {
-            this.edit[group] = [];
-            this.edit[group].push(m.stream(""));
+    selectGroup(grp) {
+        if (grp >= this.groups.length)
+            grp = 0;
+        if (!this.edit[grp] || this.edit[grp].length == 0) {
+            this.edit[grp] = [];
+            this.edit[grp].push(m.stream(""));
         }
-        this.selectedGroup = group;
-        CONFIG.store('tracking.BullBoard.selgroup', this.groups[group]);
+        this.selectedGroup = grp;
+        CONFIG.store('tracking.BullBoard.selgroup', this.groups[grp]);
         this.getMessages();
         if (this.canSend())
             this.getMyMessages(); 
