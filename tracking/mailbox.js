@@ -3,7 +3,7 @@
  Map browser based on OpenLayers 5. Tracking. 
  Messaging.
  
- Copyright (C) 2017-2020 Øyvind Hanssen, LA7ECA, ohanssen@acm.org
+ Copyright (C) 2017-2024 Øyvind Hanssen, LA7ECA, ohanssen@acm.org
  
  This program is free software: you can redistribute it and/or modify
  it under the terms of the GNU Affero General Public License as published 
@@ -59,8 +59,8 @@ pol.tracking.Mailbox = class extends pol.core.Widget {
                             { id: "recipient", value: t.recipient,
                                 maxLength: 40, regex: /.*/i }), 
                             m("img#ulist", {src:"images/participant.png", 
-                                title:"Show logged on users (on/off)", onclick:()=>toggleUsers()})
-                       //  m(checkBox, "APRS"), m(checkBox, "SMS")
+                                title:"Show logged on users (on/off)", onclick:()=>toggleUsers()}),
+                        //  nbsp, m(checkBox,{title: "Tick to send as plain APRS"}, "@APRS")
                     ),
                          
  
@@ -72,7 +72,6 @@ pol.tracking.Mailbox = class extends pol.core.Widget {
                                 maxLength: 66, regex: /.*/i }), 
                        m("img#sendmsg", {src:"images/sendmsg.png", 
                                 title:"Send message", onclick:send} ))
-                      // m("button", { type: "button", onclick: send }, "Send"))
                 ]);
             }
         }
@@ -98,9 +97,9 @@ pol.tracking.Mailbox = class extends pol.core.Widget {
                                             : m("span.fromaddr", {onclick: ()=> {t.recipient(x.to);}}, x.to)) ]),
                                   
                                     (x.status==0 || !x.outgoing ? "" 
-                                    : m("img", {class: "status", title: x.stinfo, src: (x.status == 1 
-                                        ? "images/16px/ok.png" 
-                                        : "images/16px/warn.png")})),  
+                                    : m("img", {class: "status", title: x.stinfo, src: 
+                                        ( x.status == 1 ? "images/16px/ok.png" 
+                                             : (x.status == 2 ? "images/16px/maybe.png" : "images/16px/warn.png") )})),  
                                     br, m("span.txt", x.text)
                                 ] ))
                             ] 
@@ -248,6 +247,7 @@ pol.tracking.Mailbox = class extends pol.core.Widget {
             
         
     setStatus(st) {
+        console.log("setStatus", st);
         for (const i in this.msglist)
             if (this.msglist[i].msgId == st.msgId) {
                 this.msglist[i].status = st.status;
