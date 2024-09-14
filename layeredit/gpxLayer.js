@@ -157,11 +157,11 @@ pol.layers.Gpx = class extends pol.layers.Edit {
     
     // FIXME: Do similar for other layer classes
     _createLayer(name, filt, styleId, label, files) {
-        
+        const login = CONFIG.server.isAuth(); 
         let sublayers = [];
         for (const f of files) {
             const sl = createLayer_GPX( {
-                url: "/objects/"+this.subTag(name)+"/"+f.id, 
+                url: (login? "" : "/open") + "/objects/"+this.subTag(name)+"/"+f.id, 
                 style: (label && label!=null ? SETLABEL(styleId, label) : GETSTYLE(styleId)), 
                 gjson: f.gjson
             });
