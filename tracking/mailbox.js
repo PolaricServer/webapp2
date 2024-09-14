@@ -85,7 +85,7 @@ pol.tracking.Mailbox = class extends pol.core.Widget {
                     m("div#msglist", 
                     m("table", m("tbody", t.msglist.map( x => {
                         return m("tr", 
-                            {oncontextmenu: (e)=> msgMenu(e, x) }, [
+                            [
                                 m("td", m("img", {"class":(x.outgoing ? "ticon" : "icon"), 
                                     src: (x.outgoing ? 'images/32px/chatt.png':'images/32px/chatf.png')})),
                                 m("td"+(x.outgoing ? ".out" : ""), m("div", [
@@ -95,7 +95,10 @@ pol.tracking.Mailbox = class extends pol.core.Widget {
                                         nbsp, m("img", {src:"images/16px/dE.png"}), nbsp, //  > ", 
                                         ( !x.outgoing ? x.to 
                                             : m("span.fromaddr", {onclick: ()=> {t.recipient(x.to);}}, x.to)) ]),
-                                  
+                                    
+                                    m("img", {class: "status", src: "images/16px/close.png", 
+                                        onclick: ()=>t.remove(x.msgId)}), 
+                                      
                                     (x.status==0 || !x.outgoing ? "" 
                                     : m("img", {class: "status", title: x.stinfo, src: 
                                         ( x.status == 1 ? "images/16px/ok.png" 
@@ -124,18 +127,7 @@ pol.tracking.Mailbox = class extends pol.core.Widget {
                 t.closePopup();
         });
         
-        
-        function msgMenu(e, x) {
-            console.log(x.msgId);
-            CONFIG.mb.ctxMenu.showOnPos(
-              { name: "MESSAGES", 
-                msg: x }, [e.clientX, e.clientY]);
-            
-            e.cancelBubble = true;
-            return false;
-        }
-        
-        
+
         
         function toggleUsers() {
             if (t.uvisible) {
@@ -201,11 +193,6 @@ pol.tracking.Mailbox = class extends pol.core.Widget {
         this.server.DELETE("mailbox/"+id,
             x => {
                 console.log("Remove message: "+id);
-                for (i in this.msglist)
-                    if (this.msglist[i].msgId == id) 
-                        this.msglist.splice(i,1);
-                m.redraw();
-                this.setScroll(false);
             },
             x => {
                 console.log("Remove message -> "+x.status+": "+x.statusText +
@@ -264,9 +251,10 @@ pol.tracking.Mailbox = class extends pol.core.Widget {
         */
         this.pscli1 = this.server.pubsub.subscribe("messages:" + this.server.auth.userid, 
             x => { 
+                console.log("Got message: ", x);
                 this.msglist.push(x); 
                 m.redraw();
-                setTimeout(()=> this.addScroll(true), 300);
+                setTimeout(()=> this.addScroll(true), 500);
             }
         );   
         this.pscli2 = this.server.pubsub.subscribe("msgstatus:" + this.server.auth.userid, 
@@ -274,7 +262,14 @@ pol.tracking.Mailbox = class extends pol.core.Widget {
                 this.setStatus(x);
                 m.redraw();
             }
-        );  
+        );        
+        this.pscli3 = this.server.pubsub.subscribe("msgdelete:" + this.server.auth.userid, 
+            x => { 
+                this.msglist = [];
+                m.redraw();
+                this.getMsgs(); 
+            }
+        ); 
         this.getMsgs();
     }
     
@@ -283,8 +278,10 @@ pol.tracking.Mailbox = class extends pol.core.Widget {
         if (this.pscli1 != null)
             this.server.pubsub.unsubscribe("messages:" + this.server.auth.userid, this.pscli1); 
         if (this.pscli2 != null)
-            this.server.pubsub.unsubscribe("msgstatus:" + this.server.auth.userid, this.pscli1); 
-        this.pscli1=this.pscli2=null;
+            this.server.pubsub.unsubscribe("msgstatus:" + this.server.auth.userid, this.pscli2); 
+        if (this.pscli3 != null)
+            this.server.pubsub.unsubscribe("msgdelete:" + this.server.auth.userid, this.pscli3); 
+        this.pscli1=this.pscli2=this.pscli3=null;
         super.onclose();
     }
     
@@ -292,15 +289,6 @@ pol.tracking.Mailbox = class extends pol.core.Widget {
 } /* class */
 
 
-/* Context menu 
- * FIXME
-setTimeout( ()=> {
-        CONFIG.mb.ctxMenu.addCallback("MESSAGES", (m, ctxt)=> {
-            m.add('Reply',  () => getWIDGET("tracking.Mailbox").reply(ctxt.msg) );
-            m.add('Remove', () => getWIDGET("tracking.Mailbox").remove(ctxt.msg.msgId) );
-        }); 
-    }, 2000 );
-*/
         
 pol.widget.setFactory( "tracking.Mailbox", {
         create: () => new pol.tracking.Mailbox()

@@ -251,6 +251,7 @@ pol.tracking.NotifyList = class extends pol.core.Widget {
         /* Remove notification from list */
         function removeNot(id) {
             t.notifier.remove(id);
+            m.redraw();
         }            
         
         function addScroll(moveend) {
