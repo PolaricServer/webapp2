@@ -72,12 +72,37 @@ pol.tracking.TelHist = class extends pol.core.Widget {
                 return  m("div#TelHist", [       
                     m("h1", "Telemetry graph - "+t.ident), 
                     m("div.graph", {id: "graph_"+t.ident}),
-                    m("button", { type: "button", onclick: ()=>t.getHist(t.ident, t.meta) }, "Next"),     
+                    m("button", { type: "button", onclick: ()=>t.getHist(t.ident, t.meta) }, "Next"), nbsp,
+                    m(checkBox, {onclick: selDay,  checked: t.period=="day"}, "Day"), nbsp, 
+                    m(checkBox, {onclick: selWeek, checked: t.period=="week" },"Week"),
+                          
                 ] );    
             }
         };
 
+    
+        function selDay() {
+            if (t.period=="day")
+                t.period = ""; 
+            else 
+                t.period = "day";
+            t.getHist(t.ident, t.meta, true);
+        }
+        
+        function selWeek() {
+            if (t.period=="week") 
+                t.period = ""; 
+            else
+                t.period = "week"; 
+            t.getHist(t.ident, t.meta, true);
+        }
+        
+        
+        
+        
+        
     } /* constructor */
+    
     
     
     
@@ -89,6 +114,7 @@ pol.tracking.TelHist = class extends pol.core.Widget {
                 this.meta.num[chan].eqns[2]; 
         return Math.round(res*1000)/1000;
     }
+        
         
         
     getHist(id, meta, keep) {
@@ -104,15 +130,22 @@ pol.tracking.TelHist = class extends pol.core.Widget {
 
         this.meta = meta
         this.ident = id; 
+        let param = "";
+        if (this.period == "day")
+            param="?hours=24";
+        else if (this.period =="week")
+            param="?hours=168";
+        
         m.redraw();
-        this.srv.GET("telemetry/"+id+"/history", null, 
+        this.srv.GET("telemetry/"+id+"/history"+param, null, 
             x => { 
                 if (keep==true)
                     this.index = this.prevIndex;
                 this.prevIndex = this.index;
+                
                 if (this.chart == null || this.index < 0)
                     this.index = 0;
-                if (keep!=true)
+               // if (keep!=true)
                     this.resetChart();
                 var hist = JSON.parse(x);
                 var opt = Object.assign( {}, this.option); 
@@ -137,11 +170,10 @@ pol.tracking.TelHist = class extends pol.core.Widget {
                         break;
                     }
                 }
-                
                 this.chart.setOption(opt);   
                 this.index++;
                 if (this.index >= 5)
-                    this.index = -1;
+                    this.index = -1;         
             },
             
             x => { console.warn(x); }
