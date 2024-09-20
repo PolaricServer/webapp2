@@ -233,8 +233,10 @@ pol.layers.List = class List extends pol.core.Widget {
                             name:wr.name, type:wr.type, server:true, readonly:obj.readOnly, 
                             noremove: obj.noRemove, index: obj.id
                         });
+                        
+                        /* Add to configured layers-list */
                         t.myLayers.push(x);
-                        CONFIG.mb.addConfiguredLayer(x, wr.name);
+                        CONFIG.mb.addConfiguredLayer(x, wr.name, false);
                         this.myLayerNames = lrs;
                     }
                 m.redraw();
@@ -271,7 +273,16 @@ pol.layers.List = class List extends pol.core.Widget {
         }
     }       
         
-    
+            
+    /* Remove layer from list */
+    _removeLayer(id, lr, store) {
+        if (lr == null)
+            lr = this.myLayers[id];
+        this.myLayers.splice(id,1);
+        this.myLayerNames.splice(id,1);
+        if (lr != null)
+            CONFIG.mb.removeConfiguredLayer(lr);
+    }
         
 } /* class */
 
