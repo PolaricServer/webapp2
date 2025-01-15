@@ -181,6 +181,8 @@
    
     browser.ctxMenu.addCallback("MAP", (m, ctxt)=> {
         
+        m.add('Terreng/høyde', () => WIDGET("tracking.HeightInfo", [50,70], true, x=> x.setPosPix([m.x, m.y]))); 
+        
         m.add('Show map reference', () => browser.show_MaprefPix( [m.x, m.y] ) );  
         if (!phone && (srv.auth.sar || srv.auth.admin)) {
             m.add('Add APRS object', () => 
