@@ -200,9 +200,15 @@ pol.tracking.db.History = class extends pol.core.Widget {
    
         /* Show all items in list - button handler */
         function showAll() {
+            let idmap = {};
             CONFIG.tracks.clear();
             for (const x of t.list) 
-                setTimeout(() => showTrail(x), 100);
+                idmap[x.ident] = 0;
+            for (const x of t.list) { 
+                const i = idmap[x.ident];
+                setTimeout(() => showTrail(x, i), 100);
+                idmap[x.ident]++;
+            }
         }
     
         
@@ -231,7 +237,7 @@ pol.tracking.db.History = class extends pol.core.Widget {
        
     
         /* Show the trail for a given item */
-        function showTrail(x) {
+        function showTrail(x, index) {
             var qstring = "?tfrom=" + toIsoString(x.from.tdate, x.from.ttime()) 
               + "&tto=" + toIsoString(x.to.tdate, x.to.ttime());
             
@@ -240,7 +246,7 @@ pol.tracking.db.History = class extends pol.core.Widget {
                     $('#hist_back').addClass('searchMode');
                     t.searchmode = true;
                     CONFIG.tracks.searchMode(true);
-                    CONFIG.tracks.update(JSON.parse(x), true);
+                    CONFIG.tracks.update(JSON.parse(x), true, index);
                 });
         }
     

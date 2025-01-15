@@ -118,7 +118,6 @@ pol.core.LayerSwitcher = class extends pol.core.Widget {
      * Re-evaluate what layers to be shown in layer switcher list. 
      */
     evaluateLayers() {
-
         /* First, check if base layer is still valid. If not, 
          * replace it with first layer in list that is. 
          */
@@ -139,11 +138,11 @@ pol.core.LayerSwitcher = class extends pol.core.Widget {
                     layers[i].wasOn = true; 
                 layers[i].setVisible(false);
             }
-            else
-                if (layers[i].wasOn) {
+            else {
+                if (layers[i].wasOn) 
                     layers[i].setVisible(true);
-                    layers[i].wasOn = NaN;
-                }
+            }
+
         m.redraw();
     }
     

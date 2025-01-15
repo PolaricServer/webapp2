@@ -38,6 +38,7 @@ pol.tracking.BullBoard = class extends pol.core.Widget {
         t.messages = [];
         t.selectedGroup = 0;
         t.edit = [[]]; 
+        t.showOld = true;
         
         t.sentText = [];
         let addgrp = m.stream("");
@@ -46,7 +47,7 @@ pol.tracking.BullBoard = class extends pol.core.Widget {
         /* Render a bulletin group */
         const showGroup = {
             view: function(vn) {
-                return m("table", vn.attrs.msgs.map( x => {
+                return m("table", vn.attrs.msgs.filter(mx => (t.showOld || !oldSender(mx)) ).map( x => {
                     return m("tr"+(oldSender(x) ? ".oldmsg" : ""), [ m("td", x.sender), m("td", m("table", x.bulls.map( y => {
                         if (y!=null) 
                             return m("tr"+(oldMsg(y) ? ".oldmsg" : ""), 
@@ -127,7 +128,7 @@ pol.tracking.BullBoard = class extends pol.core.Widget {
                     m.redraw();
                     return;
                 }
-            console.log("grpAdd - push James");
+            console.log("grpAdd - push");
             t.groups.push(addgrp().toUpperCase());
             t.selectGroup(t.groups.length-1);
             t.messages = [];
@@ -166,6 +167,14 @@ pol.tracking.BullBoard = class extends pol.core.Widget {
                     old = false; 
             return old;
         }
+        
+        
+        function oldGroup(g) {
+            var old = true; 
+            for (s of g.senders) ;
+            return old;
+        }
+        
         
         
         /* Add input line */
@@ -238,6 +247,7 @@ pol.tracking.BullBoard = class extends pol.core.Widget {
         const t=this;
         t.server.GET("/bullboard/groups", "", x => { 
             t.groups = JSON.parse(x);
+            console.log(t.groups);
             t.groups.unshift('APRS');
             t.groups.unshift('Announcements');
         

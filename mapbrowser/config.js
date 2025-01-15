@@ -105,6 +105,7 @@ pol.core.Config = class extends ol.Object {
         console.assert(layer != null, "layer=null");
         if (name && name != null) 
             layer.set("name", name);
+        layer.wasOn = false; 
         if (!layer.predicate) 
             layer.predicate = function() {return true;}
         return this.oLayers.push(layer) - 1;

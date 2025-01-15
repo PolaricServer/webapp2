@@ -381,24 +381,30 @@ pol.tracking.Tracking = class {
 
 
     /**
-    * Add a feature (tracking point) or update it if it is already there.
-    */
-    addPoint(p) {
+     * Add a feature (tracking point) or update it if it is already there.
+     */
+    addPoint(p, ext) {
         console.assert(p!=null, "Assertion failed");
+
+        let eext = "";
+        if (ext != null && ext > 0)
+            eext = "."+ext;
+        const ident = p.ident+eext;
+        
         const c = ll2proj(p.pos);
 
         if (p.redraw)
-            this.removePoint(p.ident);
+            this.removePoint(ident);
 
 
         /* Draw the trail first. */
-        if (!this._trailHidden(p.ident, false))
-            this.addTrail(p);
+        if (!this._trailHidden(ident, false))
+            this.addTrail(p, ext);
 
-        let feature = this.source.getFeatureById(p.ident);
+        let feature = this.source.getFeatureById(ident);
         if (feature == null) {
             feature = new ol.Feature(new ol.geom.Point(c));
-            feature.setId(p.ident);
+            feature.setId(ident);
             this.source.addFeature(feature);
         }
         /* If feature exists and redraw flag is false. Just return */
@@ -407,7 +413,7 @@ pol.tracking.Tracking = class {
     
         /* update position, etc. */
         feature.getGeometry().setCoordinates(c);
-        if (this.tracked != null && this.tracked == p.ident)
+        if (this.tracked != null && this.tracked == ident)
             CONFIG.mb.setCenter(p.pos, 70);
             
         if (p.label != null) 
@@ -416,10 +422,10 @@ pol.tracking.Tracking = class {
         this.setStyle(feature);
         
         /* Update label. Just replace it. */
-        if (p.label != null && !this._labelHidden(p.ident, p.label.hidden)) {
+        if (p.label != null && !this._labelHidden(ident, p.label.hidden)) {
             if (feature.label)
                 CONFIG.mb.map.removeOverlay(feature.label);
-            feature.label = this.createLabel(c, p.ident, p.label);
+            feature.label = this.createLabel(c, ident, p.label);
         }
         else if (feature.label)
             CONFIG.mb.map.removeOverlay(feature.label);
@@ -621,14 +627,21 @@ pol.tracking.Tracking = class {
     /**
      * Add a trail.
      */
-    addTrail(p) {
-        let i=0;
+    addTrail(p, ext) {
+        let eext = "";
+        if (ext != null && ext > 0)
+            eext = "."+ext;
+        const ident = p.ident+".trail"+eext;
+
+        console.log("Feature eext: "+eext);
         
         console.assert(p!=null, "p is null");
-        let feature = this.source.getFeatureById(p.ident+'.trail');
+        let feature = this.source.getFeatureById(ident);
         /* If feature exists and redraw flag is false. Just return */
-        if (feature != null && !p.redraw)
+        if (feature != null && !p.redraw) {
+            console.log("Feature exists: "+ident);
             return;
+        }
 
         /* Just replace it with a new one. Remove the old one. */
         if (feature !=null)
@@ -640,7 +653,7 @@ pol.tracking.Tracking = class {
 
 
         feature = new ol.Feature(new ol.geom.LineString([ll2proj(p.pos)]));
-        feature.setId(p.ident+'.trail');
+        feature.setId(ident);
         this.source.addFeature(feature);
 
         /* update position */
@@ -657,9 +670,10 @@ pol.tracking.Tracking = class {
         feature.setStyle(style);
 
         if (CONFIG.mb.getResolution() < 90)
-            this.addTrailPoints(p);
+            this.addTrailPoints(p, ext);
     } /* addTrail */
 
+    
 
     formatTime(dt) {
         const days = ['jan','feb','mar','apr','may','jun','jul','aug','sep','oct','nov','dec'];
@@ -676,14 +690,19 @@ pol.tracking.Tracking = class {
      * Add points to a trail.
      * TODO: Should there be a method to enable/disable this?
      */
-    addTrailPoints(p) {
+    addTrailPoints(p, ext) {
         console.assert(p!=null, "p is null");
-        let feature = this.source.getFeatureById(p.ident+'.trailpoints');
+        let eext = "";
+        if (ext != null && ext > 0)
+            eext = "."+ext;
+        const ident = p.ident+'.trailpoints'+eext;
+        
+        let feature = this.source.getFeatureById(ident);
         if (feature !=null)
             this.source.removeFeature(feature);
 
         feature = new ol.Feature(new ol.geom.MultiPoint([]));
-        feature.setId(p.ident+'.trailpoints');
+        feature.setId(ident);
         p.trail.labels = [];
 
         /* update position */
@@ -853,7 +872,7 @@ pol.tracking.Tracking = class {
     /**
      * Update using JSON data from Polaric Server backend
      */
-    update(ov, srch) {
+    update(ov, srch, index) {
         let i = 0;
         
         if (this.srch && !srch)
@@ -879,7 +898,7 @@ pol.tracking.Tracking = class {
         this.srch = srch;
 	
         for (i in ov.points)
-            this.addPoint(ov.points[i]);
+            this.addPoint(ov.points[i], index);
    
         for (i in ov.lines)
             this.addLine(ov.lines[i]);
