@@ -72,7 +72,7 @@ pol.psadmin.Channels = class extends pol.core.Widget {
                             m("td", 
                               m(removeEdit, {remove: apply(remove,i), edit: apply(edit, i++)})),
                             m("td.flags", flags(x)),
-                            m("td", x.ident),
+                            m("td", x.specific.type),
                             m("td.name", x.name), 
                             m("td", ( x.generic.state != 'OFF' ? 
                                     ( x.generic.state === 'RUNNING' ? m("img", {src:"images/16px/ok.png"}) 
