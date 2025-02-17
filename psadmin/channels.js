@@ -2,7 +2,7 @@
  Map browser based on OpenLayers. System admin. 
  Channel management.  
  
- Copyright (C) 2023-2024 Øyvind Hanssen, LA7ECA, ohanssen@acm.org
+ Copyright (C) 2023-2025 Øyvind Hanssen, LA7ECA, ohanssen@acm.org
  
  This program is free software: you can redistribute it and/or modify
  it under the terms of the GNU Affero General Public License as published 
@@ -41,9 +41,11 @@ pol.psadmin.Channels = class extends pol.core.Widget {
         t.clearAllVars();
         t.typelist = [
             {label: "APRSIS"},
+            {label: "APRSIS-SRV"},
             {label: "KISS"},
             {label: "TCPKISS"},
-            {label: "TNC2"}
+            {label: "TNC2"},
+            {label: "ROUTER"}
         ];
         
         
@@ -72,12 +74,14 @@ pol.psadmin.Channels = class extends pol.core.Widget {
                             m("td", 
                               m(removeEdit, {remove: apply(remove,i), edit: apply(edit, i++)})),
                             m("td.flags", flags(x)),
+                            m("td", (x.generic.inRouter ? m("img",{src:"images/16px/router.png", title: "Via router"}) 
+                                            : (x.specific.type==="ROUTER" ? m("img",{src:"images/16px/router2.png"}) : null)) ),
                             m("td", x.specific.type),
                             m("td.name", x.name), 
                             m("td", ( x.generic.state != 'OFF' ? 
                                     ( x.generic.state === 'RUNNING' ? m("img", {src:"images/16px/ok.png"}) 
-                                        :  ( x.generic.state === 'FAILED' ? m("img", {src:"images/16px/warn.png"}) 
-                                                  : m("img", {src:"images/16px/maybe.png"} ) )) : null )), 
+                                        :  ( x.generic.state === 'FAILED' ? m("img", {src:"images/16px/warn.png", title: "Failed"}) 
+                                                  : m("img", {src:"images/16px/maybe.png", title: "trying..."} ) )) : null )), 
                         ])
                     })
                 ))
@@ -89,17 +93,20 @@ pol.psadmin.Channels = class extends pol.core.Widget {
             view: function() {
                 return m("div#stats", [
                     m("div.field", 
-                    m("span.lleftlab", "Heard stns:"),
-                        m("span", t.ch.specific.heard )), 
-                    m("div.field", 
                         m("span.lleftlab", "Traffic in:"),
-                        m("span", t.ch.specific.heardpackets + " ("+t.ch.specific.duplicates+" duplicates)" )), 
+                        m("span", t.ch.specific.heardpackets )), 
                     m("div.field", 
                         m("span.lleftlab", "Traffic out:"),
-                        m("span", t.ch.specific.sentpackets ))
+                        m("span", t.ch.specific.sentpackets )), 
+                    (t.type === "APRSIS-SRV" ? 
+                        m("div.field", 
+                          m("span.lleftlab", "Clients:"),
+                          m("span", t.ch.specific.nclients )) : null),
                 ])
             }
         }
+        
+        
         const stats_ais = {
             view: function() {
                 return m("div#stats", [
@@ -112,6 +119,8 @@ pol.psadmin.Channels = class extends pol.core.Widget {
                 ])
             }
         }
+        
+        
         const stats = {
             view: function() {
                 return (t.type === "AIS-TCP" ? m(stats_ais) : m(stats_aprs));
@@ -146,7 +155,7 @@ pol.psadmin.Channels = class extends pol.core.Widget {
                         m("span.lleftlab", "KISS port:"),
                         m(textInput, { id:"kissport", value: t.kissport, size: 3, 
                             maxLength:3, regex: /[0-9]*/i })) : null), 
-                ]);
+                    ]);
                     
                 else if (t.type === 'TCPKISS' || t.type === 'AIS-TCP')
                     return m("div#config", [ 
@@ -169,9 +178,41 @@ pol.psadmin.Channels = class extends pol.core.Widget {
                             m("span.lleftlab", "KISS port:"),
                             m(textInput, { id:"kissport", value: t.kissport, size: 3, 
                                 maxLength:3, regex: /[0-9]*/i })) : null), 
-                ]);
+                    ]);
+                
                     
-                else    
+                else if (t.type === 'APRSIS-SRV')
+                    return m("div#config", [ 
+                    m("div.field", 
+                        m("span.lleftlab", "Channel:"),
+                        m(checkBox, {id: "activated", onclick: toggleAct, checked: t.activated}, 
+                            "Activate"),                 
+                        m(checkBox, {id: "activated", onclick: togglePrim, checked: t.primary}, 
+                            "Primary"), ),
+                    m("div.field", 
+                        m("span.lleftlab", "Listen port:"),
+                        m(textInput, { id:"port", value: t.port, size: 6, 
+                            maxLength:6, regex: /[0-9]*/i })),  
+                    ]);
+                    
+                    
+                else if (t.type === 'ROUTER')
+                    return m("div#config", [ 
+                    m("div.field", 
+                        m("span.lleftlab", "Channel:"),
+                        m(checkBox, {id: "activated", onclick: toggleAct, checked: t.activated}, 
+                            "Activate"),                 
+                        m(checkBox, {id: "activated", onclick: togglePrim, checked: t.primary}, 
+                            "Primary"), ),
+                        
+                    m("div.field", 
+                        m("span.lleftlab", "Channels:"),
+                        m(textInput, { id:"channels", value: t.channels, size: 25, 
+                            maxLength:48, regex: /{a-zA-Z0-9,_-]*/i })),  
+                    ]);
+                
+                
+                else  // APRSIS    
                     return m("div#config", [ 
                         m("div.field", 
                             m("span.lleftlab", "Channel:"),
@@ -292,6 +333,7 @@ pol.psadmin.Channels = class extends pol.core.Widget {
             m.redraw();
         }
         
+        
         /* Load info about channel and enter edit mode */
         function edit(i) {
            const ch = t.clist[i];
@@ -314,7 +356,6 @@ pol.psadmin.Channels = class extends pol.core.Widget {
         function add() {
             let ch = {
                 active: t.activated,
-                ident: null, 
                 name: t.name(),
                 generic: {
                     restricted: t.loggedinonly,
@@ -331,11 +372,16 @@ pol.psadmin.Channels = class extends pol.core.Widget {
             else if (t.type==='APRSIS')
                 ch.specific = { host: t.host(), port: parseInt(t.port()), 
                                 pass: parseInt(t.passcode()), filter: t.filter() };
+            else if (t.type==='APRSIS-SRV')
+                ch.specific = { port: parseInt(t.port())};
             else if (t.type==='AIS-TCP')
                 ch.specific = { host: t.host(), port: parseInt(t.port()) };
+            else if (t.type==='ROUTER')
+                ch.specific = { channels: t.channels() };
             
             ch.specific.type = t.type;
             
+            /* Add it to server */
             srv.POST("system/adm/channels", JSON.stringify(ch), 
                     ()=> {
                         console.log("Channel added: "+t.name());
@@ -362,9 +408,11 @@ pol.psadmin.Channels = class extends pol.core.Widget {
             return !t.editMode;
         }
         
+        
         function updateMode() {
             return t.editMode;
         }
+        
         
         /* Update object on backend (on server) */
         function update() {
@@ -394,6 +442,12 @@ pol.psadmin.Channels = class extends pol.core.Widget {
             if (t.type === 'APRSIS') {
                 t.ch.specific.pass = parseInt(t.passcode());
                 t.ch.specific.filter = t.filter();
+            }   
+            if (t.type === 'ROUTER') {
+                t.ch.specific.channels = t.channels()   ;
+            }
+            if (t.type === 'APRSIS-SRV') {
+                t.ch.specific.port = parseInt(t.port());
             }
             srv.PUT("system/adm/channels/"+t.name(), JSON.stringify(t.ch), 
                     ()=> {
@@ -415,6 +469,8 @@ pol.psadmin.Channels = class extends pol.core.Widget {
     } /* constructor */
     
     
+    
+    
     onclose() {
         clearInterval(this.listUpd);       
         if (this.chanUpd != null)
@@ -424,7 +480,7 @@ pol.psadmin.Channels = class extends pol.core.Widget {
     onActivate() {
         this.getObjects();        
         this.listUpd = setInterval( () => 
-            this.getObjects(), 15000)
+            this.getObjects(), 10000)
     }
     
     
@@ -451,14 +507,22 @@ pol.psadmin.Channels = class extends pol.core.Widget {
         t.kissport = m.stream("");
         t.passcode = m.stream("");
         t.filter = m.stream("");
+        t.channels = m.stream("");
     }
     
     
-    /* Get list of objects from backend server */
+    /* Get list of channels from backend server */
     getObjects() {
         CONFIG.server.GET("system/adm/channels", null,
             x=> { 
-                this.clist=JSON.parse(x); 
+                this.clist = JSON.parse(x); 
+                this.clist.sort( (a,b) => {
+                    if (a.specific.type > b.specific.type) return 1; 
+                    else if (a.specific.type < b.specific.type) return -1;
+                    else if (a.name > b.name) return 1;
+                    else if (a.name < b.name) return -1; 
+                    else return 0;
+                  } );
                 m.redraw() 
             },
             (xhr, st, err)=> { 
@@ -486,6 +550,7 @@ pol.psadmin.Channels = class extends pol.core.Widget {
                 this.primary = this.ch.rfchan || this.ch.inetchan;
                 this.loggedinonly = this.ch.generic.restricted;
                 this.tag(this.ch.generic.tag);
+                this.channels(this.ch.specific.channels);
                 m.redraw(); 
             },
             (xhr, st, err) => { 
@@ -500,8 +565,12 @@ pol.psadmin.Channels = class extends pol.core.Widget {
     remove(x) {
         if (!x || x==null)
             return;
+        if (confirm("Remove - are you sure?") == false)
+                return;
+        
         srv.DELETE("system/adm/channels/"+x,
                 ()=> { 
+                    console.log("Removed channel: "+x);
                     this.successMsg("Channel deleted", 10000)
                     this.getObjects() 
                     if (this.name() === x)
