@@ -29,6 +29,8 @@ pol.mapref = pol.mapref || {};
 console.assert = console.assert || function() {};
 
 
+const sleep = ms => new Promise(r => setTimeout(r, ms));
+
 
 /** 
  *  Configuration of map browser application.

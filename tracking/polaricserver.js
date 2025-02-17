@@ -76,6 +76,7 @@ pol.tracking.PolaricServer = class extends pol.core.Server {
     
     async init() {
         const t = this;
+        await sleep(2000);
         await super._init();
         await t.restoreCredentials(); 
         

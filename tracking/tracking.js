@@ -633,8 +633,6 @@ pol.tracking.Tracking = class {
             eext = "."+ext;
         const ident = p.ident+".trail"+eext;
 
-        console.log("Feature eext: "+eext);
-        
         console.assert(p!=null, "p is null");
         let feature = this.source.getFeatureById(ident);
         /* If feature exists and redraw flag is false. Just return */

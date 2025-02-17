@@ -278,6 +278,8 @@ pol.psadmin.Users = class extends pol.core.Widget {
         
         /* Remove a user (on server) */
         function remove(i) {
+            if (confirm("Remove - are you sure?") == false)
+                return;
             t.server.DELETE("users/"+t.users[i].ident, x => {
                 console.log("Removed user: "+t.users[i].ident);
                 t.users.splice(i, 1);
