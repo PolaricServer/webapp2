@@ -44,12 +44,14 @@
     setTimeout( ()=> { srv = CONFIG.server = CONFIG.srvManager.instantiate()}, 800 );
     setTimeout(pol.widget.restore, 1500);
     
+    
     /* Instantiation of server - we use the server-manager so we more easily can 
      * replace the instance. 
      */
     let tbar = false; 
     
     CONFIG.srvManager = new pol.tracking.ServerManager( false, 
+                                                        
         (srv)=> {
             srv.onStart( ()=> {
                 CONFIG.tracks = new pol.tracking.Tracking(srv, (hires? 1.4 : 1) );  
@@ -64,7 +66,7 @@
                     CONFIG.mb.toolbar.addSection(3);
                     CONFIG.mb.toolbar.addIcon(3, "images/locked.png", "toolbar_login", 
                        ()=> WIDGET("tracking.Login", [230,30], true) , "Click to log in");
-                    CONFIG.mb.toolbar.addIcon(3, "images/sar.png", "sarmode");
+                    CONFIG.mb.toolbar.addIcon(3, "images/warn.png", "warnmode");
                     tbar = true; 
                 }
             });
@@ -106,6 +108,7 @@
                 }
             );
         });
+    
     
     
 //    const srv = CONFIG.srvManager.instantiate();

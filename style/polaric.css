@@ -179,9 +179,9 @@ img.selected {background: #f60 !important}
 }
 
 
-#sarmode {margin-left: -4px; padding-bottom: 1px}
-.sar_visible {visibility: visible}
-.sar_hidden {visibility: hidden; width: 0}
+#warnmode {margin-left: -4px; padding-bottom: 1px}
+.warn_visible {visibility: visible}
+.warn_hidden {visibility: hidden; width: 0}
 
 
 img.logo { 

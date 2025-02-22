@@ -637,7 +637,6 @@ pol.tracking.Tracking = class {
         let feature = this.source.getFeatureById(ident);
         /* If feature exists and redraw flag is false. Just return */
         if (feature != null && !p.redraw) {
-            console.log("Feature exists: "+ident);
             return;
         }
 
@@ -886,10 +885,7 @@ pol.tracking.Tracking = class {
         else
             CONFIG.filt.setDisabled(false);
         
-        if (ov.sarmode)
-            $("#sarmode").removeClass("sar_hidden");
-        else
-            $("#sarmode").addClass("sar_hidden");
+        $("#warnmode").addClass("warn_hidden");
 
         if (!srch && this.srch)
             this.clear();
