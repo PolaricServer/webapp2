@@ -266,7 +266,6 @@ pol.tracking.Tracking = class {
         element.style.position = "absolute";
         element.style.top = (pos[1])-13+"px";
         element.style.left = (pos[0]-13)+"px";
-        console.log("ELEMENT: ", element);
         
         /* Mouse event handlers */
         setTimeout(()=> {

@@ -436,8 +436,7 @@ pol.core.MapBrowser = class {
     async addConfiguredLayer(layer, name, v) {
         console.assert(layer != null && name != null, "layer="+layer+", name="+name);
         const i = this.config.addLayer(layer, name);
-        let visible = await this.config.get('core.olayer.'+name)
-        console.log("addConfiguredLayer: get layer", name, visible);
+        let visible = await this.config.get('core.olayer.'+name);
          
         if (visible == null) {
             visible = false; 
