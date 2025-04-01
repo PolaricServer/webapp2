@@ -35,7 +35,11 @@ pol.psadmin.Channels = class extends pol.core.Widget {
         let errmsg = "";
         
         t.editMode = false; 
-        t.clist = [];
+        t.clist = [];  // Channel list
+        t.rclist = []; // Channels under a router
+        t.rcfilter = m.stream("");
+        t.chanSelect = "";
+        
         t.classname = "psadmin.Channels"; 
         t.type = "APRSIS";
         t.clearAllVars();
@@ -64,6 +68,23 @@ pol.psadmin.Channels = class extends pol.core.Widget {
                 ])
             }
         }
+        
+        const chanSelect = {
+            view: function() {
+                let lst = [];
+                let x;
+                for (x of t.clist)
+                    if (x.specific.type == 'APRSIS' || x.specific.type == 'APRSIS-SRV') 
+                        lst.push({label: x.name});
+                return m(select, {
+                    id: "chanSelect", 
+                    list: lst
+                })
+            }
+        }
+        
+        
+        
         
         /* Show list of channels */
         const chanList = {
@@ -101,7 +122,8 @@ pol.psadmin.Channels = class extends pol.core.Widget {
                     (t.type === "APRSIS-SRV" ? 
                         m("div.field", 
                           m("span.lleftlab", "Clients:"),
-                          m("span", t.ch.specific.nclients )) : null),
+                          m("span", t.ch.specific.nclients ),nbsp, nbsp,
+                          m("span.link_id", {onclick: showClients}, "(show)")) : null),
                 ])
             }
         }
@@ -124,6 +146,26 @@ pol.psadmin.Channels = class extends pol.core.Widget {
         const stats = {
             view: function() {
                 return (t.type === "AIS-TCP" ? m(stats_ais) : m(stats_aprs));
+            }
+        }
+        
+        
+        /* Show router connected channels each with a text input field for the filter spec. */
+        const routerChannels = {
+            view: function() {
+                return m("div.rChannels", [t.rclist.map( x=> {
+                        return m("div.field", 
+                            m("span.lleftlab", "Filter '"+x.name+"' :"), 
+                            m(textInput, { id:"filt"+x.name, value: x.filter, size: 29, 
+                                maxLength:64, regex: /.*/i }));
+                    }), 
+                    
+                    m("div.field", 
+                        m("span.lleftlab", "Connect chan:"),                                
+                        m(chanSelect), 
+                        m("span.add", {title: "Add connected channel", onclick: addRouterChan}, "+")
+                    )
+                ])
             }
         }
         
@@ -180,7 +222,7 @@ pol.psadmin.Channels = class extends pol.core.Widget {
                                 maxLength:3, regex: /[0-9]*/i })) : null), 
                     ]);
                 
-                    
+                
                 else if (t.type === 'APRSIS-SRV')
                     return m("div#config", [ 
                     m("div.field", 
@@ -193,6 +235,10 @@ pol.psadmin.Channels = class extends pol.core.Widget {
                         m("span.lleftlab", "Listen port:"),
                         m(textInput, { id:"port", value: t.port, size: 6, 
                             maxLength:6, regex: /[0-9]*/i })),  
+                    m("div.field", 
+                            m("span.lleftlab", "Input filter:"),
+                            m(textInput, { id:"filter", value: t.filter, size: 29, 
+                                maxLength:64, regex: /.*/i })), 
                     ]);
                     
                     
@@ -204,11 +250,7 @@ pol.psadmin.Channels = class extends pol.core.Widget {
                             "Activate"),                 
                         m(checkBox, {id: "activated", onclick: togglePrim, checked: t.primary}, 
                             "Primary"), ),
-                        
-                    m("div.field", 
-                        m("span.lleftlab", "Channels:"),
-                        m(textInput, { id:"channels", value: t.channels, size: 25, 
-                            maxLength:48, regex: /{a-zA-Z0-9,_-]*/i })),  
+                        m(routerChannels)
                     ]);
                 
                 
@@ -234,8 +276,8 @@ pol.psadmin.Channels = class extends pol.core.Widget {
                                 maxLength:6, regex: /[0-9]*/i })),    
                         m("div.field", 
                             m("span.lleftlab", "Filter:"),
-                            m(textInput, { id:"filter", value: t.filter, size: 25, 
-                                maxLength:32, regex: /[a-zA-Z0-9\-\.]*/i })), 
+                            m(textInput, { id:"filter", value: t.filter, size: 29, 
+                                maxLength:64, regex: /.*/i })), 
                     ])
             }
         }
@@ -270,19 +312,21 @@ pol.psadmin.Channels = class extends pol.core.Widget {
                     
                     m(config),
                     
-                    m("div.field", 
-                        m("span.lleftlab", "Visibility:"),
-                        m(checkBox, {id: "loggedinonly", onclick: toggleVis, checked: t.loggedinonly}, 
-                            "Only for logged in users")),
-                    m("div.field", 
-                        m("span.lleftlab", "Tag:"),
-                        m(textInput, { id:"tag", value: t.tag, size: 15, 
-                            maxLength:32, regex: /[a-zA-Z0-9\-\.]*/i })), 
+                    (t.type != 'ROUTER' ? 
+                        m("div.field", 
+                            m("span.lleftlab", "Visibility:"),
+                            m(checkBox, {id: "loggedinonly", onclick: toggleVis, checked: t.loggedinonly}, 
+                                "Only for logged in users")) : null),
+                    (t.type != 'ROUTER' ? 
+                        m("div.field", 
+                            m("span.lleftlab", "Tag:"),
+                            m(textInput, { id:"tag", value: t.tag, size: 15, 
+                                maxLength:32, regex: /[a-zA-Z0-9\-\.]*/i })) : null), 
                          
                     m("div.butt", [
                         m("button", { type: "button", disabled: !addMode(), onclick: add }, "Add"),
                         m("button", { type: "button", disabled: !updateMode(),  onclick: update }, "Update"),
-                        m("button", { type: "button", onclick: ()=> {t.clear();} }, "Clear"),
+                        m("button", { type: "button", onclick: ()=> {t.clear();} }, "New"),
                     ])
                 ])
             }
@@ -333,6 +377,14 @@ pol.psadmin.Channels = class extends pol.core.Widget {
             m.redraw();
         }
         
+
+        
+        function addRouterChan() {
+            const sel = $('#chanSelect').val();
+            t.rclist.push({name: sel, filter: m.stream("*")});
+        }
+
+        
         
         /* Load info about channel and enter edit mode */
         function edit(i) {
@@ -377,7 +429,7 @@ pol.psadmin.Channels = class extends pol.core.Widget {
             else if (t.type==='AIS-TCP')
                 ch.specific = { host: t.host(), port: parseInt(t.port()) };
             else if (t.type==='ROUTER')
-                ch.specific = { channels: t.channels() };
+                ch.specific = { channels: getRouterChannels() };  
             
             ch.specific.type = t.type;
             
@@ -444,10 +496,11 @@ pol.psadmin.Channels = class extends pol.core.Widget {
                 t.ch.specific.filter = t.filter();
             }   
             if (t.type === 'ROUTER') {
-                t.ch.specific.channels = t.channels()   ;
+                t.ch.specific.channels = getRouterChannels(); // t.channels() 
             }
             if (t.type === 'APRSIS-SRV') {
                 t.ch.specific.port = parseInt(t.port());
+                t.ch.specific.filter = t.filter();
             }
             srv.PUT("system/adm/channels/"+t.name(), JSON.stringify(t.ch), 
                     ()=> {
@@ -463,12 +516,38 @@ pol.psadmin.Channels = class extends pol.core.Widget {
         }
 
         
+        function getRouterChannels() {
+            let chlist = [];
+            for (const x of t.rclist) {
+                chlist.push({name: x.name, filter: x.filter()});
+            }
+            return chlist;
+        }
+        
+
+        function showClients() {
+            if (!t.clients) 
+                t.clients = new pol.psadmin.Clients();
+            if (!t.clients.isActive())
+                t.clients.activatePopup('features.Properties', [60, 60], true);
+            t.clients.getClients(t.ch.name); 
+        }
+        
+        
+        
         /* Apply a function to an argument. Returns a new function */
         function apply(f, id) {return function() { f(id); }};  
         
     } /* constructor */
     
     
+            
+    putRouterChannels(chlist) {
+        this.rclist = [];
+        if (chlist != null)
+            for (const x of chlist)
+                this.rclist.push({name: x.name, filter: m.stream(x.filter)});
+    }
     
     
     onclose() {
@@ -476,6 +555,7 @@ pol.psadmin.Channels = class extends pol.core.Widget {
         if (this.chanUpd != null)
             clearInterval(this.chanUpd);
     }
+    
     
     onActivate() {
         this.getObjects();        
@@ -508,6 +588,7 @@ pol.psadmin.Channels = class extends pol.core.Widget {
         t.passcode = m.stream("");
         t.filter = m.stream("");
         t.channels = m.stream("");
+        t.rclist = []; 
     }
     
     
@@ -545,12 +626,12 @@ pol.psadmin.Channels = class extends pol.core.Widget {
                 this.port(""+this.ch.specific.port);
                 this.kissport(""+this.ch.specific.kissport);
                 this.passcode(""+this.ch.specific.pass);
-                this.filter(this.ch.specific.filter);
+                this.filter(this.ch.specific.filter==null ? "*":this.ch.specific.filter);
                 this.activated = this.ch.active;
                 this.primary = this.ch.rfchan || this.ch.inetchan;
                 this.loggedinonly = this.ch.generic.restricted;
                 this.tag(this.ch.generic.tag);
-                this.channels(this.ch.specific.channels);
+                this.putRouterChannels(this.ch.specific.channels);  
                 m.redraw(); 
             },
             (xhr, st, err) => { 
@@ -560,7 +641,19 @@ pol.psadmin.Channels = class extends pol.core.Widget {
         )
     } 
     
-    
+            
+        
+    removeRouterChan(ch) {
+        for (i in this.rclist)
+            if (ch == this.rclist[i].name == ch)
+                break
+        if (i==this.rclist.length && this.rclist[i].name != ch)
+            return;
+        this.rclist.splice(i,1);
+    }
+        
+        
+        
     /* Remove channel on server */
     remove(x) {
         if (!x || x==null)
@@ -568,11 +661,13 @@ pol.psadmin.Channels = class extends pol.core.Widget {
         if (confirm("Remove - are you sure?") == false)
                 return;
         
+        
         srv.DELETE("system/adm/channels/"+x,
                 ()=> { 
                     console.log("Removed channel: "+x);
                     this.successMsg("Channel deleted", 10000)
                     this.getObjects() 
+                    this.removeRouterChan(x);
                     if (this.name() === x)
                         this.clear();
                 }, 
