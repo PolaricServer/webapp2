@@ -45,11 +45,11 @@
     setTimeout(pol.widget.restore, 1500);
     
     
-    /* Instantiation of server - we use the server-manager so we more easily can 
+    /* 
+     * Instantiation of server - we use the server-manager so we more easily can 
      * replace the instance. 
      */
     let tbar = false; 
-    
     CONFIG.srvManager = new pol.tracking.ServerManager( false, 
                                                         
         (srv)=> {
@@ -111,9 +111,6 @@
     
     
     
-//    const srv = CONFIG.srvManager.instantiate();
-//    CONFIG.server = srv;
-    
     
     setTimeout( () => {
         if (urlArgs['track'] != null) 
@@ -127,6 +124,7 @@
             getWIDGET("tracking.db.Sharing").getShares();
         });
         
+        /* Get updates when objects are changed */ 
         CONFIG.server.pubsub.subscribe("object", x => {
             console.log("Change to object:", x);
             if (x=="area")
@@ -136,7 +134,8 @@
             else if (x=="feature")
                 getWIDGET("features.Edit").reload();
         });
-         
+        
+        /* Get updates when signs are changed */ 
         CONFIG.server.pubsub.subscribe("sign", x => {
             console.log("Change to signs:", x);
             getWIDGET("tracking.db.Signs").getSigns();
@@ -149,7 +148,7 @@
             ()=> WIDGET("features.Edit", [50, 70], true), 
             null, "Draw tool");
         
-    }, 4000); 
+    }, 5000); 
    
     CONFIG.labelStyle = new pol.tracking.LabelStyle();
 
@@ -184,22 +183,20 @@
    
     browser.ctxMenu.addCallback("MAP", (m, ctxt)=> {
         
-        m.add('Terreng/høyde', () => WIDGET("tracking.HeightInfo", [50,70], true, x=> x.setPosPix([m.x, m.y]))); 
-        
-        m.add('Show map reference', () => browser.show_MaprefPix( [m.x, m.y] ) );  
+     m.add('Show map reference', () => browser.show_MaprefPix( [m.x, m.y] ) );  
         if (!phone && (srv.auth.sar || srv.auth.admin)) {
             m.add('Add APRS object', () => 
-                WIDGET("tracking.OwnObjects", [50,70], true, x=> x.setPosPix([m.x, m.y]))); 
+                WIDGET("tracking.OwnObjects", [50,70], false, x=> x.setPosPix([m.x, m.y]))); 
                         
             if (srv.hasDb)
                 m.add('Add sign', () => 
-                    WIDGET("tracking.db.Signs", [50,70], true, x=> x.setPosPix([m.x, m.y])));
+                    WIDGET("tracking.db.Signs", [50,70], false, x=> x.setPosPix([m.x, m.y])));
         }
         
         /* BICYCLE WHEEL */
         if (!phone)
             m.add('Add LKP/IPP with rings', () => 
-                WIDGET("tracking.BikeWheel", [50,70], true, x=> x.setPosPix([m.x, m.y]))); 
+                WIDGET("tracking.BikeWheel", [50,70], false, x=> x.setPosPix([m.x, m.y]))); 
         
             
         m.add(null);
@@ -212,7 +209,7 @@
         
         if (!phone && srv.auth.admin) {
             m.add('Set server (own) position', ()=> 
-                WIDGET("tracking.OwnPos", [50,70], true, x=> x.setPosPix([m.x, m.y])));
+                WIDGET("tracking.OwnPos", [50,70], false, x=> x.setPosPix([m.x, m.y])));
         }
         if (!phone) 
             m.add('Map view info', () => 
@@ -232,10 +229,10 @@
             m.add("User admin..", () => WIDGET("psadmin.Users", [50, 70], true));
             m.add("Server config..", () => WIDGET("psadmin.ServerConfig", [50, 70], true));
             m.add("Own pos config..", () => WIDGET("psadmin.OwnposConfig", [50, 70], true));
-            m.add("Channels config..", () => WIDGET("psadmin.Channels", [50, 70], true));
+            m.add("Channels config..", () => WIDGET("psadmin.Channels", [50, 70], false));
             if (srv.hasDb) {
                 m.add(null);
-                m.add("Synch nodes", () => WIDGET("psadmin.db.SyncNodes", [50,70], true));
+                m.add("Synch nodes", () => WIDGET("psadmin.db.SyncNodes", [50,70], false));
             }
         }
     });
@@ -253,18 +250,18 @@
             m.add(null);
         }
         if (!phone) {
-            m.add('Search items',  () => WIDGET("tracking.Search", [50,70], true));
+            m.add('Search items',  () => WIDGET("tracking.Search", [50,70], false));
             m.add('Find position', () => WIDGET("core.refSearch",  [50,70], true));
         }
         
         if (!phone && (srv.auth.sar || srv.auth.admin)) {                 
             m.add('Add APRS object', () => 
-                WIDGET("tracking.OwnObjects", [50,70], true)); 
+                WIDGET("tracking.OwnObjects", [50,70], false)); 
         }
         if (!phone) {
             if (srv.isAuth() && srv.hasDb) {
-                m.add('Area List',  () => WIDGET("core.AreaList", [50,70], true)); 
-                m.add('Layer List', () => WIDGET("layers.List", [50,70], true));
+                m.add('Area List',  () => WIDGET("core.AreaList", [50,70], false)); 
+                m.add('Layer List', () => WIDGET("layers.List", [50,70], false));
             }    
             if (browser.getPermalink())
                 m.add("Permalink OFF", () => browser.setPermalink(false)); 
@@ -283,29 +280,29 @@
         }
         
         if (srv.isAuth()) {
-            m.add("Set/change password..", () => WIDGET("psadmin.Passwd", [50,70], true));
+            m.add("Set/change password..", () => WIDGET("psadmin.Passwd", [50,70], false));
             m.add(null);
         }
         
         if (srv.isAuth()) {
             if (!phone && srv.hasDb) 
-                m.add("My trackers", () => WIDGET("tracking.db.MyTrackers", [50, 70], true));
+                m.add("My trackers", () => WIDGET("tracking.db.MyTrackers", [50, 70], false));
         }
         
         if (srv.hasDb) {
             if (!phone) {
                 if (srv.auth.sar || srv.auth.admin)
-                    m.add("Signs...", () => WIDGET("tracking.db.Signs", [50,70], true));
-                m.add("History...", () => WIDGET("tracking.db.History", [50,70], true)); 
-                m.add("Heard points via..", () => WIDGET("tracking.db.HeardVia", [50,70], true));
+                    m.add("Signs...", () => WIDGET("tracking.db.Signs", [50,70], false));
+                m.add("History...", () => WIDGET("tracking.db.History", [50,70], false)); 
+                m.add("Heard points via..", () => WIDGET("tracking.db.HeardVia", [50,70], false));
             }    
-            m.add("Time machine..", () => WIDGET("tracking.db.Timemachine", [50,70], true)); 
+            m.add("Time machine..", () => WIDGET("tracking.db.Timemachine", [50,70], false)); 
         }
         
         if (!phone && srv.isAuth()) 
-            m.add("Bulletin board", () => WIDGET("tracking.BullBoard", [50,70], true));
+            m.add("Bulletin board", () => WIDGET("tracking.BullBoard", [50,70], false));
         if (srv.isAuth())
-            m.add('Short messages', () => WIDGET("tracking.Mailbox", (phone ? [0,1] : [50,70]), true));
+            m.add('Short messages', () => WIDGET("tracking.Mailbox", (phone ? [0,1] : [50,70]), false));
         
     });
 
@@ -324,7 +321,7 @@
         
         if (ctxt.telemetry)
             m.add('Telemetry', () => 
-                WIDGET( "tracking.Telemetry", [50, 70], true,  x=> x.getItem(ctxt.ident), ctxt.ident ));
+                WIDGET( "tracking.Telemetry", [50, 70], false,  x=> x.getItem(ctxt.ident), ctxt.ident ));
          
         if (srv.auth.sar||srv.auth.admin) { 
             m.add('Global settings', () => 
@@ -358,7 +355,7 @@
              
         if ((srv.auth.sar||srv.auth.admin) && srv.hasDb && ctxt.aprs) { 
             m.add('Add to my trackers', () => 
-                WIDGET("tracking.db.MyTrackers", [50, 70], true, x=> x.setIdent(ctxt.ident))); 
+                WIDGET("tracking.db.MyTrackers", [50, 70], false, x=> x.setIdent(ctxt.ident))); 
         }
         if (srv.hasDb && ctxt.aprs) {
 
@@ -366,10 +363,10 @@
                 WIDGET( "tracking.AprsPackets", [50, 70], false,  x=> x.getPackets(ctxt.ident, 300) ) );
                         
             m.add("History...", () => 
-                WIDGET("tracking.db.History", [50,70], true, x=>x.setCall(ctxt.ident))); 
+                WIDGET("tracking.db.History", [50,70], false, x=>x.setCall(ctxt.ident))); 
             
             m.add("Heard points via..", () =>
-                WIDGET("tracking.db.HeardVia", [50,70], true, x=>x.setCall(ctxt.ident)));
+                WIDGET("tracking.db.HeardVia", [50,70], false, x=>x.setCall(ctxt.ident)));
         }
     });
    
@@ -383,7 +380,7 @@
         if (srv.hasDb) {
             m.add('Show info', () => srv.infoPopup(ctxt.point, [m.x, m.y]) );
             if (srv.auth.sar && /__db/.test(ctxt.ident) ) {
-                m.add('Edit object', () => WIDGET('tracking.db.Signs', [50,70], true, x=> x.edit(ctxt.ident))); 
+                m.add('Edit object', () => WIDGET('tracking.db.Signs', [50,70], false, x=> x.edit(ctxt.ident))); 
                 m.add('Delete object', () => getWIDGET('tracking.db.Signs').remove( ctxt.ident )); 
             }
         }
@@ -398,12 +395,12 @@
         console.log(ctxt.point);
         m.add('Show image', () => srv.infoPopup(ctxt.point, [m.x, m.y]) );
  
-        m.add('Share photo', () => WIDGET("tracking.db.Sharing", [m.x, m.y], true, 
+        m.add('Share photo', () => WIDGET("tracking.db.Sharing", [m.x, m.y], false, 
             x=> x.setIdent( ctxt.ident.replace(/^(__db\.)/, ""), "name", "Photo", "type")));
             
         if (ctxt.point.point.own || srv.auth.admin) {
             m.add('Delete photo', () => rmPhoto(ctxt.ident) );
-            m.add('Edit photo title', ()=> WIDGET("tracking.db.PhotoDescr", [m.x, m.y], true, 
+            m.add('Edit photo title', ()=> WIDGET("tracking.db.PhotoDescr", [m.x, m.y], false, 
                 x=> x.setIdent(ctxt.ident, ctxt.point.point.title)));
         }
     });
