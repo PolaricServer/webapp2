@@ -38,38 +38,55 @@ pol.layers.Wms = class extends pol.layers.Edit {
         
         t.selected = this.srs[0];
         t.url = m.stream("");
+        t.token = m.stream("");
 
     
         t.fields = {
             view: function() { 
                 return m("div.spec", [ 
-                    m("span.sleftlab", "Server: "),   
-                    m(textInput, {id:"wmsUrl", size: 40, maxLength:160, value: t.url, regex: /^.+$/i }),
-                    m("button", { type: "button", onclick: getCap}, "Get"),
-                    br,
-                    m("span.sleftlab", "Projection:"),
-                    m(select, {id: "sel_srs", onchange: selectSRS, list: t.srs.map( x=> {
-                        return {label: x, val: x, obj: null};
-                    })}),  
-                    br,
+                    
+                    m("div.field", 
+                        m("span.sleftlab", "Server: "),   
+                        m(textInput, {id:"wmsUrl", size: 40, maxLength:160, value: t.url, regex: /^.+$/i }),
+                        m("button", { type: "button", onclick: getCap}, "Get")),
+                    
+                    m("div.field", 
+                        m("span.sleftlab", "Token: "),   
+                        m(textInput, {id:"wmsParams", size: 32, maxLength:64, value: t.token, regex: /^.+$/i })),
+                                          
+                    m("div.field", 
+                        m("span.sleftlab", "Projection:"),
+                        m(select, {id: "sel_srs", onchange: selectSRS, list: t.srs.map( x=> {
+                            return {label: x, val: x, obj: null};
+                        })})),  
+                    
                     (t.cap==null ? null : m(t.wfields))
                 ]);
             }
         }   
+        
+        
+        t.wlayers = {
+            view: function() {
+                  return  m("div#wlayers", t.sLayers.map( x=> {
+                        return m(checkBox, {title: (x.Abstract=="" ? x.Title:x.Abstract), checked: x.checked, id: "layer_"+x.Name, 
+                            onchange: apply(tagToggle, x)}, limitLen(x.Title,32));
+                    }));
+                
+            }
+        }
     
         /* Fields representing capabilities of wms service (from GetCapabilities) */
         t.wfields = {
             view: function() { 
                 return m("div.wserver", [ 
-                    m("span.sleftlab", "Title: "),
-                    m("span", {title: t.cap.Service.Abstract}, t.cap.Service.Title), br,    
-                    m("span.sleftlab", "Layers:"),
-                    m("table", {id: "layerSelect"}, m("tbody", t.sLayers.map( x => {
-                        return m("tr", [ 
-                            m("td", {cssclass: (x.level2 ? "level2" : null)}, 
-                            m(checkBox, {onclick: apply(selLayer, x), checked: x.checked}, x.Title))
-                        ])
-                    })))
+                    m("div.field", 
+                        m("span.sleftlab", "Title: "),
+                        m("span", {title: t.cap.Service.Abstract}, t.cap.Service.Title)),  
+                         
+                    m("div.field", 
+                        m("span.sleftlab", "Layers:"),
+                        m(t.wlayers))
                 ]);
             }
         }
@@ -79,7 +96,17 @@ pol.layers.Wms = class extends pol.layers.Edit {
         /* Apply a function to an argument. Returns a new function */
         function apply(f, id) {return function() {f(id); }};  
    
-    
+        function tagToggle(x) {
+            if (x.checked != null)
+                x.checked = !x.checked
+            else
+                x.checked = true;
+        }
+        
+        function limitLen(x, len) {
+            return x.substring(0,len-1)+(x.length>len? "..":"");
+        }
+        
         function getCap() {
             t.getCapabilities(m.redraw);
         }
@@ -96,18 +123,18 @@ pol.layers.Wms = class extends pol.layers.Edit {
                 t.filterLayers(t.selected);
         }
     
-        function selLayer(x) {
-            x.checked = !x.checked; 
-        }
+
     
     } /* constructor */
 
 
+    
 
     reset() {
         super.reset();
         this.url("");
     }
+    
     
     /*
      * Get capabilities from WMS server
@@ -116,7 +143,6 @@ pol.layers.Wms = class extends pol.layers.Edit {
         const t = this;
         t.layers=[];
         t.sLayers=[];
-    
         const parser = new ol.format.WMSCapabilities();
         fetch(this.url()+'?service=wms&request=GetCapabilities')
             .then( response => response.text() )
@@ -131,6 +157,8 @@ pol.layers.Wms = class extends pol.layers.Edit {
                 else if (t.cap.Capability.Layer)
                     t.layers[0] = t.cap.Capability.Layer;
 
+                if (t.selected == null)
+                    t.selected = $("#sel_srs").val();
                 t.filterLayers(t.selected);
                 if (handler)
                     handler();
@@ -142,12 +170,14 @@ pol.layers.Wms = class extends pol.layers.Edit {
     filterLayers(crs) {
         const t = this;
         t.sLayers = [];
-        for (const i in t.layers)
-            for (const j in t.layers[i].CRS)
+        for (const i in t.layers) {
+            for (const j in t.layers[i].CRS) {
                 if (t.layers[i].CRS[j] == crs) {
                     t.sLayers.push(t.layers[i]);
                     break; 
                 }
+            }
+        }
     }
 
 
@@ -156,8 +186,7 @@ pol.layers.Wms = class extends pol.layers.Edit {
      * Return true if add button can be enabled 
      */
     enabled() {
-        return  $("#editLayer").attr("ok") && 
-                $("#wmsUrl").attr("ok"); 
+        return (this.url().length > 1);
     }
 
 
@@ -165,15 +194,29 @@ pol.layers.Wms = class extends pol.layers.Edit {
      * Get layers for WMS request as comma separated list 
      */
     getReqLayers() {
+
         let layers = "";
         let first=true;
+        
+        /* FIXME: Make this a recursive function? Make sublayers selectable */
         for (i in this.sLayers) {
             if (this.sLayers[i].checked) {
-                layers += ((first ? "" : ",") + this.sLayers[i].Name);
-                first=false; 
+                let n = this.sLayers[i].Name; 
+                if (n!=null) 
+                    add(n)
+                else
+                    for (const x of this.sLayers[i].Layer)
+                        add(x.Name)
             }
         }
-        return layers; 
+        return layers;
+        
+        function add(n) {
+            if (n != null) {
+                layers += (first ? "" : ",") + n;
+                first=false;
+            }
+        }
     }
 
 
@@ -190,7 +233,7 @@ pol.layers.Wms = class extends pol.layers.Edit {
             source: new ol.source.ImageWMS ({
                ratio:  1,
                url:    this.url(),
-               params: {'LAYERS':layers, VERSION: "1.1.1"}
+               params: {'LAYERS':layers, VERSION: "1.1.1", token: (this.token()==""? null: this.token())}
             }) 
         });
         x.selSrs = this.selected; 
@@ -209,13 +252,19 @@ pol.layers.Wms = class extends pol.layers.Edit {
         super.edit(layer);
    
         /* Specific to WMS layer */
+        console.log("PARAMS", layer.getSource().getParams());
         this.url(layer.getSource().getUrl());
+        this.token(layer.getSource().getParams().token);
         $("#sel_srs").val(layer.selSrs).trigger("change");
    
         this.getCapabilities( () => {
-            for (i in this.sLayers) 
+            for (i in this.sLayers) {
+                if (this.sLayers[i] == null)
+                    continue;
                 if (this.sLayers[i].Name == layer.checkList[i].name) 
                     this.sLayers[i].checked = layer.checkList[i].checked; 
+            }
+            console.log("EDIT: layers", this.sLayers);
             m.redraw();
         });
     }
@@ -247,7 +296,6 @@ pol.layers.Wms = class extends pol.layers.Edit {
             return null;
         }  
         const x = new ol.layer.Image({
- //           name: lx.name, 
             source: new ol.source.ImageWMS ({
                ratio:  1,
                url:    lx.url,

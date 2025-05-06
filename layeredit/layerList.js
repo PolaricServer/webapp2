@@ -32,6 +32,8 @@ pol.layers.List = class List extends pol.core.Widget {
         this.suspendGet = false; 
         const t = this;
    
+        console.assert(CONFIG.server.authOk, "Connection to server not yet established");
+        
         /* Register types */
         t.addType("_any_", "Select layer type..", new pol.layers.Dummy(this));
         if (CONFIG.server!=null && CONFIG.server.hasDb) {
@@ -228,6 +230,8 @@ pol.layers.List = class List extends pol.core.Widget {
                     if (obj != null) {
                         const wr = obj.data;
                         wr.data.name = wr.name;
+                        if (this.typeList[wr.type] == null)
+                            break;
                         const x = this.typeList[wr.type].obj.obj2layer(wr.data);        
                         lrs.push({
                             name:wr.name, type:wr.type, server:true, readonly:obj.readOnly, 

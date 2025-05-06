@@ -156,10 +156,6 @@ span.kartref:hover {
 div#tags { 
   columns: 3; 
   column-width: 1em; 
-  -moz-columns: 3; 
-  -moz-column-width: 1em; 
-  -webkit-columns: 3; 
-  -webkit-column-width: 1em; 
   border:1px dotted #555; 
   background: #ddc; 
   min-width: 34em; 
@@ -167,6 +163,18 @@ div#tags {
 }
 div#tags input {margin: 0.15em}
 div#tags span {display: block}
+
+div#wlayers { 
+  columns: 2; 
+  column-width: 1em;   
+  border:1px dotted #333; 
+  background: #d0d0c0; 
+  min-width: 37em; 
+  padding: 3px;
+  font-size: 0.9em
+}
+div#wlayers input {margin: 0.15em}
+div#wlayers span {display: block}
 
 
 

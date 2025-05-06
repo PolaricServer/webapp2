@@ -31,7 +31,9 @@ pol.layers.Edit = class {
         t.list = list;
         t.filt = {ext: null, zoom: null, proj: null};
         t.lName = m.stream("");
-   
+        t.readonly = false; 
+        
+        
         this.widget = {
             view: function() {
                 let i=0;
@@ -123,9 +125,10 @@ pol.layers.Edit = class {
             const s = CONFIG.server; 
             if (s && s != null && s.isAuth()) {
                 const obj = {type: t.typeid, name: t.lName(), data: t.layer2obj(layer)}; 
-                s.updateObj("layer", t.index, obj, i => { 
+                /* Send update to server (REST API) */
+                s.updateObj("layer", t.index, obj, i => {
+                    /* When confirmation from server */
                     layer.server = true;
-                    t.list.myLayers[layerIdx] = layer;
                     m.redraw();
                 });
             }
