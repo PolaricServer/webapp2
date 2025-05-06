@@ -41,8 +41,8 @@
 
 
     let srv=null;
-    setTimeout( ()=> { srv = CONFIG.server = CONFIG.srvManager.instantiate()}, 800 );
-    setTimeout(pol.widget.restore, 1500);
+    setTimeout( ()=> { srv = CONFIG.server = CONFIG.srvManager.instantiate()}, 500 );
+    setTimeout(pol.widget.restore, 1200);
     
     
     /* 
@@ -53,9 +53,19 @@
     CONFIG.srvManager = new pol.tracking.ServerManager( false, 
                                                         
         (srv)=> {
+            
+            /*********************************
+             * On start of server connection
+             *********************************/ 
             srv.onStart( ()=> {
                 CONFIG.tracks = new pol.tracking.Tracking(srv, (hires? 1.4 : 1) );  
                 CONFIG.filt = new pol.tracking.Filters(CONFIG.tracks);
+                
+                CONFIG.tracks.onOpen( ()=> {
+                    /* Allow user to specify callsign to track in URL parameter */
+                    if (urlArgs['track'] != null) 
+                        CONFIG.tracks.setTracked(urlArgs['track']);
+                });
                 
                 /* Log base layer selection */ 
                 CONFIG.mb.setBaseLayerCb( (x)=> { CONFIG.tracks.reportLayer(x) } ) ;
@@ -71,13 +81,19 @@
                 }
             });
     
-    
+            /*********************************
+             * On stop of server connection
+             *********************************/ 
             srv.onStop( ()=> {
                 CONFIG.tracks.close();
             });
             
-            
+            /*********************************
+             * On login to server
+             *********************************/ 
             srv.onLogin( 
+                
+                /* Login success */
                 ()=> {
                     CONFIG.mb.toolbar.changeIcon
                         ("toolbar_login", "images/unlocked.png", 
@@ -91,7 +107,17 @@
                     * FIXME: Do this after websocket connection is restored.
                     */
                     CONFIG.notifier = this.not = new pol.tracking.Notifier();
+                     
+                    /* Some of the widgets have state that is needed by others so 
+                     * they need to be started when login is done. 
+                     */
+                    getWIDGET("core.AreaList");
+                    getWIDGET("layers.List");
+                    
+                    pubSubSubscribe();
                 }, 
+                
+                /* Login failure */
                 (err)=> {
                     console.log("Logged out or authentication failed: ", err);     
             
@@ -111,11 +137,8 @@
     
     
     
-    
-    setTimeout( () => {
-        if (urlArgs['track'] != null) 
-        	CONFIG.tracks.setTracked(urlArgs['track']);
-                
+
+    function pubSubSubscribe() {
         /* Get updates when sharing of objects are changed */ 
         CONFIG.server.pubsub.subscribe("sharing", x => {
             console.log("Change to object sharing");
@@ -140,7 +163,11 @@
             console.log("Change to signs:", x);
             getWIDGET("tracking.db.Signs").getSigns();
         });
-        
+    }
+    
+    
+    
+    setTimeout( () => {
         /* FIXME: May put init into Edit class constructor */
         pol.features.init(CONFIG.browser.map);
         
@@ -148,23 +175,13 @@
             ()=> WIDGET("features.Edit", [50, 70], true), 
             null, "Draw tool");
         
-    }, 5000); 
+    }, 600); 
    
     CONFIG.labelStyle = new pol.tracking.LabelStyle();
 
   
     
-    
-    /* 
-     * Some of the widgets have state that is needed by others so they need to be started. This is slightly 
-     * delayed to allow connection to server to be established first. 
-     */
-    setTimeout(()=> {
-        getWIDGET("core.AreaList");
-        getWIDGET("layers.List");
-    }, 5000);
-    
-    
+
     
    /* 
     * Set up application-specific context menus. We may define named contexts. The toolbar 
