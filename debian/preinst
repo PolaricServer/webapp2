@@ -16,13 +16,12 @@ case "$1" in
                 --group --disabled-password --shell /bin/false \
                 polaric
             usermod -G dialout polaric
+            usermod -aG polaric www-data
         fi
         chown www-data:polaric /var/lib/polaric/mapcache
         chmod 2775 /var/lib/polaric/mapcache
-        if ls /var/lib/polaric/mapcache/*.db > /dev/null 2>%1; then
-            chown www-data:polaric /var/lib/polaric/mapcache/*.db
-            chmod 664 /var/lib/polaric/mapcache/*.db
-        fi
+        setfacl -d -m g::rwx /var/lib/polaric/mapcache
+        setfacl -m g::rwx /var/lib/polaric/mapcache
     ;;
 
     *)

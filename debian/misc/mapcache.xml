@@ -7,11 +7,12 @@
     Set up caches here. Files, sqlite, mbtiles, etc.. 
   ******************************************************* 
   -->
-
-   <cache name="grunnkart_sqlite" type="sqlite3">
-     <dbfile>/var/lib/polaric/mapcache/maps_grunnkart.db</dbfile>
+   
+   <cache name="topo" type="disk">
+      <base>/var/lib/polaric/mapcache</base>
    </cache>
 
+   
    <!-- 
    **********************************************************************
      Set up sources here.
@@ -20,20 +21,36 @@
    ********************************************************************** 
    -->
    
-   <source name="kv_grunnkart" type="wms">
+    
+   <source name="kv_topo" type="wms">
      <getmap>
        <params>
          <FORMAT>image/png</FORMAT>
-         <LAYERS>norgeskart_bakgrunn</LAYERS>
+         <LAYERS>topo</LAYERS>
        </params>
      </getmap>
      
      <http>
-       <url>http://opencache.statkart.no/gatekeeper/gk/gk.open?</url>
+       <url>https://wms.geonorge.no/skwms1/wms.topo?</url>
      </http>
    </source>
    
+    
+   <source name="kv_topo2" type="wms">
+     <getmap>
+       <params>
+         <FORMAT>image/png</FORMAT>
+         <LAYERS>topograatone</LAYERS>
+       </params>
+     </getmap>
+     
+     <http>
+       <url>https://wms.geonorge.no/skwms1/wms.topograatone?</url>
+     </http>
+   </source>
  
+   
+   
  
    <!-- 
    **********************************************************************
@@ -71,6 +88,9 @@
    </grid>
    
    
+   
+   
+   
    <!-- 
    ********************************************************************
      Set up tilesets here.
@@ -78,18 +98,35 @@
    ******************************************************************** 
    -->
 
+   
    <tileset name="kv_grunnkart">
-     <source>kv_grunnkart</source>
-     <cache>grunnkart_sqlite</cache>
+     <source>kv_topo</source>
+     <cache>topo</cache>
      <grid>utm33</grid>
-     <format>PNG</format>
+     <format>JPEG</format>
 
-     <metatile>1 1</metatile>
-     <metabuffer>0</metabuffer>
+     <metatile>5 5</metatile>
+     <metabuffer>1</metabuffer>
      <expires>604800</expires>
      <auto_expire>5184000</auto_expire>
    </tileset>
  
+   
+ 
+    <tileset name="kv_grunnkart2">
+     <source>kv_topo2</source>
+     <cache>topo</cache>
+     <grid>utm33</grid>
+     <format>JPEG</format>
+
+     <metatile>5 5</metatile>
+     <metabuffer>1</metabuffer>
+     <expires>604800</expires>
+     <auto_expire>5184000</auto_expire>
+   </tileset>
+   
+   
+   
  
  
    <default_format>JPEG</default_format>

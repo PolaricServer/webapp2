@@ -8,7 +8,7 @@ Homepage: http://aprs.no/polaricserver
 
 Package: polaric-webapp2
 Architecture: all
-Depends: adduser, apache2, apache2-utils, libapache2-mod-mapcache, mapcache-tools, openssl, ssl-cert, javascript-common, libjs-jquery, libjs-jquery-ui, ${misc:Depends}
+Depends: acl, adduser, apache2, apache2-utils, libapache2-mod-mapcache, mapcache-tools, openssl, ssl-cert, javascript-common, libjs-jquery, libjs-jquery-ui, ${misc:Depends}
 Recommends:  polaric-aprsd (>= 3.1)
 Conflicts: polaric-webapp, polaric-aprsd (<< 3.1)
 Description: Polaric Server: Web application. 
