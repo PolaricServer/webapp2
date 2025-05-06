@@ -12,7 +12,7 @@
  * Uncomment to use aprs.no as a backend. 
  * Default is to use the location of the webapp. 
  */
-// SERVER("https://aprs.no");
+SERVER("https://kart2.aprs.no");
 
 
 /*
@@ -25,7 +25,7 @@
 /* 
  * If using backend server directly with HTTPS, uncomment this
  */
-// SECURE(true);
+//SECURE(true);
 
 
 
@@ -33,8 +33,9 @@
  * WSPREFIX is the url prefix for websocket interface
  * AJAXPREFIX is the url prefix used for other webservices/REST-API.
  * ICONPATH is the url prefix used for icons.  
- * aprs.no uses "ws" and "srv" through a proxy. Default is to use a separate port: 8081. 
- * Uncomment the following two lines to use a backend with a proxy. 
+ * aprs.no uses "ws" and "srv" through a proxy. 
+ * Uncomment the following two lines to use a backend with a proxy. This should be 
+ * in the distribution. 
  */
 WSPREFIX("ws");
 AJAXPREFIX("srv");
@@ -53,8 +54,8 @@ DEFAULT_ICON(61);
 
 
 /* Default projection and list of supported projections */
-PROJECTION( "EPSG:900913" );
-SUPPORTED_PROJ( ["EPSG:900913", "EPSG:32633"] );
+PROJECTION( "EPSG:3857" );
+SUPPORTED_PROJ( ["EPSG:3857", "EPSG:900913", "EPSG:32633", "EPSG:25832"] );
 
 
 /* Default center and scale */
@@ -120,7 +121,7 @@ const KV_grid_UTM = new ol.tilegrid.TileGrid({
 
 /* Generate WMTS tilegrids */  
 const KV_grid_WMTS = TILEGRID_WMTS(utmproj, 0, 14, "EPSG:32633");
-
+const DAF_grid_WMTS  = TILEGRID_WMTS(utmproj, 0, 14, "EPSG:25832");
 
 
    
@@ -138,7 +139,20 @@ const Norway = POLYGON([
    [18.581, 68.349], [13.877, 64.618], [14.363, 64.414], [14.014, 63.957], [12.853, 63.963],
    [12.287, 61.782], [12.971, 61.244] 
 ]);   
-        
+
+const Sweden = POLYGON([
+   [11, 59.13],     [12.04, 60.98],   [11.809, 63.3],   [14.228, 65.29],  [14.292, 66.163], 
+   [15.02, 66.321], [16.01, 67.117],  [15.836, 67.513], [17.989, 68.6],   [19.54, 68.547],  
+   [19.853, 69.06], [20.864, 69.086], [23.969, 68.015], [24.263, 65.783], [21.509, 63.61], 
+   [18.55, 62.278], [18.125, 61.37],  [19.233, 60.676], [20.029, 59.446], [19.458, 57.284],
+   [14.25, 55.189], [12.788, 55.189], [12.612, 55.408], [10.508, 58.756] 
+]);
+
+const Denmark = POLYGON([ 
+   [12.177, 54.528], [8.178, 54.453],   [7.861, 56.948],  [10.707, 57.986], 
+   [12.450, 56.171], [12.74, 55.868,6], [12.703, 54.951], [11.928, 54.432] 
+]);
+
 const Svalbard = POLYGON([
     [19.1602, 74.1161], [15.6885, 76.4346],  [12.9199, 77.8696], [10.3710, 78.3494],
     [9.9316,  79.2207], [10.0635, 79.8743],  [16.6113, 80.2608], [20.3467, 80.8868],
@@ -166,10 +180,11 @@ const KV_ATTR = "Maps: © <a href=\"kartverket.no\">Kartverket</a>"
  * 
  ************************************************************************************************/
 
+
 LAYERS({ 
     base: true,
     predicate: TRUE,
-    projection: "EPSG:900913",
+    projection: "EPSG:3857",
 },
 [
     new ol.layer.Tile({
@@ -192,7 +207,9 @@ LAYERS({
     projection: utmproj,
 },
 [    
-    /* This is an example of how we can use mapcache */
+    /* This is an example of how we can use mapcache. 
+     * See /etc/polaric-webapp2/mapcache.xml 
+     */
     createLayer_MapCache( {
         name: "Norgeskart bakgrunn (cache)",
         opacity: 0.65,
@@ -201,38 +218,16 @@ LAYERS({
         attributions: KV_ATTR, 
         seed_max_res: 30
     }),   
+
+    createLayer_MapCache( {
+        name: "Norgeskart bakgrunn gråtone (cache)",
+        opacity: 0.65,
+        layers: "kv_grunnkart2",
+        tilegrid: KV_grid_UTM,
+        attributions: KV_ATTR, 
+        seed_max_res: 30
+    }),  
     
-    new ol.layer.Tile({
-        name: "Norges grunnkart",
-        opacity: 0.85,
-        source: new ol.source.WMTS({
-            url: "http://opencache.statkart.no/gatekeeper/gk/gk.open_wmts?",
-            layer: 'norges_grunnkart',
-            matrixSet: 'EPSG:32633',
-            format: 'image/png',
-            projection: utmproj,
-            style: 'default',
-            tileGrid: KV_grid_WMTS,
-            cacheSize: 4096, 
-            attributions: KV_ATTR
-        })
-    }),      
-    
-    new ol.layer.Tile({
-        name: "Norges grunnkart gråtone",
-        opacity: 1.0,
-        source: new ol.source.WMTS({
-            url: "http://opencache.statkart.no/gatekeeper/gk/gk.open_wmts?",
-            layer: 'norges_grunnkart_graatone',
-            matrixSet: 'EPSG:32633',
-            format: 'image/png',
-            projection: utmproj,
-            style: 'default',
-            tileGrid: KV_grid_WMTS,
-            cacheSize: 4096, 
-            attributions: KV_ATTR
-        })
-    })
 ]);                    
 
 
@@ -248,7 +243,7 @@ LAYERS ({
         name: "UTM/MGRS Rutenett",
         source: new ol.source.ImageWMS ({
             ratio: 1,
-            url: "https://openwms.statkart.no/skwms1/wms.rutenett",
+            url: "https://wms.geonorge.no/skwms1/wms.rutenett",
             params: {'LAYERS':'UTMrutenett', VERSION: "1.1.1"}
         })
     }),
@@ -294,6 +289,7 @@ LAYERS ({
      * In this example, 'id' is such an attribute.
      */
 ]);
+
 
 
 

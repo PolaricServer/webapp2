@@ -114,6 +114,9 @@ pol.tracking.Tracking = class {
                 })
             })
         );
+        
+        t.onOpenHandler = null;
+        
 
         t.source = this.layer.getSource();;
 
@@ -192,9 +195,13 @@ pol.tracking.Tracking = class {
             /* Subscribe to updates from server */
             if (t.filter != null) 
                 t.producer.subscribe(t.filter, x => t.update(x), t.tag, false );
+            
+            if (t.onOpenHandler != null)
+                t.onOpenHandler(); 
         }
 
 
+        
         
         
         /* Called when move of map starts */
@@ -232,6 +239,9 @@ pol.tracking.Tracking = class {
     } /* constructor */
 
     
+    onOpen(f) {
+        this.onOpen = f;
+    }
     
     isConnected() {
         return this.producer.isConnected();

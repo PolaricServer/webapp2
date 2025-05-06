@@ -131,6 +131,7 @@ pol.tracking.db.Sharing = class extends pol.core.Widget {
              
             /* Add sharing to features/sublayers as well */
             if (!t.photo && t.tag=="layer" && (t.type=="drawing" || t.type=="gpx")) {
+                /* create a tag for the sharing */
                 const tag = encodeURIComponent(
                     (t.type=="gpx" ? "gpx." : "feature.") + t.name
                 );

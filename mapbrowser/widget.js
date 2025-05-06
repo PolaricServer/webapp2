@@ -26,7 +26,7 @@ pol.widget =  {};
 
 
 /**
- * What widget-instances are actually stored. Maps to class-names (see above).
+ * What widget-instances are actually stored.
  */
 pol.widget._stored = {};
 
@@ -272,6 +272,7 @@ pol.core.Widget = class {
         }
      
      
+        /* When a widget has finished being dragged, save its position on screen */
         function dragStop( event, ui ) {
             t.winpos = [ui.position.left, ui.position.top];
             save();

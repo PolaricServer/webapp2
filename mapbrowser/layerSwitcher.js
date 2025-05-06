@@ -135,13 +135,15 @@ pol.core.LayerSwitcher = class extends pol.core.Widget {
         const layers = this.mb.config.oLayers;
         for (const i in layers)
             if (!layers[i].predicate()) {
-                if (layers[i].getVisible() == true)
-                    layers[i].wasOn = true; 
+             //   if (layers[i].getVisible() == true)
+             //       layers[i].wasOn = true; 
                 layers[i].setVisible(false);
             }
             else {
-                if (layers[i].wasOn) 
+                if (layers[i].wasOn) {
                     layers[i].setVisible(true);
+            //        layers[i].wasOn = false;
+                }
             }
 
         m.redraw();

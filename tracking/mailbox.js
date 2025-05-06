@@ -206,7 +206,7 @@ pol.tracking.Mailbox = class extends pol.core.Widget {
     /* Get list of messages from server */
     getMsgs() {
         const userid = this.server.auth.userid;
-        console.assert(userid && userid!=null, "userid="+userid);
+        console.assert(userid && userid!=null, "userid is undefined");
         if (userid == null)
             return;
         this.server.GET("mailbox", "", x => { 
@@ -245,6 +245,7 @@ pol.tracking.Mailbox = class extends pol.core.Widget {
         
     
     onActivate() { 
+        console.assert(this.server.authOk, "Connection to server not established");
        /* 
         * Subscribe to notifications from server using the pubsub service: 
         * Related to user (if logged in). 

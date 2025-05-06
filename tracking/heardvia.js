@@ -34,7 +34,7 @@ pol.tracking.db.HeardVia = class extends pol.core.Widget {
         var t = this;
     
         t.classname = "tracking.db.HeardVia"; 
-        t.item = null;
+        t.item = {call:m.stream(item), fromdate:null, todate:null};
         t.list = []; 
         t.colors = ["c008", "00c8", "a0a8", "0a08", "0008"];
         t.color = 0;
@@ -109,7 +109,7 @@ pol.tracking.db.HeardVia = class extends pol.core.Widget {
         });
 
         t.setItem(item);
-    
+        
         setTimeout( 
             () => $('#hrd_end').prop('disabled', t.item.open), 
             300 );
@@ -243,7 +243,7 @@ pol.tracking.db.HeardVia = class extends pol.core.Widget {
             t.list.push(x);
             saveList();
         }
-    
+         
     
         /* Save list to local storage */
         function saveList() { 
