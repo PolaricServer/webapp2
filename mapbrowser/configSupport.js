@@ -379,7 +379,8 @@ function createLayer_WFS(opts)
         return opts.url +'?service=WFS&' +
            'version='+opts.wfsVersion+'&request=GetFeature&typename='+opts.ftype+'&' +
            'outputFormat='+opts.outputFormat+'&srsname='+srs+'&' +
-           'bbox=' + extent.join(',')+","+srs+opts.cql;
+           'bbox=' + extent.join(',')+","+srs+opts.cql+
+           (opts.token!=null? "&token="+opts.token : "");
      },
 
      strategy: ol.loadingstrategy.bbox
