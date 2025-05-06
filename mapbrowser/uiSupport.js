@@ -502,8 +502,9 @@ const removeEdit = {
         return m("span.removeEdit", [ 
             m("img", {src:"images/edit-delete.png",
                 onclick: vn.attrs.remove }), 
-            m("img", {src:"images/edit.png",
-                onclick: vn.attrs.edit }),
+            ( vn.attrs.edit != null  
+                ? m("img", {src:"images/edit.png", onclick: vn.attrs.edit })
+                : null )
         ]);    
     }
 }

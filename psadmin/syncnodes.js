@@ -59,6 +59,7 @@ pol.psadmin.db.SyncNodes = class extends pol.core.Widget {
                 var i=0;
                 return m("table", m("tbody", t.children.map(x => {
                         return m("tr", [
+                            m(removeEdit, {remove: apply(remove, i++), edit: null}),
                             m("td", x.nodeid),
                             m("td", x.items),  
                             (x.active ? m("img", {src: "images/16px/ok.png"}) : null),
