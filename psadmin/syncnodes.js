@@ -59,7 +59,7 @@ pol.psadmin.db.SyncNodes = class extends pol.core.Widget {
                 var i=0;
                 return m("table", m("tbody", t.children.map(x => {
                         return m("tr", [
-                            m(removeEdit, {remove: apply(remove, i++), edit: null}),
+                            m(removeEdit, {remove: apply(removeChild, i++), edit: null}),
                             m("td", x.nodeid),
                             m("td", x.items),  
                             (x.active ? m("img", {src: "images/16px/ok.png"}) : null),
@@ -105,13 +105,19 @@ pol.psadmin.db.SyncNodes = class extends pol.core.Widget {
         
         setInterval(()=> t.getNodes(), 60000);
         
+        function removeChild(i) {remove(i, true); };
         
-        function remove(i) {
-            const node = t.parents[i];
+        function remove(i, child) {
+            const list = (child ? t.children: t.parents);
+            const node = list[i]; 
+            if (confirm("Remove sync node "+node.nodeid+" - are you sure?") == false)
+                return;
+            if (child && confirm("Warning: Manual removal of child node - are you sure?") == false)
+                return;
             
-             t.server.DELETE("sync/nodes/"+node.nodeid, 
+            t.server.DELETE("sync/nodes/"+node.nodeid, 
                 x => {
-                    t.parents.splice(i);
+                    list.splice(i);
                     m.redraw();
                 },
                 x => {
