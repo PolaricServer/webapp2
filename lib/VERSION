@@ -1,10 +1,10 @@
  
-Mithril     2.2.2
+Mithril     2.2.15 
 Moment      2.29.4 (with locales)
 Pikaday     1.8.2  
-OpenLayers  7.5.2
+OpenLayers  10.5.0
 proj4       2.9.2
-echarts     5.4.2 (custom built with default selections)
+echarts     5.4.2 (custom built with default selections)  - siste versjon 5.6
 
 ---------------------------------------------------------------------------------------
 
