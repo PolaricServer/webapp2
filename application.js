@@ -247,6 +247,8 @@
             m.add("Server config..", () => WIDGET("psadmin.ServerConfig", [50, 70], true));
             m.add("Own pos config..", () => WIDGET("psadmin.OwnposConfig", [50, 70], true));
             m.add("Channels config..", () => WIDGET("psadmin.Channels", [50, 70], false));
+            m.add("Clear all items..", () => resetAllItems()); 
+            
             if (srv.hasDb) {
                 m.add(null);
                 m.add("Synch nodes", () => WIDGET("psadmin.db.SyncNodes", [50,70], false));
@@ -468,7 +470,18 @@
                 x  => console.log("Reset info failed: "+x)
             );
     }
-
+    
+    
+    
+    // FIXME: maybe an "are you sure" dialog?     
+    function resetAllItems() {
+        srv.DELETE("/item", null,
+                () => console.log("Clear items"),
+                x  => console.log("Clear items failed: "+x)
+            );
+    }
+    
+    
     function chColor(ident) {
         srv.PUT("/item/"+ident+"/chcolor", null,
                 () => console.log("Change trail color for: "+ident),
