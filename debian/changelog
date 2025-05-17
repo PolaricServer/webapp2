@@ -1,3 +1,15 @@
+polaric-webapp2 (3.2) stable; urgency=medium
+
+  * Bullboard and mailbox fixes
+  * Allow showing telemetry history for last day or week
+  * Layer management fixes: WMS layer improvements..
+  * Channel management fixes: new types...
+  * Allow manual removal of child dbsync nodes (see also db-plugin)
+  * Openlayers to 10.5.0, Mithril to 2.2.15
+  * Various fixes..
+
+ -- Oyvind Hanssen <ohanssen@acm.org>  Sat, 17 May 2025 20:17:12 +0200
+
 polaric-webapp2 (3.1) stable; urgency=medium
 
   * Support photo API (Database plugin)

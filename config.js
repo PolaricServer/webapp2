@@ -4,7 +4,7 @@
  * Feel free to modify it to meet your needs. 
  * See examples aprs.no.config.js for more examples... 
  * 
- * (c) 2017-2023 LA7ECA, Ø. Hanssen
+ * (c) 2017-2025 LA7ECA, Ø. Hanssen
  *************************************************************/
 
 /* 
@@ -12,7 +12,7 @@
  * Uncomment to use aprs.no as a backend. 
  * Default is to use the location of the webapp. 
  */
-SERVER("https://kart2.aprs.no");
+// SERVER("https://aprs.no");
 
 
 /*
