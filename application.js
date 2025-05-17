@@ -19,7 +19,7 @@
     var mobile = mobplatform | phone | tablet;
     
     /* Set to true to incldue REST API testbench in menu */
-    var developer_mode = true; 
+    var developer_mode = false; 
     
     
     
@@ -30,6 +30,7 @@
     var urlArgs = getParams(window.location.href);
 
    
+    
     /* 
      * Instantiate the map browser and try to restore widgets from a previous session. 
      */  
@@ -41,8 +42,8 @@
 
 
     let srv=null;
-    setTimeout( ()=> { srv = CONFIG.server = CONFIG.srvManager.instantiate()}, 500 );
-    setTimeout(pol.widget.restore, 1200);
+    setTimeout( ()=> { srv = CONFIG.server = CONFIG.srvManager.instantiate()}, 800 );
+    setTimeout(pol.widget.restore, 1500);
     
     
     /* 
@@ -60,15 +61,6 @@
             srv.onStart( ()=> {
                 CONFIG.tracks = new pol.tracking.Tracking(srv, (hires? 1.4 : 1) );  
                 CONFIG.filt = new pol.tracking.Filters(CONFIG.tracks);
-                
-                CONFIG.tracks.onOpen( ()=> {
-                    /* Allow user to specify callsign to track in URL parameter */
-                    if (urlArgs['track'] != null) 
-                        CONFIG.tracks.setTracked(urlArgs['track']);
-                });
-                
-                /* Log base layer selection */ 
-                CONFIG.mb.setBaseLayerCb( (x)=> { CONFIG.tracks.reportLayer(x) } ) ;
 
                 /* Add items to toolbar */
                 if (!tbar) { 
@@ -81,12 +73,14 @@
                 }
             });
     
+            
             /*********************************
              * On stop of server connection
              *********************************/ 
             srv.onStop( ()=> {
                 CONFIG.tracks.close();
             });
+            
             
             /*********************************
              * On login to server
@@ -103,12 +97,14 @@
                     CONFIG.filt.getFilters();
                     CONFIG.tracks.reconnect();
                 
-                    /* Notifier is used only when logged in. 
-                    * FIXME: Do this after websocket connection is restored.
-                    */
+                    /* 
+                     * Notifier is used only when logged in. 
+                     * FIXME: Do this after websocket connection is restored.
+                     */
                     CONFIG.notifier = this.not = new pol.tracking.Notifier();
                      
-                    /* Some of the widgets have state that is needed by others so 
+                    /* 
+                     * Some of the widgets have state that is needed by others so 
                      * they need to be started when login is done. 
                      */
                     getWIDGET("core.AreaList");
