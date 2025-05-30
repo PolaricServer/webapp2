@@ -2,7 +2,7 @@
  Map browser based on OpenLayers 5. Tracking. 
  Manage own position and tracking 
  
- Copyright (C) 2023 Øyvind Hanssen, LA7ECA, ohanssen@acm.org
+ Copyright (C) 2023-2025 Øyvind Hanssen, LA7ECA, ohanssen@acm.org
  
  This program is free software: you can redistribute it and/or modify
  it under the terms of the GNU Affero General Public License as published 
@@ -30,7 +30,6 @@ pol.psadmin.OwnposConfig = class extends pol.core.Widget {
     constructor() {
         super();
         var t = this;
-        t.server = CONFIG.server;
         t.classname = "psadmin.OwnposConfig"; 
         t.txon = false; 
         t.allowrf = false;
@@ -185,18 +184,19 @@ pol.psadmin.OwnposConfig = class extends pol.core.Widget {
         /* Handler for when user selects symbol */
         function onSymSelect () {
             const sym = $('#symSelect').val();
-            t.obj.symtab(sym[0]); 
-            t.obj.sym(sym[1]);
+            t.symtab(sym[0]); 
+            t.sym(sym[1]);
             m.redraw();
         }
         
         /* Update a user (on server) */
         function update() {
+            console.log("sym", t.symtab(), t.sym());
             const data = {
                 txon: t.txon,
                 allowrf: t.allowrf,
                 compress: t.compress,
-                symbol: "" + t.symtab().charAt(0) + t.sym().charAt(1),
+                symbol: "" + t.symtab().charAt(0) + t.sym().charAt(0),
                 rfpath: t.digipath(),
                 comment: t.descr(),
                 pos: t.pos,
@@ -210,7 +210,7 @@ pol.psadmin.OwnposConfig = class extends pol.core.Widget {
                 maxturn: parseInt(t.maxturn())
             };
 
-            t.server.PUT("system/adm/ownpos", JSON.stringify(data), 
+            CONFIG.server.PUT("system/adm/ownpos", JSON.stringify(data), 
                 x => {
                     console.log("Update succeeded");
                     t.successMsg("Update succeeded. Reboot may be necessary", 10000);
@@ -253,10 +253,11 @@ pol.psadmin.OwnposConfig = class extends pol.core.Widget {
             t.maxpause(""+conf.maxpause);
             t.mindist(""+conf.mindist);
             t.maxturn(""+conf.maxturn);
+            m.redraw();
         }, 
         (xhr, st, err) => {
             console.log("Failed to fetch data from server:", st, err);
-            this.errmsg("Failed to fetch data from server: "+err, 10000);
+            this.errMsg("Failed to fetch data from server: "+err, 10000);
         });
     }
             

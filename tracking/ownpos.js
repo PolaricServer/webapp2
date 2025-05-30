@@ -70,7 +70,7 @@ pol.tracking.OwnPos = class extends pol.core.Widget {
         
         /* Update object on backend (through REST call */
         function update() {
-            if (t.pos[0]==0 && t.posx[1]==0) {
+            if (t.posx[0]==0 && t.posx[1]==0) {
                 error("Invalid position");
                 return;
             }

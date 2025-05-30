@@ -239,9 +239,9 @@
         if (srv.auth.admin) {
             m.add("Status info", () => WIDGET("psadmin.StatusInfo", [50, 70], true));
             m.add(null);
-            m.add("User admin..", () => WIDGET("psadmin.Users", [50, 70], true));
-            m.add("Server config..", () => WIDGET("psadmin.ServerConfig", [50, 70], true));
-            m.add("Own pos config..", () => WIDGET("psadmin.OwnposConfig", [50, 70], true));
+            m.add("User admin..", () => WIDGET("psadmin.Users", [50, 70], false));
+            m.add("Server config..", () => WIDGET("psadmin.ServerConfig", [50, 70], false));
+            m.add("Own pos config..", () => WIDGET("psadmin.OwnposConfig", [50, 70], false));
             m.add("Channels config..", () => WIDGET("psadmin.Channels", [50, 70], false));
             m.add("Clear all items..", () => resetAllItems()); 
             
