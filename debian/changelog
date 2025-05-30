@@ -1,3 +1,9 @@
+polaric-webapp2 (3.2.1) stable; urgency=medium
+
+  * Fix some bugs in management of own position
+
+ -- Oyvind Hanssen <ohanssen@acm.org>  Fri, 30 May 2025 19:55:26 +0200
+
 polaric-webapp2 (3.2) stable; urgency=medium
 
   * Bullboard and mailbox fixes
