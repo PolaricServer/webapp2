@@ -1,6 +1,6 @@
  /*
     Map browser based on OpenLayers. 
-    Copyright (C) 2017-2024 Øyvind Hanssen, LA7ECA, ohanssen@acm.org
+    Copyright (C) 2017-2025 Øyvind Hanssen, LA7ECA, ohanssen@acm.org
     
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU Affero General Public License as published 
@@ -139,7 +139,7 @@ pol.core.MapBrowser = class {
         if (proj == null || persistent)
             proj = await t.config.get(prefix+'.p.projection');
         if (proj == null)
-            proj = 'EPSG:900913';
+            proj = 'EPSG:3857';
         
         t.view = new ol.View({   
             projection: proj,                         
@@ -149,12 +149,12 @@ pol.core.MapBrowser = class {
 
         
         /* Workaround issue with OL */
-        if (proj=='EPSG:900913') {
+        if (proj=='EPSG:900913' || proj=='EPSG:3857') {
             setTimeout(()=>
                 t.view.setCenter(ol.proj.fromLonLat(center, proj)), 50);
             setTimeout(()=>
                 t.view.setCenter(ol.proj.fromLonLat(center, proj)), 400);
-        }
+        } 
         
         /* Mouse position indicator */
         t.mousepos = new pol.core.MousePos({}),

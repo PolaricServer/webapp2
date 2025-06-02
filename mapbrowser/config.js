@@ -59,7 +59,7 @@ pol.core.Config = class extends ol.Object {
         this.widgets = [];
    
         this.props = {
-            projection: "EPSG:900913",
+            projection: "EPSG:3857",
             center: [0,0]
         }
     }
