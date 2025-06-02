@@ -237,7 +237,11 @@ pol.psadmin.Channels = class extends pol.core.Widget {
                             maxLength:6, regex: /[0-9]*/i })),  
                     m("div.field", 
                             m("span.lleftlab", "Input filter:"),
-                            m(textInput, { id:"filter", value: t.filter, size: 29, 
+                            m(textInput, { id:"filter", value: t.filter, size: 30, 
+                                maxLength:64, regex: /.*/i })), 
+                    m("div.field", 
+                            m("span.lleftlab", "Default filter:"),
+                            m(textInput, { id:"dfilter", value: t.dfilter, size: 30, 
                                 maxLength:64, regex: /.*/i })), 
                     ]);
                     
@@ -425,7 +429,7 @@ pol.psadmin.Channels = class extends pol.core.Widget {
                 ch.specific = { host: t.host(), port: parseInt(t.port()), 
                                 pass: parseInt(t.passcode()), filter: t.filter() };
             else if (t.type==='APRSIS-SRV')
-                ch.specific = { port: parseInt(t.port())};
+                ch.specific = { port: parseInt(t.port()), defaultfilt: t.dfilter() };
             else if (t.type==='AIS-TCP')
                 ch.specific = { host: t.host(), port: parseInt(t.port()) };
             else if (t.type==='ROUTER')
@@ -501,6 +505,7 @@ pol.psadmin.Channels = class extends pol.core.Widget {
             if (t.type === 'APRSIS-SRV') {
                 t.ch.specific.port = parseInt(t.port());
                 t.ch.specific.filter = t.filter();
+                t.ch.specific.defaultfilt = t.dfilter();
             }
             srv.PUT("system/adm/channels/"+t.name(), JSON.stringify(t.ch), 
                     ()=> {
@@ -587,6 +592,7 @@ pol.psadmin.Channels = class extends pol.core.Widget {
         t.kissport = m.stream("");
         t.passcode = m.stream("");
         t.filter = m.stream("");
+        t.dfilter = m.stream("");
         t.channels = m.stream("");
         t.rclist = []; 
     }
@@ -626,7 +632,8 @@ pol.psadmin.Channels = class extends pol.core.Widget {
                 this.port(""+this.ch.specific.port);
                 this.kissport(""+this.ch.specific.kissport);
                 this.passcode(""+this.ch.specific.pass);
-                this.filter(this.ch.specific.filter==null ? "*":this.ch.specific.filter);
+                this.filter(this.ch.specific.filter==null ? "*" : this.ch.specific.filter);
+                this.dfilter(this.ch.specific.defaultfilt==null ? "" : this.ch.specific.defaultfilt);
                 this.activated = this.ch.active;
                 this.primary = this.ch.rfchan || this.ch.inetchan;
                 this.loggedinonly = this.ch.generic.restricted;
