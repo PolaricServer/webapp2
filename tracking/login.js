@@ -1,7 +1,5 @@
 /*
  Map browser based on OpenLayers 5. Tracking. 
- Search historic data on tracker points on server.  
- 
  Copyright (C) 2023-2025 Øyvind Hanssen, LA7ECA, ohanssen@acm.org
  
  This program is free software: you can redistribute it and/or modify
@@ -285,11 +283,13 @@ pol.tracking.Login = class extends pol.core.Widget {
     
     
     onActivate() {
-        this.getAuth();
-        this.getGroups();
-        this.group = CONFIG.server.temp_role;      
-        setTimeout(()=>$("select#group").val(this.group).trigger("change"), 300);
-        m.redraw();
+        setTimeout(()=> {
+            this.getAuth();
+            this.getGroups();
+            this.group = CONFIG.server.temp_role;      
+            setTimeout(()=>$("select#group").val(this.group).trigger("change"), 300);
+            m.redraw();
+        }, 1500);
     }
     
     
