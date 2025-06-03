@@ -9,8 +9,8 @@ Homepage: http://aprs.no/polaricserver
 Package: polaric-webapp2
 Architecture: all
 Depends: acl, adduser, apache2, apache2-utils, libapache2-mod-mapcache, mapcache-tools, openssl, ssl-cert, javascript-common, libjs-jquery, libjs-jquery-ui, ${misc:Depends}
-Recommends:  polaric-aprsd (>= 3.1)
-Conflicts: polaric-webapp, polaric-aprsd (<< 3.1)
+Recommends:  polaric-aprsd (>= 3.2.2)
+Conflicts: polaric-webapp, polaric-aprsd (<< 3.2.2)
 Description: Polaric Server: Web application. 
  The "Polaric Server" is mainly a web based service to present APRS 
  tracking information on maps and where the information is updated at real-

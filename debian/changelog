@@ -1,3 +1,10 @@
+polaric-webapp2 (3.2.2) stable; urgency=medium
+
+  * Add default filter to aprsis-srv channel config
+  * Use projectiopn 3857 instead of 900913 - fixes a problem
+
+ -- Oyvind Hanssen <ohanssen@acm.org>  Tue, 03 Jun 2025 22:15:18 +0200
+
 polaric-webapp2 (3.2.1) stable; urgency=medium
 
   * Fix some bugs in management of own position
