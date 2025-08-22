@@ -48,7 +48,7 @@ pol.tracking.PolaricServer = class extends pol.core.Server {
     
     constructor(mobile) {
         super();
-        this.auth = { userid: "", groupid: "", callsign: "", servercall: "", admin: false, sar: false, services: "" }; 
+        this.auth = { userid: "", groupid: "", callsign: "", servercall: "", admin: false, sar: false, nclients: 0, services: "" }; 
         this.hasDb = false;
         const t = this;
            
@@ -62,7 +62,6 @@ pol.tracking.PolaricServer = class extends pol.core.Server {
         t.stopcb = null;
         t.cbId = 0;
         t.mobile = mobile;
-        
         t.init();
         
         /* Get login status. Periodic, interval: 6 minutes */
@@ -74,10 +73,10 @@ pol.tracking.PolaricServer = class extends pol.core.Server {
 
     
     
-    async init() {
+    async init(alt) {
         const t = this;
         await sleep(2000);
-        await super._init();
+        await super._init(alt);
         await t.restoreCredentials(); 
         
         t.pubsub = new pol.tracking.PubSub(this);
@@ -93,10 +92,9 @@ pol.tracking.PolaricServer = class extends pol.core.Server {
         /* Callback when pubsub websocket is closed */
         t.pubsub.onclose = function() {
         }
- 
     }
     
-    
+     
     stop() {
         this.key = null;
         if (this.stopcb != null)
@@ -277,7 +275,7 @@ pol.tracking.PolaricServer = class extends pol.core.Server {
         this.DELETE("objects/"+tag+"/"+id, 
             x => {
                 console.log("Server object "+id+" for user "+this.auth.userid+": "+x+" objects removed");
-                if (typeof f == 'function') f(x);
+                if (typeof f == 'function') f(GETJSON(x));
             },
             (xhr,stat,err) => { console.log("ERROR: ", err); }
             
@@ -288,7 +286,7 @@ pol.tracking.PolaricServer = class extends pol.core.Server {
 
     getObj(tag, f) {
         this.GET((!this.isAuth() ? "open/" : "") + "objects/"+tag, "", 
-                x => f(JSON.parse(x)) );
+                x => f(GETJSON(x)) ); 
     }
 
 
@@ -303,6 +301,24 @@ pol.tracking.PolaricServer = class extends pol.core.Server {
     }
     
     
+    async setAltServer() {
+        const ahost = await CONFIG.get('alt_server');
+        if (ahost == null)
+            return;
+        this.pubsub.close();
+        CONFIG.tracks.close();
+        this.stop();
+        this.init(true);
+    }
+    
+    
+    async checkLoad() {
+        const maxcli = await CONFIG.get('max_clients');
+        
+        if (maxcli != null && this.auth.nclients > maxcli)
+            this.setAltServer();
+    }
+    
     
     
     /* 
@@ -314,10 +330,12 @@ pol.tracking.PolaricServer = class extends pol.core.Server {
             x => { 
                 if (this.authOk && this.temp_role == null)
                     return;
-                this.auth = JSON.parse(x);
+                console.log("authStatus");
+                this.auth = GETJSON(x);
+                this.checkLoad();
                 this.authOk = true;
                 this.hasDb = this.hasService('database');
-                
+
                 /* Close the pubsub channel to get a new which is authenticated 
                  */
                 this.pubsub.close();
@@ -328,6 +346,7 @@ pol.tracking.PolaricServer = class extends pol.core.Server {
             
             (xhr, st, err) => {
                 if (this.authOk) {
+                    this.pubsub.close();
                     this.authOk = false;
                     this.doAuthCb();
                     if (this.logoutcb != null)
@@ -346,7 +365,8 @@ pol.tracking.PolaricServer = class extends pol.core.Server {
     loginStatus2() {
         this.GET("authStatus2", "", 
             x => { 
-                this.auth = JSON.parse(x);
+                this.auth = GETJSON(x);
+                this.checkLoad();
                 this.hasDb = this.hasService('database');
             },
             null
@@ -367,7 +387,7 @@ pol.tracking.PolaricServer = class extends pol.core.Server {
    
     getPhoto(ident, func) {
         this.GET((this.isAuth() ? "" : "open/") + "photos/"+ident, "", x => { 
-            const photo = JSON.parse(x);
+            const photo = GETJSON(x);
             func(photo);
         } );
     }
@@ -379,7 +399,7 @@ pol.tracking.PolaricServer = class extends pol.core.Server {
      * FIXME: Move this somewhere else? 
      */
     infoPopup(p, pixel) {
-        console.assert(p!=null, "Assertion failed");
+        console.assert(p!=null, "(infopopup) p==null");
         CONFIG.mb.gui.removePopup();
         
         if (pol.tracking.isSign(p)) {

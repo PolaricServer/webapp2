@@ -89,10 +89,13 @@ pol.tracking.Filters = class {
     getFilters() {
         const uri=(CONFIG.server.isAuth() ? "myfilters" : "filters");
         CONFIG.server.GET(uri, "", x => { 
-            this.filterViews = JSON.parse(x);   
+            this.filterViews = GETJSON(x);   
             
             /* Find index of default selection */
             var i=0;
+            if (this.filterViews.length == 0) 
+                this.filterViews.push(["Null", "No filters found"]);
+
             for (var j in this.filterViews)
                 if (this.filterViews[j][0] === this.filt)
                     { i=j; break; }
@@ -108,7 +111,7 @@ pol.tracking.Filters = class {
 }    
 
 
-
+    
 /**
  * Convenience function for use in mapconfig file
  */

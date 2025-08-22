@@ -69,7 +69,7 @@ pol.tracking.TrackerAlias = class extends pol.core.Widget {
 
         /* Get icons from server */
         t.server.GET("system/icons/default", "", x => {
-            t.icons = JSON.parse(x);
+            t.icons = GETJSON(x);
             for (const i in t.icons)
                t.icons[i] = t.iconpath + t.icons[i];
             m.redraw();
@@ -133,5 +133,7 @@ pol.tracking.TrackerAlias = class extends pol.core.Widget {
                     
                     
 } /* class */
+
+
 
 

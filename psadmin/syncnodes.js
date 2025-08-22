@@ -183,7 +183,7 @@ pol.psadmin.db.SyncNodes = class extends pol.core.Widget {
         this.parents = [];
         
         this.server.GET("sync/nodes", "", x => {
-            var list = JSON.parse(x);
+            var list = GETJSON(x);
             for (x of list) 
                 if (x.url == null || x.url == "")
                     this.children.push(x);

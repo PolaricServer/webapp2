@@ -168,10 +168,10 @@
         pol.features.init(CONFIG.browser.map);
         
         CONFIG.mb.toolbar.addIcon(2, "images/draw.png", "tb_draw", 
-            ()=> WIDGET("features.Edit", [50, 70], true), 
+            ()=> WIDGET("features.Edit", [50, 70], false), 
             null, "Draw tool");
         
-    }, 600); 
+    }, 100); 
    
     CONFIG.labelStyle = new pol.tracking.LabelStyle();
 

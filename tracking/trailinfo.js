@@ -108,7 +108,7 @@ pol.tracking.TrailInfo = class extends pol.core.Widget {
             return;
         CONFIG.server.GET("item/"+ident+"/trail", null,
             x=> { 
-                this.tlist = JSON.parse(x); 
+                this.tlist = GETJSON(x); 
                 /* 
                  * Mount mithril component for resulting table to #ttable div
                  * make table scrollable. 

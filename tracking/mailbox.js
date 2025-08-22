@@ -149,7 +149,7 @@ pol.tracking.Mailbox = class extends pol.core.Widget {
                 return;
             
             t.server.GET("loginusers", "", x => { 
-                t.users = JSON.parse(x);
+                t.users = GETJSON(x);
                 m.redraw();
                 setTimeout(()=>t.addScroll(true), 200);
             } );
@@ -210,7 +210,7 @@ pol.tracking.Mailbox = class extends pol.core.Widget {
         if (userid == null)
             return;
         this.server.GET("mailbox", "", x => { 
-            this.msglist = JSON.parse(x);
+            this.msglist = GETJSON(x);
             m.redraw();
             this.addScroll(true);
         } );

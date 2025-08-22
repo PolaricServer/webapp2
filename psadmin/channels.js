@@ -602,7 +602,7 @@ pol.psadmin.Channels = class extends pol.core.Widget {
     getObjects() {
         CONFIG.server.GET("system/adm/channels", null,
             x=> { 
-                this.clist = JSON.parse(x); 
+                this.clist = GETJSON(x); 
                 this.clist.sort( (a,b) => {
                     if (a.specific.type > b.specific.type) return 1; 
                     else if (a.specific.type < b.specific.type) return -1;
@@ -624,7 +624,7 @@ pol.psadmin.Channels = class extends pol.core.Widget {
     getChannel(name, timed) {
         CONFIG.server.GET("system/adm/channels/"+name, null,
             x=> { 
-                this.ch=JSON.parse(x); 
+                this.ch=GETJSON(x); 
                 if (timed)
                     return;
                 this.type = this.ch.specific.type;

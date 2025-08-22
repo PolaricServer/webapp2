@@ -155,7 +155,8 @@ pol.features.Edit = class extends pol.core.Widget {
 
     onActivate() {
         snow.activate();
-        snow.featureEdit = this; 
+        snow.featureEdit = this;
+        console.log("draftlayer", snow.draftLayer);
         snow.draftLayer.setVisible(true);
         setTimeout(
             ()=> m.mount($("#toolbox")[0], this.tool), 100);

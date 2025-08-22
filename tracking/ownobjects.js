@@ -187,7 +187,7 @@ pol.tracking.OwnObjects = class extends pol.core.Widget {
     /* Get list of objects from backend server */
     getObjects() {
         CONFIG.server.GET("aprs/objects", null,
-            x=> { this.olist=JSON.parse(x); m.redraw() },
+            x=> { this.olist=GETJSON(x); m.redraw() },
             ()=> { console.warn("Couldn't get object-list"); }
         )
     }

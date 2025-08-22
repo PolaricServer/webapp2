@@ -246,7 +246,7 @@ pol.tracking.db.History = class extends pol.core.Widget {
                     $('#hist_back').addClass('searchMode');
                     t.searchmode = true;
                     CONFIG.tracks.searchMode(true);
-                    CONFIG.tracks.update(JSON.parse(x), true, index);
+                    CONFIG.tracks.update(GETJSON(x), true, index);
                 });
         }
     
@@ -291,7 +291,7 @@ pol.tracking.db.History = class extends pol.core.Widget {
                 
                 CONFIG.server.GET("/hist/"+x.call()+"/trail"+qstring, "", 
                     x => {
-                        const data = JSON.parse(x).points[0];
+                        const data = GETJSON(x).points[0];
                         if (data.trail == null) {
                             resolve("");
                             return;
@@ -364,7 +364,7 @@ pol.tracking.db.History = class extends pol.core.Widget {
             if (userid == null)
                 return;
             CONFIG.server.GET("trackers", "", x => { 
-                let mtr = JSON.parse(x);
+                let mtr = GETJSON(x);
                 for (var tt of mtr) { 
                    let tr = {
                        call: m.stream(tt.id), 

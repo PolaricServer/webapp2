@@ -157,7 +157,7 @@ pol.layers.Edit = class {
             if (s && s != null && s.isAuth()) {
                 const obj = {type: t.typeid, name: t.lName(), data: t.layer2obj(layer)}; 
                 s.putObj("layer", obj, i => { 
-                    layer.index = i; //JSON.parse(i);
+                    layer.index = GETJSON(i);
                     layer.server = true;
                 });
                 _add();
@@ -281,7 +281,7 @@ pol.layers.Edit = class {
         return null; 
     }
     json2layer(js) {
-        return this.obj2layer(JSON.parse(js));
+        return this.obj2layer(GETJSON(js));
     }
     
 

@@ -122,7 +122,7 @@ pol.tracking.AprsPackets = class extends pol.core.Widget {
 
         CONFIG.server.GET("hist/"+ident+"/aprs?n="+this.n+tsearch, null,
             x=> { 
-                this.tlist = JSON.parse(x); 
+                this.tlist = GETJSON(x); 
                 /* 
                  * Mount mithril component for resulting table to #ttable div
                  * make table scrollable. 

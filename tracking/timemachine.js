@@ -133,7 +133,7 @@ pol.tracking.db.Timemachine = class extends pol.core.Widget {
                     $('#tm_back').addClass('searchMode');
                     t.searchmode = true;
                     CONFIG.tracks.searchMode(true);
-                    CONFIG.tracks.update(JSON.parse(x), true);
+                    CONFIG.tracks.update(GETJSON(x), true);
                     t.message = null;
                     done = true;
                     m.redraw();

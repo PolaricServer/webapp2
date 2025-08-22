@@ -241,9 +241,9 @@ pol.tracking.Login = class extends pol.core.Widget {
     getGroups() {
         const t = this;
         t.groupList = [];
-        CONFIG.server.GET("/groups" , "", 
+        CONFIG.server.GET("groups" , "", 
             x => {
-                let grps = JSON.parse(x);
+                let grps = GETJSON(x);
                 for (x of grps)
                     if (x.avail)
                         t.groupList.push(x);
@@ -263,9 +263,9 @@ pol.tracking.Login = class extends pol.core.Widget {
      */
     getAuth() {
         const t = this;
-        CONFIG.server.GET("/authStatus" , "", 
+        CONFIG.server.GET("authStatus" , "", 
             x => {
-                t.info = JSON.parse(x);
+                t.info = GETJSON(x);
                 t.group = t.info.groupid;
                 if (CONFIG.server.temp_role != null)
                     t.group = CONFIG.server.temp_role;

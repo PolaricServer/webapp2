@@ -94,7 +94,7 @@ pol.tracking.db.MyTrackers = class extends pol.tracking.TrackerAlias {
         
         t.server.GET("usernames", null,
             x=> { 
-                t.userList=JSON.parse(x);
+                t.userList=GETJSON(x);
                 t.userList.sort((x,y)=> {return x > y});
                 m.redraw() 
             },
@@ -133,7 +133,7 @@ pol.tracking.db.MyTrackers = class extends pol.tracking.TrackerAlias {
                     }); 
                 
                 /* Parse result */
-                t.myTrackers = JSON.parse(x);
+                t.myTrackers = GETJSON(x);
                 for (var tt of t.myTrackers) 
                     t.setIcon(tt, tt.icon); 
                 

@@ -132,9 +132,9 @@ pol.psadmin.statusInfo = class extends pol.core.Widget {
         
         
     getInfo() {
-        CONFIG.server.GET( "/system/adm/status", null, 
+        CONFIG.server.GET( "system/adm/status", null, 
             st => {
-                this.data = JSON.parse(st);
+                this.data = GETJSON(st);
                 m.redraw();
             },            
             x=> { 
@@ -144,9 +144,9 @@ pol.psadmin.statusInfo = class extends pol.core.Widget {
     }
     
     getClients() {
-        CONFIG.server.GET( "/system/adm/clients", null, 
+        CONFIG.server.GET( "system/adm/clients", null, 
             st => {
-                this.clients = JSON.parse(st);           
+                this.clients = GETJSON(st);           
                 this.clients.sort( (x,y) => (x.cid < y.cid ? -1 : (x.cid===y.cid ? 0 : 1)));
                 if (this.nclients != this.clients.length)
                     setTimeout(()=> this.mountList(), 400);

@@ -177,7 +177,7 @@ pol.psadmin.TestRest = class extends pol.core.Widget {
             $("#testResp").removeClass("err").addClass("success");
             if (t.sel.json)
                 try {
-                    console.log("RESPONSE: ", JSON.parse(x));
+                    console.log("RESPONSE: ", GETJSON(x));
                     t.response = "Success (JSON)"; 
                 }
                 catch(err) {

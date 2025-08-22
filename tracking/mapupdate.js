@@ -2,7 +2,7 @@
  Map browser based on OpenLayers. Tracking. 
  Websocket connection with Polaric Server backend. 
  
- Copyright (C) 2017-2023 Øyvind Hanssen, LA7ECA, ohanssen@acm.org
+ Copyright (C) 2017-2025 Øyvind Hanssen, LA7ECA, ohanssen@acm.org
  
  This program is free software: you can redistribute it and/or modify
  it under the terms of the GNU Affero General Public License as published 
@@ -45,8 +45,9 @@ pol.tracking.MapUpdate = class {
         t.open(); 
  
         setInterval ( ()=> {
-            if (t.retry==0)
+            if (t.retry==0) 
                 t.open();
+            
             else if (t.retry > 0)
                 t.retry--;
         }, 5000)
@@ -72,7 +73,8 @@ pol.tracking.MapUpdate = class {
             /* Socket connected handler */
             t.websocket.onopen = function() { 
                 console.log("Connected to server (for tracking overlay).");
-                if (t.onopen != null /* && t.firstopen */ ) 
+                $("#warnmode").addClass("warn_hidden");
+                if (t.onopen != null ) 
                     t.onopen();
                 t.firstopen = false;      
                 t.retry = -1;  t.cretry = 0;
@@ -118,6 +120,8 @@ pol.tracking.MapUpdate = class {
             /** Socket error handler */
             t.websocket.onerror = function(evt) { 
                 console.log("Server connection error (tracking overlay): ");
+                if (t.closed)
+                    return;
                 clearInterval(t.kalive);
                 errorRetry();
                 closeHandler();
@@ -155,7 +159,7 @@ pol.tracking.MapUpdate = class {
     * Suspend the map-updater for a given time 
     */
     suspend(time) {
-        console.assert(time>0, "Assertion failed");
+        console.assert(time>0, "(suspend) time<=0");
         this.suspend = true; 
         setTimeout( ()=> { this.suspend = false; }, time);
     }
@@ -187,7 +191,8 @@ pol.tracking.MapUpdate = class {
      * Subscribe to updates from the server 
      */
     subscribe(flt, c, tag, keep) {
-        console.assert(flt!=null && flt!="" && c!=null, "Assertion failed");
+        console.assert(flt!=null && flt!="", "(subscribe) flt is empty or null");
+        console.assert(c!=null, "(subscribe) c is null");
         this.subscriber = c;  
         this.suspend = false; 
         var ext = CONFIG.mb.getExtent(); 

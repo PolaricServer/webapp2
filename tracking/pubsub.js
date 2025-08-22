@@ -65,6 +65,7 @@ pol.tracking.PubSub = class {
             /* Socket connected handler */
             t.websocket.onopen = function() { 
                 console.log("Connected to server (for notify service).");
+                $("#warnmode").addClass("warn_hidden");
                 if (t.onopen != null && t.firstopen) 
                     t.onopen();
                 t.firstopen = false;
@@ -78,6 +79,7 @@ pol.tracking.PubSub = class {
             
             /* Incoming message on socket */
             t.websocket.onmessage = function(evt) { 
+                console.log("pubsub onmessage: ", evt);
                 const slc = evt.data.indexOf(",");
                 const txt1 = evt.data.slice(0,slc);
                 const txt2 = evt.data.slice(slc+1);
@@ -111,6 +113,8 @@ pol.tracking.PubSub = class {
             /** Socket error handler */
             t.websocket.onerror = function(evt) { 
                 console.log("Server connection error (pubsub)");
+                if (t.closed)
+                    return;
                 clearInterval(t.kalive);
                 errorRetry();
                 closeHandler();
@@ -198,7 +202,8 @@ pol.tracking.PubSub = class {
      * Allow multiple subscribers to a room.  
      */
     subscribe(room, c, text) {
-        console.assert(room!=null && room!="" && c!=null, "Assertion failed");
+        console.assert(room!=null && room!="", "Room is null or blank");
+        console.assert(c!=null, "Client is null" );
         if (!this.rooms[room] || this.rooms[room] == null) {
             this.rooms[room] = new Array();
             this.websocket.send('SUBSCRIBE,' + room);

@@ -235,7 +235,7 @@ pol.psadmin.OwnposConfig = class extends pol.core.Widget {
     getConfig() {
         const t = this;
         CONFIG.server.GET("system/adm/ownpos", "", x => { 
-            const conf = JSON.parse(x);
+            const conf = GETJSON(x);
             const t = this;
             t.txon = conf.txon;
             t.allowrf = conf.allowrf; 

@@ -147,7 +147,7 @@ pol.tracking.TelHist = class extends pol.core.Widget {
                     this.index = 0;
                // if (keep!=true)
                     this.resetChart();
-                var hist = JSON.parse(x);
+                var hist = GETJSON(x);
                 var opt = Object.assign( {}, this.option); 
                 opt.series = [];
                 opt.legend.data = [];

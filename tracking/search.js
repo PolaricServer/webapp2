@@ -142,7 +142,7 @@ pol.tracking.Search = class extends pol.core.Widget {
             t.server.GET( (CONFIG.server.isAuth() ? "xitems" : "items")+
                 '?srch='+(filt==null ? "*":filt)  + (tags!=null ? '&tags='+tags : ''), null, 
                 x => {
-                    t.result = JSON.parse(x);
+                    t.result = GETJSON(x);
 
                    /* 
                     * Mount mithril component for resulting table to #ttable div
@@ -243,7 +243,7 @@ pol.tracking.Search = class extends pol.core.Widget {
         this.server.GET("system/tags", null, 
             x=> {
                 this.tags = [];
-                const tt = JSON.parse(x); 
+                const tt = GETJSON(x); 
                 for (const i in tt) {
                     if (tt[i].charAt(0)=='-')
                         continue;

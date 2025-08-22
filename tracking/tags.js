@@ -121,7 +121,7 @@ pol.tracking.Tags = class extends pol.core.Widget {
     getTags() {
         this.server.GET("system/tags", null,
             x=> { 
-                this.usedTags=JSON.parse(x); 
+                this.usedTags=GETJSON(x); 
                 this.usedTags.sort((x,y)=> {return x>y}); 
                 m.redraw();
             },
@@ -131,7 +131,7 @@ pol.tracking.Tags = class extends pol.core.Widget {
         this.server.GET(this.url, null,
             x=> { 
                 this.negTags.clear();
-                this.tagsOn=JSON.parse(x);
+                this.tagsOn=GETJSON(x);
                 this.tagsOn.sort((x,y)=> {return x>y});
                 for (const tt of this.tagsOn)
                     if (tt.charAt('-'))

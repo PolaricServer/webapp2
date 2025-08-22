@@ -841,7 +841,7 @@ pol.tracking.Tracking = class {
                 console.log("Goto point: Not found on server");
                 return;
             }
-            const pos = JSON.parse(info);
+            const pos = GETJSON(info);
             CONFIG.mb.gui.removePopup();
             CONFIG.mb.goto_Pos(pos, false);
         });
@@ -881,6 +881,9 @@ pol.tracking.Tracking = class {
     update(ov, srch, index) {
         let i = 0;
         
+        
+        
+                
         if (this.srch && !srch)
             return
         if (ov == null)
@@ -893,8 +896,6 @@ pol.tracking.Tracking = class {
         }
         else
             CONFIG.filt.setDisabled(false);
-        
-        $("#warnmode").addClass("warn_hidden");
 
         if (!srch && this.srch)
             this.clear();

@@ -200,7 +200,7 @@ pol.psadmin.ServerConfig = class extends pol.core.Widget {
     /* Get list of users from server */
     getConfig() {
         CONFIG.server.GET("system/adm/server", "", x => { 
-            const conf = JSON.parse(x);
+            const conf = GETJSON(x);
             const t = this;
             t.mycall(conf.mycall); 
             t.igate_range(""+conf.radius);

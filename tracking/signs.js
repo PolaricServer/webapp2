@@ -289,7 +289,7 @@ pol.tracking.db.Signs = class extends pol.core.Widget {
         if (i==null)
             return;
         this.server.GET("signs/"+i, "", x => {
-            var obj = JSON.parse(x);
+            var obj = GETJSON(x);
             this._edit(obj);
         });
         
@@ -309,7 +309,7 @@ pol.tracking.db.Signs = class extends pol.core.Widget {
     getTypes() {
         this.server.GET("signs/types", "", x => {
             this.myTypes = [];
-            var list = JSON.parse(x);
+            var list = GETJSON(x);
             for (x of list) 
                 this.myTypes.push({label:x.name, val:x.id, icon: x.icon });
             
@@ -338,7 +338,7 @@ pol.tracking.db.Signs = class extends pol.core.Widget {
             query += (this.typeSel ? "&" : "?") + "user=true"; 
         
         this.server.GET("signs"+query, "", x => { 
-            this.mySigns = JSON.parse(x);
+            this.mySigns = GETJSON(x);
             this.sortList();
             setTimeout(()=> this.mountList(), 1000);
             this.inProgr = false;

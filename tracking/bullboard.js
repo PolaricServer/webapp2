@@ -245,9 +245,8 @@ pol.tracking.BullBoard = class extends pol.core.Widget {
     /* Get set of groups from server */
     getGroups() {
         const t=this;
-        t.server.GET("/bullboard/groups", "", x => { 
-            t.groups = JSON.parse(x);
-            console.log(t.groups);
+        t.server.GET("bullboard/groups", "", x => { 
+            t.groups = GETJSON(x);
             t.groups.unshift('APRS');
             t.groups.unshift('Announcements');
         
@@ -263,8 +262,8 @@ pol.tracking.BullBoard = class extends pol.core.Widget {
              
     /* Get selected bulletin group from server */
     getMessages() {
-        this.server.GET("/bullboard/"+this.group()+"/messages", "", x => { 
-            this.messages = JSON.parse(x);      
+        this.server.GET("bullboard/"+this.group()+"/messages", "", x => { 
+            this.messages = GETJSON(x);      
             this.updateScreen();
         } );
     }   
@@ -275,8 +274,8 @@ pol.tracking.BullBoard = class extends pol.core.Widget {
         const call = this.server.auth.callsign; 
         if (call==null || call=="")
             return;
-        this.server.GET("/bullboard/"+this.group()+"/messages/"+call, "", x => { 
-            var msgs = JSON.parse(x);
+        this.server.GET("bullboard/"+this.group()+"/messages/"+call, "", x => { 
+            var msgs = GETJSON(x);
             for (const i in msgs) 
                 if (msgs[i] != null) {
                     this.sentText[i] = true;

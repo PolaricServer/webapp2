@@ -183,7 +183,7 @@ pol.psadmin.Users = class extends pol.core.Widget {
         
         function getGroups() {
             t.server.GET("groups", "", x => { 
-                t.groupList = JSON.parse(x);    
+                t.groupList = GETJSON(x);    
             } );
         }
         
@@ -343,7 +343,7 @@ pol.psadmin.Users = class extends pol.core.Widget {
     /* Get list of users from server */
     getUsers() {
         CONFIG.server.GET("users", "", x => { 
-            this.users = JSON.parse(x);    
+            this.users = GETJSON(x);    
             this.sortList();
             setTimeout(()=> this.mountList(), 500);
         } );

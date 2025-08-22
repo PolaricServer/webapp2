@@ -43,6 +43,18 @@ function SERVER(url)
  function PORT(port) 
  { CONFIG.set('port', port); }
  
+function MAX_CLIENTS(n) 
+ { CONFIG.set('max_clients', n); }
+
+function ALT_SECURE(sec)
+ { CONFIG.set('alt_secure', sec); }
+ 
+function ALT_SERVER(url) 
+ { CONFIG.set('alt_server', url); }
+
+ function ALT_PORT(port) 
+ { CONFIG.set('alt_port', port); }
+ 
 function WSPREFIX(p)
  { CONFIG.set('wsprefix', p); }
  
@@ -560,3 +572,5 @@ function CIRCLE(radius, opts) {
 function WIDGET(id, pos,save,f,multi) { pol.widget.start(id, pos, true, save, f, multi); }
 function POPUP(id,pos,f) {pol.widget.start(id, pos, false, false, f); }
 function getWIDGET(id) { return pol.widget.get(id); }
+
+function GETJSON(x) {return JSON.parse(x);}

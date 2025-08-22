@@ -262,7 +262,7 @@ pol.tracking.PointInfo = class extends pol.core.Widget {
         const svc = (CONFIG.server.isAuth() ? "xinfo" : "info");
         this.srv.GET("item/"+id+"/"+svc, null, 
             x  => { 
-                this.info = JSON.parse(x); 
+                this.info = GETJSON(x); 
                 m.redraw()
             },
             () => {

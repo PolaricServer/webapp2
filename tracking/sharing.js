@@ -91,7 +91,7 @@ pol.tracking.db.Sharing = class extends pol.core.Widget {
 
         srv.GET("usernames", null,
             x=> { 
-                t.userList=JSON.parse(x);
+                t.userList=GETJSON(x);
                 t.userList.sort((x,y)=> {return x > y});
                 t.userList.push("#ALL");
                 getGroups(); 
@@ -102,7 +102,7 @@ pol.tracking.db.Sharing = class extends pol.core.Widget {
 
         function getGroups() {
             t.server.GET("groups", "", x => { 
-                t.groupList = JSON.parse(x);    
+                t.groupList = GETJSON(x);    
                 t.groupList.sort((x,y)=> {return x > y});
                 for (const xx of t.groupList) 
                     t.userList.push('@'+xx.ident);
@@ -196,7 +196,7 @@ pol.tracking.db.Sharing = class extends pol.core.Widget {
         console.log("this.tag/ident: ", this.tag, this.ident);
         CONFIG.server.GET(encodeURI((this.photo ? "photos/" : "objects/"+this.tag+"/") + this.ident+"/share"), null,
             x=> { 
-                this.shareList=JSON.parse(x);
+                this.shareList=GETJSON(x);
                 this.shareList.sort((x,y)=> {return x.userid > y.userid});
                 m.redraw();
             },

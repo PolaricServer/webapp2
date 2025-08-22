@@ -48,11 +48,24 @@ pol.core.Server = class {
     }
 
     
-    async _init() {
-        console.log("SERVER _INIT");
+    async _init(alt) {        
         let host   = await CONFIG.get('server');
         let port   = await CONFIG.get('port');
         let secure = await CONFIG.get('secure');
+        
+        if (alt==true) {
+            const ahost   = await CONFIG.get('alt_server');
+            const aport   = await CONFIG.get('alt_port');
+            const asecure = await CONFIG.get('alt_secure');
+            console.log("ALT SERVER: ", ahost);
+            if (ahost != null)
+                host = ahost;
+            if (aport != null)
+                port = aport;
+            if (asecure != null)
+                secure = asecure;
+        }
+
         
         /* Default is to use window.location as host, and port 8081 */
         if (host == null) {
@@ -99,6 +112,8 @@ pol.core.Server = class {
     }
     
 
+    
+    
     /** Full (browser) popup window */
     popup(name, url, width, height) {
         const u = this.url+"/"+url;

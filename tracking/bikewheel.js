@@ -137,7 +137,7 @@ pol.tracking.BikeWheel = class extends pol.core.Widget {
             if (srv != null && srv.isAuth()) 
                 srv.GET("/sar/ipp", null,
                     (dt)=> {
-                        const list = JSON.parse(dt);
+                        const list = GETJSON(dt);
                         for (const x of list) {
                             if (x!= null) {
                                 t.olist.push(x);

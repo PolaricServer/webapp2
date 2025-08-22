@@ -122,15 +122,15 @@ pol.tracking.Telemetry = class extends pol.core.Widget {
                 
         this.ident = id; 
         this.srv.GET("telemetry/"+id+"/descr", null, 
-                x => { this.descr = JSON.parse(x); m.redraw(); },
+                x => { this.descr = GETJSON(x); m.redraw(); },
                 x => { console.warn(x); }
             );
         this.srv.GET("telemetry/"+id+"/meta", null, 
-                x => { this.meta = JSON.parse(x); m.redraw(); },
+                x => { this.meta = GETJSON(x); m.redraw(); },
                 x => { console.warn(x); }
             );
         this.srv.GET("telemetry/"+id+"/current", null, 
-                x => { this.current = JSON.parse(x); m.redraw(); },
+                x => { this.current = GETJSON(x); m.redraw(); },
                 x => { console.warn(x); }
             );
     }

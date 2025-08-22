@@ -97,13 +97,13 @@ pol.tracking.db.HeardVia = class extends pol.core.Widget {
     
     
         CONFIG.get('tracking.db.hrd').then( x=> { 
-            t.list = JSON.parse(x);
+            t.list = GETJSON(x);
             if (t.list == null)
                 t.list = []; 
         });
         
         CONFIG.get('tracking.db.hrd.color').then( x=> {
-            t.color = JSON.parse(x);
+            t.color = GETJSON(x);
             if (!t.color || t.color==null)
                 t.color = 0;
         });
@@ -205,7 +205,7 @@ pol.tracking.db.HeardVia = class extends pol.core.Widget {
                     $('#hrd_back').addClass('searchMode');
                     t.searchmode = true;
                     CONFIG.tracks.searchMode(true);
-                    const pc = JSON.parse(x);
+                    const pc = GETJSON(x);
                     pc.ident=c.call;
                     pc.color = (color ? color : t.colors[0]); 
                     CONFIG.tracks.update(pc, true);
