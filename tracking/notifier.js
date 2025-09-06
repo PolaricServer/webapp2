@@ -161,7 +161,7 @@ pol.tracking.NotifyList = class extends pol.core.Widget {
     constructor ()
     {
         super();
-        this.classname = "tracking.NotifyList"; 
+        this.classname = "test.NotifyList"; 
         this.notifier = CONFIG.notifier;  
         var t = this;
         t.msg = m.stream("");

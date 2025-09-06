@@ -31,15 +31,18 @@ pol.layers.List = class List extends pol.core.Widget {
         this.typeList = {};
         this.suspendGet = false; 
         const t = this;
-   
-        console.assert(CONFIG.server.authOk, "Connection to server not yet established");
         
         /* Register types */
         t.addType("_any_", "Select layer type..", new pol.layers.Dummy(this));
-        if (CONFIG.server!=null && CONFIG.server.hasDb) {
-            t.addType("drawing", "Drawing layer", new pol.layers.Drawing(this));
-            t.addType("gpx", "GPX/GeoJSON files upload", new pol.layers.Gpx(this));
-        }
+        
+        setTimeout( ()=> {
+            if (CONFIG.server!=null && CONFIG.server.hasDb) {
+                console.log("Adding type");
+                t.addType("drawing", "Drawing layer", new pol.layers.Drawing(this));
+                t.addType("gpx", "GPX/GeoJSON files upload", new pol.layers.Gpx(this));
+            }
+        }, 1000);
+        
         t.addType("wms", "Standard WMS layer", new pol.layers.Wms(this));   
         t.addType("wfs", "Standard WFS layer", new pol.layers.Wfs(this));
                
@@ -204,6 +207,7 @@ pol.layers.List = class List extends pol.core.Widget {
         for (const x of this.myLayers) {
             CONFIG.mb.removeConfiguredLayer(x)
         }
+
         this.myLayers=[];
         this.myLayerNames=[];
     }
@@ -216,7 +220,7 @@ pol.layers.List = class List extends pol.core.Widget {
         const t = this;
         if (t.suspendGet) 
             return;
-                   
+        
         /* lrs is a list of name,type pairs */
         let lrs = []; 
         t._clearMyLayers(); 
@@ -231,7 +235,7 @@ pol.layers.List = class List extends pol.core.Widget {
                         const wr = obj.data;
                         wr.data.name = wr.name;
                         if (this.typeList[wr.type] == null)
-                            break;
+                            continue;
                         const x = this.typeList[wr.type].obj.obj2layer(wr.data);        
                         lrs.push({
                             name:wr.name, type:wr.type, server:true, readonly:obj.readOnly, 
