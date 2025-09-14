@@ -1,3 +1,9 @@
+polaric-webapp2 (3.3) stable; urgency=medium
+
+  * Fixes..
+
+ -- Oyvind Hanssen <ohanssen@acm.org>  Sun, 14 Sep 2025 20:50:00 +0200
+
 polaric-webapp2 (3.2.2) stable; urgency=medium
 
   * Add default filter to aprsis-srv channel config
