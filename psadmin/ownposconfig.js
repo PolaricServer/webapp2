@@ -248,11 +248,11 @@ pol.psadmin.OwnposConfig = class extends pol.core.Widget {
             t.gpson = conf.gpson;
             t.adjustclock = conf.adjustclock;
             t.gpsport(conf.gpsport);
-            t.gpsbaud(""+conf.baud);
-            t.minpause(""+conf.minpause);
-            t.maxpause(""+conf.maxpause);
-            t.mindist(""+conf.mindist);
-            t.maxturn(""+conf.maxturn);
+            t.gpsbaud(""+(conf.baud>0 ? conf.baud : ""));
+            t.minpause(""+(conf.minpause>0 ? conf.minpause : ""));
+            t.maxpause(""+(conf.maxpause>0 ? conf.maxpause : ""));
+            t.mindist(""+(conf.mindist>0 ? conf.mindist : ""));
+            t.maxturn(""+(conf.maxturn>0 ? conf.maxturn : ""));
             m.redraw();
         }, 
         (xhr, st, err) => {

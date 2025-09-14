@@ -189,7 +189,7 @@ pol.core.AreaList = class extends pol.core.Widget {
             }); 
         }
         else
-            console.warn("Not logged in to server");
+            console.warn("Not logged in to server with database plugin");
     }
     
     

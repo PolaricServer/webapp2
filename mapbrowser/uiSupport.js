@@ -414,10 +414,10 @@ const latLngInput = class {
         const W = (Ednum < 0); 
         const S = (Ndnum < 0);
         
-        this.Ed( "" + Math.abs(Ednum));
-        this.Em( "" + Math.abs(Math.round((vn.attrs.value[0]-Ednum)*60*1000)/1000));
-        this.Nd( "" + Math.abs(Ndnum));
-        this.Nm( "" + Math.abs(Math.round((vn.attrs.value[1]-Ndnum)*60*100)/100));
+        this.Ed( "" + (Ednum >0 ? Math.abs(Ednum):""));
+        this.Em( "" + (Ednum >0 ? Math.abs(Math.round((vn.attrs.value[0]-Ednum)*60*1000)/1000) : ""));
+        this.Nd( "" + (Ndnum >0 ? Math.abs(Ndnum) : ""));
+        this.Nm( "" + (Ndnum >0 ? Math.abs(Math.round((vn.attrs.value[1]-Ndnum)*60*100)/100) : ""));
         
     }
 

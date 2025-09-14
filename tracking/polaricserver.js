@@ -330,7 +330,6 @@ pol.tracking.PolaricServer = class extends pol.core.Server {
             x => { 
                 if (this.authOk && this.temp_role == null)
                     return;
-                console.log("authStatus");
                 this.auth = GETJSON(x);
                 this.checkLoad();
                 this.authOk = true;
