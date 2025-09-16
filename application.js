@@ -62,6 +62,7 @@
                 CONFIG.tracks = new pol.tracking.Tracking(srv, (hires? 1.4 : 1) );  
                 CONFIG.filt = new pol.tracking.Filters(CONFIG.tracks);
                 getWIDGET("layers.List");
+                getWIDGET("core.AreaList").getMyAreas();
                 
                 /* Add items to toolbar */
                 if (!tbar) { 
@@ -109,6 +110,8 @@
                      * they need to be started when login is done. 
                      */
                     getWIDGET("core.AreaList");
+                    getWIDGET("layers.List");
+
                     pubSubSubscribe();
                 }, 
                 

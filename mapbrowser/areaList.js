@@ -168,28 +168,30 @@ pol.core.AreaList = class extends pol.core.Widget {
     getMyAreas() 
     {
         const t = this; 
-
         /* Get areas stored on server (if logged on) */
-        const srv = CONFIG.server; 
-        t.myAreas = [];           
+        const srv = CONFIG.server;          
         m.redraw();
-        if (srv != null && srv.hasDb) {
-            srv.getObj("area", a => {     
-                for (const obj of a) 
-                    if (obj != null) {
-                        const x = obj.data;
-                        x.index = obj.id;
-                        x.server = true;
-                        x.readonly = obj.readOnly; 
-                        x.noremove = obj.noRemove;
-                        t.myAreas.push(x);  
-                    }
-                t.myAreas.sort((x,y)=> {return  (x.name < y.name ? -1 : 1) });
-                m.redraw();
-            }); 
-        }
-        else
-            console.warn("Not logged in to server with database plugin");
+        
+        setTimeout(()=> {
+            if (srv != null && srv.hasDb) {
+                srv.getObj("area", a => {     
+                    t.myAreas = [];  
+                    for (const obj of a) 
+                        if (obj != null) {
+                            const x = obj.data;
+                            x.index = obj.id;
+                            x.server = true;
+                            x.readonly = obj.readOnly; 
+                            x.noremove = obj.noRemove;
+                            t.myAreas.push(x);  
+                        }
+                    t.myAreas.sort((x,y)=> {return  (x.name < y.name ? -1 : 1) });
+                    m.redraw();
+                }); 
+            }
+            else
+                console.warn("Not logged in to server with database plugin");
+        }, 800);
     }
     
     

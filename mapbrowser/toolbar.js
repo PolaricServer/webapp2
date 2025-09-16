@@ -99,7 +99,7 @@ pol.core.Toolbar = class extends ol.control.Control  {
             (m)=> {
                 let w = getWIDGET("core.AreaList");
                 for (const i in w.myAreas) {
-                    const area = w.myAreas[i];   
+                    const area = w.myAreas[i];
                     if (area && area != null)
                         m.add(area.name, handleSelect(w.myAreas, i)); 
                 }
@@ -117,6 +117,7 @@ pol.core.Toolbar = class extends ol.control.Control  {
                         m.add(aMap.title, handleSelect(this.browser.config.aMaps, i));
                 }
 
+                
                 function handleSelect(a, i) {
                     return function() {
                         CONFIG.browser.gotoExtent(a[i]);

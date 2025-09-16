@@ -85,7 +85,7 @@ pol.layers.List = class List extends pol.core.Widget {
             },
         };
 
-        setTimeout( ()=>this.getMyLayers(), 100);
+        setTimeout( ()=>this.getMyLayers(), 1000);
         
         /* Get stored layers */
 
