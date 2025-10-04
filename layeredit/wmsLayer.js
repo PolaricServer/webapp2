@@ -70,7 +70,7 @@ pol.layers.Wms = class extends pol.layers.Edit {
             view: function() {
                   return  m("div#wlayers", t.sLayers.map( x=> {
                         return m(checkBox, {title: (x.Abstract=="" ? x.Title:x.Abstract), checked: x.checked, id: "layer_"+x.Name, 
-                            onchange: apply(tagToggle, x)}, limitLen(x.Title,32));
+                            onchange: pol.ui.apply(tagToggle, x)}, limitLen(x.Title,32));
                     }));
                 
             }
@@ -92,9 +92,6 @@ pol.layers.Wms = class extends pol.layers.Edit {
         }
  
         restoreSRS();
-   
-        /* Apply a function to an argument. Returns a new function */
-        function apply(f, id) {return function() {f(id); }};  
    
         function tagToggle(x) {
             if (x.checked != null)

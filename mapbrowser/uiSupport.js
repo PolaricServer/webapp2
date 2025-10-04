@@ -64,6 +64,21 @@ pol.ui.autojump = function(fieldId, nextFieldId)
 
 
 
+/**
+ * Apply a function to an argument. Returns a new function.
+ * This is a utility function for creating event handlers with bound parameters.
+ * @param {function} f - Function to apply
+ * @param {*} id - Argument to bind to the function
+ * @returns {function} A new function that calls f with id
+ */
+pol.ui.apply = function(f, id) {
+    return function() { 
+        f(id); 
+    };
+};
+
+
+
 /* Some simple DOM elements */
 const br = m("br");
 const hr = m("hr");

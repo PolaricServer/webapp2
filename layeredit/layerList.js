@@ -60,10 +60,10 @@ pol.layers.List = class List extends pol.core.Widget {
                             const i = indexOf(x.name);
                             return m("tr", [ m("td", 
                                 (removable(i) ? 
-                                    m(removeEdit, {remove: apply(x=>t.removeLayer(x), i), edit: apply(editLayer, i) })
+                                    m(removeEdit, {remove: pol.ui.apply(x=>t.removeLayer(x), i), edit: pol.ui.apply(editLayer, i) })
                                     : ""),
                                 (sharable(i) ? 
-                                    m("img", {src:"images/16px/user.png", title:"Sharing", onclick: apply(sharing, i)} )
+                                    m("img", {src:"images/16px/user.png", title:"Sharing", onclick: pol.ui.apply(sharing, i)} )
                                     : "") 
                                 ),
                                 m("td", {'class': (x.server ? "onserver" : null)}, x.name) ] );
@@ -99,10 +99,7 @@ pol.layers.List = class List extends pol.core.Widget {
         
         
         function indexOf(n) {
-            for (var i in t.myLayerNames) 
-                if (n === t.myLayerNames[i].name)
-                    return i;
-            i=-1;
+            return t._indexOf(n);
         }
         
         function sharable(i) {
@@ -113,9 +110,6 @@ pol.layers.List = class List extends pol.core.Widget {
             return !t.myLayerNames[i].noremove;
         }
         
-        /* Apply a function to an argument. Returns a new function */
-        function apply(f, id) {return function() {f(id); }};  
-      
 	
         function sharing(i) {
             const obj = t.myLayerNames[i]; 
@@ -152,6 +146,20 @@ pol.layers.List = class List extends pol.core.Widget {
    
     } /* constructor */
 
+    
+    /**
+     * Find index of a layer by name
+     * @param {string} name - Layer name to search for
+     * @returns {number} Index of layer, or -1 if not found
+     */
+    _indexOf(name) {
+        for (const i in this.myLayerNames) {
+            if (name === this.myLayerNames[i].name)
+                return i;
+        }
+        return -1;
+    }
+    
     
     onActivate() {
         this.getMyLayers();

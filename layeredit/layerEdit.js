@@ -178,20 +178,29 @@ pol.layers.Edit = class {
                 t.list.myLayers.push( layer );
             }
         }
-   
-   
+        
         function getLayerIdx(name) {
-            for (const i in t.list.myLayerNames) {
-                if (name==t.list.myLayerNames[i].name)
-                    return i;
-            }
-            return -1; 
+            return t._getLayerIdx(name);
         }
         
    
     } /* constructor */
 
     
+    /**
+     * Get index of a layer by name from the layer list
+     * @param {string} name - Layer name to search for
+     * @returns {number} Index of layer, or -1 if not found
+     */
+    _getLayerIdx(name) {
+        for (const i in this.list.myLayerNames) {
+            if (name === this.list.myLayerNames[i].name)
+                return i;
+        }
+        return -1; 
+    }
+    
+
     onclose() {}
     
     
