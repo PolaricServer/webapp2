@@ -6,8 +6,6 @@
 //Makes download prompt for the user.
 snow.download = function(filename, text) 
 {
-    //var newlonLat = new OpenLayers.LonLat(lon, lat).transform(map.getProjectionObject() , new OpenLayers.Projection("EPSG:4326"))
-    //http://epsg.io/map#srs=3857&x=5635549.221409&y=5948635.289266&z=2&layer=streets
     var element = document.createElement('a')
     element.setAttribute('href', 'data:text/gpx;charset=utf-8,' + encodeURIComponent(text))
     element.setAttribute('download', filename)

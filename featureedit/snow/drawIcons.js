@@ -11,12 +11,6 @@
 
 snow.imageLoc = "images/iconpack/"
 
-// let iconSource = new VectorSource()
-// let iconLayer = new VectorLayer({
-//   source: iconSource
-// })
-// map.addLayer(iconLayer)
-
 snow.iconStyle = null
 snow.thisID = null
 
