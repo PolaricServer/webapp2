@@ -3,7 +3,6 @@
 # All rights reserved. See LICENSE for more detail.
 
 import glob
-import errno
 import re
 import os
 
@@ -17,8 +16,6 @@ files = sorted( filter( os.path.isfile, glob.glob(image_path) ) )
 spacer = '     '
 quadSpacer = spacer + spacer + spacer + spacer
 nameList = ''
-#manual counter, Count \n to figure out number of lines.
-lineCounter = 0
 
 #writes the header
 
@@ -46,17 +43,12 @@ nameList += spacer + spacer + spacer + 'm("div",' + '\n'
 nameList += spacer + spacer + spacer + '{"id":"iconContainer"}, ' + '\n'
 nameList += spacer + spacer + spacer + '[' + '\n'
 
-#manual header count, change if header changes.
-lineCounter += 12 + 11
-fileCounter = 0
-
 #runs through all the images in iconpack and writes them to a mithrilformated JS file.
 for name in files:
     try:
         nameOutput = ""
-        fileCounter += 1
         currentName = name.split('/',4)[3]
-        nameOutput += quadSpacer + '//Icon Number:' + str(fileCounter) + ' Name:' + currentName + '\n' 
+        nameOutput += quadSpacer + '//Name:' + currentName + '\n' 
         currentName = currentName.split('.png', 1)[0]
         filename = currentName
         if re.match("[0-9]+\..+", currentName):
@@ -73,8 +65,6 @@ for name in files:
         nameOutput += quadSpacer +'}),' + '\n'
         nameList += nameOutput
 
-        #Manually counted lines added per icon, Change with changes made.
-        lineCounter += 10
     except IOError as exc:
         print(exc)
 #Adds bracket and spaceing.
@@ -83,13 +73,10 @@ nameList += spacer + spacer + '])' + '\n'
 nameList += spacer + '}' + '\n'
 nameList += '}' 
 
-#Counting the ending brackets
-lineCounter +=4
-
 #Writes the icons to File
 writeToFile = open(fileWrite_Path,'w')
 writeToFile.write(nameList)
-print('Done writing to file. ' + str(lineCounter) + ' lines written. ' + str(fileCounter) + ' Icons Added.')
+print('Done writing to file.')
 print('File Closing')
 writeToFile.close()
 print('Script Closing.')
