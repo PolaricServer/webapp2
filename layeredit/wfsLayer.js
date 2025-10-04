@@ -1,11 +1,11 @@
 /*
- Map browser based on OpenLayers 5. Layer editor. 
- WFS layer. 
- 
+ Map browser based on OpenLayers 5. Layer editor.
+ WFS layer.
+
  Copyright (C) 2017-2020 Øyvind Hanssen, LA7ECA, ohanssen@acm.org
- 
+
  This program is free software: you can redistribute it and/or modify
- it under the terms of the GNU Affero General Public License as published 
+ it under the terms of the GNU Affero General Public License as published
  by the Free Software Foundation, either version 3 of the License, or
  (at your option) any later version.
 
@@ -25,70 +25,70 @@
  */
 
 pol.layers.Wfs = class extends pol.layers.Edit {
-    
+
     constructor(list) {
-        super(list); 
+        super(list);
         const t=this;
         t.wurl = m.stream("");
         t.wlabel = m.stream("");
         t.version = false;
-        t.ftypes = []; 
+        t.ftypes = [];
         t.ftype = null;
-        
+
         t.fields = {
-            view: function() { 
-                return m("div.spec", [ 
-                    m("div.field", 
-                        m("span.sleftlab", "WFS URL: "),   
+            view: function() {
+                return m("div.spec", [
+                    m("div.field",
+                        m("span.sleftlab", "WFS URL: "),
                         m(textInput, {id:"wfsUrl", size: 40, maxLength:160, value: t.wurl, regex: /^.+$/i })
                     ),
- 
-                    m("div.field", 
+
+                    m("div.field",
                         m("span.sleftlab", "Feat. type: "),
                           m(select, {id: "wfsFtype", list: t.ftypes.map( x => {
-                             return {label: x, val: x, obj: x}; 
+                             return {label: x, val: x, obj: x};
                           }) }),
-                          m("button#addButton", 
-                            { type: "button", onclick: getFT, 
+                          m("button#addButton",
+                            { type: "button", onclick: getFT,
                               title: "Get feature-types from server"}, "Get" )
                     ),
-                    
-                    m("div.field", 
-                        m("span.sleftlab", 
-                          {title: "Label text. Use $(attr) to include feature attributes"}, 
+
+                    m("div.field",
+                        m("span.sleftlab",
+                          {title: "Label text. Use $(attr) to include feature attributes"},
                           "Label: "),
                         m(textInput, {id:"wfsLabel", size: 20, maxLength: 200, value: t.wlabel, regex: /^.+$/i })
-                    ),     
-                    
-                    m("div.field", 
+                    ),
+
+                    m("div.field",
                         m("span.sleftlab", "Style: "),
                         m(select, {id: "wfsStyle", list: Object.keys(CONFIG.getStyles("wfs")).map( x => {
-                            return {label: x, val: x, obj: CONFIG.styles[x]}; 
+                            return {label: x, val: x, obj: CONFIG.styles[x]};
                         }) })
                     ),
 
-                    m("div.field", 
+                    m("div.field",
                         m("span.sleftlab", "Std version: "),
-                        m(checkBox, {id:"stdver", onclick: setVer, checked: t.version, 
+                        m(checkBox, {id:"stdver", onclick: setVer, checked: t.version,
                             title: "Check to use old standards version (wfs 1.1.0 / gml 3.1.1)" },
                             "Use old version"))
                 ]);
             }
-        }  
-        
+        }
+
         function setVer() {
             t.version = !t.version;
             console.log("t.version=", t.version);
         }
-      
+
         function getFT() {
             if (t.wurl() != "")
                 t.getFeatureTypes()}
-        
+
     } /* constructor */
 
 
-    
+
     /**
      * Get Feature types through GetCapabilities call
      */
@@ -98,44 +98,44 @@ pol.layers.Wfs = class extends pol.layers.Edit {
             .then( txt => {
                 this.ftypes = [];
                 const xmlDoc = $.parseXML( txt );
-                const $xml = $( xmlDoc ); 
+                const $xml = $( xmlDoc );
                 $xml.find("FeatureType").each( (index, elem) => {
                     this.ftypes.push($(elem).find("Name").text());
                 });
-                
-                if (this.ftype != null) 
+
+                if (this.ftype != null)
                     setTimeout(()=> $("#wfsFtype").val(this.ftype).trigger("change"), 100);
-                else 
+                else
                     this.ftype = this.ftypes[0];
                 m.redraw();
             });
     }
-    
-    
-    
+
+
+
     /**
-    * Return true if add button can be enabled 
+    * Return true if add button can be enabled
     */
     enabled() {
-        if (this.ftype == null) 
+        if (this.ftype == null)
             this.ftype = $("#wfsFtype").val();
-        var en = this.wurl() && this.ftype != null;  
+        var en = this.wurl() && this.ftype != null;
         return en;
     }
-      
-      
-      
+
+
+
     /**
-     * Create a layer. 
+     * Create a layer.
      */
-    createLayer(name) 
+    createLayer(name)
     {
-        const styleId = $("#wfsStyle").val(); 
+        const styleId = $("#wfsStyle").val();
         this.ftype = $("#wfsFtype").val();
-        
+
         console.log("Create WFS layer: URL="+this.wurl()+", ftype="+this.ftype+
             ", style="+styleId+", label="+this.wlabel());
-    
+
         const x = createLayer_WFS( {
             name: name,
             url: this.wurl(),
@@ -145,14 +145,14 @@ pol.layers.Wfs = class extends pol.layers.Edit {
         });
         x.styleId = styleId;
         x.label = this.wlabel();
-        x.version = this.version;     
+        x.version = this.version;
         return x;
     }
 
 
 
     /**
-     * Move settings to web-form. 
+     * Move settings to web-form.
      */
     edit(layer) {
         super.edit(layer);
@@ -164,43 +164,43 @@ pol.layers.Wfs = class extends pol.layers.Edit {
         this.getFeatureTypes();
     }
 
-    
+
     reset() {
-        super.reset(); 
+        super.reset();
         this.wurl("");
         this.ftype = null;
         this.wlabel("");
         this.ftypes = [];
         this.version = false;
     }
-    
-    
+
+
     /**
-     * Prepare for saving a layer to JSON format. 
-     */   
-    layer2obj(layer) { 
+     * Prepare for saving a layer to JSON format.
+     */
+    layer2obj(layer) {
         const lx = {
             filter:  layer.filt,
             url:     layer.getSource().baseurl,
             ftype:   layer.getSource().ftype,
             oformat: layer.getSource().oformat,
             styleId: layer.styleId,
-            label:   layer.label, 
+            label:   layer.label,
             verison: layer.version
         };
         return lx;
     }
 
-      
-      
+
+
     /**
-     * Restore a layer (see also layer2obj). 
+     * Restore a layer (see also layer2obj).
      */
     obj2layer(lx) {
         if (lx == null) {
             console.warn("WfsLayer.obj2layer: Layer to be restored is null");
             return null;
-        }   
+        }
         const x = createLayer_WFS( {
             url:   lx.url,
             ftype: lx.ftype,
@@ -215,6 +215,6 @@ pol.layers.Wfs = class extends pol.layers.Edit {
         x.version = lx.version;
         return x;
     }
-      
+
 } /* class */
 

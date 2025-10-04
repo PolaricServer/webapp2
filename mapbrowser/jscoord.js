@@ -13,15 +13,15 @@
 function LatLng(lat, lng) {
   this.lat = lat;
   this.lng = lng;
-     
+
   this.distance = LatLngDistance;
-      
+
   this.toOSRef = LatLngToOSRef;
   this.toUTMRef = LatLngToUTMRef;
-      
+
   this.WGS84ToOSGB36 = WGS84ToOSGB36;
   this.OSGB36ToWGS84 = OSGB36ToWGS84;
-      
+
   this.toString = LatLngToString;
 }
 
@@ -36,9 +36,9 @@ function LatLngToString() {
 function OSRef(easting, northing) {
   this.easting  = easting;
   this.northing = northing;
-    
+
   this.toLatLng = OSRefToLatLng;
-    
+
   this.toString = OSRefToString;
   this.toSixFigureString = OSRefToSixFigureString;
 }
@@ -95,9 +95,9 @@ function UTMRef(easting, northing, latZone, lngZone) {
   this.northing = northing;
   this.latZone  = latZone;
   this.lngZone  = lngZone;
-    
+
   this.toLatLng = UTMRefToLatLng;
-    
+
   this.toString = UTMRefToString;
 }
 
@@ -134,15 +134,15 @@ function tanSquared(x) {
 function sec(x) {
   return 1.0 / Math.cos(x);
 }
-  
+
 function deg2rad(x) {
   return x * (Math.PI / 180);
 }
-  
+
 function rad2deg(x) {
   return x * (180 / Math.PI);
 }
-  
+
 function chr(x) {
   var h = x.toString (16);
   if (h.length == 1)
@@ -150,7 +150,7 @@ function chr(x) {
   h = "%" + h;
   return unescape (h);
 }
-  
+
 function ord(x) {
   var c = x.charAt(0);
   var i;
@@ -233,7 +233,7 @@ function OSGB36ToWGS84() {
   }
 
   var phiB = rad2deg(phiN);
-    
+
   this.lat = phiB;
   this.lng = lambdaB;
 }
@@ -278,7 +278,7 @@ function WGS84ToOSGB36() {
   }
 
   var phiB = rad2deg(phiN);
-    
+
   this.lat = phiB;
   this.lng = lambdaB;
 }
@@ -581,7 +581,7 @@ function LatLngToUTMRef(z, lz) {
       longitudeZone = 37;
     }
   }
-  
+
   /* If arguments are given, override UTM zone */
   if (lz != null)
      longitudeZone = lz;
@@ -590,7 +590,7 @@ function LatLngToUTMRef(z, lz) {
   var longitudeOrigin = (longitudeZone - 1) * 6 - 180 + 3;
   var longitudeOriginRad = longitudeOrigin * (Math.PI / 180.0);
 
-  
+
   var UTMZone = getUTMLatitudeZoneLetter(latitude);
   /* If arguments are given, override UTM zone */
   if (z != null)

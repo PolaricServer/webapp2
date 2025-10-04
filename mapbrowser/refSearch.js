@@ -1,11 +1,11 @@
 /*
- Map browser based on OpenLayers 5. 
- Misc. generic application stuff. 
- 
+ Map browser based on OpenLayers 5.
+ Misc. generic application stuff.
+
  Copyright (C) 2017-2023 Øyvind Hanssen, LA7ECA, ohanssen@acm.org
- 
+
  This program is free software: you can redistribute it and/or modify
- it under the terms of the GNU Affero General Public License as published 
+ it under the terms of the GNU Affero General Public License as published
  by the Free Software Foundation, either version 3 of the License, or
  (at your option) any later version.
 
@@ -22,7 +22,7 @@
 
 
 /**
- * Reference search (in a popup window). 
+ * Reference search (in a popup window).
  */
 
 pol.core.refSearch = class refSearch extends pol.core.Widget {
@@ -30,38 +30,38 @@ pol.core.refSearch = class refSearch extends pol.core.Widget {
     constructor() {
         super();
         const t = this;
-        t.classname = "core.refSearch"; 
+        t.classname = "core.refSearch";
         t.mgrsVal = [0,0];
         t.utmVal = [0,0];
         t.llVal = [0,0];
         t.llVal2 = [0,0];
         let errmsg = "";
-        
+
         this.widget = {
             view: function() {
-                return m("div", [       
+                return m("div", [
                     m("h1", "Show reference on map"),
                     m("div.errmsg", errmsg),
-                    m("form.mapref", [  
-                        m("div.field", 
-                            m("span.sleftlab", {title: "MGRS 100x100m square"}, "MGRS ref: "), 
+                    m("form.mapref", [
+                        m("div.field",
+                            m("span.sleftlab", {title: "MGRS 100x100m square"}, "MGRS ref: "),
                             m(mgrsInput, {value: t.mgrsVal}),
                             m("button#butt_mgrs", {type: "button", onclick: ()=> gotoPos(t.mgrsVal, "MGRS") }, "Find") ), hr,
-                           
-                        m("div.field", 
+
+                        m("div.field",
                             m("span.sleftlab", "UTM ref: "),
-                            m(utmInput, {value: t.utmVal}), 
-                            m("button#butt_utm", {type: "button", style: "margin-right:3.5em", 
-                                onclick: ()=> gotoPos(t.utmVal, "UTM")  }, "Find")), hr,   
-                      
-                        m("div.field", 
-                            m("span.sleftlab", 
-                                {title: "Degrees, decimal-minutes (click to change hemisphere)"}, 
+                            m(utmInput, {value: t.utmVal}),
+                            m("button#butt_utm", {type: "button", style: "margin-right:3.5em",
+                                onclick: ()=> gotoPos(t.utmVal, "UTM")  }, "Find")), hr,
+
+                        m("div.field",
+                            m("span.sleftlab",
+                                {title: "Degrees, decimal-minutes (click to change hemisphere)"},
                                 "Lat Long: "),
                             m(latLngInput, {value: t.llVal}),
                             m("button#butt_ll", {type: "button", onclick: ()=> gotoPos(t.llVal, "LatLong") }, "Find") ), hr,
-                      
-                        m("div.field", 
+
+                        m("div.field",
                             m("span.sleftlab", {title: "Decimal degrees"}, "Dec. LL: "),
                             m(latLngInputDec, {value: t.llVal2}),
                             m("button#butt_lld", {type: "button", onclick: ()=> gotoPos(t.llVal2, "LatLong") }, "Find") )
@@ -69,7 +69,7 @@ pol.core.refSearch = class refSearch extends pol.core.Widget {
                 ])
             }
         };
-        
+
         function gotoPos(pos, type) {
             const pp = [pos[0], pos[1]];
             if (pp[0]==0 && pp[1]==0) {
@@ -82,7 +82,7 @@ pol.core.refSearch = class refSearch extends pol.core.Widget {
 
         CONFIG.mb.map.on('moveend', ()=> { m.redraw();});
     }
-    
+
 } /* class */
 
 

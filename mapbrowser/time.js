@@ -1,30 +1,30 @@
- 
+
 pol.core.Time = class {
-    
+
     /* Handler is a function. It is called when time is changed */
     constructor(handler) {
         var t = this;
-    
+
         t.handler = handler;
         t.tdate = formatDate(new Date());
         t.ttime = m.stream( formatTime(new Date()) );
     }
-    
-    
-    
+
+
+
     static parseDate(d) {
         return new Date(d);
     }
 
 
     static decrementDay(d) {
-        let day = d.getDate(); 
+        let day = d.getDate();
         day--;
         d.setDate(day);
     }
 
     static incrementDay(d) {
-        let day = d.getDate(); 
+        let day = d.getDate();
         day++;
         d.setDate(day);
     }
@@ -32,7 +32,7 @@ pol.core.Time = class {
 
 
     static formatDate(d) {
-        return ""+d.getFullYear() + "-" + 
+        return ""+d.getFullYear() + "-" +
             (d.getMonth()<9 ? "0" : "") + (d.getMonth()+1) + "-" +
             (d.getDate()<10 ? "0" : "")  + d.getDate();
     }
@@ -78,7 +78,7 @@ pol.core.Time = class {
             newHour = 23;
         }
         this.ttime(pol.core.Time.pad(newHour,2) + ':' + pol.core.Time.pad(newMinute,2));
-        if (this.handler instanceof Function) 
+        if (this.handler instanceof Function)
             this.handler();
     }
 
@@ -97,16 +97,16 @@ pol.core.Time = class {
     incr_hour() {
         this.adjust_time(1, 0);
     }
-    
-    
-    timeIsSet() { 
-        if (this.tdate == null || this.ttime == null || this.tdate == '' 
+
+
+    timeIsSet() {
+        if (this.tdate == null || this.ttime == null || this.tdate == ''
              || this.ttime == '' || this.tdate == '-' || this.ttime == '-' )
             return false;
         return true;
     }
-    
-    
+
+
     setNow() {
         const now = new Date();
         this.tdate = formatDate(now);

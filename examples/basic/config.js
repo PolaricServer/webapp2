@@ -28,7 +28,7 @@
                   resolutions: [21664, 10832, 5416, 2708, 1354, 677, 338.5, 169.25, 84.625, 42.3125, 21.15625, 10.5781255, 5.2890625, 2.64453125, 1.322265625]
                });
 
-    
+
 
   /*
    * Map browser configuration
@@ -43,7 +43,7 @@
   SCALE     ( 20000 );
 
 
-  
+
   /*
    * Layers.
    *
@@ -90,7 +90,7 @@
           source: new ol.source.OSM()
          }),
 
-                
+
       new ol.layer.Tile({
             name: "Kartverket Topo 4 (Norway)",
             preload: 2,

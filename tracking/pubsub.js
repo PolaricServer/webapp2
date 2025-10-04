@@ -1,11 +1,11 @@
 /*
- Map browser based on OpenLayers 5. Tracking. 
- Publish/subscribe service. Based on websocket connection with Polaric Server backend. 
- 
+ Map browser based on OpenLayers 5. Tracking.
+ Publish/subscribe service. Based on websocket connection with Polaric Server backend.
+
  Copyright (C) 2017-2023 Øyvind Hanssen, LA7ECA, ohanssen@acm.org
- 
+
  This program is free software: you can redistribute it and/or modify
- it under the terms of the GNU Affero General Public License as published 
+ it under the terms of the GNU Affero General Public License as published
  by the Free Software Foundation, either version 3 of the License, or
  (at your option) any later version.
 
@@ -21,11 +21,11 @@
 
 
 /**
- * Websocket connection to server for generic publish/subscribe service 
+ * Websocket connection to server for generic publish/subscribe service
  */
 
 pol.tracking.PubSub = class {
-    
+
     constructor (server) {
         const t = this;
         t.server = server;
@@ -41,8 +41,8 @@ pol.tracking.PubSub = class {
         t.rooms = {};
             /* Each room is an array of subscribers (callback functions) */
 
-        t.open(); 
- 
+        t.open();
+
         setInterval ( ()=> {
             if (t.retry==0)
                 t.open();
@@ -50,23 +50,23 @@ pol.tracking.PubSub = class {
                 t.retry--;
         }, 5000)
     }
-    
-        
-    open() {
-        const t = this; 
-        t.retry = -1;    
-        let url = t.server.wsurl;         
 
-        url += 'notify';  
+
+    open() {
+        const t = this;
+        t.retry = -1;
+        let url = t.server.wsurl;
+
+        url += 'notify';
         console.log("Opening Websocket. URL: "+url);
         CONFIG.server.genAuthString(null).then( x => {
             t.websocket = new WebSocket(url+(x==null ? "" : "?"+x));
 
             /* Socket connected handler */
-            t.websocket.onopen = function() { 
+            t.websocket.onopen = function() {
                 console.log("Connected to server (for notify service).");
                 $("#warnmode").addClass("warn_hidden");
-                if (t.onopen != null && t.firstopen) 
+                if (t.onopen != null && t.firstopen)
                     t.onopen();
                 t.firstopen = false;
                 t.restoreSubs();
@@ -75,10 +75,10 @@ pol.tracking.PubSub = class {
                     clearInterval(t.kalive);
                 t.kalive = setInterval(()=> t.websocket.send("****"), 120000);
             };
-            
-            
+
+
             /* Incoming message on socket */
-            t.websocket.onmessage = function(evt) { 
+            t.websocket.onmessage = function(evt) {
                 const slc = evt.data.indexOf(",");
                 const txt1 = evt.data.slice(0,slc);
                 const txt2 = evt.data.slice(slc+1);
@@ -89,8 +89,8 @@ pol.tracking.PubSub = class {
                         if (room[i].json) room[i].cb( JSON.parse(txt2));
                         else room[i].cb(txt2);
             };
-        
-            
+
+
             /* Socket close handler. Retry connection. */
             t.websocket.onclose = function(evt) {
                 clearInterval(t.kalive);
@@ -100,17 +100,17 @@ pol.tracking.PubSub = class {
                 }
                 else
                     console.log("Lost connection to server (pubsub): ", evt.code, evt.reason);
-                
-                closeHandler(); 
+
+                closeHandler();
                 if (evt.code==1000)
                     normalRetry();
                 else
                     errorRetry();
             }
-  
-   
+
+
             /** Socket error handler */
-            t.websocket.onerror = function(evt) { 
+            t.websocket.onerror = function(evt) {
                 console.log("Server connection error (pubsub)");
                 if (t.closed)
                     return;
@@ -119,49 +119,49 @@ pol.tracking.PubSub = class {
                 closeHandler();
             };
         });
-        
-        
+
+
         function closeHandler() {
             if (t.onclose != null)
                 t.onclose();
         }
-        
-        
-        function normalRetry() { 
+
+
+        function normalRetry() {
             t.retry = 5;
         }
-        
-        
+
+
         function errorRetry() {
             t.retry = (t.cretry==0 ? 2 : t.retry * 2);
-            if (t.cretry < 10) 
+            if (t.cretry < 10)
                 t.cretry++;
             else {
                 console.log("Giving up connecting (pubsub)");
                 t.retry = -1; // GIVE UP after 10 attempts
             }
         }
-        
-    } 
+
+    }
 
 
-    /** 
-     * Suspend the updater for a given time 
+    /**
+     * Suspend the updater for a given time
      */
     suspend(time) {
         console.assert(time>0, "Assertion failed");
-        this.suspend = true; 
+        this.suspend = true;
         setTimeout( () => {this.suspend = false; }, time);
     }
 
-       
+
     isConnected() {
-        return (this.websocket != null 
+        return (this.websocket != null
             && this.websocket.readyState === Websocket.OPEN);
     }
 
-    /** 
-     * Close it 
+    /**
+     * Close it
      */
     close() {
         this.websocket.close();
@@ -183,22 +183,22 @@ pol.tracking.PubSub = class {
      */
     put(room, obj) {
         this.putText(room, JSON.stringify(obj));
-    }   
+    }
 
 
-   
+
     restoreSubs() {
         for (const rm of Object.keys(this.rooms))
             this.websocket.send('SUBSCRIBE,' + rm);
     }
-    
-   
-   
-    /** 
-     * Subscribe to updates from the server in a given room. 
-     * A subscriber is a callback function to be called when notifications arrive. 
-     * it is returned to allow unsubscribing. 
-     * Allow multiple subscribers to a room.  
+
+
+
+    /**
+     * Subscribe to updates from the server in a given room.
+     * A subscriber is a callback function to be called when notifications arrive.
+     * it is returned to allow unsubscribing.
+     * Allow multiple subscribers to a room.
      */
     subscribe(room, c, text) {
         console.assert(room!=null && room!="", "Room is null or blank");
@@ -208,13 +208,13 @@ pol.tracking.PubSub = class {
             this.websocket.send('SUBSCRIBE,' + room);
         }
         this.rooms[room].push({cb:c, json:!text});
-        this.suspend = false; 
+        this.suspend = false;
         return c;
     }
 
 
-    /** 
-     * Unsubscribe all subscribers to a room 
+    /**
+     * Unsubscribe all subscribers to a room
      */
     unsubscribeAll(room) {
         this.rooms[room] = null;
@@ -222,21 +222,21 @@ pol.tracking.PubSub = class {
 
 
     /**
-     * Unsubscribe from a room. 
-     */ 
+     * Unsubscribe from a room.
+     */
     unsubscribe(room, c) {
-        console.assert(room!=null && room!="" && this.rooms[room] 
+        console.assert(room!=null && room!="" && this.rooms[room]
             && this.rooms[room] != null && c!=null, "Assertion failed");
         var clients = this.rooms[room];
         if (clients == null || clients.length == 0)
-            return; 
-    
+            return;
+
         /* if only one subscriber, set list to null and unsubscribe on server */
         if (clients.length == 1) {
             this.rooms[room] = null;
             this.websocket.send('UNSUBSCRIBE,' + room);
         }
-        else for (i in clients) 
+        else for (i in clients)
             if (clients[i].cb == c)
                 clients.splice(i, 1);
     }

@@ -1,12 +1,12 @@
- 
+
 /*
- Map browser based on OpenLayers. Tracking. 
- Search historic data on tracker points on server.  
- 
+ Map browser based on OpenLayers. Tracking.
+ Search historic data on tracker points on server.
+
  Copyright (C) 2020-2024 Øyvind Hanssen, LA7ECA, ohanssen@acm.org
- 
+
  This program is free software: you can redistribute it and/or modify
- it under the terms of the GNU Affero General Public License as published 
+ it under the terms of the GNU Affero General Public License as published
  by the Free Software Foundation, either version 3 of the License, or
  (at your option) any later version.
 
@@ -18,14 +18,14 @@
  You should have received a copy of the GNU Affero General Public License
  along with this program. If not, see <http://www.gnu.org/licenses/>.
 */
- 
+
 
 
 /**
- * Reference search (in a popup window). 
+ * Reference search (in a popup window).
  */
 
-pol.tracking.BikeWheel = class extends pol.core.Widget {  
+pol.tracking.BikeWheel = class extends pol.core.Widget {
 
     constructor() {
         super();
@@ -40,47 +40,47 @@ pol.tracking.BikeWheel = class extends pol.core.Widget {
         t.p75 = m.stream("");
         t.p95 = m.stream("");
         t.olist = [];
-                
-        t.classname = "tracking.BikeWheel"; 
-        
+
+        t.classname = "tracking.BikeWheel";
+
         CONFIG.get('iconpath').then( x=> {
             t.iconpath = x;
             if (t.iconpath == null)
                 t.iconpath = '';
         });
 
-        
+
         this.widget = {
             view: function() {
                 var i=0;
-                return m("div#bikeWheel", [       
-                    m("h1", "Add LKP/IPP with distance rings"),  
-                    
+                return m("div#bikeWheel", [
+                    m("h1", "Add LKP/IPP with distance rings"),
+
                     m("div.itemList", t.olist.map( x=> {
-                        return [ m("span", [ 
+                        return [ m("span", [
                             m("img",  {src: "images/edit-delete.png", onclick: apply(_remove, i)}),
-                            m("img",  {src: "images/edit.png", onclick: apply(edit, i++)}), nbsp,      
+                            m("img",  {src: "images/edit.png", onclick: apply(edit, i++)}), nbsp,
                             m("span", {onclick: apply(zoomTo, x)}, x.ident), nbsp]
                         ), " "]
-                    })),     
-                    m("div.errmsg", errmsg),    
-                                   
-                         
+                    })),
+                    m("div.errmsg", errmsg),
+
+
                     m("div.field",
-                        m("span.sleftlab", "Ident: "),   
-                        m(textInput, {id:"label", value: t.ident, size: 10, maxLength:15, 
-                            regex: /^[a-zA-Z0-9\_\-\.\#\/]+$/i })) ,   
-                         
-                    m("div.field", 
-                        m("span.sleftlab", "Description: "), 
+                        m("span.sleftlab", "Ident: "),
+                        m(textInput, {id:"label", value: t.ident, size: 10, maxLength:15,
+                            regex: /^[a-zA-Z0-9\_\-\.\#\/]+$/i })) ,
+
+                    m("div.field",
+                        m("span.sleftlab", "Description: "),
                         m(textInput, {id:"descr", value: t.descr, size: 32, maxLength:64, regex: /^.+$/i })),
-                   
-                    m("div.field", 
-                        m("span.sleftlab", "Pos (UTM): "), 
-                        m(utmInput, {value: t.pos})),    
-                         
-                    m("div.field", 
-                        m("span.sleftlab", "Rings: "), 
+
+                    m("div.field",
+                        m("span.sleftlab", "Pos (UTM): "),
+                        m(utmInput, {value: t.pos})),
+
+                    m("div.field",
+                        m("span.sleftlab", "Rings: "),
                         m("div#rings", [
                             m(textInput, {id: "p25", value: t.p25, size: 5, maxlength: 6, regex: /^[0-9]+(\.[0-9]+)?$/i }),
                                 m("span.km"," km"), " - 25%", br,
@@ -89,13 +89,13 @@ pol.tracking.BikeWheel = class extends pol.core.Widget {
                             m(textInput, {id: "p75", value: t.p75, size: 5, maxlength: 6, regex: /^[0-9]+(\.[0-9]+)?$/i }),
                                 m("span.km"," km"), " - 75%", br,
                             m(textInput, {id: "p95", value: t.p95, size: 5, maxlength: 6, regex: /^[0-9]+(\.[0-9]+)?$/i }),
-                                m("span.km"," km"), " - 95%", 
-                         ]), 
-                         m("div#alternatives", [ 
+                                m("span.km"," km"), " - 95%",
+                         ]),
+                         m("div#alternatives", [
                             m("span", "To find suitable distances for a subject, see ISRID Database / Lost Person Behavior by Koester")
                         ])
                      ),
-                         
+
                     m("div.butt", [
                         m("button", { type: "button", onclick: add }, "Add"),
                         m("button", { type: "button", onclick: update }, "Update"),
@@ -105,36 +105,36 @@ pol.tracking.BikeWheel = class extends pol.core.Widget {
                 ])
             }
         };
-        
+
         t.authCb = CONFIG.server.addAuthCb( ()=> {
             if (!CONFIG.server.isAuth())
                 t.closePopup();
         });
-                
+
         setTimeout(()=>t.clear(), 500);
-        
+
         //Default source for drawing.
         t.src = new VectorSource()
 
-    
+
         const layer = new VectorLayer(
             { name: "BIKEWHEEL", source: t.src }
         );
 
         CONFIG.mb.addLayer(layer);
-       
+
         CONFIG.mb.featureInfo.register(layer, (x)=> {
            return [
-                { val: x.getId() }, 
+                { val: x.getId() },
                 { val: x.description }
            ];
-            
+
         });
         restoreFeatures();
-        
-        
-        function restoreFeatures() {            
-            if (srv != null && srv.isAuth()) 
+
+
+        function restoreFeatures() {
+            if (srv != null && srv.isAuth())
                 srv.GET("/sar/ipp", null,
                     (dt)=> {
                         const list = GETJSON(dt);
@@ -145,15 +145,15 @@ pol.tracking.BikeWheel = class extends pol.core.Widget {
                             }
                         }
                     },
-                    
+
                     (e)=> {
                         console.log("Cannot get features: "+e);
                       }
-                );  
+                );
         }
-        
-        
-        
+
+
+
         /*
          * Add the center point (IPP or LKP)
          */
@@ -174,8 +174,8 @@ pol.tracking.BikeWheel = class extends pol.core.Widget {
             t.src.addFeature(feat);
             return feat;
         }
-        
-        
+
+
         /*
          * Add a circle
          */
@@ -187,43 +187,43 @@ pol.tracking.BikeWheel = class extends pol.core.Widget {
             geom.setRadius(radius/proj.getMetersPerUnit());
             feat.setGeometry(geom);
             feat.hide=true;
-            
+
             feat.setStyle( ()=> {
-                let pixoff = radius/CONFIG.mb.getResolution(); 
+                let pixoff = radius/CONFIG.mb.getResolution();
                 let st = style.clone();
                 if (pixoff < 10)
                     st.setStroke(null);
-                if (pixoff < 35) 
-                    st.setText(null); 
+                if (pixoff < 35)
+                    st.setText(null);
                 else
-                    st.getText().setOffsetY(pixoff); 
+                    st.getText().setOffsetY(pixoff);
                 return st;
             });
-            
+
             t.src.addFeature(feat)
             return feat;
         }
-        
-        
-        /* 
+
+
+        /*
          * Draw point with rings on map
          */
-        function draw(x) {   
+        function draw(x) {
             x.features = [];
             if (x.p25 > 0)
-                x.features.push(addCircle(x.pos, x.p25*1000, getStyle('bike25') )); 
+                x.features.push(addCircle(x.pos, x.p25*1000, getStyle('bike25') ));
             if (x.p50 > 0)
-                x.features.push(addCircle(x.pos, x.p50*1000, getStyle('bike50') )); 
+                x.features.push(addCircle(x.pos, x.p50*1000, getStyle('bike50') ));
             if (x.p75 > 0)
-                x.features.push(addCircle(x.pos, x.p75*1000, getStyle('bike75') )); 
+                x.features.push(addCircle(x.pos, x.p75*1000, getStyle('bike75') ));
             if (x.p95 > 0)
-                x.features.push(addCircle(x.pos, x.p95*1000, getStyle('bike95') )); 
-            x.features.push( addPoint(x.pos, x.ident, x.descr) );   
+                x.features.push(addCircle(x.pos, x.p95*1000, getStyle('bike95') ));
+            x.features.push( addPoint(x.pos, x.ident, x.descr) );
         }
-    
+
         function createItem() {
             return {
-                pos: t.pos, 
+                pos: t.pos,
                 ident: t.ident(),
                 descr: t.descr(),
                 p25: t.p25()=="" ? 0 : parseFloat(t.p25()),
@@ -232,7 +232,7 @@ pol.tracking.BikeWheel = class extends pol.core.Widget {
                 p95: t.p95()=="" ? 0 : parseFloat(t.p95()),
             }
         }
-    
+
         /*
          * Add a item (a IPP/LKP with distance rings */
         function add() {
@@ -245,22 +245,22 @@ pol.tracking.BikeWheel = class extends pol.core.Widget {
                     error("Cannot add '"+x.ident+"'. Already added");
                     return;
                 }
-            const item = createItem(); 
-            
+            const item = createItem();
+
             /* Update on server if logged in */
-            if (srv != null && srv.isAuth()) 
-                srv.POST("sar/ipp", JSON.stringify(item), 
+            if (srv != null && srv.isAuth())
+                srv.POST("sar/ipp", JSON.stringify(item),
                     ()=> { console.log("Posted IPP/LKP: "+item.ident); },
                     (e)=> { error("Cannot post IPP/LKP: "+e); }
                 );
-        
+
             /* Update on client */
             t.olist.push(item);
             draw(item);
             setTimeout(()=> CONFIG.mb.setCenter(item.pos, 100), 200);
         }
-        
-        
+
+
         /*
          * Update a item
          */
@@ -278,28 +278,28 @@ pol.tracking.BikeWheel = class extends pol.core.Widget {
                         t.src.removeFeature(f);
                     break;
                 }
-            
+
             const item = createItem();
-            
+
             /* Update on server if logged in */
-            if (srv != null && srv.isAuth()) 
-                srv.PUT("sar/ipp/"+item.ident, JSON.stringify(item), 
+            if (srv != null && srv.isAuth())
+                srv.PUT("sar/ipp/"+item.ident, JSON.stringify(item),
                     ()=> { console.log("Updated IPP/LKP: "+item.ident); },
                     (e)=> { error("Cannot update IPP/LKP: "+e); }
                 );
-            
+
             t.olist[i]=item;
             draw(item);
         }
-        
-        
+
+
         function zoomTo(x) {
-            CONFIG.mb.setCenter(x.pos, 60); 
+            CONFIG.mb.setCenter(x.pos, 60);
         }
-        
-                
-        /* 
-         * Report error 
+
+
+        /*
+         * Report error
          */
         function error(txt) {
             console.log(txt);
@@ -307,35 +307,35 @@ pol.tracking.BikeWheel = class extends pol.core.Widget {
             setTimeout(()=>{errmsg="";m.redraw();}, 6000);
             m.redraw();
         }
-        
-        
+
+
         /* Move item i to form for editing */
         function edit(i) {
-            const x = t.olist[i]; 
+            const x = t.olist[i];
             t.ident(x.ident);
             t.descr(x.descr);
-            t.pos = x.pos; 
+            t.pos = x.pos;
             t.p25(x.p25);
             t.p50(x.p50);
             t.p75(x.p75);
             t.p95(x.p95);
         }
-    
-    
+
+
         function _remove(i) {
             t.remove(i);
         }
-        
-        
-        /* Apply a function to an argument. Returns a new function */
-        function apply(f, id) {return function() { f(id); }};  
-        
-        
-    } /* constructor */
-    
 
-    
-    
+
+        /* Apply a function to an argument. Returns a new function */
+        function apply(f, id) {return function() { f(id); }};
+
+
+    } /* constructor */
+
+
+
+
     /* Clear form fields */
     clear() {
         this.ident("IPP");
@@ -347,35 +347,35 @@ pol.tracking.BikeWheel = class extends pol.core.Widget {
         this.pos = [0,0];
         m.redraw();
     }
-    
-    
+
+
     /* Set position field from pixel location */
     setPosPix(pix) {
         const llpos = CONFIG.mb.pix2LonLat(pix);
         this.pos = llpos;
         m.redraw();
     }
-    
-    
-        
+
+
+
     /* Remove object on map and on backend server */
     remove(i) {
         /* Remove on server if logged in */
         const item = this.olist[i];
-        if (srv != null && srv.isAuth()) 
-            srv.DELETE("sar/ipp/"+item.ident, 
+        if (srv != null && srv.isAuth())
+            srv.DELETE("sar/ipp/"+item.ident,
                 ()=> { console.log("Deleted IPP/LKP: "+item.ident); },
                 (e)=> { error("Cannot delete IPP/LKP: "+e); }
             );
-        
+
         /* Remove features on map */
         for (const f of this.olist[i].features)
             this.src.removeFeature(f);
         this.olist.splice(i,1);
         m.redraw();
     }
-        
-    
+
+
 } /* class */
 
 

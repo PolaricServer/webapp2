@@ -1,9 +1,9 @@
- 
+
 /*
  Copyright (C) 2023 Øyvind Hanssen, LA7ECA, ohanssen@acm.org
- 
+
  This program is free software: you can redistribute it and/or modify
- it under the terms of the GNU Affero General Public License as published 
+ it under the terms of the GNU Affero General Public License as published
  by the Free Software Foundation, either version 3 of the License, or
  (at your option) any later version.
 
@@ -32,7 +32,7 @@ pol.security.bin2base64 = function(arr) {
         let c1 = i*3+1>=l; // case when "=" is on end
         let c2 = i*3+2>=l; // case when "=" is on end
         let chunk = bin(arr[3*i]) + bin(c1? 0:arr[3*i+1]) + bin(c2? 0:arr[3*i+2]);
-        let r = chunk.match(/.{1,6}/g).map((x,j)=> j==3&&c2 ? '=' :(j==2&&c1 ? '=':abc[+('0b'+x)]));  
+        let r = chunk.match(/.{1,6}/g).map((x,j)=> j==3&&c2 ? '=' :(j==2&&c1 ? '=':abc[+('0b'+x)]));
         result += r.join('');
     }
     return result;
@@ -57,11 +57,11 @@ pol.security.hmac_Sha256_B64 = async function(key, message) {
     const enc = new TextEncoder("utf-8");
     const algorithm = { name: "HMAC", hash: "SHA-256" };
     const hashBuffer = await crypto.subtle.sign(
-        algorithm.name, 
-        key, 
+        algorithm.name,
+        key,
         enc.encode(message)
-    );  
-    const hashArray = Array.from(new Uint8Array(hashBuffer));  
+    );
+    const hashArray = Array.from(new Uint8Array(hashBuffer));
     const hashHex = pol.security.bin2base64(hashArray);
     return hashHex;
 }
@@ -71,8 +71,8 @@ pol.security.hmac_Sha256_B64 = async function(key, message) {
 /* Generate a MD5 hash from key and message */
 pol.security.Sha256_B64 = async function(message) {
     const enc = new TextEncoder("utf-8");
-    const hashBuffer = await crypto.subtle.digest("SHA-256", enc.encode(message));  
-    const hashArray = Array.from(new Uint8Array(hashBuffer));  
+    const hashBuffer = await crypto.subtle.digest("SHA-256", enc.encode(message));
+    const hashArray = Array.from(new Uint8Array(hashBuffer));
     const hashHex = await pol.security.bin2base64(hashArray);
     return hashHex;
 }
