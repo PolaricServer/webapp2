@@ -21,7 +21,7 @@ snow.iconTools =
                m("div",
                {"id":"iconContainer"}, 
                [
-                    //Icon Number:1 Name:1.Bunker.png
+                    //Name:1.Bunker.png
                     m("img",
                     {
                          "src":"images/iconpack/1.Bunker.png",
@@ -31,7 +31,7 @@ snow.iconTools =
                          onclick: (e) =>
                          {snow.markerIcons_click(e)}
                     }),
-                    //Icon Number:2 Name:1.Factory.png
+                    //Name:1.Factory.png
                     m("img",
                     {
                          "src":"images/iconpack/1.Factory.png",
@@ -41,7 +41,7 @@ snow.iconTools =
                          onclick: (e) =>
                          {snow.markerIcons_click(e)}
                     }),
-                    //Icon Number:3 Name:1.Oil-rig2.png
+                    //Name:1.Oil-rig2.png
                     m("img",
                     {
                          "src":"images/iconpack/1.Oil-rig2.png",
@@ -51,7 +51,7 @@ snow.iconTools =
                          onclick: (e) =>
                          {snow.markerIcons_click(e)}
                     }),
-                    //Icon Number:4 Name:1.Radio-station.png
+                    //Name:1.Radio-station.png
                     m("img",
                     {
                          "src":"images/iconpack/1.Radio-station.png",
@@ -61,7 +61,7 @@ snow.iconTools =
                          onclick: (e) =>
                          {snow.markerIcons_click(e)}
                     }),
-                    //Icon Number:5 Name:1.Warehouse-2.png
+                    //Name:1.Warehouse-2.png
                     m("img",
                     {
                          "src":"images/iconpack/1.Warehouse-2.png",
@@ -71,7 +71,7 @@ snow.iconTools =
                          onclick: (e) =>
                          {snow.markerIcons_click(e)}
                     }),
-                    //Icon Number:6 Name:1.Wind-turbine.png
+                    //Name:1.Wind-turbine.png
                     m("img",
                     {
                          "src":"images/iconpack/1.Wind-turbine.png",
@@ -81,7 +81,7 @@ snow.iconTools =
                          onclick: (e) =>
                          {snow.markerIcons_click(e)}
                     }),
-                    //Icon Number:7 Name:2.Ambulance-boat.png
+                    //Name:2.Ambulance-boat.png
                     m("img",
                     {
                          "src":"images/iconpack/2.Ambulance-boat.png",
@@ -91,7 +91,7 @@ snow.iconTools =
                          onclick: (e) =>
                          {snow.markerIcons_click(e)}
                     }),
-                    //Icon Number:8 Name:2.First-taid.png
+                    //Name:2.First-taid.png
                     m("img",
                     {
                          "src":"images/iconpack/2.First-taid.png",
@@ -101,7 +101,7 @@ snow.iconTools =
                          onclick: (e) =>
                          {snow.markerIcons_click(e)}
                     }),
-                    //Icon Number:9 Name:2.Footprint.png
+                    //Name:2.Footprint.png
                     m("img",
                     {
                          "src":"images/iconpack/2.Footprint.png",
@@ -111,7 +111,7 @@ snow.iconTools =
                          onclick: (e) =>
                          {snow.markerIcons_click(e)}
                     }),
-                    //Icon Number:10 Name:2.Hospital-building.png
+                    //Name:2.Hospital-building.png
                     m("img",
                     {
                          "src":"images/iconpack/2.Hospital-building.png",
@@ -121,7 +121,7 @@ snow.iconTools =
                          onclick: (e) =>
                          {snow.markerIcons_click(e)}
                     }),
-                    //Icon Number:11 Name:2.Medicine.png
+                    //Name:2.Medicine.png
                     m("img",
                     {
                          "src":"images/iconpack/2.Medicine.png",
@@ -131,7 +131,7 @@ snow.iconTools =
                          onclick: (e) =>
                          {snow.markerIcons_click(e)}
                     }),
-                    //Icon Number:12 Name:2.Nursing-home.png
+                    //Name:2.Nursing-home.png
                     m("img",
                     {
                          "src":"images/iconpack/2.Nursing-home.png",
@@ -141,7 +141,7 @@ snow.iconTools =
                          onclick: (e) =>
                          {snow.markerIcons_click(e)}
                     }),
-                    //Icon Number:13 Name:2.School-or-university.png
+                    //Name:2.School-or-university.png
                     m("img",
                     {
                          "src":"images/iconpack/2.School-or-university.png",
@@ -151,7 +151,7 @@ snow.iconTools =
                          onclick: (e) =>
                          {snow.markerIcons_click(e)}
                     }),
-                    //Icon Number:14 Name:2.Summer-camp.png
+                    //Name:2.Summer-camp.png
                     m("img",
                     {
                          "src":"images/iconpack/2.Summer-camp.png",
@@ -161,7 +161,7 @@ snow.iconTools =
                          onclick: (e) =>
                          {snow.markerIcons_click(e)}
                     }),
-                    //Icon Number:15 Name:2.Toilets.png
+                    //Name:2.Toilets.png
                     m("img",
                     {
                          "src":"images/iconpack/2.Toilets.png",
@@ -171,7 +171,7 @@ snow.iconTools =
                          onclick: (e) =>
                          {snow.markerIcons_click(e)}
                     }),
-                    //Icon Number:16 Name:3.Aircraft-small.png
+                    //Name:3.Aircraft-small.png
                     m("img",
                     {
                          "src":"images/iconpack/3.Aircraft-small.png",
@@ -181,7 +181,7 @@ snow.iconTools =
                          onclick: (e) =>
                          {snow.markerIcons_click(e)}
                     }),
-                    //Icon Number:17 Name:3.Airport.png
+                    //Name:3.Airport.png
                     m("img",
                     {
                          "src":"images/iconpack/3.Airport.png",
@@ -191,7 +191,7 @@ snow.iconTools =
                          onclick: (e) =>
                          {snow.markerIcons_click(e)}
                     }),
-                    //Icon Number:18 Name:3.Ambulance.png
+                    //Name:3.Ambulance.png
                     m("img",
                     {
                          "src":"images/iconpack/3.Ambulance.png",
@@ -201,7 +201,7 @@ snow.iconTools =
                          onclick: (e) =>
                          {snow.markerIcons_click(e)}
                     }),
-                    //Icon Number:19 Name:3.Barrier.png
+                    //Name:3.Barrier.png
                     m("img",
                     {
                          "src":"images/iconpack/3.Barrier.png",
@@ -211,7 +211,7 @@ snow.iconTools =
                          onclick: (e) =>
                          {snow.markerIcons_click(e)}
                     }),
-                    //Icon Number:20 Name:3.Bus.png
+                    //Name:3.Bus.png
                     m("img",
                     {
                          "src":"images/iconpack/3.Bus.png",
@@ -221,7 +221,7 @@ snow.iconTools =
                          onclick: (e) =>
                          {snow.markerIcons_click(e)}
                     }),
-                    //Icon Number:21 Name:3.Car-fourbyfour.png
+                    //Name:3.Car-fourbyfour.png
                     m("img",
                     {
                          "src":"images/iconpack/3.Car-fourbyfour.png",
@@ -231,7 +231,7 @@ snow.iconTools =
                          onclick: (e) =>
                          {snow.markerIcons_click(e)}
                     }),
-                    //Icon Number:22 Name:3.Car.png
+                    //Name:3.Car.png
                     m("img",
                     {
                          "src":"images/iconpack/3.Car.png",
@@ -241,7 +241,7 @@ snow.iconTools =
                          onclick: (e) =>
                          {snow.markerIcons_click(e)}
                     }),
-                    //Icon Number:23 Name:3.Caution.png
+                    //Name:3.Caution.png
                     m("img",
                     {
                          "src":"images/iconpack/3.Caution.png",
@@ -251,7 +251,7 @@ snow.iconTools =
                          onclick: (e) =>
                          {snow.markerIcons_click(e)}
                     }),
-                    //Icon Number:24 Name:3.Disability.png
+                    //Name:3.Disability.png
                     m("img",
                     {
                          "src":"images/iconpack/3.Disability.png",
@@ -261,7 +261,7 @@ snow.iconTools =
                          onclick: (e) =>
                          {snow.markerIcons_click(e)}
                     }),
-                    //Icon Number:25 Name:3.Ferry.png
+                    //Name:3.Ferry.png
                     m("img",
                     {
                          "src":"images/iconpack/3.Ferry.png",
@@ -271,7 +271,7 @@ snow.iconTools =
                          onclick: (e) =>
                          {snow.markerIcons_click(e)}
                     }),
-                    //Icon Number:26 Name:3.Fuel-fillingstation.png
+                    //Name:3.Fuel-fillingstation.png
                     m("img",
                     {
                          "src":"images/iconpack/3.Fuel-fillingstation.png",
@@ -281,7 +281,7 @@ snow.iconTools =
                          onclick: (e) =>
                          {snow.markerIcons_click(e)}
                     }),
-                    //Icon Number:27 Name:3.Harbor.png
+                    //Name:3.Harbor.png
                     m("img",
                     {
                          "src":"images/iconpack/3.Harbor.png",
@@ -291,7 +291,7 @@ snow.iconTools =
                          onclick: (e) =>
                          {snow.markerIcons_click(e)}
                     }),
-                    //Icon Number:28 Name:3.Helicopter.png
+                    //Name:3.Helicopter.png
                     m("img",
                     {
                          "src":"images/iconpack/3.Helicopter.png",
@@ -301,7 +301,7 @@ snow.iconTools =
                          onclick: (e) =>
                          {snow.markerIcons_click(e)}
                     }),
-                    //Icon Number:29 Name:3.Parking.png
+                    //Name:3.Parking.png
                     m("img",
                     {
                          "src":"images/iconpack/3.Parking.png",
@@ -311,7 +311,7 @@ snow.iconTools =
                          onclick: (e) =>
                          {snow.markerIcons_click(e)}
                     }),
-                    //Icon Number:30 Name:3.Railway.png
+                    //Name:3.Railway.png
                     m("img",
                     {
                          "src":"images/iconpack/3.Railway.png",
@@ -321,7 +321,7 @@ snow.iconTools =
                          onclick: (e) =>
                          {snow.markerIcons_click(e)}
                     }),
-                    //Icon Number:31 Name:3.Repair.png
+                    //Name:3.Repair.png
                     m("img",
                     {
                          "src":"images/iconpack/3.Repair.png",
@@ -331,7 +331,7 @@ snow.iconTools =
                          onclick: (e) =>
                          {snow.markerIcons_click(e)}
                     }),
-                    //Icon Number:32 Name:4.Avalanche.png
+                    //Name:4.Avalanche.png
                     m("img",
                     {
                          "src":"images/iconpack/4.Avalanche.png",
@@ -341,7 +341,7 @@ snow.iconTools =
                          onclick: (e) =>
                          {snow.markerIcons_click(e)}
                     }),
-                    //Icon Number:33 Name:4.Danger.png
+                    //Name:4.Danger.png
                     m("img",
                     {
                          "src":"images/iconpack/4.Danger.png",
@@ -351,7 +351,7 @@ snow.iconTools =
                          onclick: (e) =>
                          {snow.markerIcons_click(e)}
                     }),
-                    //Icon Number:34 Name:4.Earthquake-3.png
+                    //Name:4.Earthquake-3.png
                     m("img",
                     {
                          "src":"images/iconpack/4.Earthquake-3.png",
@@ -361,7 +361,7 @@ snow.iconTools =
                          onclick: (e) =>
                          {snow.markerIcons_click(e)}
                     }),
-                    //Icon Number:35 Name:4.Explosion-or-explosive.png
+                    //Name:4.Explosion-or-explosive.png
                     m("img",
                     {
                          "src":"images/iconpack/4.Explosion-or-explosive.png",
@@ -371,7 +371,7 @@ snow.iconTools =
                          onclick: (e) =>
                          {snow.markerIcons_click(e)}
                     }),
-                    //Icon Number:36 Name:4.Fire.png
+                    //Name:4.Fire.png
                     m("img",
                     {
                          "src":"images/iconpack/4.Fire.png",
@@ -381,7 +381,7 @@ snow.iconTools =
                          onclick: (e) =>
                          {snow.markerIcons_click(e)}
                     }),
-                    //Icon Number:37 Name:4.Flood.png
+                    //Name:4.Flood.png
                     m("img",
                     {
                          "src":"images/iconpack/4.Flood.png",
@@ -391,7 +391,7 @@ snow.iconTools =
                          onclick: (e) =>
                          {snow.markerIcons_click(e)}
                     }),
-                    //Icon Number:38 Name:4.Person-down.png
+                    //Name:4.Person-down.png
                     m("img",
                     {
                          "src":"images/iconpack/4.Person-down.png",
@@ -401,7 +401,7 @@ snow.iconTools =
                          onclick: (e) =>
                          {snow.markerIcons_click(e)}
                     }),
-                    //Icon Number:39 Name:4.Plane-accident.png
+                    //Name:4.Plane-accident.png
                     m("img",
                     {
                          "src":"images/iconpack/4.Plane-accident.png",
@@ -411,7 +411,7 @@ snow.iconTools =
                          onclick: (e) =>
                          {snow.markerIcons_click(e)}
                     }),
-                    //Icon Number:40 Name:4.Radiation.png
+                    //Name:4.Radiation.png
                     m("img",
                     {
                          "src":"images/iconpack/4.Radiation.png",
@@ -421,7 +421,7 @@ snow.iconTools =
                          onclick: (e) =>
                          {snow.markerIcons_click(e)}
                     }),
-                    //Icon Number:41 Name:4.Rescue.png
+                    //Name:4.Rescue.png
                     m("img",
                     {
                          "src":"images/iconpack/4.Rescue.png",
@@ -431,7 +431,7 @@ snow.iconTools =
                          onclick: (e) =>
                          {snow.markerIcons_click(e)}
                     }),
-                    //Icon Number:42 Name:4.Shooting.png
+                    //Name:4.Shooting.png
                     m("img",
                     {
                          "src":"images/iconpack/4.Shooting.png",
@@ -441,7 +441,7 @@ snow.iconTools =
                          onclick: (e) =>
                          {snow.markerIcons_click(e)}
                     }),
-                    //Icon Number:43 Name:5.Coffee.png
+                    //Name:5.Coffee.png
                     m("img",
                     {
                          "src":"images/iconpack/5.Coffee.png",
@@ -451,7 +451,7 @@ snow.iconTools =
                          onclick: (e) =>
                          {snow.markerIcons_click(e)}
                     }),
-                    //Icon Number:44 Name:5.Food.png
+                    //Name:5.Food.png
                     m("img",
                     {
                          "src":"images/iconpack/5.Food.png",
@@ -461,7 +461,7 @@ snow.iconTools =
                          onclick: (e) =>
                          {snow.markerIcons_click(e)}
                     }),
-                    //Icon Number:45 Name:5.Lodging.png
+                    //Name:5.Lodging.png
                     m("img",
                     {
                          "src":"images/iconpack/5.Lodging.png",
@@ -471,7 +471,7 @@ snow.iconTools =
                          onclick: (e) =>
                          {snow.markerIcons_click(e)}
                     }),
-                    //Icon Number:46 Name:5.Wi-Fi.png
+                    //Name:5.Wi-Fi.png
                     m("img",
                     {
                          "src":"images/iconpack/5.Wi-Fi.png",
@@ -481,7 +481,7 @@ snow.iconTools =
                          onclick: (e) =>
                          {snow.markerIcons_click(e)}
                     }),
-                    //Icon Number:47 Name:6.Number-1.png
+                    //Name:6.Number-1.png
                     m("img",
                     {
                          "src":"images/iconpack/6.Number-1.png",
@@ -491,7 +491,7 @@ snow.iconTools =
                          onclick: (e) =>
                          {snow.markerIcons_click(e)}
                     }),
-                    //Icon Number:48 Name:6.Number-2.png
+                    //Name:6.Number-2.png
                     m("img",
                     {
                          "src":"images/iconpack/6.Number-2.png",
@@ -501,7 +501,7 @@ snow.iconTools =
                          onclick: (e) =>
                          {snow.markerIcons_click(e)}
                     }),
-                    //Icon Number:49 Name:6.Number-3.png
+                    //Name:6.Number-3.png
                     m("img",
                     {
                          "src":"images/iconpack/6.Number-3.png",
@@ -511,7 +511,7 @@ snow.iconTools =
                          onclick: (e) =>
                          {snow.markerIcons_click(e)}
                     }),
-                    //Icon Number:50 Name:6.Number-4.png
+                    //Name:6.Number-4.png
                     m("img",
                     {
                          "src":"images/iconpack/6.Number-4.png",
