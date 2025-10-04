@@ -3,7 +3,7 @@
  Map browser based on OpenLayers. Tracking.
  Notifications.
 
- Copyright (C) 2017-2024 Øyvind Hanssen, LA7ECA, ohanssen@acm.org
+ Copyright (C) 2017-2025 Øyvind Hanssen, LA7ECA, ohanssen@acm.org
 
  This program is free software: you can redistribute it and/or modify
  it under the terms of the GNU Affero General Public License as published
@@ -190,7 +190,7 @@ pol.tracking.NotifyList = class extends pol.core.Widget {
                                 "class":"icon", src:icon(x.type)})),
                             m("td", m("div", [
                                 m("span.header", [x.from+", "+formatDTG(x.time)]),
-                                m("img", {src:"images/16px/close.png", onclick: apply(removeNot, i++) }),
+                                m("img", {src:"images/16px/close.png", onclick: pol.ui.apply(removeNot, i++) }),
                                 br, m("span.txt", {title: x.text}, limit(x.text, 32))
                             ] ))
                         ]);
@@ -241,11 +241,6 @@ pol.tracking.NotifyList = class extends pol.core.Widget {
             else if (type==='alert') return 'images/emergency.png';
             else return 'images/32px/info.png';
         }
-
-
-
-        /* Apply a function to an argument. Returns a new function */
-        function apply(f, id) {return function() { f(id); }};
 
 
         /* Remove notification from list */

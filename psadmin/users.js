@@ -1,5 +1,5 @@
 /*
- Map browser based on OpenLayers 5. Tracking.
+ Map browser based on OpenLayers.
  Search historic data on tracker points on server.
 
  Copyright (C) 2020-2025 Øyvind Hanssen, LA7ECA, ohanssen@acm.org
@@ -56,7 +56,7 @@ pol.psadmin.Users = class extends pol.core.Widget {
                         m("tbody", t.users.filter(x=> {x.idx=i++; return ufilter(x)} ).map(x => {
                             return m("tr", [
                                 m("td",
-                                    m(removeEdit, {remove: apply(remove,x.idx), edit: apply(edit, x.idx)})),
+                                    m(removeEdit, {remove: pol.ui.apply(remove,x.idx), edit: pol.ui.apply(edit, x.idx)})),
                                 m("td", x.ident),
 
                                 m("td",
@@ -153,10 +153,7 @@ pol.psadmin.Users = class extends pol.core.Widget {
         getGroups();
         setTimeout(()=>t.clear(), 100);
 
-        /* Apply a function to an argument. Returns a new function */
-        function apply(f, id) {return function() { f(id); }};
-
-
+        
         /* Automatic checkbox handler */
         function toggleSar() {
             t.sar = (t.sar ? false : true);

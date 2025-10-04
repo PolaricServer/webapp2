@@ -3,7 +3,7 @@
  Map browser based on OpenLayers. Tracking.
  Search historic data on heard tracker points on server.
 
- Copyright (C) 2018-24 Øyvind Hanssen, LA7ECA, ohanssen@acm.org
+ Copyright (C) 2018-25 Øyvind Hanssen, LA7ECA, ohanssen@acm.org
 
  This program is free software: you can redistribute it and/or modify
  it under the terms of the GNU Affero General Public License as published
@@ -48,8 +48,8 @@ pol.tracking.db.HeardVia = class extends pol.core.Widget {
                 return m("div.hrdvia", m("table", t.list.map( x => {
                     return m("tr",
                         m("td",
-                            m(removeEdit, {remove: apply(deleteItem, i), edit: apply(editItem, i)})),
-                        m("td", {onclick:apply(showItem, i++)}, x.call),
+                            m(removeEdit, {remove: pol.ui.apply(deleteItem, i), edit: pol.ui.apply(editItem, i)})),
+                        m("td", {onclick:pol.ui.apply(showItem, i++)}, x.call),
                         m("td", x.fromdate),
                         m("td", x.todate),
                         m("td", {style: 'background: #'+x.color})
@@ -114,9 +114,7 @@ pol.tracking.db.HeardVia = class extends pol.core.Widget {
             () => $('#hrd_end').prop('disabled', t.item.open),
             300 );
 
-        /* Apply a function to an argument. Returns a new function */
-        function apply(f, id) {return function() { f(id); }};
-    	    t.color = 0;
+        t.color = 0;
 
 
         function toIsoString(d, t) {

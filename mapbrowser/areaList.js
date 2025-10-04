@@ -1,7 +1,7 @@
 /*
  Map browser based on OpenLayers.
 
- Copyright (C) 2017-2024 Øyvind Hanssen, LA7ECA, ohanssen@acm.org
+ Copyright (C) 2017-2025 Øyvind Hanssen, LA7ECA, ohanssen@acm.org
 
  This program is free software: you can redistribute it and/or modify
  it under the terms of the GNU Affero General Public License as published
@@ -43,14 +43,14 @@ pol.core.AreaList = class extends pol.core.Widget {
                         return m("tr", [
                             m("td", [
                                 (removable(i) ?
-                                    m(removeEdit, { remove: apply(removeArea, i), edit: apply(editArea, i) })
+                                    m(removeEdit, { remove: pol.ui.apply(removeArea, i), edit: pol.ui.apply(editArea, i) })
                                     : ""),
                                 (sharable(i) ?
-                                    m("img", {src:"images/16px/user.png", title:"Sharing", onclick: apply(sharing, i)} )
+                                    m("img", {src:"images/16px/user.png", title:"Sharing", onclick: pol.ui.apply(sharing, i)} )
                                     : "")
                                 ]),
                             m("td",
-                                {onclick: apply(gotoExtent, i++), 'class': (x.server ? "onserver" : null) },
+                                {onclick: pol.ui.apply(gotoExtent, i++), 'class': (x.server ? "onserver" : null) },
                                  x.name)
                         ]);
                     }))),
@@ -69,9 +69,6 @@ pol.core.AreaList = class extends pol.core.Widget {
                 t.closePopup();
         });
 
-
-        /* Apply a function to an argument. Returns a new function */
-        function apply(f, id) {return function() { f(id); }};
 
 
         function sharable(i) {

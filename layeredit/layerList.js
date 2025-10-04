@@ -1,7 +1,7 @@
 /*
  Map browser based on OpenLayers. Layer editor.
 
- Copyright (C) 2017-2023 Øyvind Hanssen, LA7ECA, ohanssen@acm.org
+ Copyright (C) 2017-2025 Øyvind Hanssen, LA7ECA, ohanssen@acm.org
 
  This program is free software: you can redistribute it and/or modify
  it under the terms of the GNU Affero General Public License as published

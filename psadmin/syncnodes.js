@@ -2,7 +2,7 @@
  Map browser based on OpenLayers 5. Tracking.
  Search historic data on tracker points on server.
 
- Copyright (C) 2023 Øyvind Hanssen, LA7ECA, ohanssen@acm.org
+ Copyright (C) 2023-2025 Øyvind Hanssen, LA7ECA, ohanssen@acm.org
 
  This program is free software: you can redistribute it and/or modify
  it under the terms of the GNU Affero General Public License as published
@@ -44,7 +44,7 @@ pol.psadmin.db.SyncNodes = class extends pol.core.Widget {
                 var i=0;
                 return m("table", m("tbody", t.parents.map(x => {
                         return m("tr", [
-                            m(removeEdit, {remove: apply(remove, i), edit: apply(editObj, i++)}),
+                            m(removeEdit, {remove: pol.ui.apply(remove, i), edit: pol.ui.apply(editObj, i++)}),
                             m("td", x.nodeid),
                             m("td", x.url),
                             m("td", x.items.substring(0,12)+"..."),
@@ -59,7 +59,7 @@ pol.psadmin.db.SyncNodes = class extends pol.core.Widget {
                 var i=0;
                 return m("table", m("tbody", t.children.map(x => {
                         return m("tr", [
-                            m(removeEdit, {remove: apply(removeChild, i++), edit: null}),
+                            m(removeEdit, {remove: pol.ui.apply(removeChild, i++), edit: null}),
                             m("td", x.nodeid),
                             m("td", x.items),
                             (x.active ? m("img", {src: "images/16px/ok.png"}) : null),
@@ -167,10 +167,6 @@ pol.psadmin.db.SyncNodes = class extends pol.core.Widget {
             t.url(t.parents[i].url);
             m.redraw();
         }
-
-
-        /* Apply a function to an argument. Returns a new function */
-        function apply(f, id) {return function() { f(id); }};
 
 
     } /* constructor */

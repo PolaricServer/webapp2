@@ -1,5 +1,5 @@
 /*
- Map browser based on OpenLayers 5. Tracking.
+ Map browser based on OpenLayers. Tracking.
  Manage own position and tracking
 
  Copyright (C) 2023-2025 Øyvind Hanssen, LA7ECA, ohanssen@acm.org
@@ -154,10 +154,6 @@ pol.psadmin.OwnposConfig = class extends pol.core.Widget {
                 ])
             }
         };
-
-
-        /* Apply a function to an argument. Returns a new function */
-        function apply(f, id) {return function() { f(id); }};
 
 
         /* Automatic checkbox handler */

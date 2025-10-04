@@ -2,7 +2,7 @@
  Map browser based on OpenLayers 5. Tracking.
  Search historic data on tracker points on server.
 
- Copyright (C) 2021-2024 Øyvind Hanssen, LA7ECA, ohanssen@acm.org
+ Copyright (C) 2021-2025 Øyvind Hanssen, LA7ECA, ohanssen@acm.org
 
  This program is free software: you can redistribute it and/or modify
  it under the terms of the GNU Affero General Public License as published
@@ -67,7 +67,7 @@ pol.tracking.db.Sharing = class extends pol.core.Widget {
                         (t.photo? t.ident : t.name)) : ""),
                     m("div.tagList", t.shareList.map( x=> {
                         return [ m("span.box", [
-                            m("img",  {src: "images/edit-delete.png", onclick: apply((x)=>t.remove(x), x.userid)}),
+                            m("img",  {src: "images/edit-delete.png", onclick: pol.ui.apply((x)=>t.remove(x), x.userid)}),
                                 (x.readOnly ? m("span.ulistro", x.userid) : m("span.ulistitem", x.userid))
                             ])]
                     })),
@@ -151,10 +151,6 @@ pol.tracking.db.Sharing = class extends pol.core.Widget {
             }
             return false;
         }
-
-
-        /* Apply a function to an argument. Returns a new function */
-        function apply(f, id) {return function() { f(id); }};
 
     } /* constructor */
 

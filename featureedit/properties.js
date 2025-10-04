@@ -43,7 +43,7 @@ pol.features.Properties = class extends pol.core.Widget {
                 return m("div#circleInfo", [
                     m("span.field", [
                         m("span.sleftlab", "Center: "),
-                        (t.center ? m("span.coord", {onclick: apply(gotoPos,t.center)}, formatPos(t.center)) : "-") ]),
+                        (t.center ? m("span.coord", {onclick: pol.ui.apply(gotoPos,t.center)}, formatPos(t.center)) : "-") ]),
 
                     m("span.field", [
                         m("span.sleftlab", "Radius: "),
@@ -61,7 +61,7 @@ pol.features.Properties = class extends pol.core.Widget {
                 if (t.colist.length < 50)
                     return m("div#colist",
                         t.colist.map( x=> {
-                            return [m("span.coord", {onclick: apply(gotoPos,x)}, formatPos(x)), ", "]}));
+                            return [m("span.coord", {onclick: pol.ui.apply(gotoPos,x)}, formatPos(x)), ", "]}));
                 else
                     return m("div#colist", "(more than 50 points)");
             }
@@ -91,7 +91,7 @@ pol.features.Properties = class extends pol.core.Widget {
                       m("tbody", features().map( x => {
                         return m("tr", {class: (x==t.selected ? "selected" : "")}, [
                             m("td", m(removeEdit,
-                                { remove: apply(remove, i), edit: apply(edit, i++) })),
+                                { remove: pol.ui.apply(remove, i), edit: pol.ui.apply(edit, i++) })),
                             m("td", shortType(x.getGeometry().getType())),
                             m("td", (x.label ? x.label : ""))
                         ])
@@ -155,9 +155,6 @@ pol.features.Properties = class extends pol.core.Widget {
 
         setTimeout(checkHide, 500);
 
-
-        /* Apply a function to an argument. Returns a new function */
-        function apply(f, id) {return function() { f(id); }};
 
 
         function layerWidget() {

@@ -3,7 +3,7 @@
  Map browser based on OpenLayers. Tracking.
  Bulletin board.
 
- Copyright (C) 2021-2024 Øyvind Hanssen, LA7ECA, ohanssen@acm.org
+ Copyright (C) 2021-2025 Øyvind Hanssen, LA7ECA, ohanssen@acm.org
 
  This program is free software: you can redistribute it and/or modify
  it under the terms of the GNU Affero General Public License as published
@@ -92,7 +92,7 @@ pol.tracking.BullBoard = class extends pol.core.Widget {
                     m("div.bgroups",
                         t.groups.map( x => {
                             return [m("span",
-                                {"class": (i==t.selectedGroup ? 'selected' :''), onclick:apply(_selectGrp, i++)},
+                                {"class": (i==t.selectedGroup ? 'selected' :''), onclick:pol.ui.apply(_selectGrp, i++)},
                                 x ), " " ];
                         }),
                         (t.canSend() ?
@@ -235,9 +235,6 @@ pol.tracking.BullBoard = class extends pol.core.Widget {
                 return hour+"h"+min+"m";
         }
 
-
-        /* Apply a function to an argument. Returns a new function */
-        function apply(f, id) {return function() { f(id); }};
 
     }
 

@@ -3,7 +3,7 @@
  Map browser based on OpenLayers. Tracking.
  Search historic data on tracker points on server.
 
- Copyright (C) 2020-2024 Øyvind Hanssen, LA7ECA, ohanssen@acm.org
+ Copyright (C) 2020-2025 Øyvind Hanssen, LA7ECA, ohanssen@acm.org
 
  This program is free software: you can redistribute it and/or modify
  it under the terms of the GNU Affero General Public License as published
@@ -58,9 +58,9 @@ pol.tracking.BikeWheel = class extends pol.core.Widget {
 
                     m("div.itemList", t.olist.map( x=> {
                         return [ m("span", [
-                            m("img",  {src: "images/edit-delete.png", onclick: apply(_remove, i)}),
-                            m("img",  {src: "images/edit.png", onclick: apply(edit, i++)}), nbsp,
-                            m("span", {onclick: apply(zoomTo, x)}, x.ident), nbsp]
+                            m("img",  {src: "images/edit-delete.png", onclick: pol.ui.apply(_remove, i)}),
+                            m("img",  {src: "images/edit.png", onclick: pol.ui.apply(edit, i++)}), nbsp,
+                            m("span", {onclick: pol.ui.apply(zoomTo, x)}, x.ident), nbsp]
                         ), " "]
                     })),
                     m("div.errmsg", errmsg),
@@ -325,11 +325,6 @@ pol.tracking.BikeWheel = class extends pol.core.Widget {
         function _remove(i) {
             t.remove(i);
         }
-
-
-        /* Apply a function to an argument. Returns a new function */
-        function apply(f, id) {return function() { f(id); }};
-
 
     } /* constructor */
 

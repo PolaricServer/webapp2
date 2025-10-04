@@ -123,12 +123,6 @@ pol.tracking.Login = class extends pol.core.Widget {
 
 
 
-
-        /* Apply a function to an argument. Returns a new function */
-        function apply(f, id) {return function() { f(id); }};
-
-
-
         function isLoggedIn() {
             return CONFIG.server.isAuth();
         }

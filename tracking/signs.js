@@ -2,7 +2,7 @@
  Map browser based on OpenLayers 5. Tracking.
  Search historic data on tracker points on server.
 
- Copyright (C) 2020-2023 Øyvind Hanssen, LA7ECA, ohanssen@acm.org
+ Copyright (C) 2020-2025 Øyvind Hanssen, LA7ECA, ohanssen@acm.org
 
  This program is free software: you can redistribute it and/or modify
  it under the terms of the GNU Affero General Public License as published
@@ -52,9 +52,9 @@ pol.tracking.db.Signs = class extends pol.core.Widget {
                 var i=0;
                 return m("table", m("tbody", t.mySigns.map(x => {
                         return m("tr", [
-                            m(removeEdit, {remove: apply(remove, i), edit: apply(editObj, i++)}),
+                            m(removeEdit, {remove: pol.ui.apply(remove, i), edit: pol.ui.apply(editObj, i++)}),
 
-                            m("td", {onclick: apply(gotoPos, x)},  x.descr),
+                            m("td", {onclick: pol.ui.apply(gotoPos, x)},  x.descr),
                             m("td", x.tname),
                             m("td", x.scale)
                         ]);
@@ -212,10 +212,6 @@ pol.tracking.db.Signs = class extends pol.core.Widget {
         function remove(i) {
             t._remove(i, true);
         }
-
-
-        /* Apply a function to an argument. Returns a new function */
-        function apply(f, id) {return function() { f(id); }};
 
 
         function gotoPos(x) {

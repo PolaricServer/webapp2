@@ -2,7 +2,7 @@
  Map browser based on OpenLayers 5. Tracking.
  Search historic data on tracker points on server.
 
- Copyright (C) 2019 Øyvind Hanssen, LA7ECA, ohanssen@acm.org
+ Copyright (C) 2019-2025 Øyvind Hanssen, LA7ECA, ohanssen@acm.org
 
  This program is free software: you can redistribute it and/or modify
  it under the terms of the GNU Affero General Public License as published
@@ -94,10 +94,6 @@ pol.tracking.OwnPos = class extends pol.core.Widget {
             setTimeout(()=>{errmsg="";m.redraw();}, 10000);
             m.redraw();
         }
-
-
-        /* Apply a function to an argument. Returns a new function */
-        function apply(f, id) {return function() { f(id); }};
 
     } /* constructor */
 

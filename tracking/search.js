@@ -2,7 +2,7 @@
  Map browser based on OpenLayers 4. Tracking.
  Search active tracker points on server.
 
- Copyright (C) 2017 Øyvind Hanssen, LA7ECA, ohanssen@acm.org
+ Copyright (C) 2017-2025 Øyvind Hanssen, LA7ECA, ohanssen@acm.org
 
  This program is free software: you can redistribute it and/or modify
  it under the terms of the GNU Affero General Public License as published
@@ -45,7 +45,7 @@ pol.tracking.Search = class extends pol.core.Widget {
                    [ m("th", "Ident"), m("th", "Updated"), m("th", "Dir"), m("th", "Description") ])),
                    m("tbody", t.result.map( x=> {
                        return m("tr", [
-                         m("td.ident", {onclick: apply(gotoPos, x), title: idTitle(x)},
+                         m("td.ident", {onclick: pol.ui.apply(gotoPos, x), title: idTitle(x)},
                          m("span."+idClass(x), formatIdent(x))),
                          m("td", formatTime(x.updated)),
                          m("td", formatDir(x.course)),
@@ -63,7 +63,7 @@ pol.tracking.Search = class extends pol.core.Widget {
                         m("form", [
                             "Keywords (tags): ", br,
                                 m("div#tags", t.tags.filter(x=> prefixSel(x)).map( x=> {
-                                    return m(checkBox, {checked: t.selected[x], id: "tag_"+x, onchange: apply(tagToggle, x)}, limitLen(x,20));
+                                    return m(checkBox, {checked: t.selected[x], id: "tag_"+x, onchange: pol.ui.apply(tagToggle, x)}, limitLen(x,20));
                                 })),
 
 
@@ -82,11 +82,6 @@ pol.tracking.Search = class extends pol.core.Widget {
 
         function limitLen(x, len) {
             return x.substring(0,len-1)+(x.length>len? "..":"");
-        }
-
-
-        function apply(f, x) {
-            return () => { return f(x); }
         }
 
 

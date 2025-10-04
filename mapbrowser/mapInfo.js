@@ -1,7 +1,7 @@
 /*
- Map browser based on OpenLayers 5.
+ Map browser based on OpenLayers.
 
- Copyright (C) 2017-2023 Øyvind Hanssen, LA7ECA, ohanssen@acm.org
+ Copyright (C) 2017-2025 Øyvind Hanssen, LA7ECA, ohanssen@acm.org
 
  This program is free software: you can redistribute it and/or modify
  it under the terms of the GNU Affero General Public License as published
@@ -72,10 +72,6 @@ pol.core.MapInfo = class extends pol.core.Widget {
             }
         }
 
-
-
-        /* Apply a function to an argument. Returns a new function */
-        function apply(f, id) {return function() { f(id); }};
 
 
         function seed() {

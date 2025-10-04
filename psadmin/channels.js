@@ -93,7 +93,7 @@ pol.psadmin.Channels = class extends pol.core.Widget {
                 return m("table.myChannels", m("tbody", t.clist.map( x=> {
                         return m("tr", {class: (t.editMode && x.name===t.name() ? "selected" : null) }, [
                             m("td",
-                              m(removeEdit, {remove: apply(remove,i), edit: apply(edit, i++)})),
+                              m(removeEdit, {remove: pol.ui.apply(remove,i), edit: pol.ui.apply(edit, i++)})),
                             m("td.flags", flags(x)),
                             m("td", (x.generic.inRouter ? m("img",{src:"images/16px/router.png", title: "Via router"})
                                             : (x.specific.type==="ROUTER" ? m("img",{src:"images/16px/router2.png"}) : null)) ),
@@ -538,10 +538,6 @@ pol.psadmin.Channels = class extends pol.core.Widget {
             t.clients.getClients(t.ch.name);
         }
 
-
-
-        /* Apply a function to an argument. Returns a new function */
-        function apply(f, id) {return function() { f(id); }};
 
     } /* constructor */
 

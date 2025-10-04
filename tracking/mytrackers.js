@@ -2,7 +2,7 @@
  Map browser based on OpenLayers 5. Tracking.
  Search historic data on tracker points on server.
 
- Copyright (C) 2018-2021 Øyvind Hanssen, LA7ECA, ohanssen@acm.org
+ Copyright (C) 2018-2025 Øyvind Hanssen, LA7ECA, ohanssen@acm.org
 
  This program is free software: you can redistribute it and/or modify
  it under the terms of the GNU Affero General Public License as published
@@ -47,8 +47,8 @@ pol.tracking.db.MyTrackers = class extends pol.tracking.TrackerAlias {
                     m("table.mytrackers", m("tbody", t.myTrackers.map(x => {
                         return m("tr", [
                             m("td",
-                                m(removeEdit, {remove: apply(remove,i), edit: apply(edit, i++)})),
-                            m("td", {onclick: apply(goto, x.id)}, x.id),
+                                m(removeEdit, {remove: pol.ui.apply(remove,i), edit: pol.ui.apply(edit, i++)})),
+                            m("td", {onclick: pol.ui.apply(goto, x.id)}, x.id),
                             m("td", x.alias),
                             m("td", (x.icon == null || x.auto ? "" :  m("img.icon", {src:x.icon}))),
                             m("td", (x.active ? m("img", {src:"images/16px/ok.png"}) : ""))
@@ -112,10 +112,6 @@ pol.tracking.db.MyTrackers = class extends pol.tracking.TrackerAlias {
                 return false;
             return t.editMode;
         }
-
-
-        /* Apply a function to an argument. Returns a new function */
-        function apply(f, id) {return function() { f(id); }};
 
 
         /* Get list of trackers from server */

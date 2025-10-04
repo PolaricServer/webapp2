@@ -49,11 +49,8 @@ pol.tracking.GlobalSettings = class extends pol.tracking.TrackerAlias {
             }
         };
 
-
-        /* Apply a function to an argument. Returns a new function */
-        function apply(f, id) {return function() { f(id); }};
-
-
+        
+        
         function update() {
             let icn = $("#iconpick").get(0).value;
             if (!icn)

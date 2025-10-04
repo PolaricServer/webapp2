@@ -2,7 +2,7 @@
  Map browser based on OpenLayers 5. Tracking.
  Search historic data on tracker points on server.
 
- Copyright (C) 2020 Øyvind Hanssen, LA7ECA, ohanssen@acm.org
+ Copyright (C) 2020-2025 Øyvind Hanssen, LA7ECA, ohanssen@acm.org
 
  This program is free software: you can redistribute it and/or modify
  it under the terms of the GNU Affero General Public License as published
@@ -55,7 +55,7 @@ pol.tracking.Tags = class extends pol.core.Widget {
                             return  m("span.disabled", x);
                         else
                             return [ m("span.box", [
-                                m("img",  {src: "images/edit-delete.png", onclick: apply((x)=>t.remove(x), x)}),
+                                m("img",  {src: "images/edit-delete.png", onclick: pol.ui.apply((x)=>t.remove(x), x)}),
                                 (x.charAt(0)=='-' ? m("span.negtag", x) :
                                     (x.charAt(0)=='+' ? m("span.usertag", x.substring(1)) :
                                         m("span.systag", x))) ])]
@@ -85,12 +85,6 @@ pol.tracking.Tags = class extends pol.core.Widget {
                 (x)=> { console.warn("Couldn't add tag: "+x); }
             );
         }
-
-
-
-
-        /* Apply a function to an argument. Returns a new function */
-        function apply(f, id) {return function() { f(id); }};
 
     } /* constructor */
 
