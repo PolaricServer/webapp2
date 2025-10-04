@@ -251,7 +251,7 @@ pol.psadmin.Users = class extends pol.core.Widget {
 
             t.server.PUT("users/"+t.ident(), JSON.stringify(data),
                 x => {
-                    for (i in t.users)
+                    for (let i in t.users)
                         if (t.users[i].ident==t.ident()) {
                             t.users[i].name = data.name;
                             t.users[i].callsign = data.callsign;

@@ -663,7 +663,7 @@ pol.tracking.Tracking = class {
         this.source.addFeature(feature);
 
         /* update position */
-        for (i in p.trail.linestring)
+        for (let i in p.trail.linestring)
             feature.getGeometry().appendCoordinate(ll2proj(p.trail.linestring[i].pos));
 
         /* Update style */
@@ -901,16 +901,16 @@ pol.tracking.Tracking = class {
             this.clear();
         this.srch = srch;
 
-        for (i in ov.points)
+        for (let i in ov.points)
             this.addPoint(ov.points[i], index);
 
-        for (i in ov.lines)
+        for (let i in ov.lines)
             this.addLine(ov.lines[i]);
 
         if (ov.pcloud != null)
             this.addCoveragePoints(ov.pcloud, ov.ident, ov.color);
 
-        for (i in ov["delete"])
+        for (let i in ov["delete"])
             this.removePoint(ov["delete"][i]);
 
         CONFIG.mb.map.render();

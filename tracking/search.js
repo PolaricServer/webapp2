@@ -114,7 +114,7 @@ pol.tracking.Search = class extends pol.core.Widget {
                 return true
             if (!t.tagUsed(t.tags, c[0]))
                 return true;
-            for (i in t.selected)
+            for (let i in t.selected)
                 if (c[0] == i.split('.')[0])
                     return true;
             return false;
@@ -125,7 +125,7 @@ pol.tracking.Search = class extends pol.core.Widget {
         /* Return tags that user has checked, as a comma separated list */
         function getTagArgs() {
             let tags = "";
-            for (i in t.selected)
+            for (let i in t.selected)
                 tags = tags + (tags=="" ? "" : ",") + i;
             return tags;
         }
@@ -225,7 +225,7 @@ pol.tracking.Search = class extends pol.core.Widget {
 
 
     tagUsed(tt, x) {
-        for (i in tt)
+        for (let i in tt)
             if (x==tt[i])
                 return true;
         return false;

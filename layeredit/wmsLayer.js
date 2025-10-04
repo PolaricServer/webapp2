@@ -146,7 +146,7 @@ pol.layers.Wms = class extends pol.layers.Edit {
             .then( txt => {
                 t.cap = parser.read(txt);
                 if (t.cap.Capability.Layer.Layer) {
-                    for (i in t.cap.Capability.Layer.Layer) {
+                    for (let i in t.cap.Capability.Layer.Layer) {
                         const x = t.cap.Capability.Layer.Layer[i];
                         t.layers.push(x);
                     }
@@ -196,7 +196,7 @@ pol.layers.Wms = class extends pol.layers.Edit {
         let first=true;
 
         /* FIXME: Make this a recursive function? Make sublayers selectable */
-        for (i in this.sLayers) {
+        for (let i in this.sLayers) {
             if (this.sLayers[i].checked) {
                 let n = this.sLayers[i].Name;
                 if (n!=null)
@@ -235,7 +235,7 @@ pol.layers.Wms = class extends pol.layers.Edit {
         });
         x.selSrs = this.selected;
         x.checkList = [];
-        for (i in this.sLayers)
+        for (let i in this.sLayers)
             x.checkList[i] = {name: this.sLayers[i].Name, checked: this.sLayers[i].checked};
         return x;
     }
@@ -255,7 +255,7 @@ pol.layers.Wms = class extends pol.layers.Edit {
         $("#sel_srs").val(layer.selSrs).trigger("change");
 
         this.getCapabilities( () => {
-            for (i in this.sLayers) {
+            for (let i in this.sLayers) {
                 if (this.sLayers[i] == null)
                     continue;
                 if (this.sLayers[i].Name == layer.checkList[i].name)

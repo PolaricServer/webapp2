@@ -152,7 +152,7 @@ pol.tracking.TelHist = class extends pol.core.Widget {
                 opt.series = [];
                 opt.legend.data = [];
 
-                for (i=this.index; i<5; i++) {
+                for (let i=this.index; i<5; i++) {
                     var s = {
                         type: 'line',
                         name: meta.num[i].parm,
