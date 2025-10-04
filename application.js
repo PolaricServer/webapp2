@@ -161,6 +161,12 @@
             console.log("Change to signs:", x);
             getWIDGET("tracking.db.Signs").getSigns();
         });
+        
+        /* Get updates when users db is changed */ 
+        CONFIG.server.pubsub.subscribe("userdb", x => {
+            console.log("Change to user db:", x);
+            getWIDGET("psadmin.Users").getUsers();
+        });
     }
     
     

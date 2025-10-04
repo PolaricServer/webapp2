@@ -79,7 +79,6 @@ pol.tracking.PubSub = class {
             
             /* Incoming message on socket */
             t.websocket.onmessage = function(evt) { 
-                console.log("pubsub onmessage: ", evt);
                 const slc = evt.data.indexOf(",");
                 const txt1 = evt.data.slice(0,slc);
                 const txt2 = evt.data.slice(slc+1);

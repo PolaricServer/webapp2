@@ -146,12 +146,10 @@ pol.psadmin.statusInfo = class extends pol.core.Widget {
     getClients() {
         CONFIG.server.GET( "system/adm/clients", null, 
             st => {
-                this.clients = GETJSON(st);           
+                this.clients = GETJSON(st);         
                 this.clients.sort( (x,y) => (x.cid < y.cid ? -1 : (x.cid===y.cid ? 0 : 1)));
-                if (this.nclients != this.clients.length)
-                    setTimeout(()=> this.mountList(), 400);
-                else
-                    m.redraw();
+                setTimeout(()=> this.mountList(), 200);
+                m.redraw();
                 this.nclients = this.clients.length;
             },            
             x=> { 
@@ -173,7 +171,7 @@ pol.psadmin.statusInfo = class extends pol.core.Widget {
         this.updates = setInterval( () => {
             this.getInfo();
             this.getClients();
-        }, 5000);
+        }, 10000);
     }
 
     
