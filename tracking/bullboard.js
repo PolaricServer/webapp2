@@ -122,7 +122,7 @@ pol.tracking.BullBoard = class extends pol.core.Widget {
             console.log("grpAdd", addgrp());
             if (addgrp() == "")
                 return;
-            for (i in t.groups)
+            for (let i in t.groups)
                 if (t.groups[i] == addgrp()) {
                     t.selectGroup(i);
                     m.redraw();
@@ -185,7 +185,7 @@ pol.tracking.BullBoard = class extends pol.core.Widget {
 
 
         function clear() {
-            for (i in t.edit[t.selectedGroup])
+            for (let i in t.edit[t.selectedGroup])
                 t.edit[t.selectedGroup][i]("");
             t.updateScreen();
             sendMessages();

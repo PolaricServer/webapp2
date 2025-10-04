@@ -571,7 +571,7 @@ pol.core.MapBrowser = class {
 
         function getIndex(x) {
             const lrs = CONFIG.baseLayers;
-            for (i in lrs)
+            for (let i in lrs)
                 if (x == lrs[i].get("name"))
                     return i;
             return 0;

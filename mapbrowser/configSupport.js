@@ -422,7 +422,7 @@ function FEATUREINFO(fi) {
     return function(feat) {
         let fi2 = fi.slice(0);
         // FIXME. Refering to 'values_' is too implementation dependent (OpenLayers)
-        for (i in fi) {
+        for (let i in fi) {
             feat.values_.get = function(key) {return this[key];}
             fi2[i] = {lbl:fi[i].lbl, val: evalExpr(fi[i].val, feat.values_)};
         }
@@ -433,7 +433,7 @@ function FEATUREINFO(fi) {
 
 
 function STYLES( st ) {
-    for (i in st) {
+    for (let i in st) {
        let x = st[i];
        const ident = (x.id ? x.id : 'style_'+i);
        delete x.id;

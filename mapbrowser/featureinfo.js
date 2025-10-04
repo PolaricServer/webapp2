@@ -192,7 +192,7 @@ pol.core.FeatureInfo = class {
                 this.unregister(x);
             });
         else
-            for (i in this.layers)
+            for (let i in this.layers)
                 if (this.layers[i] == layer)
                     this.layers.splice(i, 1);
     }

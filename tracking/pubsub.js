@@ -236,7 +236,7 @@ pol.tracking.PubSub = class {
             this.rooms[room] = null;
             this.websocket.send('UNSUBSCRIBE,' + room);
         }
-        else for (i in clients)
+        else for (let i in clients)
             if (clients[i].cb == c)
                 clients.splice(i, 1);
     }

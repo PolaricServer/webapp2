@@ -357,10 +357,11 @@ pol.tracking.BikeWheel = class extends pol.core.Widget {
     remove(i) {
         /* Remove on server if logged in */
         const item = this.olist[i];
+        const srv = CONFIG.server;
         if (srv != null && srv.isAuth())
             srv.DELETE("sar/ipp/"+item.ident,
                 ()=> { console.log("Deleted IPP/LKP: "+item.ident); },
-                (e)=> { error("Cannot delete IPP/LKP: "+e); }
+                (e)=> { console.error("Cannot delete IPP/LKP: "+e); }
             );
 
         /* Remove features on map */

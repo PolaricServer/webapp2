@@ -647,6 +647,7 @@ pol.psadmin.Channels = class extends pol.core.Widget {
 
 
     removeRouterChan(ch) {
+        let i;
         for (i in this.rclist)
             if (ch == this.rclist[i].name == ch)
                 break
