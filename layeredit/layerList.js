@@ -99,10 +99,7 @@ pol.layers.List = class List extends pol.core.Widget {
         
         
         function indexOf(n) {
-            for (var i in t.myLayerNames) 
-                if (n === t.myLayerNames[i].name)
-                    return i;
-            i=-1;
+            return t._indexOf(n);
         }
         
         function sharable(i) {
@@ -149,6 +146,20 @@ pol.layers.List = class List extends pol.core.Widget {
    
     } /* constructor */
 
+    
+    /**
+     * Find index of a layer by name
+     * @param {string} name - Layer name to search for
+     * @returns {number} Index of layer, or -1 if not found
+     */
+    _indexOf(name) {
+        for (const i in this.myLayerNames) {
+            if (name === this.myLayerNames[i].name)
+                return i;
+        }
+        return -1;
+    }
+    
     
     onActivate() {
         this.getMyLayers();
