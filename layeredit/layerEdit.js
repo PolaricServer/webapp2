@@ -1,10 +1,10 @@
 /*
  Map browser based on OpenLayers 5. Layer editor.
- 
+
  Copyright (C) 2017-2023 Øyvind Hanssen, LA7ECA, ohanssen@acm.org
- 
+
  This program is free software: you can redistribute it and/or modify
- it under the terms of the GNU Affero General Public License as published 
+ it under the terms of the GNU Affero General Public License as published
  by the Free Software Foundation, either version 3 of the License, or
  (at your option) any later version.
 
@@ -25,89 +25,89 @@ pol.layers = pol.layers || {};
  */
 
 pol.layers.Edit = class {
-    
+
     constructor(list) {
         const t = this;
         t.list = list;
         t.filt = {ext: null, zoom: null, proj: null};
         t.lName = m.stream("");
-        t.readonly = false; 
-        
-        
+        t.readonly = false;
+
+
         this.widget = {
             view: function() {
                 let i=0;
-                return m("form", [    
-                    m("div.field", 
-                        m("span.sleftlab", "Name: "),   
+                return m("form", [
+                    m("div.field",
+                        m("span.sleftlab", "Name: "),
                         m(textInput, {id:"editLayer", size: 16, maxLength:25, value: t.lName, regex: /^[^\<\>\'\"]+$/i })
                     ),
-                    
-                    m("div.field", 
+
+                    m("div.field",
                         m("span.sleftlab", "Visibility: "),
-                            m(checkBox, {id:"vis.extent", onclick: filterExtent, checked: (t.filt.ext != null), 
-                                title: "Check to make layer visible only if it overlaps this extent" }, 
+                            m(checkBox, {id:"vis.extent", onclick: filterExtent, checked: (t.filt.ext != null),
+                                title: "Check to make layer visible only if it overlaps this extent" },
                                 "Map extent", nbsp, nbsp),
                         m(checkBox, {id:"vis.zoom", onclick: filterZoom, checked: (t.filt.zoom != null),
                             title: "Check to make layer visible only from this zoom level" },
                             "Zoom level+", nbsp, nbsp),
-                        m(checkBox, {id:"vis.proj", onclick: filterProj, checked: (t.filt.proj != null), 
+                        m(checkBox, {id:"vis.proj", onclick: filterProj, checked: (t.filt.proj != null),
                             title: "Check to make layer visible only with this base map projection" },
                             "Base proj.")
                      ),
-                     
+
                     m(t.fields),
                     m("div.buttons", [
-                        m("button#addButton", 
-                          { disabled: !t.enabled() || !addMode(), type: "button", onclick: add, 
+                        m("button#addButton",
+                          { disabled: !t.enabled() || !addMode(), type: "button", onclick: add,
                             title: "Add layer to list"}, "Add" ),
-                        m("button#updateButton", 
-                          { disabled: !t.enabled() || addMode() || t.readonly, type: "button", onclick: update, 
+                        m("button#updateButton",
+                          { disabled: !t.enabled() || addMode() || t.readonly, type: "button", onclick: update,
                             title: "Update layer"}, "Update" ),
-                      
+
                         m("button", { type: "reset", onclick: ()=>t.reset(), title: "Clear input fields"}, "Clear" )
                     ])
                 ]);
             }
         };
-   
-        
-   
+
+
+
         /* To be redefined in subclass */
         this.fields = {
             view: function() { return null; }
         }
-   
-   
+
+
         function addMode() {
-            return t.origName != t.lName() && t.lName().length > 0; 
+            return t.origName != t.lName() && t.lName().length > 0;
         }
-        
+
 
         /* Handler for checkbox. Extent filter on/off */
         function filterExtent() {
-            t.filt.ext = (t.filt.ext == null ? 
+            t.filt.ext = (t.filt.ext == null ?
                 CONFIG.mb.getExtent().map(function(x) {return Math.round(x*1000)/1000;}) : null);
             console.log("Set extent filter: "+t.filt.ext);
         }
-   
-   
+
+
         /* Handler for checkbox. Zoom level filter on/off */
         function filterZoom() {
             t.filt.zoom = (t.filt.zoom == null ? CONFIG.mb.getResolution() : null);
             console.log("Set zoom filter: "+t.filt.zoom);
         }
-   
-   
+
+
         /* Handler for checkbox. Projection filter on/off */
         function filterProj() {
             t.filt.proj = (t.filt.proj == null ? CONFIG.mb.view.getProjection() : null);
             console.log("Set projection filter: " + (t.filt.proj==null ? "null" : t.filt.proj.getCode()));
         }
-   
-        
-        function update() 
-        {               
+
+
+        function update()
+        {
             const layerIdx = getLayerIdx(t.lName());
             if (layerIdx == -1) {
                 alert("ERROR: Unknown layer: "+t.lName());
@@ -116,15 +116,15 @@ pol.layers.Edit = class {
 
             const layer = t.createLayer(t.lName(), t.list.myLayers[layerIdx]);
             if (layer==null)
-                return false; 
-            
+                return false;
+
             layer.predicate = t.createFilter(t.filt);
             layer.filt = {ext:t.filt.ext, zoom:t.filt.zoom, proj:t.filt.proj};
-            
+
             /* IF server available and logged in, update on server as well */
-            const s = CONFIG.server; 
+            const s = CONFIG.server;
             if (s && s != null && s.isAuth()) {
-                const obj = {type: t.typeid, name: t.lName(), data: t.layer2obj(layer)}; 
+                const obj = {type: t.typeid, name: t.lName(), data: t.layer2obj(layer)};
                 /* Send update to server (REST API) */
                 s.updateObj("layer", t.index, obj, i => {
                     /* When confirmation from server */
@@ -134,29 +134,29 @@ pol.layers.Edit = class {
             }
             return false;
         }
-   
-   
-        /** 
-         * Add a map layer to list 
+
+
+        /**
+         * Add a map layer to list
          */
-        function add() 
-        { 
+        function add()
+        {
             if (_hasLayer(t.lName())) {
                 alert("ERROR: Layer name already used: "+t.lName());
                 return;
             }
             const layer = t.createLayer(t.lName());
             if (layer==null)
-                return false; 
-            
+                return false;
+
             layer.predicate = t.createFilter(t.filt);
-            layer.filt = {ext:t.filt.ext, zoom:t.filt.zoom, proj:t.filt.proj}; 
-                        
+            layer.filt = {ext:t.filt.ext, zoom:t.filt.zoom, proj:t.filt.proj};
+
             /* IF server available and logged in, store on server as well */
-            const s = CONFIG.server; 
+            const s = CONFIG.server;
             if (s && s != null && s.isAuth()) {
-                const obj = {type: t.typeid, name: t.lName(), data: t.layer2obj(layer)}; 
-                s.putObj("layer", obj, i => { 
+                const obj = {type: t.typeid, name: t.lName(), data: t.layer2obj(layer)};
+                s.putObj("layer", obj, i => {
                     layer.index = GETJSON(i);
                     layer.server = true;
                 });
@@ -164,29 +164,29 @@ pol.layers.Edit = class {
                 m.redraw();
             }
             t.origName = t.lName();
-            return false; 
-            
-            
+            return false;
+
+
             function _hasLayer(name) {
-               return getLayerIdx(name) != -1; 
+               return getLayerIdx(name) != -1;
             }
-            
-            
+
+
             function _add() {
                 CONFIG.mb.addConfiguredLayer(layer, t.lName(), true);
                 t.list.myLayerNames.push( {name: t.lName(), type: t.typeid, server: layer.server, index: layer.index} );
                 t.list.myLayers.push( layer );
             }
         }
-        
+
         function getLayerIdx(name) {
             return t._getLayerIdx(name);
         }
-        
-   
+
+
     } /* constructor */
 
-    
+
     /**
      * Get index of a layer by name from the layer list
      * @param {string} name - Layer name to search for
@@ -197,38 +197,38 @@ pol.layers.Edit = class {
             if (name === this.list.myLayerNames[i].name)
                 return i;
         }
-        return -1; 
+        return -1;
     }
-    
+
 
     onclose() {}
-    
-    
+
+
     /* To be defined in subclass */
-    allowed() 
+    allowed()
         { return true; }
     enabled()
         { return false; }
     reset()
         { this.lName(""); }
 
-        
+
     /**
-     * Create a filter function (a predicate) with the parameters 
+     * Create a filter function (a predicate) with the parameters
      * (extent, zoom-level, projection) set by user
      */
     createFilter(f) {
         const filt = f;
-    
+
         if (!filt)
             return null;
 
         /* Returns a closure with the chosen parameter values */
         return function() {
-            return ( 
+            return (
                 (filt.ext == null  || ol.extent.intersects(filt.ext, CONFIG.mb.getExtent())) &&
                 (filt.zoom == null || filt.zoom >= CONFIG.mb.getResolution()) &&
-                (filt.proj == null || filt.proj === CONFIG.mb.view.getProjection())  
+                (filt.proj == null || filt.proj === CONFIG.mb.view.getProjection())
             );
         }
     }
@@ -236,13 +236,13 @@ pol.layers.Edit = class {
 
 
     /**
-     * Move settings to web-form. 
-     * To be extended in subclass. 
+     * Move settings to web-form.
+     * To be extended in subclass.
      */
     edit(layer) {
         this.lName(layer.get("name"));
         this.filt = layer.filt;
-        if (this.filt == null) 
+        if (this.filt == null)
             this.filt = {ext:null, zoom:null, proj:null};
 
         $("#vis.extent").prop("checked", (this.filt.ext != null)).trigger("change");
@@ -253,48 +253,48 @@ pol.layers.Edit = class {
 
 
     /**
-     * Create a layer. 
-     * To be defined in subclass 
+     * Create a layer.
+     * To be defined in subclass
      */
     createLayer(n) {
-        return null; 
+        return null;
     }
-    
-    
-    
-    /* 
-     * Remove info specific to layer-type. 
-     * To be redefined in subclass 
+
+
+
+    /*
+     * Remove info specific to layer-type.
+     * To be redefined in subclass
      */
     removeLayer(layer, onserver) { }
-        
-        
+
+
     /**
-     * Stringify settings for a layer to JSON format. 
-     * layer2obj is to be defined in subclass. 
+     * Stringify settings for a layer to JSON format.
+     * layer2obj is to be defined in subclass.
      */
-    layer2obj(layer) { 
+    layer2obj(layer) {
         return null;
     }
     layer2json(layer) {
         return JSON.stringify(this.layer2obj(layer));
     }
-    
+
 
 
     /**
-     * Restore a layer from JSON format (see layer2json). 
-     * obj2layer is to be defined in subclass. 
+     * Restore a layer from JSON format (see layer2json).
+     * obj2layer is to be defined in subclass.
      */
     obj2layer(obj) {
-        return null; 
+        return null;
     }
     json2layer(js) {
         return this.obj2layer(GETJSON(js));
     }
-    
 
-    
+
+
 } /* class */
 
 

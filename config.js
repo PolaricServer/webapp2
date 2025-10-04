@@ -1,41 +1,41 @@
 
 /*************************************************************
  * Map browser configuration.
- * Feel free to modify it to meet your needs. 
- * See examples aprs.no.config.js for more examples... 
- * 
+ * Feel free to modify it to meet your needs.
+ * See examples aprs.no.config.js for more examples...
+ *
  * (c) 2017-2025 LA7ECA, Ø. Hanssen
  *************************************************************/
 
-/* 
- * Backend server base URL. 
- * Uncomment to use aprs.no as a backend. 
- * Default is to use the location of the webapp. 
+/*
+ * Backend server base URL.
+ * Uncomment to use aprs.no as a backend.
+ * Default is to use the location of the webapp.
  */
 // SERVER("https://aprs.no");
 
 
 /*
- * Port number if different from the standard port 80. 
+ * Port number if different from the standard port 80.
  * Uncomment this if using the backend-server directly on port 8081
  */
 // PORT(8081);
 
 
-/* 
+/*
  * If using backend server directly with HTTPS, uncomment this
  */
 //SECURE(true);
 
 
 
-/* 
+/*
  * WSPREFIX is the url prefix for websocket interface
  * AJAXPREFIX is the url prefix used for other webservices/REST-API.
- * ICONPATH is the url prefix used for icons.  
- * aprs.no uses "ws" and "srv" through a proxy. 
- * Uncomment the following two lines to use a backend with a proxy. This should be 
- * in the distribution. 
+ * ICONPATH is the url prefix used for icons.
+ * aprs.no uses "ws" and "srv" through a proxy.
+ * Uncomment the following two lines to use a backend with a proxy. This should be
+ * in the distribution.
  */
 WSPREFIX("ws");
 AJAXPREFIX("srv");
@@ -50,7 +50,7 @@ LOGO("images/nrrl.png");
 
 
 /* default icon (index in icon list) */
-DEFAULT_ICON(61); 
+DEFAULT_ICON(61);
 
 
 /* Default projection and list of supported projections */
@@ -63,13 +63,13 @@ CENTER    ( 14, 66 );
 SCALE     ( 20000 );
 
 
-/* If set to true, a popup window will appear when application is started, 
- * showing the content in 'welcome.html'. 
+/* If set to true, a popup window will appear when application is started,
+ * showing the content in 'welcome.html'.
  */
 WELCOME(false);
 
 
-/* Default filter view selections, per group. 
+/* Default filter view selections, per group.
  */
 DEFAULT_FILTER(null,  "track"); // Default - if not set for group
 
@@ -83,28 +83,28 @@ const utmproj = ADD_PROJECTION
  (  "EPSG:32633", "+proj=utm +zone=33 +ellps=WGS84 +datum=WGS84 +units=m +no_defs",
      [-2500000, 3500000, 3045984, 9045984]
  );
- 
+
  const utm33euref = ADD_PROJECTION
  (  "EPSG:32633", "+proj=utm +zone=33 +ellps=EUREF89 +datum=EUREF89 +units=m +no_defs",
      [-2500000, 3500000, 3045984, 9045984]
  );
- 
+
  const utm32 = ADD_PROJECTION
  (  "EPSG:32632", "+proj=utm +zone=32 +ellps=WGS84 +datum=WGS84 +units=m +no_defs",
      [-2500000, 3500000, 3045984, 9045984]
  );
- 
-/* Sweden uses EPSG:3006 */ 
+
+/* Sweden uses EPSG:3006 */
 const sweproj = ADD_PROJECTION
 ( "EPSG:3006", "+proj=utm +zone=33 +ellps=GRS80 +towgs84=0,0,0,0,0,0,0 +units=m +no_defs",
      [-2500000, 3500000, 3045984, 9045984]
 );
 
 
-   
+
 /***************************************************************************************
  * WMTS and tiled WMS layers need grid definitions.
- * 
+ *
  ***************************************************************************************/
 
 const KV_grid = new ol.tilegrid.TileGrid({
@@ -119,38 +119,38 @@ const KV_grid_UTM = new ol.tilegrid.TileGrid({
     });
 
 
-/* Generate WMTS tilegrids */  
+/* Generate WMTS tilegrids */
 const KV_grid_WMTS = TILEGRID_WMTS(utmproj, 0, 14, "EPSG:32633");
 const DAF_grid_WMTS  = TILEGRID_WMTS(utmproj, 0, 14, "EPSG:25832");
 
 
-   
+
 /*********************************************************************************************
- * We may define polygons to test against map extents. 
- * The layer-definitions below uses this to show layers only if extent includes 
+ * We may define polygons to test against map extents.
+ * The layer-definitions below uses this to show layers only if extent includes
  * Norway or Svalbard. See IN_EXTENT(..) function
- * 
+ *
  *********************************************************************************************/
 
 const Norway = POLYGON([
-   [11.557, 58.979], [9.725, 58.692],  [7.408, 57.819],  [4.911, 58.911],  [4.428, 62.343],   
-   [9.962, 64.567],  [11.675, 67.99],  [16.842, 70.029], [26.154, 71.528], [31.944, 70.39], 
-   [29.1, 69.19],    [27.899, 70.05],  [24.854, 68.481], [21.04, 68.979],  [20.021, 68.306], 
+   [11.557, 58.979], [9.725, 58.692],  [7.408, 57.819],  [4.911, 58.911],  [4.428, 62.343],
+   [9.962, 64.567],  [11.675, 67.99],  [16.842, 70.029], [26.154, 71.528], [31.944, 70.39],
+   [29.1, 69.19],    [27.899, 70.05],  [24.854, 68.481], [21.04, 68.979],  [20.021, 68.306],
    [18.581, 68.349], [13.877, 64.618], [14.363, 64.414], [14.014, 63.957], [12.853, 63.963],
-   [12.287, 61.782], [12.971, 61.244] 
-]);   
-
-const Sweden = POLYGON([
-   [11, 59.13],     [12.04, 60.98],   [11.809, 63.3],   [14.228, 65.29],  [14.292, 66.163], 
-   [15.02, 66.321], [16.01, 67.117],  [15.836, 67.513], [17.989, 68.6],   [19.54, 68.547],  
-   [19.853, 69.06], [20.864, 69.086], [23.969, 68.015], [24.263, 65.783], [21.509, 63.61], 
-   [18.55, 62.278], [18.125, 61.37],  [19.233, 60.676], [20.029, 59.446], [19.458, 57.284],
-   [14.25, 55.189], [12.788, 55.189], [12.612, 55.408], [10.508, 58.756] 
+   [12.287, 61.782], [12.971, 61.244]
 ]);
 
-const Denmark = POLYGON([ 
-   [12.177, 54.528], [8.178, 54.453],   [7.861, 56.948],  [10.707, 57.986], 
-   [12.450, 56.171], [12.74, 55.868,6], [12.703, 54.951], [11.928, 54.432] 
+const Sweden = POLYGON([
+   [11, 59.13],     [12.04, 60.98],   [11.809, 63.3],   [14.228, 65.29],  [14.292, 66.163],
+   [15.02, 66.321], [16.01, 67.117],  [15.836, 67.513], [17.989, 68.6],   [19.54, 68.547],
+   [19.853, 69.06], [20.864, 69.086], [23.969, 68.015], [24.263, 65.783], [21.509, 63.61],
+   [18.55, 62.278], [18.125, 61.37],  [19.233, 60.676], [20.029, 59.446], [19.458, 57.284],
+   [14.25, 55.189], [12.788, 55.189], [12.612, 55.408], [10.508, 58.756]
+]);
+
+const Denmark = POLYGON([
+   [12.177, 54.528], [8.178, 54.453],   [7.861, 56.948],  [10.707, 57.986],
+   [12.450, 56.171], [12.74, 55.868,6], [12.703, 54.951], [11.928, 54.432]
 ]);
 
 const Svalbard = POLYGON([
@@ -177,11 +177,11 @@ const KV_ATTR = "Maps: © <a href=\"kartverket.no\">Kartverket</a>"
  *
  * The createLayer_MapCache is a convenience function to simplify creation of alayer
  * using a mapcache (see example below).
- * 
+ *
  ************************************************************************************************/
 
 
-LAYERS({ 
+LAYERS({
     base: true,
     predicate: TRUE,
     projection: "EPSG:3857",
@@ -191,49 +191,49 @@ LAYERS({
         name: 'OpenStreetMap',
         source: new ol.source.OSM()
     })
-        
+
 ]);
 
 
 
 
-/* Base layers in UTM projection. Norway and scale > 8000000 
+/* Base layers in UTM projection. Norway and scale > 8000000
  * Layers are shown if predicate evaluates to true
  */
 
-LAYERS({ 
+LAYERS({
     base: true,
     predicate: AND( SCALE_LT(8000000), IN_EXTENT(Norway)),
     projection: utmproj,
 },
-[    
-    /* This is an example of how we can use mapcache. 
-     * See /etc/polaric-webapp2/mapcache.xml 
+[
+    /* This is an example of how we can use mapcache.
+     * See /etc/polaric-webapp2/mapcache.xml
      */
     createLayer_MapCache( {
         name: "Norgeskart bakgrunn (cache)",
         opacity: 0.65,
         layers: "kv_grunnkart",
         tilegrid: KV_grid_UTM,
-        attributions: KV_ATTR, 
+        attributions: KV_ATTR,
         seed_max_res: 30
-    }),   
+    }),
 
     createLayer_MapCache( {
         name: "Norgeskart bakgrunn gråtone (cache)",
         opacity: 0.65,
         layers: "kv_grunnkart2",
         tilegrid: KV_grid_UTM,
-        attributions: KV_ATTR, 
+        attributions: KV_ATTR,
         seed_max_res: 30
-    }),  
-    
-]);                    
+    }),
+
+]);
 
 
 /* Overlays for all projections. Show only for resolution < 3600 */
 
-LAYERS ({ 
+LAYERS ({
     base: false,
     predicate: RESOLUTION_LT (3600)
 },[
@@ -259,17 +259,17 @@ LAYERS ({
 
 
 
-LAYERS ({ 
+LAYERS ({
     base: false,
     predicate: AND( SCALE_LT (2000000), IN_EXTENT(Norway) )
-},[  
+},[
     createLayer_WFS({
         name : "Brannstasjoner (DSB)",
         description: "Lokale brannstasjoner. Kilde: DSB.",
-        url  : "https://ogc.dsb.no/wfs.ashx", 
+        url  : "https://ogc.dsb.no/wfs.ashx",
         ftype: "layer_183",
         newVersion: false,
-        
+
         style: GETSTYLE("Fireicon"),
         info : FEATUREINFO([
             {val: "$(brannstasj)"},
@@ -277,7 +277,7 @@ LAYERS ({
             {val: "Type $(stasjonsty)"}
         ])
       })
-      
+
 
     /* TESTRES, SETLABEL and GETSTYLE return functions that return styles.
      * TESTRES returns the second argument if resolution is less than 50, and
@@ -304,29 +304,29 @@ LAYERS ({
  * Note that we simplify a bit: we just need to give the values for the options
  * given to ol.style Stroke, ol.style.Fill and ol.style.Text. We also offer
  * convenience functions CIRCLE and ICON to define image properties.
- * 
+ *
  * Maybe styles could be defined in a separate config file?
- * Maybe styles could be grouped. 
+ * Maybe styles could be grouped.
  *********************************************************************************/
 
 var defaultStyle = 'Red + blue';
 STYLES ([
     { id: "Red + blue",
-        tag : /gpx|wfs/, 
+        tag : /gpx|wfs/,
         stroke: {color: 'rgba(200,0,0,1)', width: 1.5},
 	    fill  : 'rgba(255,240,220,0.3)',
 	    text  : {scale: 0.9,  offsetY: 14, fill: '#300', stroke: {color: '#fff', width: 3} },
 	    image : CIRCLE(4, {fill: '#55ea'})
     },
     { id: "Red dashed",
-        tag : /gpx|wfs/, 
+        tag : /gpx|wfs/,
         stroke: {color: 'rgba(200,0,0,1)', width: 2.2, lineDash: [3,3.5]},
 	    fill  : 'rgba(255,240,220,0.3)',
 	    text  : {scale: 0.9,  offsetY: 14, fill: '#300', stroke: {color: '#fff', width: 3} },
 	    image : CIRCLE(4, {fill: '#55ea'})
-    },  
+    },
     { id: "Red (no fill)",
-        tag : /gpx|wfs/, 
+        tag : /gpx|wfs/,
         stroke: {color: 'rgba(200,0,0,1)', width: 1.5},
 	    text  : {scale: 0.9,  offsetY: 14, fill: '#300', stroke: {color: '#fff', width: 3} },
 	    image : CIRCLE(4, {fill: '#55ea'})
@@ -337,7 +337,7 @@ STYLES ([
 	    fill  : 'rgba(220,255,220,0.3)',
 	    text  : {scale: 0.9,  offsetY: 14, fill: '#300', stroke: {color: '#fff', width: 3} },
 	    image : CIRCLE(4, {fill: '#f448'})
-    }, 
+    },
     { id: "Green (no fill)",
         tag: /gpx|wfs/,
         stroke: {color: 'rgba(0,100,0,1)', width: 1.5},
@@ -357,29 +357,29 @@ STYLES ([
 	    text  : {scale: 0.9, offsetY: 14, fill: '#003', stroke: {color: '#fff', width: 3} },
 	    image : CIRCLE(4, {fill: '#55f8'})
     },
-    
-    
+
+
     { id: "Fireicon",
         tag   : /wfs/,
         text  : {baseline: 'Bottom', offsetY: 14, scale: 0.9, fill: '#003', stroke: {color: '#fff', width: 3} },
 	    image : ICON("aprsd/icons/car-fire.png", {})
     },
-    
+
     /* styles for bicycle wheel model: Circles and labels */
-    { id: "bike25", 
+    { id: "bike25",
        stroke: {color: 'rgba(200,0,0,1)', width: 1.4},
        fill  : 'rgba(255,220, 100, 0.15)',
        text  : {scale: 1.1, fill: '#003', stroke: {color: '#fff', width: 3}, text: '25%' }
     },
-    { id: "bike50", 
+    { id: "bike50",
        stroke: {color: 'rgba(0,150,10,1)', width: 1.4, lineDash: [3,3]},
        text  : {scale: 1.1, fill: '#003', stroke: {color: '#fff', width: 3}, text: '50%' }
     },
-    { id: "bike75", 
+    { id: "bike75",
        stroke: {color: 'rgba(0,10,200,1)', width: 1.4, lineDash: [3,3]},
        text  : {scale: 1.1, fill: '#003', stroke: {color: '#fff', width: 3}, text: '75%' }
     },
-    { id: "bike95", 
+    { id: "bike95",
        stroke: {color: 'rgba(0,0,0,1)', width: 1.1},
        text  : {scale: 1.1, fill: '#003', stroke: {color: '#fff', width: 3}, text: '95%' }
     }
@@ -393,7 +393,7 @@ STYLES ([
  *
  * Extents are upper left corner (1) and lower right corner (2) in decimal degrees
  * [longitude-1, latitude-1, longitude-2, latitude-2]
- * 
+ *
  * This is an example with 3 areas in Scandinavia
  ***************************************************************************************/
 

@@ -1,13 +1,13 @@
 /*
-   Map browser based on OpenLayers 5. 
+   Map browser based on OpenLayers 5.
    Copyright (C) 2017-2018 Øyvind Hanssen, LA7ECA, ohanssen@acm.org
-   AGPL licenced. 
+   AGPL licenced.
    ----
-   
-   This source file is based on OpenLayers examples: 
-   http://openlayers.org/en/latest/examples/measure.html 
+
+   This source file is based on OpenLayers examples:
+   http://openlayers.org/en/latest/examples/measure.html
    Copyright 2005-present OpenLayers Contributors. All rights reserved.
-   
+
    Redistribution and use in source and binary forms, with or without modification,
    are permitted provided that the following conditions are met:
 
@@ -36,7 +36,7 @@
 
 
 pol.core.Measure = class {
-    
+
     constructor() {
         const t = this;
         let tooltipElement;
@@ -44,8 +44,8 @@ pol.core.Measure = class {
         let listener;
         let sketch;
         t.tooltips = [];
-        
-        
+
+
         t.vector = CONFIG.mb.addVectorLayer(
            new ol.style.Style({
               fill: new ol.style.Fill({
@@ -56,8 +56,8 @@ pol.core.Measure = class {
                 width: 2
               })
             }));
-        
-        
+
+
         t.draw = new ol.interaction.Draw({
            source: t.vector.getSource(),
            type: "LineString",
@@ -81,21 +81,21 @@ pol.core.Measure = class {
             })
           })
         });
-        
+
         CONFIG.mb.map.addInteraction(t.draw);
-        
-        
+
+
         t.draw.on("drawstart",  evt => {
             sketch = evt.feature;
-     
+
             listener = sketch.getGeometry().on('change', evt => {
                const tooltipCoord = evt.target.getLastCoordinate();
                tooltipElement.innerHTML = formatLength(evt.target);
                tooltip.setPosition(tooltipCoord);
             });
         }, t);
-     
-        
+
+
         t.draw.on("drawend", () => {
            tooltipElement.className = 'tooltip tooltip-static';
            tooltip.setOffset([0, -7]);
@@ -106,11 +106,11 @@ pol.core.Measure = class {
            t.tooltips.push(createTooltip());
            ol.Observable.unByKey(listener);
         }, t);
-     
-     
-        
+
+
+
         t.tooltips.push(createTooltip());
-    
+
 
         function createTooltip() {
            if (tooltipElement) {
@@ -126,8 +126,8 @@ pol.core.Measure = class {
            CONFIG.mb.map.addOverlay(tooltip);
            return tooltip;
         }
-        
-        
+
+
         function bearing(c1, c2) {
             var cr1 = toRadians(c1[1]), cr2 = toRadians(c2[1]);
             var d = toRadians(c2[0]-c1[0]);
@@ -137,19 +137,19 @@ pol.core.Measure = class {
             var brng = Math.atan2(y, x);
             return (toDegrees(brng) + 360) % 360;
         }
-        
-        
+
+
         // Converts from degrees to radians.
         function toRadians(degrees) {
             return degrees * Math.PI / 180;
         }
-        
-        
+
+
         // Converts from radians to degrees.
         function toDegrees(radians) {
             return radians * 180 / Math.PI;
         }
-        
+
         function formatLength(line) {
             const coordinates = line.getCoordinates();
             const sourceProj = CONFIG.mb.view.getProjection();
@@ -160,10 +160,10 @@ pol.core.Measure = class {
                 c2 = ol.proj.transform(coordinates[i + 1], sourceProj, 'EPSG:4326');
                 length += ol.sphere.getDistance(c1, c2);
             }
-    
+
             let brng = bearing(c1, c2);
-          
-    
+
+
             let output = "";
             if (length > 100) {
                 output = (Math.round(length / 1000 * 100) / 100) +
@@ -180,7 +180,7 @@ pol.core.Measure = class {
 
 
 
-    
+
     deactivate(a) {
        this.draw.setActive(false);
        CONFIG.mb.map.removeInteraction(this.draw);
@@ -188,30 +188,30 @@ pol.core.Measure = class {
        for (const x of this.tooltips)
           CONFIG.mb.map.removeOverlay(x);
     }
-    
-    
+
+
 } /* class */
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

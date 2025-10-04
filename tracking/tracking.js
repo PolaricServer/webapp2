@@ -22,12 +22,12 @@
 pol.tracking = pol.tracking || {};
 
 
- 
+
 pol.tracking.isSign = function(p) {
     return (p.getId().indexOf("__") === 0);
 }
 
-        
+
 /*
  * Return a name of the context to be used when
  * generating context-menu.
@@ -51,7 +51,7 @@ pol.tracking.ctxName = function (x) {
  */
 
 pol.tracking.Tracking = class {
-    
+
     /* Constructor takes a server as an argument */
     constructor(srv, scale) {
         const t = this;
@@ -62,7 +62,7 @@ pol.tracking.Tracking = class {
         t.tag = null;
         t.ready = false;
         t.server = srv;
-        t.srch = false; 
+        t.srch = false;
         t.tracked = null;
         CONFIG.get("tracking.tracked").then( x=> {
             t.tracked = x;
@@ -75,11 +75,11 @@ pol.tracking.Tracking = class {
             if (t.iconpath == null)
                 t.iconpath = '';
         });
-        
+
         t.iconscale = scale;
         if (t.iconscale == null)
             t.iconscale = 1;
-        
+
         var init = true;
         t.producer = new pol.tracking.MapUpdate(t.server);
 
@@ -90,7 +90,7 @@ pol.tracking.Tracking = class {
             if (t.showLabel == null)
                 t.showLabel = {};
         });
-	
+
         /* Show trail for point or not */
         t.showTrail = {};
         CONFIG.get("tracking.showtrail").then( x=> {
@@ -98,10 +98,10 @@ pol.tracking.Tracking = class {
             if (t.showTrail == null)
                 t.showTrail = {};
         });
-        
+
         /* Set up vector layer and source */
         t.layer = CONFIG.mb.addVectorLayer(
-            /* 
+            /*
              * Default style.
              */
             new ol.style.Style({
@@ -114,9 +114,9 @@ pol.tracking.Tracking = class {
                 })
             })
         );
-        
+
         t.onOpenHandler = null;
-        
+
 
         t.source = this.layer.getSource();;
 
@@ -136,13 +136,13 @@ pol.tracking.Tracking = class {
                     t.showList(pts, [e.clientX, e.clientY], true);
                     return {name: "_STOP_"};
                 }
-                if (pts.length > 0) 
+                if (pts.length > 0)
                     /* Just one point */
                     t.contextOn=true;
                     setTimeout(()=>{t.contextOn=false}, 3000);
                     if (pts[0] == null)
                         return null;
-                    return { 
+                    return {
                         sarAuth: pts[0].point.sarAuth,
                         name:  pol.tracking.ctxName(pts[0]),
                         ident: pts[0].getId(),
@@ -155,7 +155,7 @@ pol.tracking.Tracking = class {
             else return null;
         });
 
-   
+
         /* Add click handler for tracking-features. Click on icons and pop up some info... */
         CONFIG.mb.map.on("click", e => {
             if (t.contextOn)
@@ -171,20 +171,20 @@ pol.tracking.Tracking = class {
                     t.showList(points, e.pixel);
             }
         });
-        
-        
+
+
         CONFIG.mb.map.on("change:view", e => {
             t.clear();
-            const ovr = CONFIG.mb.map.getOverlays(); 
+            const ovr = CONFIG.mb.map.getOverlays();
             setTimeout(()=>ovr.clear(), 10);
             t.producer.subscribe(t.filter, x => t.update(x), t.tag, false );
         });
-        
-        
+
+
         t.source.on("clear", ()=> {
-            t.clear(); 
+            t.clear();
         });
-        
+
 
         /* Called when (Web socket) connection to server is opened. */
         t.producer.onopen = function() {
@@ -193,23 +193,23 @@ pol.tracking.Tracking = class {
             CONFIG.mb.map.on('moveend', onMoveEnd);
 
             /* Subscribe to updates from server */
-            if (t.filter != null) 
+            if (t.filter != null)
                 t.producer.subscribe(t.filter, x => t.update(x), t.tag, false );
-            
+
             if (t.onOpenHandler != null)
-                t.onOpenHandler(); 
+                t.onOpenHandler();
         }
 
 
-        
-        
-        
+
+
+
         /* Called when move of map starts */
         function onMoveStart() {
             if (t.srch)
                 return;
         }
-        
+
 
         /* Called when move of map ends */
         function onMoveEnd() {
@@ -218,10 +218,10 @@ pol.tracking.Tracking = class {
                 z = Math.round(z/100);
             else if (z > 99)
                 z = Math.round(z/10);
-            
+
             const zoomed = (z != t.zoom);
-            t.zoom = z; 
-            
+            t.zoom = z;
+
             if (t.srch)
                 return;
             if (init)
@@ -229,84 +229,84 @@ pol.tracking.Tracking = class {
             else {
                 /* Re-subscribe */
                 t.layer.setVisible(true);
-                if (zoomed) 
+                if (zoomed)
                     t.clear();
                 t.producer.subscribe(t.filter, x => t.update(x), t.tag, (zoomed != true) );
-                
+
             }
         }
 
     } /* constructor */
 
-    
+
     onOpen(f) {
         this.onOpen = f;
     }
-    
+
     isConnected() {
         return this.producer.isConnected();
     }
-    
-    
+
+
     reconnect() {
-        this.producer.close(); 
+        this.producer.close();
         setTimeout(()=>this.producer.open(), 1500);
     }
 
-    
+
     reportLayer(ly) {
         if (this.isConnected())
             this.producer.reportLayer(ly);
     }
-    
-    
+
+
     close() {
         this.clear();
-        this.producer.close(); 
+        this.producer.close();
     }
-    
-    
+
+
 
     createFeedback(pos, timeout) {
         let root = document.getElementById("map");
         let element = document.createElement('div');
         root.appendChild(element);
         element.className = "indicator";
-        
+
         element.style.position = "absolute";
         element.style.top = (pos[1])-13+"px";
         element.style.left = (pos[0]-13)+"px";
-        
+
         /* Mouse event handlers */
         setTimeout(()=> {
             element.remove();
-        }, timeout);       
+        }, timeout);
     }
-    
-    
-    
+
+
+
     /**
      * Show list of points. Clickable to show info about each.
      */
     showList(points, pixel, cmenu) {
         const t = this;
-        
+
         const widget =  {
             view: function() {
                 return m("div.pointlist", [
-                    m("table.items", points.map( x => { 
-                        let lbl = (x.alias != null ? x.alias : 
+                    m("table.items", points.map( x => {
+                        let lbl = (x.alias != null ? x.alias :
                             (x.point.href[0]=='P' ? "(image)" : "(point)"));
                         if (x.point.type != null)
                             lbl = x.point.type;
                         let title = x.point.title.substring(0, 64);
                         if (title.length==64)
                             title += "..";
-                        
-                        return m("tr", { onclick: e => 
+
+                        return m("tr", { onclick: e =>
                                { t.redrawFeature(x.getId()); showContext(e, x); } },
-                            [ m("td", lbl ), 
-                              m("td", m.trust(title)) 
+                            [ m("td", lbl ),
+                              m("td", m.trust(title))
                             ] ); }))
                 ])
             }
@@ -316,59 +316,59 @@ pol.tracking.Tracking = class {
         function showContext(e, x) {
             if (cmenu) {
                 CONFIG.mb.gui.removePopup();
-                CONFIG.mb.ctxMenu.showOnPos( { 
+                CONFIG.mb.ctxMenu.showOnPos( {
                     sarAuth: x.point.sarAuth,
-                    name:  pol.tracking.ctxName(x), 
+                    name:  pol.tracking.ctxName(x),
                     ident: x.getId(),
                     aprs:  x.point.aprs,
                     own:   x.point.own,
-                    telemetry: x.point.telemetry,                   
+                    telemetry: x.point.telemetry,
                     point: x,
                 }, pixel )
-            }    
+            }
             else
                 t.server.infoPopup(x, pixel)
         }
-        
 
-        
+
+
     }
- 
- 
- 
+
+
+
     getLayerSource() {
-        return this.source; 
+        return this.source;
     }
- 
- 
+
+
     /* Redraw feature to put it on top of the stack */
     redrawFeature(id) {
         const t = this;
         const feature = t.source.getFeatureById(id);
         console.assert(feature != null, "feature=null");
         if (feature==null)
-            return; 
+            return;
         const pt = feature.point;
         if (pt != null) {
             pt.redraw = true;
             t.addPoint(pt);
         }
     }
-   
-   
+
+
     updateIconStyle() {
         const ft = this.source.getFeatures()
-        for (const x of ft) 
+        for (const x of ft)
             this.setStyle(x);
     }
-    
-       
+
+
     /**
      * Remove all features from map.
      */
     clear() {
         const ft = this.source.getFeatures()
-        for (const x of ft) 
+        for (const x of ft)
             /* For some strange reason, removing feature directly doesn't work */
             this.removePoint(x.getId());
     }
@@ -399,7 +399,7 @@ pol.tracking.Tracking = class {
         if (ext != null && ext > 0)
             eext = "."+ext;
         const ident = p.ident+eext;
-        
+
         const c = ll2proj(p.pos);
 
         if (p.redraw)
@@ -419,17 +419,17 @@ pol.tracking.Tracking = class {
         /* If feature exists and redraw flag is false. Just return */
         else if (!p.redraw)
             return;
-    
+
         /* update position, etc. */
         feature.getGeometry().setCoordinates(c);
         if (this.tracked != null && this.tracked == ident)
             CONFIG.mb.setCenter(p.pos, 70);
-            
-        if (p.label != null) 
+
+        if (p.label != null)
             feature.alias = p.label.id;
         feature.point = p;
         this.setStyle(feature);
-        
+
         /* Update label. Just replace it. */
         if (p.label != null && !this._labelHidden(ident, p.label.hidden)) {
             if (feature.label)
@@ -440,8 +440,8 @@ pol.tracking.Tracking = class {
             CONFIG.mb.map.removeOverlay(feature.label);
     } /* AddPoint */
 
-    
-    
+
+
     setStyle(feature) {
         const p = feature.point;
         if (p == null)
@@ -451,15 +451,15 @@ pol.tracking.Tracking = class {
             new ol.style.Icon( ({
                 scale: this.iconscale * CONFIG.labelStyle.getIconScale(),
                 anchor: [0.5, 0.5],
-                src: this.iconpath + p.icon, 
-                opacity: ((p.label != null && p.label.style.includes("lstill")) 
+                src: this.iconpath + p.icon,
+                opacity: ((p.label != null && p.label.style.includes("lstill"))
                     ? 0.8 : 1)
             }))
         });
         feature.setStyle(style);
     }
-    
-    
+
+
     createPopupLabel(pos, text, xtext) {
         const t = this;
         let element = document.createElement('div');
@@ -472,7 +472,7 @@ pol.tracking.Tracking = class {
         });
         lbl.setPosition(pos);
         CONFIG.mb.map.addOverlay(lbl);
-        
+
         /* Mouse event handlers */
         element.onclick = function(e) {
             CONFIG.mb.gui.removePopup();
@@ -480,8 +480,8 @@ pol.tracking.Tracking = class {
             CONFIG.mb.gui.showPopup({
                 geoPos: proj2ll(pos), html: text+"<br>"+xtext});
             e.stopPropagation();
-        }       
-        
+        }
+
         return lbl;
     }
 
@@ -497,7 +497,7 @@ pol.tracking.Tracking = class {
         element.innerHTML = label.id;
         if (ident == this.tracked)
             $(element).addClass("tracked");
-   
+
         let lbl = new ol.Overlay({
             element: element,
             offset: [14, 0],
@@ -507,36 +507,36 @@ pol.tracking.Tracking = class {
         lbl.setPosition(pos);
         lbl.tracklabel=true;
         CONFIG.mb.map.addOverlay(lbl);
-    
+
         /* Mouse event handlers */
         element.onclick = function(e) {
             t.server.infoPopup(t.source.getFeatureById(ident), [e.clientX, e.clientY]);
             e.stopPropagation();
         }
-        element.onmouseenter = function(e) { 
+        element.onmouseenter = function(e) {
             element._cancel = false;
             setTimeout(() => {
-                if (!element._cancel) 
+                if (!element._cancel)
                     t.redrawFeature(ident);
                 if (CONFIG.labelStyle)
                     CONFIG.labelStyle.setFont();
             }, 800);
         }
         element.onmouseleave = function(e) {
-            element._cancel = true; 
-        }         
-        element.oncontextmenu = function(e) { 
+            element._cancel = true;
+        }
+        element.oncontextmenu = function(e) {
             const f = t.source.getFeatureById(ident);
             CONFIG.mb.ctxMenu.showOnPos(
-              { name: "POINT", 
+              { name: "POINT",
                 point: f.point,
                 aprs:  f.point.aprs,
                 own:   f.point.own,
-                telemetry: f.point.telemetry,   
+                telemetry: f.point.telemetry,
                 sarAuth: f.point.sarAuth,
-                ident: ident}, [e.clientX, e.clientY]); 
+                ident: ident}, [e.clientX, e.clientY]);
         }
-    
+
         return lbl;
     }
 
@@ -581,8 +581,8 @@ pol.tracking.Tracking = class {
         CONFIG.store("tracking.showlabel", this.showLabel);
     }
 
-    
-    
+
+
     /**
      * Return true if label is hidden.
      */
@@ -605,7 +605,7 @@ pol.tracking.Tracking = class {
         return x;
     }
 
-    
+
     /**
      * Hide trail.
      */
@@ -614,25 +614,25 @@ pol.tracking.Tracking = class {
         const feature = this.source.getFeatureById(id);
         const trail = this.source.getFeatureById(id +'.trail');
         const tpoints = this.source.getFeatureById(id+'.trailpoints');
-	
-        if (hide) {      
+
+        if (hide) {
             if (trail !=null)
                this.source.removeFeature(trail);
             if (tpoints !=null) {
-                this.source.removeFeature(tpoints);	
+                this.source.removeFeature(tpoints);
                 this.removeTrailPoints(feature.point);
             }
         }
         else
             if (feature.point != null)
                 this.addTrail(feature.point);
-	    
+
         CONFIG.mb.map.render();
         CONFIG.store("tracking.showtrail", this.showTrail);
     }
-    
-    
-    
+
+
+
     /**
      * Add a trail.
      */
@@ -679,7 +679,7 @@ pol.tracking.Tracking = class {
             this.addTrailPoints(p, ext);
     } /* addTrail */
 
-    
+
 
     formatTime(dt) {
         const days = ['jan','feb','mar','apr','may','jun','jul','aug','sep','oct','nov','dec'];
@@ -690,8 +690,8 @@ pol.tracking.Tracking = class {
             (d.getMinutes()<10 ? "0" : "") + d.getMinutes() +":"+
             (d.getSeconds()<10 ? "0" : "") + d.getSeconds();
     }
-        
-        
+
+
     /**
      * Add points to a trail.
      * TODO: Should there be a method to enable/disable this?
@@ -702,7 +702,7 @@ pol.tracking.Tracking = class {
         if (ext != null && ext > 0)
             eext = "."+ext;
         const ident = p.ident+'.trailpoints'+eext;
-        
+
         let feature = this.source.getFeatureById(ident);
         if (feature !=null)
             this.source.removeFeature(feature);
@@ -714,15 +714,15 @@ pol.tracking.Tracking = class {
         /* update position */
         for (const x of p.trail.linestring) {
             p.trail.labels.push(
-                this.createPopupLabel( ll2proj(x.pos), 
-                    this.formatTime(x.time), 
+                this.createPopupLabel( ll2proj(x.pos),
+                    this.formatTime(x.time),
                     p.ident +
                     (x.path!=null ? "<br>Via: "+x.path : ""))
             );
-            
+
             if ((CONFIG.mb.getResolution() < 30) && x.path != null && x.path != "(ext)" && x.path != "(int)" && x.path != "AIS")
                 feature.getGeometry().appendPoint(
-                    new ol.geom.Point( ll2proj(x.pos) ) 
+                    new ol.geom.Point( ll2proj(x.pos) )
                 );
         }
 
@@ -738,22 +738,22 @@ pol.tracking.Tracking = class {
     }
 
 
-    
-    
+
+
     removeTrailPoints(p) {
         let feature = this.source.getFeatureById(p.ident+'.trailpoints');
         this.source.removeFeature(feature);
         if (!p.trail || !p.trail.labels)
             return;
-        for (const x of p.trail.labels) 
+        for (const x of p.trail.labels)
             CONFIG.mb.map.removeOverlay(x);
         p.trail.labels = [];
     }
-    
-    
-    
-    
-    
+
+
+
+
+
     addCoveragePoints(p, ident, color) {
         const style = new ol.style.Style({
             image: new ol.style.Circle({
@@ -765,25 +765,25 @@ pol.tracking.Tracking = class {
         feature.setId(ident+'.coveragepoints');
         for (const x of p)
             feature.getGeometry().appendPoint(
-                new ol.geom.Point( ll2proj(x.pos)));        
+                new ol.geom.Point( ll2proj(x.pos)));
         feature.setStyle(style);
         this.source.addFeature(feature);
     }
-    
+
 
     /**
      * Add a line (representing a path between nodes)
      */
     addLine(line) {
         let feature = new ol.Feature(new ol.geom.LineString([ll2proj(line.from), ll2proj(line.to)]) );
-    
-        /* Update style 
-         * FIXME: Use style repository or styles from config 
+
+        /* Update style
+         * FIXME: Use style repository or styles from config
          */
         const style = new ol.style.Style({
             stroke:
                 new ol.style.Stroke( (
-                    (line.type === "prim" ? 
+                    (line.type === "prim" ?
                         { color: "#a00", width: 1.6} :
                         { color: "#00c", width: 1.5, lineDash: [3,3]} )))
         });
@@ -793,7 +793,7 @@ pol.tracking.Tracking = class {
     }
 
 
-    
+
     /**
      * Remove a feature from map.
      */
@@ -805,7 +805,7 @@ pol.tracking.Tracking = class {
             if (feature.label)
                 CONFIG.mb.map.removeOverlay(feature.label);
             this.source.removeFeature(feature);
-            if (feature.point) 
+            if (feature.point)
                 this.removeTrailPoints(feature.point);
         }
     }
@@ -847,7 +847,7 @@ pol.tracking.Tracking = class {
         });
     }
 
-    
+
     searchMode(on) {
         if (!this.srch && on)
             this.clear();
@@ -857,38 +857,38 @@ pol.tracking.Tracking = class {
         }
         this.srch = on;
     }
-    
-    
+
+
     setTracked(ident) {
-        this.tracked = ident; 
+        this.tracked = ident;
         this.clear();
         this.producer.subscribe(this.filter, x => this.update(x), this.tag );
         CONFIG.store("tracking.tracked", (ident==null? "null" : ident));
     }
-    
-    
+
+
     isTracked(ident) {
         if (this.tracked == null)
-            return false; 
+            return false;
         return (this.tracked == ident);
     }
-    
-    
+
+
 
     /**
      * Update using JSON data from Polaric Server backend
      */
     update(ov, srch, index) {
         let i = 0;
-        
-        
-        
-                
+
+
+
+
         if (this.srch && !srch)
             return
         if (ov == null)
             return;
-        
+
         if (ov.overload) {
             console.log("Overload (too many points in overlay generation)");
             CONFIG.filt.setDisabled(true);
@@ -900,13 +900,13 @@ pol.tracking.Tracking = class {
         if (!srch && this.srch)
             this.clear();
         this.srch = srch;
-	
+
         for (i in ov.points)
             this.addPoint(ov.points[i], index);
-   
+
         for (i in ov.lines)
             this.addLine(ov.lines[i]);
-        
+
         if (ov.pcloud != null)
             this.addCoveragePoints(ov.pcloud, ov.ident, ov.color);
 
@@ -917,5 +917,5 @@ pol.tracking.Tracking = class {
         if (CONFIG.labelStyle)
             CONFIG.labelStyle.setFont();
     }
-    
+
 } /* class */
