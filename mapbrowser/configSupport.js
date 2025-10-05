@@ -573,4 +573,5 @@ function WIDGET(id, pos,save,f,multi) { pol.widget.start(id, pos, true, save, f,
 function POPUP(id,pos,f) {pol.widget.start(id, pos, false, false, f); }
 function getWIDGET(id) { return pol.widget.get(id); }
 
-function GETJSON(x) {return JSON.parse(x);}
+function GETJSON(x) {return x;}
+

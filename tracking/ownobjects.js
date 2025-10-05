@@ -55,7 +55,7 @@ pol.tracking.OwnObjects = class extends pol.core.Widget {
                     m("div.itemList", t.olist.map( x=> {
                         return [ m("span", [
                             m("img",  {src: "images/edit-delete.png", onclick: pol.ui.apply((x)=>t.remove(x), x)}),
-                            m("span", {onclick: pol..ui.apply(zoomTo, x)}, x), nbsp]
+                            m("span", {onclick: pol.ui.apply(zoomTo, x)}, x), nbsp]
                         ), " "]
                     })),
                     m("div.errmsg", errmsg),

@@ -47,7 +47,7 @@ pol.tracking.db.History = class extends pol.core.Widget {
                 return m("div.histt", m("table", t.list.map( x => {
                     return m("tr",
                         m("td", [
-                            m(removeEdit, {remove: pol.ui.apply(deleteItem, i), pol..ui.edit: pol.ui.apply(editItem, i)}), nbsp,
+                            m(removeEdit, {remove: pol.ui.apply(deleteItem, i), edit: pol.ui.apply(editItem, i)}), nbsp,
                             m("span.removeEdit",
                               m("img", {src: "images/time.png", title: "Set time (from form)", onclick: pol.ui.apply(setTime, i)})) ]
                         ),
