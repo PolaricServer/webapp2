@@ -17,7 +17,7 @@ The Javscript code in *'application.js'* is used to compose a running applicatio
 ## Installing and running 
 
 ### Deb package
-A binary deb package (built on Debian bookworm) is available. It installs the software assuming that a Polaric-aprsd backend is installed on the same machine. The config files for the webapp and mapcache are placed in /etc/polaric-webapp2. See https://polaricserver.readthedocs.io/en/latest/install.html
+A binary deb package is available. It installs the software assuming that a Polaric-aprsd backend is installed on the same machine. The config files for the webapp and mapcache are placed in /etc/polaric-webapp2. See https://polaricserver.readthedocs.io/en/latest/install.html
 
 ### Makefile
 The Makefile is used in building Debian packages, but could be used to install the software directly on your system for use with a Polaric Server backend. Modify the Makefile too your needs first, then type 'make' and 'sudo make install'.
