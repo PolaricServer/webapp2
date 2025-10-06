@@ -83,7 +83,8 @@ install: mapbrowser-min.js
 
 	
 compile: 
-	sh compile-js.sh
+	npm install
+	npm run build
 	
 
 

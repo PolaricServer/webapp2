@@ -27,7 +27,7 @@ To run it, copy or move the content of this directory to a directory that can be
 
 For testing and development, point your browser at *'index-dev.html'*. It runs the source code directly. 
 
-For production installations you may use *'compile-js.sh'* to minify the javascript code (and point the browser to index.html). To use a minified version of application.js, you will need to edit index.html. 
+For production installations you may use `npm run build` (or `make compile`) to bundle and minify the javascript code using webpack (and point the browser to index.html). The build creates 5 modules: mapbrowser-min.js, layeredit-min.js, tracking-min.js, featureedit-min.js, and psadmin-min.js. To use a minified version of application.js, you will need to edit index.html. 
 
 ### Configuration
 Edit the file *'config.js'* to suit your needs. Here you can set up various map sources, backends, etc.. I am sorry little documentation at the moment but some explanations in the file. The config for aprs.no is provided as an example. 
@@ -35,7 +35,7 @@ Edit the file *'config.js'* to suit your needs. Here you can set up various map 
 
 ## Contributing
 
-Contributions and hacks are welcome. Or fell free to tell us what you think. It is based on OpenLayers and Ecmascript 6 (2015) version of Javascript and uses namespaces. We hope to migrate to ES6 modules and maybe webpack in not too long time. 
+Contributions and hacks are welcome. Or fell free to tell us what you think. It is based on OpenLayers and Ecmascript 6 (2015) version of Javascript and uses namespaces. The build system now uses webpack to bundle the webapp into 5 modules (mapbrowser, layeredit, tracking, featureedit, and psadmin). 
   
 ## Licence
 This is free software. License is GNU Affero General Public License. See <http://www.gnu.org/licenses/>.
