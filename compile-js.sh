@@ -1,5 +1,8 @@
 #!/bin/bash
 
+# DEPRECATED: This script is no longer used for building.
+# The project now uses webpack for bundling. Use 'npm run build' or 'make compile' instead.
+# This file is kept for reference only.
 
 BABEL="babeljs --minified --compact=true --no-comments"
 
