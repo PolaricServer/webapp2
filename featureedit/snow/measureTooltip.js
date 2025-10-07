@@ -3,6 +3,8 @@
  * All rights reserved. See LICENSE for more detail.  
  * */ 
 
+var snow = window.snow;
+
 snow.measureTooltipElement = null;
 snow.measureTooltip = null;
 

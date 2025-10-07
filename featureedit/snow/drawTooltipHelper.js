@@ -3,6 +3,8 @@
  * All rights reserved. See LICENSE for more detail.  
  * */ 
 
+var snow = window.snow;
+
 //Helper class for tooltips.
 $( function()  
 { $( document ).tooltip() })

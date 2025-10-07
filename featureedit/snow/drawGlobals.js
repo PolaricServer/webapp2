@@ -24,7 +24,7 @@ const jsonFormat = ol.format.GeoJSON
 const gpxFormat = ol.format.GPX
 
 
-var snow = snow || {};
+var snow = window.snow;
 
 
 snow.draw = null; 

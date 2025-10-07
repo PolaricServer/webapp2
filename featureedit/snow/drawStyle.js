@@ -3,6 +3,8 @@
  * All rights reserved. See LICENSE for more detail.  
  * */ 
 
+var snow = window.snow;
+
 //Sets the current style to the selected color.
 snow.setStyleColor = function(colorVal)
 {
