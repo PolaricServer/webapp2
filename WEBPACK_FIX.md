@@ -71,7 +71,7 @@ optimization: {
 
 ### Core Configuration
 - `mapbrowser/config.js` - Changed namespace and CONFIG declarations to use `window`
-- `mapbrowser/configSupport.js` - Changed `pol.uid` to `window.pol.uid`
+- `mapbrowser/configSupport.js` - Changed `pol.uid` to `window.pol.uid` and exported all configuration functions to `window` object
 - `webpack.config.js` - Added terser configuration to preserve identifiers
 
 ### All Module Files (65 files total)
@@ -88,6 +88,17 @@ The `snow` global variable in the `featureedit/snow/` subdirectory was fixed usi
 - All other files in `featureedit/snow/` - Added `var snow = window.snow;`
 - `webpack.config.js` - Added 'snow' to reserved names: `reserved: ['window', 'pol', 'CONFIG', 'snow']`
 
+### Configuration Functions Export (configSupport.js)
+To make configuration functions available for the root `config.js` file (which is loaded after the webpack bundle), all configuration helper functions are explicitly exported to the `window` object at the end of `mapbrowser/configSupport.js`. This includes 53+ functions such as:
+- Server configuration: `WELCOME`, `LOGO`, `SECURE`, `SERVER`, `PORT`, `WSPREFIX`, `AJAXPREFIX`, etc.
+- Map setup: `ADD_PROJECTION`, `PROJECTION`, `CENTER`, `SCALE`, `TILEGRID_WMTS`, etc.
+- Layer creation: `LAYERS`, `createLayer_MapCache`, `createLayer_WFS`, `createLayer_GPX`, etc.
+- Styling: `STYLES`, `GETSTYLE`, `SETLABEL`, `CIRCLE`, `ICON`, `FEATUREINFO`, etc.
+- Predicates: `TRUE`, `AND`, `OR`, `NOT`, `IN_EXTENT`, `POLYGON`, `RESOLUTION_LT`, `SCALE_LT`, etc.
+- Views and utilities: `VIEWS`, `WIDGET`, `POPUP`, `GETJSON`, etc.
+
+This allows the root `config.js` to use these functions directly after the minified bundle is loaded.
+
 ## Verification
 
 After the fix, the global variables are properly accessible:
@@ -100,6 +111,13 @@ console.log(pol.core);          // Object with pol.core namespace
 console.log(CONFIG.get);        // Function
 console.log(typeof snow);       // "object" (snow namespace)
 console.log(snow.drawMap);      // Object or null
+
+// Configuration functions from configSupport.js:
+console.log(typeof WELCOME);    // "function"
+console.log(typeof SERVER);     // "function"
+console.log(typeof LAYERS);     // "function"
+console.log(typeof AND);        // "function"
+// ... and 50+ more configuration functions
 ```
 
 ## Benefits
@@ -114,8 +132,8 @@ console.log(snow.drawMap);      // Object or null
 - Webpack version: 5.102.0
 - Build tool: webpack with terser-webpack-plugin
 - Minified bundle sizes:
-  - mapbrowser-min.js: 48 KB
+  - mapbrowser-min.js: 55 KB
   - layeredit-min.js: 19 KB
   - tracking-min.js: 94 KB
-  - featureedit-min.js: 36 KB
+  - featureedit-min.js: 37 KB
   - psadmin-min.js: 36 KB
