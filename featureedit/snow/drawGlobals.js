@@ -89,9 +89,9 @@ snow.testHex = function(color)
 }
 
 //Global opacity declaration.
-const hexOpacity = "20"
+snow.hexOpacity = "20"
    
-var hexColor = [ 
+snow.hexColor = [ 
     {fill:"#1f1f1f", stroke: null},
     {fill:"#e60000", stroke: null}, 
     {fill:"#ff9a28", stroke: null}, 
@@ -103,22 +103,22 @@ var hexColor = [
 
 for (let i=0; i<7; i++) {
     if (snow.testHex(snow.color[i]))
-        hexColor[i] = snow.color[i];
+        snow.hexColor[i] = snow.color[i];
 }
 
-const hexSelectStroke = "#0569ff"
-const hexSelectFill = "#9ebbff"
+snow.hexSelectStroke = "#0569ff"
+snow.hexSelectFill = "#9ebbff"
 
 //Sets the color of the colorselectors. 
 //Represents the colors of the hex variables used to draw.
 snow.cssColors = () => {
-    $('#selectBlack').css('background-color',  hexColor[0].fill)
-    $('#selectRed').css('background-color',    hexColor[1].fill)
-    $('#selectOrange').css('background-color', hexColor[2].fill)
-    $('#selectYellow').css('background-color', hexColor[3].fill)
-    $('#selectGreen').css('background-color',  hexColor[4].fill)
-    $('#selectBlue').css('background-color',   hexColor[5].fill)
-    $('#selectPurple').css('background-color', hexColor[6].fill)
+    $('#selectBlack').css('background-color',  snow.hexColor[0].fill)
+    $('#selectRed').css('background-color',    snow.hexColor[1].fill)
+    $('#selectOrange').css('background-color', snow.hexColor[2].fill)
+    $('#selectYellow').css('background-color', snow.hexColor[3].fill)
+    $('#selectGreen').css('background-color',  snow.hexColor[4].fill)
+    $('#selectBlue').css('background-color',   snow.hexColor[5].fill)
+    $('#selectPurple').css('background-color', snow.hexColor[6].fill)
 } //End cssColors
 
 
