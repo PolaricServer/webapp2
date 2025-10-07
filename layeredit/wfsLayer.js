@@ -20,6 +20,8 @@
 
 
 
+
+var pol = window.pol;
 /**
  * WFS layer editor.
  */
@@ -217,4 +219,3 @@ pol.layers.Wfs = class extends pol.layers.Edit {
     }
 
 } /* class */
-

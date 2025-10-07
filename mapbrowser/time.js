@@ -1,4 +1,6 @@
 
+var pol = window.pol;
+
 pol.core.Time = class {
 
     /* Handler is a function. It is called when time is changed */

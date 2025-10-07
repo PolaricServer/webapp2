@@ -19,6 +19,8 @@
 
 
 
+
+var pol = window.pol;
 /**
  * User defined areas (in a popup window).
  */

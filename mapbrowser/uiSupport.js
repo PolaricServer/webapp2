@@ -22,6 +22,8 @@
 
 
 
+
+var pol = window.pol;
 /**
  * Autojump between two fields.
  * @param {string} fieldId - Id of DOM field elelent to jump from.
@@ -578,7 +580,6 @@ function formatDTG(date) {
     const min = ltime.getMinutes();
     return day + ' ' +mth + ' ' + hour+":"+(min<=9 ? '0': '') + min;
 }
-
 
 
 

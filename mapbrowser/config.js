@@ -20,11 +20,12 @@
 
 
 /** @namespace */
-var pol = pol || {};
-pol.core = pol.core || {};
-pol.widget = pol.widget || {};
-pol.ui = pol.ui || {};
-pol.mapref = pol.mapref || {};
+window.pol = window.pol || {};
+window.pol.core = window.pol.core || {};
+window.pol.widget = window.pol.widget || {};
+window.pol.ui = window.pol.ui || {};
+window.pol.mapref = window.pol.mapref || {};
+var pol = window.pol;  // Local alias for convenience
 
 console.assert = console.assert || function() {};
 
@@ -264,5 +265,5 @@ pol.core.Config = class extends ol.Object {
 
 
 
-const CONFIG = new pol.core.Config(pol.uid);
+window.CONFIG = new pol.core.Config(pol.uid);
 

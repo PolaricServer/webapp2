@@ -19,7 +19,9 @@
 */
 
 
-pol.features = pol.features || {};
+
+var pol = window.pol;
+window.pol.features = window.pol.features || {};
 
 
 

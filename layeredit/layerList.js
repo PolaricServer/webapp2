@@ -18,6 +18,8 @@
 */
 
 
+
+var pol = window.pol;
 /**
  * User defined layers (in a popup window).
  */
@@ -307,4 +309,3 @@ pol.layers.List = class List extends pol.core.Widget {
 pol.widget.setFactory( "layers.List", {
         create: () => new pol.layers.List()
     });
-

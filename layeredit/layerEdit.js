@@ -17,7 +17,9 @@
  along with this program. If not, see <http://www.gnu.org/licenses/>.
 */
 
-pol.layers = pol.layers || {};
+
+var pol = window.pol;
+window.pol.layers = window.pol.layers || {};
 
 
 /**
@@ -304,7 +306,6 @@ pol.layers.Dummy = class extends pol.layers.Edit {
         super(list);
     }
 }
-
 
 
 

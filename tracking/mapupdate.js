@@ -20,6 +20,8 @@
 
 
 
+
+var pol = window.pol;
 /**
  * Websocket connection to server for updating tracking-info.
  */

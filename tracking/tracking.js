@@ -19,7 +19,9 @@
 */
 
 
-pol.tracking = pol.tracking || {};
+
+var pol = window.pol;
+window.pol.tracking = window.pol.tracking || {};
 
 
 

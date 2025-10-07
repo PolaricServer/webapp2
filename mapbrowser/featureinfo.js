@@ -17,6 +17,8 @@
  */
 
 
+
+var pol = window.pol;
 /*
  * Class: FeatureInfo
  * Display info about features.
@@ -200,7 +202,6 @@ pol.core.FeatureInfo = class {
 
 
 }
-
 
 
 

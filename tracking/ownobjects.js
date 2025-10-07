@@ -22,6 +22,8 @@
 
 
 
+
+var pol = window.pol;
 /**
  * Reference search (in a popup window).
  */
@@ -206,4 +208,3 @@ pol.tracking.OwnObjects = class extends pol.core.Widget {
 pol.widget.setFactory( "tracking.OwnObjects", {
         create: () => new pol.tracking.OwnObjects()
     });
-

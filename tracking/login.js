@@ -18,6 +18,8 @@
 
 
 
+
+var pol = window.pol;
 /**
  * Login (in a popup window).
  * If logged in (a valid key is received from the server), it will show login information.

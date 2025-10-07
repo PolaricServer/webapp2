@@ -35,6 +35,8 @@
  */
 
 
+
+var pol = window.pol;
 pol.core.Measure = class {
 
     constructor() {
@@ -191,7 +193,6 @@ pol.core.Measure = class {
 
 
 } /* class */
-
 
 
 

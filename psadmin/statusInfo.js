@@ -17,7 +17,9 @@
 
 
 
-pol.psadmin = pol.psadmin || {};
+
+var pol = window.pol;
+window.pol.psadmin = window.pol.psadmin || {};
 
 /**
  * Reference search (in a popup window).
@@ -190,6 +192,5 @@ pol.psadmin.statusInfo = class extends pol.core.Widget {
 pol.widget.setFactory( "psadmin.StatusInfo", {
         create: () => new pol.psadmin.statusInfo()
     });
-
 
 

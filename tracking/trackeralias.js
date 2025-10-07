@@ -18,6 +18,8 @@
  along with this program. If not, see <http://www.gnu.org/licenses/>.
 */
 
+
+var pol = window.pol;
 pol.tracking.db = pol.tracking.db || {};
 
 
@@ -133,7 +135,6 @@ pol.tracking.TrackerAlias = class extends pol.core.Widget {
 
 
 } /* class */
-
 
 
 

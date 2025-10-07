@@ -20,6 +20,8 @@
 
 
 
+
+var pol = window.pol;
 /**
  * Filters and filter menu setup.
  */

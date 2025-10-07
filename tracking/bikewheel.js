@@ -21,6 +21,8 @@
 
 
 
+
+var pol = window.pol;
 /**
  * Reference search (in a popup window).
  */
@@ -378,4 +380,3 @@ pol.tracking.BikeWheel = class extends pol.core.Widget {
 pol.widget.setFactory( "tracking.BikeWheel", {
         create: () => new pol.tracking.BikeWheel()
     });
-

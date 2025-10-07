@@ -21,6 +21,8 @@
 
 
 
+
+var pol = window.pol;
 /**
  * Item search using tags (keywords) and free text.
  */
@@ -276,4 +278,3 @@ pol.tracking.Search = class extends pol.core.Widget {
 pol.widget.setFactory( "tracking.Search", {
         create: () => new pol.tracking.Search()
     });
-

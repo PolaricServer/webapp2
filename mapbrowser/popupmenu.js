@@ -20,6 +20,8 @@
 */
 
 
+
+var pol = window.pol;
 /**
  * Popup Menu class.
  */
@@ -383,4 +385,3 @@ pol.core.ContextMenu = class {
 
 }
  /******************** End of Context menu class  **********************/
-

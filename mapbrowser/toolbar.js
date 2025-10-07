@@ -19,6 +19,8 @@
   */
 
 
+
+var pol = window.pol;
 /**
  * Toolbar class.
  * @constructor
@@ -225,6 +227,5 @@ pol.core.Toolbar = class extends ol.control.Control  {
     }
 
 } /* class */
-
 
 

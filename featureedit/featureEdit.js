@@ -19,7 +19,9 @@
 */
 
 
-pol.features = pol.features || {};
+
+var pol = window.pol;
+window.pol.features = window.pol.features || {};
 
 
 
@@ -356,4 +358,3 @@ pol.features.Edit = class extends pol.core.Widget {
 pol.widget.setFactory( "features.Edit", {
         create: () => new pol.features.Edit()
     });
-

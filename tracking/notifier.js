@@ -21,6 +21,8 @@
 
 
 
+
+var pol = window.pol;
  /*
   * Notification:
   *     - type: Code or text. Use to select icon.
@@ -268,4 +270,3 @@ pol.tracking.NotifyList = class extends pol.core.Widget {
 pol.widget.setFactory( "tracking.NotifyList", {
         create: () => new pol.tracking.NotifyList()
     });
-

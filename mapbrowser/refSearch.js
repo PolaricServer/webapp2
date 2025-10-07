@@ -21,6 +21,8 @@
 
 
 
+
+var pol = window.pol;
 /**
  * Reference search (in a popup window).
  */
@@ -91,6 +93,5 @@ pol.core.refSearch = class refSearch extends pol.core.Widget {
 pol.widget.setFactory( "core.refSearch", {
         create: () => new pol.core.refSearch()
     });
-
 
 

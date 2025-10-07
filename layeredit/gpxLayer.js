@@ -22,6 +22,8 @@
 
 
 
+
+var pol = window.pol;
 /**
  * WFS layer editor.
  */
@@ -247,4 +249,3 @@ pol.layers.Gpx = class extends pol.layers.Edit {
     }
 
 } /* class */
-
