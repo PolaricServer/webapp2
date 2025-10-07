@@ -20,6 +20,8 @@
 
 
 
+
+var pol = window.pol;
 pol.core.DocReader = class extends pol.core.Widget {
 
     constructor ()
@@ -63,4 +65,3 @@ pol.core.DocReader = class extends pol.core.Widget {
 pol.widget.setFactory( "core.DocReader", {
         create: () => new pol.core.DocReader()
     });
-

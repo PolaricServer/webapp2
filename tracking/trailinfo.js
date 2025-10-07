@@ -22,6 +22,8 @@
 
 
 
+
+var pol = window.pol;
 /**
  * Reference search (in a popup window).
  */
@@ -127,6 +129,5 @@ pol.widget.setFactory( "tracking.TrailInfo", {
         create:   () => new pol.tracking.TrailInfo(), // Instantiate
         onRestore: NaN /* To be called when automatic restore */
     });
-
 
 

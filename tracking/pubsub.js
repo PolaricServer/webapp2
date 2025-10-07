@@ -20,6 +20,8 @@
 
 
 
+
+var pol = window.pol;
 /**
  * Websocket connection to server for generic publish/subscribe service
  */
@@ -242,5 +244,4 @@ pol.tracking.PubSub = class {
     }
 
 } /* class */
-
 

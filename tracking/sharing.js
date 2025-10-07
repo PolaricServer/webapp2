@@ -22,6 +22,8 @@
 
 
 
+
+var pol = window.pol;
 /**
  *
  */
@@ -210,4 +212,3 @@ pol.tracking.db.Sharing = class extends pol.core.Widget {
 pol.widget.setFactory( "tracking.db.Sharing", {
          create: () => new pol.tracking.db.Sharing()
    });
-

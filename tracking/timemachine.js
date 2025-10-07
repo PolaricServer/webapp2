@@ -19,6 +19,8 @@
  along with this program. If not, see <http://www.gnu.org/licenses/>.
 */
 
+
+var pol = window.pol;
 pol.tracking.db = pol.tracking.db || {};
 
 
@@ -166,4 +168,3 @@ pol.tracking.db.Timemachine = class extends pol.core.Widget {
 pol.widget.setFactory( "tracking.db.Timemachine", {
         create: () => new pol.tracking.db.Timemachine()
     });
-

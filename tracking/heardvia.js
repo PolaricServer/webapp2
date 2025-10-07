@@ -19,6 +19,8 @@
  along with this program. If not, see <http://www.gnu.org/licenses/>.
 */
 
+
+var pol = window.pol;
 pol.tracking.db = pol.tracking.db || {};
 
 
@@ -312,5 +314,4 @@ function formatTime(d) {
 pol.widget.setFactory( "tracking.db.HeardVia", {
         create: () => new pol.tracking.db.HeardVia()
     });
-
 

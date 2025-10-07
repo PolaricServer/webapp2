@@ -18,6 +18,8 @@
  along with this program. If not, see <http://www.gnu.org/licenses/>.
 */
 
+
+var pol = window.pol;
 pol.psadmin.db = pol.psadmin.db || {};
 
 

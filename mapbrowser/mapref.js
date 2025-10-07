@@ -19,6 +19,8 @@
  */
 
 
+
+var pol = window.pol;
 /**
  * Format latlong position as degrees+minutes.
  * @param {ol.Coordinate} ref - Coordinate to be formatted.
@@ -268,4 +270,3 @@ pol.mapref.parseMGRS = function(browser, prefix, ax, ay)
     }
     return [llref.lng, llref.lat];
  }
-

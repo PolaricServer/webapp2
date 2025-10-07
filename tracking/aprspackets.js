@@ -22,6 +22,8 @@
 
 
 
+
+var pol = window.pol;
 /**
  * Reference search (in a popup window).
  */
@@ -141,6 +143,5 @@ pol.widget.setFactory( "tracking.AprsPackets", {
         create:   () => new pol.tracking.AprsPackets(), // Instantiate
         onRestore: null /* To be called when automatic restore */
     });
-
 
 

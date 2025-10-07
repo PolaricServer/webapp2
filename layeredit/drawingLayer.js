@@ -20,6 +20,8 @@
 
 
 
+
+var pol = window.pol;
 /**
  * WMS layer editor.
  */
@@ -118,7 +120,6 @@ pol.layers.Drawing = class extends pol.layers.Edit {
     }
 
 } /* class */
-
 
 
 

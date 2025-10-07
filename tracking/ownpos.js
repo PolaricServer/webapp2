@@ -22,6 +22,8 @@
 
 
 
+
+var pol = window.pol;
 /**
  * Reference search (in a popup window).
  */
@@ -124,4 +126,3 @@ pol.tracking.OwnPos = class extends pol.core.Widget {
 pol.widget.setFactory( "tracking.OwnPos", {
         create: () => new pol.tracking.OwnPos()
     });
-

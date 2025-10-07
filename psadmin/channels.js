@@ -22,6 +22,8 @@
 
 
 
+
+var pol = window.pol;
 /**
  * Reference search (in a popup window).
  */
@@ -689,4 +691,3 @@ pol.psadmin.Channels = class extends pol.core.Widget {
 pol.widget.setFactory( "psadmin.Channels", {
         create: () => new pol.psadmin.Channels()
     });
-

@@ -19,6 +19,8 @@
  along with this program. If not, see <http://www.gnu.org/licenses/>.
 */
 
+
+var pol = window.pol;
 pol.tracking.db = pol.tracking.db || {};
 
 
@@ -494,4 +496,3 @@ pol.tracking.db.History = class extends pol.core.Widget {
 pol.widget.setFactory( "tracking.db.History", {
         create: () => new pol.tracking.db.History()
     });
-

@@ -20,6 +20,8 @@
 */
 
 
+
+var pol = window.pol;
 /** @namespace */
 pol.widget =  {};
 

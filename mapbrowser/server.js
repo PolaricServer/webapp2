@@ -19,6 +19,8 @@
 
 
 
+
+var pol = window.pol;
 pol.core.ajax = (type, service, data, success, error) => {
     return $.ajax( service, {
         type: type,

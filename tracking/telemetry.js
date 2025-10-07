@@ -22,6 +22,8 @@
 
 
 
+
+var pol = window.pol;
 /**
  * Telemetry (last transmission)
  */

@@ -21,6 +21,8 @@
 
 
 
+
+var pol = window.pol;
 /**
  * Bulletin board widget (in a popup window).
  */
@@ -369,4 +371,3 @@ pol.tracking.BullBoard = class extends pol.core.Widget {
 pol.widget.setFactory( "tracking.BullBoard", {
         create: () => new pol.tracking.BullBoard()
     });
-

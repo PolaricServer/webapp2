@@ -18,6 +18,8 @@
 
 
 
+
+var pol = window.pol;
 pol.core.RotateNorth = class extends ol.control.Control {
   /**
    * @param {Object} [opt_options] Control options.
@@ -771,7 +773,6 @@ pol.core.MapBrowser = class {
     }
 
 } /* class */
-
 
 
 

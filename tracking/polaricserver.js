@@ -20,9 +20,9 @@
 
 
  /** @namespace */
-var pol = pol || {};
-pol.core = pol.core || {};
-pol.tracking = pol.tracking || {};
+var pol = window.pol;
+window.pol.core = window.pol.core || {};
+window.pol.tracking = window.pol.tracking || {};
 
 
 pol.tracking.ServerManager = class {

@@ -20,6 +20,8 @@
 */
 
 
+
+var pol = window.pol;
 /**
  * Notification list widget (in a popup window).
  */
@@ -291,4 +293,3 @@ pol.tracking.Mailbox = class extends pol.core.Widget {
 pol.widget.setFactory( "tracking.Mailbox", {
         create: () => new pol.tracking.Mailbox()
     });
-

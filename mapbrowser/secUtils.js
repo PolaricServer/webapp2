@@ -17,8 +17,8 @@
 */
 
 /** @namespace */
-var pol = pol || {};
-pol.security = pol.security || {};
+var pol = window.pol;
+window.pol.security = window.pol.security || {};
 
 
 /* Base-64 encoding */

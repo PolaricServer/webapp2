@@ -19,6 +19,8 @@
 */
 
 
+
+var pol = window.pol;
 var isMobile = false;
 
 
@@ -444,7 +446,6 @@ pol.core.Popup = class {
     }
 
 } /* class */
-
 
 
 

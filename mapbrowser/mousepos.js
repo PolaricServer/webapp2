@@ -19,6 +19,8 @@
   */
 
 
+
+var pol = window.pol;
 /**
  * Keep track of mouse positions in terms of geographical coordinates.
  * Subclass of ol.control.Control

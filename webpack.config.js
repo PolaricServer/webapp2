@@ -1,4 +1,5 @@
 const path = require('path');
+const TerserPlugin = require('terser-webpack-plugin');
 
 module.exports = {
   mode: 'production',
@@ -94,14 +95,27 @@ module.exports = {
   },
   output: {
     filename: '[name].js',
-    path: path.resolve(__dirname),
-    // Don't use IIFE, as we're concatenating namespace-based code
-    library: {
-      type: 'global'
-    }
+    path: path.resolve(__dirname)
   },
   optimization: {
     minimize: true,
-    concatenateModules: false // Don't concatenate to preserve namespace order
+    concatenateModules: false, // Don't concatenate to preserve namespace order
+    minimizer: [
+      new TerserPlugin({
+        terserOptions: {
+          format: {
+            comments: false
+          },
+          compress: {
+            defaults: true,
+            unused: true
+          },
+          mangle: {
+            reserved: ['window', 'pol', 'CONFIG'] // Don't mangle these names
+          },
+        },
+        extractComments: false
+      })
+    ]
   }
 };

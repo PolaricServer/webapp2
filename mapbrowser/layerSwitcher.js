@@ -20,6 +20,8 @@
 
 
 
+
+var pol = window.pol;
  /**
   * Layer manager/layer switcher.
   */
@@ -156,4 +158,3 @@ pol.core.LayerSwitcher = class extends pol.core.Widget {
 pol.widget.setFactory( "core.LayerSwitcher", {
         create: () => new pol.core.LayerSwitcher()
     });
-

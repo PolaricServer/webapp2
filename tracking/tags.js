@@ -22,6 +22,8 @@
 
 
 
+
+var pol = window.pol;
 /**
  * Reference search (in a popup window).
  */
@@ -143,4 +145,3 @@ pol.tracking.Tags = class extends pol.core.Widget {
 pol.widget.setFactory( "tracking.Tags", {
         create: () => new pol.tracking.Tags()
     });
-
