@@ -3,10 +3,12 @@
  * All rights reserved. See LICENSE for more detail.  
  * */ 
 
-var snow = window.snow | {};
+var snow = window.snow;
+
+
 
 //Defines the main div of drawModule.
-snow.drawPopup = 
+drawPopup = 
 {
     view: function() 
     {
@@ -42,9 +44,13 @@ snow.drawPopup =
         ])
     }
 }
+window.snow.drawPopup = drawPopup;
+
+
+
 
 //Defines user interface for draw funtionality.
-snow.drawTools = 
+drawTools = 
 {
     view: function() 
     {
@@ -176,7 +182,7 @@ snow.drawTools =
                     {
                         "src":"images/drawIcons/draw_128px.png", 
                         "id":"drawToggle", "class":"drawIcon", 
-                        onclick:snow.drawToggle_click
+                        onclick:()=> snow.drawToggle_click()
                     }),
                     m("img", 
                     {
@@ -208,3 +214,6 @@ snow.drawTools =
         ])   
     }
 }
+
+window.snow.drawTools = drawTools;
+

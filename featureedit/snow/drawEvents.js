@@ -3,7 +3,7 @@
  * All rights reserved. See LICENSE for more detail.  
  * */ 
 
-var snow = window.snow | {};
+var snow = window.snow;
 
 //OnClick handler for drawToggle.
 snow.drawToggle_click = function() 
@@ -32,6 +32,7 @@ snow.drawToggle_click = function()
 
 
 
+
 //OnClick handler for modifyToggle.
 snow.modifyToggle_click = function()
 { 
@@ -48,6 +49,7 @@ snow.modifyToggle_click = function()
 
 
 
+
 //OnClick handler for snapToggle.
 snow.snapToggle_click = function()
 {
@@ -60,6 +62,7 @@ snow.snapToggle_click = function()
         snow.toggleSnap = !snow.toggleSnap
     }
 } //End snapToggle_click()
+
 
 
 
@@ -90,6 +93,8 @@ snow.deleteLayer_click = function()
 
 
 
+
+
 snow.deleteFeature = function(f)
 {
     f.remove = true; 
@@ -98,7 +103,9 @@ snow.deleteFeature = function(f)
 
 
 
+
 snow.drawingColor = "selectBlack";
+
 
 
 //OnClick handler for changing drawing color.
@@ -149,6 +156,8 @@ snow.colorOption_click = function(e)
 
 
 
+
+
 /* FIXME: Move to proper source file */
 snow.updateStyle = function() {
     if( snow.selectedFeatures[0] )
@@ -165,8 +174,9 @@ snow.updateStyle = function() {
 
 
 
-
 snow.tooltipElement = null;
+
+
 
 //OnClick handler for printing out leangth/area of feature.
 snow.toggleMetric_click = function()
@@ -183,6 +193,8 @@ snow.toggleMetric_click = function()
     }
     snow.toggleAreal = !snow.toggleAreal
 } //End toggleMetric_click()
+
+
 
 
 
@@ -242,6 +254,7 @@ snow.getAreal = function(f)
 
 
 
+
 //OnClick handler to set draw to Freehand style.
 snow.freehand_click = function()
 {
@@ -256,6 +269,7 @@ snow.freehand_click = function()
 
 
 
+
 //OnClick handler to set draw to Point-to-Point style.
 snow.straight_click = function()
 {
@@ -267,11 +281,16 @@ snow.straight_click = function()
         snow.refreshDraw()
     }
 }//End straight_click()
+
+
  
  
 snow.thinstyle = false;  
 snow.dashedstyle = false; 
 snow.filledstyle = true;
+
+
+
 
 snow.thinstyle_click = function()
 {
@@ -287,6 +306,9 @@ snow.thinstyle_click = function()
     snow.updateStyle();
     snow.refreshDraw();
 }
+
+
+
 
         
 snow.dashedstyle_click = function()
@@ -306,6 +328,8 @@ snow.dashedstyle_click = function()
 
 
 
+
+
 snow.filledstyle_click = function()
 {
     if (snow.filledstyle == true) {
@@ -320,11 +344,15 @@ snow.filledstyle_click = function()
     snow.updateStyle();
     snow.refreshDraw();
 }
- 
+
+
+
  
  
 //Boolean to check if clicked location contains a feature.
 snow.featureCheck = false //True = feature on pixel/location.
+
+
 //Function for manually selecting a feature.
 //Created cause of problems with ol.Select being global and causing unintended issues.
 snow.manualSelect = function(pixel) 
@@ -355,6 +383,8 @@ snow.manualSelect = function(pixel)
 
 
 
+
+
 snow.deselectAll = function() 
 {
     //Loops throught all selected features and returns their original style.
@@ -370,6 +400,7 @@ snow.deselectAll = function()
         snow.removeAllMeasureTooltip()
     snow.selectedFeatures = []
 }
+
 
 
 
@@ -415,6 +446,8 @@ snow.selectMarkedArea = function(f)
 
 
 
+
+
 //Function for selecting icons in icon tab. 
 snow.selectIcons = function(f)
 {
@@ -427,6 +460,7 @@ snow.selectIcons = function(f)
     else 
         snow.droppingIcon = false
 } //End selectIcons()
+
 
 
 

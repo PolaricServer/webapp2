@@ -24,7 +24,28 @@ const jsonFormat = ol.format.GeoJSON
 const gpxFormat = ol.format.GPX
 
 
-var snow = window.snow | {};
+var snow = window.snow || {};
+window.snow = snow;
+
+window.snow.Draw = Draw; 
+window.snow.Modify = Modify;
+window.snow.Snap = Snap;
+window.snow.DrawSelect = DrawSelect; 
+window.snow.getActive = getActive;
+window.snow.VectorLayer = VectorLayer;
+window.snow.VectorSource = VectorSource; 
+window.snow.CircleStyle = CircleStyle;
+window.snow.Fill = Fill;
+window.snow.Stroke = Stroke;
+window.snow.Style = Style; 
+window.snow.Icon = Icon; 
+window.snow.FromLonLat = FromLonLat; 
+window.snow.Sphere = Sphere; 
+window.snow.PolygonGeom = PolygonGeom;
+window.snow.Point = Point; 
+window.snow.Feature = Feature; 
+
+
 
 
 //Set the desired colors underneat with Hex Variables.
@@ -180,4 +201,5 @@ snow.deactivate = function() {
     snow.drawMap.un('click', snow.handleClick)
 }
 
+window.snow = snow;
 

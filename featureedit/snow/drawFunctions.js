@@ -3,7 +3,7 @@
  * All rights reserved. See LICENSE for more detail.  
  * */ 
 
-var snow = window.snow | {};
+var snow = window.snow;
 
 snow.drawCB = []
 
@@ -17,8 +17,8 @@ snow.addDrawCB = function(draw) {
 
 //Function to add drawing functionality to map.
 snow.addDraw = function()
-{
-    snow.draw = new Draw(
+{ 
+    snow.draw = new window.snow.Draw (
     {
         source: snow.drawSource,
         type: snow.drawType,
@@ -43,11 +43,13 @@ snow.addDraw = function()
 } //End addDraw()
 
 
+
+
 //Function to add modify functionality to map.
 snow.addModify = function()
 {
     //Defines modify interractions.
-    snow.modify = new Modify({source: snow.drawSource})
+    snow.modify = new snow.Modify({source: snow.drawSource})
     snow.drawMap.addInteraction(snow.modify)
     $('#modifyToggle').addClass('selectedFunction')
 } //End addModify()
@@ -56,7 +58,7 @@ snow.addModify = function()
 //Function to snap on geometry types.
 snow.addSnap = function()
 {
-    snow.snap = new Snap({source: snow.drawSource})
+    snow.snap = new snow.Snap({source: snow.drawSource})
     snow.drawMap.addInteraction(snow.snap)
     $('#snapToggle').addClass('selectedFunction')
 } //End addSnap()
@@ -95,3 +97,7 @@ snow.refreshDraw = function()
         snow.addDraw()
     }
 } //End refreshDraw()
+
+
+
+

@@ -3,7 +3,7 @@
  * All rights reserved. See LICENSE for more detail.  
  * */ 
 
-var snow = window.snow | {};
+var snow = window.snow;
 
 snow.measureTooltipElement = null;
 snow.measureTooltip = null;
@@ -11,7 +11,7 @@ snow.measureTooltip = null;
 
 
 //Adds new measure overlays to the map.
-snow.addMeasureOverlay = function(f=null)
+addMeasureOverlay = function(f=null)
 {
     let tooltipCoord
     //Adds a tooltip to a feature.
@@ -50,6 +50,8 @@ snow.addMeasureOverlay = function(f=null)
         })
     }
 } //End addMeasureOverlay()
+window.snow.addMeasureOverlay = addMeasureOverlay;
+
 
 
 snow.tooltipObjects = []

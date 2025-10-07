@@ -3,7 +3,7 @@
  * All rights reserved. See LICENSE for more detail.  
  * */ 
 
-var snow = window.snow | {};
+var snow = window.snow;
 
 
 
@@ -27,6 +27,8 @@ snow.setStyleColor = function(colorVal)
 }
 
 
+
+
 // Set the current style with dashed line
 snow.setStyleDashed = function(on)
 {
@@ -40,6 +42,8 @@ snow.setStyleDashed = function(on)
 }
 
 
+
+
 // Set the current style with thinner line
 snow.setStyleThin = function(on)
 {
@@ -51,6 +55,7 @@ snow.setStyleThin = function(on)
     st.getStroke().setWidth((on? 1.1 : 2.1));
     snow.currentStyle = st;
 }
+
 
  
 
@@ -69,6 +74,7 @@ snow.setStyleFilled = function(on)
 }
 
 
+
    
 //Returns a style with a certain color.
 snow.getStyle = function(colorVal)
@@ -80,7 +86,7 @@ snow.getStyle = function(colorVal)
             color: colorVal,
             width: 2.1
         }),
-        fill: new Fill(
+        fill: new snow.Fill(
             { color: colorVal + snow.hexOpacity }),
             
         text: new ol.style.Text(
@@ -92,6 +98,9 @@ snow.getStyle = function(colorVal)
     })
     return st
 }
+
+
+
 
 
 //Initial color settings.
@@ -114,6 +123,8 @@ snow.selectStyle = new ol.style.Style (
 })
 
 
+
+
 //Toggles orange border on deleteLayer when clicking and removes it on mouseleave.
 snow.deleteHighlightHandler = function() 
 {
@@ -122,3 +133,6 @@ snow.deleteHighlightHandler = function()
     { $('#deleteLayer').removeClass("selectedFunction") }).mouseleave( () => 
     { $('#deleteLayer').removeClass("selectedFunction") })
 }
+
+
+

@@ -22,8 +22,9 @@
 
 var pol = window.pol;
 window.pol.features = window.pol.features || {};
+var snow = window.snow || {}
 
-
+console.log("SNOW", snow);
 
 pol.features.init = function(map) {
     snow.init(map);
@@ -68,7 +69,7 @@ pol.features.Edit = class extends pol.core.Widget {
         };
 
 
-        snow.deleteHighlightHandler()
+        snow.deleteHighlightHandler();
 
         /*
          * Handlers to be called when features are added, changed or removed
