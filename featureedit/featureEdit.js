@@ -40,7 +40,6 @@ pol.features.Edit = class extends pol.core.Widget {
         const t = this;
         this.tool = snow.drawTools;
         this.icontool = snow.iconTools;
-        let timer = null;
 
         this.widget = {
             view: function() {
@@ -343,7 +342,7 @@ pol.features.Edit = class extends pol.core.Widget {
             st.setImage(snow.getIconStyle(obj.image));
         }
         else {
-            st.setStroke(new ol.style.Stroke(obj.stroke)),
+            st.setStroke(new ol.style.Stroke(obj.stroke));
             st.setFill(obj.fill==null ? null : new ol.style.Fill(obj.fill));
         }
         return st;
