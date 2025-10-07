@@ -93,7 +93,9 @@ snow.getStyle = function(colorVal)
 
 
 //Initial color settings.
-snow.setStyleColor(snow.hexColor[0])
+if (snow.hexColor && snow.hexColor[0]) {
+    snow.setStyleColor(snow.hexColor[0])
+}
 
 
 //Style for selecting features.
