@@ -101,9 +101,11 @@ snow.hexColor = [
     {fill:"#a300a3", stroke: null} 
 ];
 
-for (let i=0; i<7; i++) {
-    if (snow.testHex(snow.color[i]))
-        snow.hexColor[i] = snow.color[i];
+if (snow.color) {
+    for (let i=0; i<7; i++) {
+        if (snow.testHex(snow.color[i]))
+            snow.hexColor[i] = snow.color[i];
+    }
 }
 
 snow.hexSelectStroke = "#0569ff"
