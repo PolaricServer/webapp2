@@ -3,7 +3,9 @@
  * All rights reserved. See LICENSE for more detail.  
  * */ 
 
-var snow = window.snow;
+var snow = window.snow | {};
+
+
 
 //Sets the current style to the selected color.
 snow.setStyleColor = function(colorVal)
@@ -50,7 +52,7 @@ snow.setStyleThin = function(on)
     snow.currentStyle = st;
 }
 
-
+ 
 
 snow.setStyleFilled = function(on)
 {
@@ -61,7 +63,7 @@ snow.setStyleFilled = function(on)
         st = st.clone();
 
     st.setFill(
-        (on? new Fill({ color: st.getStroke().getColor() + snow.hexOpacity }) : null)
+        (on? new ol.style.Fill({ color: st.getStroke().getColor() + snow.hexOpacity }) : null)
     )
     snow.currentStyle = st;
 }
@@ -71,9 +73,9 @@ snow.setStyleFilled = function(on)
 //Returns a style with a certain color.
 snow.getStyle = function(colorVal)
 {
-    let st = new Style(
+    let st = new ol.style.Style(
     {
-        stroke: new Stroke(
+        stroke: new ol.style.Stroke(
         {
             color: colorVal,
             width: 2.1
@@ -82,8 +84,8 @@ snow.getStyle = function(colorVal)
             { color: colorVal + snow.hexOpacity }),
             
         text: new ol.style.Text(
-            { fill: new Fill({color: colorVal}),
-              stroke: new Stroke( {width: 2.5, color: "#fff"} ), 
+            { fill: new ol.style.Fill({color: colorVal}),
+              stroke: new ol.style.Stroke( {width: 2.5, color: "#fff"} ), 
               scale: 1.0
             }
         )
@@ -99,15 +101,15 @@ if (snow.hexColor && snow.hexColor[0]) {
 
 
 //Style for selecting features.
-snow.selectStyle = new Style(
+snow.selectStyle = new ol.style.Style (
 {
-    stroke: new Stroke(
+    stroke: new ol.style.Stroke(
     {
         color: snow.hexSelectStroke,
         width: '3.5',
         lineDash: [4,5]
     }),
-    fill: new Fill(
+    fill: new ol.style.Fill(
         { color: snow.hexSelectFill + snow.hexOpacity })
 })
 

@@ -24,7 +24,7 @@ const jsonFormat = ol.format.GeoJSON
 const gpxFormat = ol.format.GPX
 
 
-var snow = window.snow;
+var snow = window.snow | {};
 
 
 //Set the desired colors underneat with Hex Variables.

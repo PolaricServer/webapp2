@@ -67,7 +67,6 @@ module.exports = {
       './tracking/photodescr.js'
     ],
     'featureedit-min': [
-      './featureedit/snow/drawConfig.js',
       './featureedit/snow/drawGlobals.js',
       './featureedit/snow/undoFunctions.js',
       './featureedit/snow/drawStyle.js',
