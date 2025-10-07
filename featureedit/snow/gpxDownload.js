@@ -3,6 +3,8 @@
  * All rights reserved. See LICENSE for more detail.  
  * */ 
 
+var snow = window.snow;
+
 //Makes download prompt for the user.
 snow.download = function(filename, text) 
 {

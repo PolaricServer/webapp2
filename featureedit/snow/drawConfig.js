@@ -1,5 +1,5 @@
-
-var snow = snow || {};
+window.snow = window.snow || {};
+var snow = window.snow;
 
 
 //Set the desired colors underneat with Hex Variables.

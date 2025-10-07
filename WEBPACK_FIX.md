@@ -82,6 +82,12 @@ Added `var pol = window.pol;` declaration to:
 - All files in `featureedit/`
 - All files in `psadmin/`
 
+### Additional Fix: snow namespace (featureedit/snow subdirectory)
+The `snow` global variable in the `featureedit/snow/` subdirectory was fixed using the same pattern:
+- `featureedit/snow/drawConfig.js` - Changed to use `window.snow = window.snow || {}; var snow = window.snow;`
+- All other files in `featureedit/snow/` - Added `var snow = window.snow;`
+- `webpack.config.js` - Added 'snow' to reserved names: `reserved: ['window', 'pol', 'CONFIG', 'snow']`
+
 ## Verification
 
 After the fix, the global variables are properly accessible:
@@ -92,6 +98,8 @@ console.log(typeof pol);        // "object"
 console.log(typeof CONFIG);      // "object"
 console.log(pol.core);          // Object with pol.core namespace
 console.log(CONFIG.get);        // Function
+console.log(typeof snow);       // "object" (snow namespace)
+console.log(snow.drawMap);      // Object or null
 ```
 
 ## Benefits
