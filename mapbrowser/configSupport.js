@@ -576,3 +576,60 @@ function POPUP(id,pos,f) {pol.widget.start(id, pos, false, false, f); }
 function getWIDGET(id) { return pol.widget.get(id); }
 
 function GETJSON(x) {return x;}
+
+
+/*
+ * Export all configuration functions to window object so they are available
+ * globally for use in config.js (which is loaded after the webpack bundle)
+ */
+window.WELCOME = WELCOME;
+window.LOGO = LOGO;
+window.SECURE = SECURE;
+window.SERVER = SERVER;
+window.PORT = PORT;
+window.MAX_CLIENTS = MAX_CLIENTS;
+window.ALT_SECURE = ALT_SECURE;
+window.ALT_SERVER = ALT_SERVER;
+window.ALT_PORT = ALT_PORT;
+window.WSPREFIX = WSPREFIX;
+window.AJAXPREFIX = AJAXPREFIX;
+window.ICONPATH = ICONPATH;
+window.DEFAULT_ICON = DEFAULT_ICON;
+window.ll2proj = ll2proj;
+window.proj2ll = proj2ll;
+window.DEFAULT_FILTER = DEFAULT_FILTER;
+window.TRUE = TRUE;
+window.ADD_PROJECTION = ADD_PROJECTION;
+window.PROJECTION = PROJECTION;
+window.SUPPORTED_PROJ = SUPPORTED_PROJ;
+window.CENTER = CENTER;
+window.SCALE = SCALE;
+window.TILEGRID_WMTS = TILEGRID_WMTS;
+window.createLayer_MapCache = createLayer_MapCache;
+window.LAYERS = LAYERS;
+window.VIEWS = VIEWS;
+window.POLYGON = POLYGON;
+window.IN_EXTENT = IN_EXTENT;
+window.SELECTED_BASE = SELECTED_BASE;
+window.IS_PROJ = IS_PROJ;
+window.RESOLUTION_LT = RESOLUTION_LT;
+window.RESOLUTION_GT = RESOLUTION_GT;
+window.SCALE_LT = SCALE_LT;
+window.SCALE_GT = SCALE_GT;
+window.LOGIN = LOGIN;
+window.AND = AND;
+window.OR = OR;
+window.NOT = NOT;
+window.createLayer_GPX = createLayer_GPX;
+window.createLayer_WFS = createLayer_WFS;
+window.FEATUREINFO = FEATUREINFO;
+window.STYLES = STYLES;
+window.GETSTYLE = GETSTYLE;
+window.SETLABEL = SETLABEL;
+window.TESTRES = TESTRES;
+window.ICON = ICON;
+window.CIRCLE = CIRCLE;
+window.WIDGET = WIDGET;
+window.POPUP = POPUP;
+window.getWIDGET = getWIDGET;
+window.GETJSON = GETJSON;

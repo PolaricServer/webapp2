@@ -1,0 +1,62 @@
+<!doctype html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Test Config Functions</title>
+</head>
+<body>
+    <h1>Testing Global Config Functions</h1>
+    <div id="output"></div>
+    
+    <!-- Load required libraries -->
+    <script src="lib/proj4.js"></script>
+    <script src="lib/ol.js"></script>
+    <script src="/javascript/jquery/jquery.min.js"></script>
+    <script src="lib/mithril.min.js"></script>
+    <script src="lib/mithril-stream.js"></script>
+    
+    <!-- Load the minified bundle -->
+    <script src="mapbrowser-min.js"></script>
+    
+    <script>
+        // Test if functions are available globally
+        const output = document.getElementById('output');
+        const functions = [
+            'WELCOME', 'LOGO', 'SERVER', 'PORT', 'WSPREFIX', 'AJAXPREFIX',
+            'ICONPATH', 'DEFAULT_ICON', 'PROJECTION', 'CENTER', 'SCALE',
+            'ADD_PROJECTION', 'LAYERS', 'POLYGON', 'IN_EXTENT', 'AND', 'OR', 'NOT',
+            'STYLES', 'GETSTYLE', 'CIRCLE', 'ICON', 'FEATUREINFO',
+            'createLayer_MapCache', 'createLayer_WFS', 'createLayer_GPX',
+            'VIEWS', 'TRUE', 'CONFIG'
+        ];
+        
+        let results = '<h2>Test Results:</h2><ul>';
+        let allPassed = true;
+        
+        functions.forEach(func => {
+            const exists = typeof window[func] !== 'undefined';
+            const status = exists ? '✓ PASS' : '✗ FAIL';
+            results += `<li>${status}: ${func} is ${exists ? 'available' : 'NOT available'}</li>`;
+            if (!exists) allPassed = false;
+        });
+        
+        results += '</ul>';
+        results += `<h2>Overall: ${allPassed ? '✓ ALL TESTS PASSED' : '✗ SOME TESTS FAILED'}</h2>`;
+        
+        output.innerHTML = results;
+        
+        // Test that we can actually call one of the functions
+        try {
+            // These should not throw errors
+            if (typeof WELCOME === 'function') {
+                console.log('✓ WELCOME is callable');
+            }
+            if (typeof CONFIG === 'object') {
+                console.log('✓ CONFIG is an object');
+            }
+        } catch (e) {
+            output.innerHTML += `<p style="color: red;">Error calling functions: ${e.message}</p>`;
+        }
+    </script>
+</body>
+</html>
