@@ -21,6 +21,7 @@
 
 
 var pol = window.pol;
+
 /**
  * Format latlong position as degrees+minutes.
  * @param {ol.Coordinate} ref - Coordinate to be formatted.
@@ -84,7 +85,7 @@ pol.mapref.formatMaidenhead = function(ref)
  */
 pol.mapref.formatUTM = function(ref)
 {
-   const llref = new LatLng(ref[1], ref[0]);
+   const llref = new pol.core.LatLng(ref[1], ref[0]);
    const uref = llref.toUTMRef();
    const sref = ""+uref;
    return sref.substring(0,5)+'<span class="kartref">' + sref.substring(5,8) + '</span>'+
@@ -95,7 +96,7 @@ pol.mapref.formatUTM = function(ref)
 
 pol.mapref.toUTM = function(ref)
 {
-    const llref = new LatLng(ref[1], ref[0]);
+    const llref = new pol.core.LatLng(ref[1], ref[0]);
     const uref = llref.toUTMRef();
     const sref = ""+uref;
     return {
@@ -112,6 +113,8 @@ pol.mapref.mgrs.latBands = 'CDEFGHJKLMNPQRSTUVWXX';
 pol.mapref.mgrs.e100kLetters = [ 'ABCDEFGH', 'JKLMNPQR', 'STUVWXYZ' ];
 pol.mapref.mgrs.n100kLetters = [ 'ABCDEFGHJKLMNPQRSTUV', 'FGHJKLMNPQRSTUVABCDE' ];
 
+
+
 /**
  * Get MGRS prefix, i.e. zone+band+100km grid.
  * @param {ol.Coordinate} - Long Lat coordinate.
@@ -121,7 +124,7 @@ pol.mapref.mgrs.n100kLetters = [ 'ABCDEFGHJKLMNPQRSTUV', 'FGHJKLMNPQRSTUVABCDE' 
 
 pol.mapref.MGRSprefix = function(x)
 {
-    const ref = new LatLng(x[1], x[0]);
+    const ref = new pol.core.LatLng(x[1], x[0]);
     const uref = ref.toUTMRef();
 
     // MGRS zone is same as UTM zone
@@ -193,11 +196,11 @@ pol.mapref.parseUTM = function(ax, ay, nz, zz)
         return [0,0];
     }
 
-    const uref = new UTMRef(x, y, nz, z);
+    const uref = new pol.core.UTMRef(x, y, nz, z);
     const ref = uref.toLatLng();
 
     /* Is this check too strict? */
-    const lz = getUTMLatitudeZoneLetter(ref.lat)
+    const lz = pol.core.getUTMLatitudeZoneLetter(ref.lat)
     if (nz != lz) {
         console.warn("Latitude '"+lz+"' is outside of given lat zone: '"+nz+"'");
         return [0,0];
@@ -247,14 +250,14 @@ pol.mapref.parseMGRS = function(browser, prefix, ax, ay)
 
         /* northing of bottom of band, extended to include entirety of bottommost 100km square
          * (100km square boundaries are aligned with 100km UTM northing intervals) */
-       const nBand = Math.floor(new LatLng(latBand, 0).toUTMRef().northing/100e3)*100e3;
+       const nBand = Math.floor(new pol.core.LatLng(latBand, 0).toUTMRef().northing/100e3)*100e3;
 
         /* 100km grid square row letters repeat every 2,000km north; add enough 2,000km blocks to get
          * into required band */
        let n2M = 0; // northing of 2,000km block
        while (n2M + n100kNum + y < nBand)
            n2M += 2000e3;
-       llref = new UTMRef(e100kNum + x * 100,  n2M + n100kNum + y * 100, 'X', zone).toLatLng();
+       llref = new pol.core.UTMRef(e100kNum + x * 100,  n2M + n100kNum + y * 100, 'X', zone).toLatLng();
     }
     else {
        console.warn("invalid MGRS prefix. Using center of map as reference");
@@ -266,7 +269,7 @@ pol.mapref.parseMGRS = function(browser, prefix, ax, ay)
        /* Replace part of the UTM reference with arguments */
        const bx = Math.floor(cref.easting  / 100000) * 100000;
        const by = Math.floor(cref.northing / 100000) * 100000;
-       llref = new UTMRef(bx + x * 100,  by + y * 100, cref.latZone, cref.lngZone).toLatLng();
+       llref = new pol.core.UTMRef(bx + x * 100,  by + y * 100, cref.latZone, cref.lngZone).toLatLng();
     }
     return [llref.lng, llref.lat];
  }

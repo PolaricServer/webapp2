@@ -1,11 +1,20 @@
-//--------------------------------------------------------------------------// JScoord
-// jscoord.js//// (c) 2005 Jonathan Stott//// Created on 21-Dec-2005//
+//--------------------------------------------------------------------------
+// JScoord
+// jscoord.js
+//
+// (c) 2005 Jonathan Stott
+//
+// Created on 21-Dec-2005
+//
 // 1.1.1 - 16 Jan 2006
 //  - Fixed radix bug in getOSRefFromSixFigureReference that would return
 //    the incorrect reference if either the northing or the easting started
 //    with a leading zero.
 // 1.1 - 23 Dec 2005
-//  - Added getOSRefFromSixFigureReference function.// 1.0 - 11 Aug 2005//  - Initial version created from PHPcoord v1.1//--------------------------------------------------------------------------
+//  - Added getOSRefFromSixFigureReference function.
+// 1.0 - 11 Aug 2005
+//  - Initial version created from PHPcoord v1.1
+//--------------------------------------------------------------------------
 
 
 // ================================================================== LatLng
@@ -28,6 +37,8 @@ function LatLng(lat, lng) {
 function LatLngToString() {
   return "(" + Math.round(this.lat*100)/100 + ", " + Math.round(this.lng*100)/100 + ")";
 }
+
+
 
 
 // =================================================================== OSRef
@@ -717,3 +728,10 @@ function getUTMLatitudeZoneLetter(latitude) {
   else if ((-72 > latitude) && (latitude >= -80)) return "C";
   else return 'Z';
 }
+
+
+
+pol.core.getUTMLatitudeZoneLetter = getUTMLatitudeZoneLetter;
+pol.core.LatLng = LatLng;
+pol.core.UTMRef = UTMRef; 
+window.chr = chr;

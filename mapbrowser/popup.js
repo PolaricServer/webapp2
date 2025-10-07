@@ -21,7 +21,7 @@
 
 
 var pol = window.pol;
-var isMobile = false;
+pol.core.isMobile = false;
 
 
 /**

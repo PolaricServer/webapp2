@@ -8,8 +8,8 @@ pol.core.Time = class {
         var t = this;
 
         t.handler = handler;
-        t.tdate = formatDate(new Date());
-        t.ttime = m.stream( formatTime(new Date()) );
+        t.tdate = pol.core.Time.formatDate(new Date());
+        t.ttime = m.stream( pol.core.Time.formatTime(new Date()) );
     }
 
 

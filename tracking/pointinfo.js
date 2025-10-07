@@ -125,7 +125,7 @@ pol.tracking.PointInfo = class extends pol.core.Widget {
                             m("span.leftlab", "Description: "), x.descr)) : null),
                     m(_posinfo),
                     m("div.field",
-                        m("span.leftlab", "Last reported: "), formatDTG(x.updated)),
+                        m("span.leftlab", "Last reported: "), pol.ui.formatDTG(x.updated)),
 
                 ]
             }

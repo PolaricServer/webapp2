@@ -116,10 +116,10 @@ pol.tracking.BikeWheel = class extends pol.core.Widget {
         setTimeout(()=>t.clear(), 500);
 
         //Default source for drawing.
-        t.src = new VectorSource()
+        t.src = new ol.source.Vector()
 
 
-        const layer = new VectorLayer(
+        const layer = new ol.layer.Vector(
             { name: "BIKEWHEEL", source: t.src }
         );
 

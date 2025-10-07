@@ -510,7 +510,7 @@ pol.core.MapBrowser = class {
      */
     getCenterUTM() {
         const center = this.getCenter();
-        const cref = new LatLng(center[1], center[0]);
+        const cref = new pol.core.LatLng(center[1], center[0]);
         return cref.toUTMRef();
     }
 

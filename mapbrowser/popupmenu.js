@@ -167,7 +167,7 @@ pol.core.PopupMenu = class {
         const t = this;
         const elem = document.createElement('div');
         elem.origCls = '';
-        if (isMobile)
+        if (pol.core.isMobile)
             // Tap listener on mobile devices.. (?)
             elem.addEventListener('tap', ()=> {
                 _executeItem(elem, actn, arg);  e.cancelBubble=true; }, false);

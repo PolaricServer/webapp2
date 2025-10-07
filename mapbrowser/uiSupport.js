@@ -82,9 +82,9 @@ pol.ui.apply = function(f, id) {
 
 
 /* Some simple DOM elements */
-const br = m("br");
-const hr = m("hr");
-const nbsp = m.trust("&nbsp;");
+window.br = m("br");
+window.hr = m("hr");
+window.nbsp = m.trust("&nbsp;");
 
 
 
@@ -134,7 +134,7 @@ const textInput = {
         });
    }
 }
-
+window.textInput = textInput; // FIXME
 
 
 
@@ -155,6 +155,7 @@ const checkBox = {
     }
 }
 
+window.checkBox = checkBox; // FIXME
 
 
 /**
@@ -170,6 +171,8 @@ const select = {
             x => m("option", {value: x.val, style: x.style}, x.label) ));
     }
 }
+
+window.select = select; // FIXME; 
 
 
 
@@ -222,6 +225,11 @@ const iconPick = {
 
 }
 
+window.iconPick = iconPick; // FIXME
+
+
+
+
 
 const Datepick = {
     oncreate: function(vn) {
@@ -250,6 +258,8 @@ const Datepick = {
   }
 }
 
+window.Datepick = Datepick; // FIXME
+
 
 
 /*
@@ -267,6 +277,8 @@ const dateTime = {
             m("img", {title: "Set time to now", src:"images/time.png", onclick: ()=> vn.attrs.tval.setNow()}));
     }
 }
+window.dateTime = dateTime; // FIXME
+
 
 
 const timeButt = {
@@ -293,7 +305,7 @@ const timeButt = {
         );
     }
 }
-
+window.timeButt = timeButt; // FIXME
 
 
 /**
@@ -339,6 +351,7 @@ const mgrsInput = class {
     }
  }
 
+ window.mgrsInput = mgrsInput; // FIXME
 
 
 /**
@@ -403,6 +416,9 @@ const utmInput = class {
             m(textInput, {id:"utmy", size: "7", maxLength: "7", value: t.lat, regex:/^[0-9]{7}$/}), nbsp)
     }
  }
+ window.utmInput = utmInput; // FIXME
+ 
+ 
 
 
  /**
@@ -481,6 +497,9 @@ const latLngInput = class {
     }
 }
 
+window.latLngInput = latLngInput; // FIXME
+
+
 
 
 const latLngInputDec = class {
@@ -511,6 +530,8 @@ const latLngInputDec = class {
     }
 }
 
+window.latLngInputDec = latLngInputDec; // FIXME
+
 
 
 
@@ -526,6 +547,7 @@ const removeEdit = {
     }
 }
 
+window.removeEdit = removeEdit; // FIXME
 
 
 
@@ -565,11 +587,12 @@ function dragdrop(element, onchange) {
 	}
 }
 
+window.dragdrop = dragdrop; // FIXME
 
 
 
 // FIXME: Move to a another source file?
-function formatDTG(date) {
+pol.ui.formatDTG = function(date) {
     const mths = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul',
                   'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
 
