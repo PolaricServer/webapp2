@@ -18,7 +18,7 @@ snow.setStyleColor = function(colorVal)
     if (colorVal.stroke != null) 
         st.getStroke().setColor(colorVal.stroke);
     if (st.getFill())
-        st.getFill().setColor(colorVal.fill + hexOpacity );
+        st.getFill().setColor(colorVal.fill + snow.hexOpacity );
     st.getText().getFill().setColor(colorVal.fill)
     ;
     snow.currentStyle = st;
@@ -61,7 +61,7 @@ snow.setStyleFilled = function(on)
         st = st.clone();
 
     st.setFill(
-        (on? new Fill({ color: st.getStroke().getColor() + hexOpacity }) : null)
+        (on? new Fill({ color: st.getStroke().getColor() + snow.hexOpacity }) : null)
     )
     snow.currentStyle = st;
 }
@@ -79,7 +79,7 @@ snow.getStyle = function(colorVal)
             width: 2.1
         }),
         fill: new Fill(
-            { color: colorVal + hexOpacity }),
+            { color: colorVal + snow.hexOpacity }),
             
         text: new ol.style.Text(
             { fill: new Fill({color: colorVal}),
@@ -93,7 +93,7 @@ snow.getStyle = function(colorVal)
 
 
 //Initial color settings.
-snow.setStyleColor(hexColor[0])
+snow.setStyleColor(snow.hexColor[0])
 
 
 //Style for selecting features.
@@ -101,12 +101,12 @@ snow.selectStyle = new Style(
 {
     stroke: new Stroke(
     {
-        color: hexSelectStroke,
+        color: snow.hexSelectStroke,
         width: '3.5',
         lineDash: [4,5]
     }),
     fill: new Fill(
-        { color: hexSelectFill + hexOpacity })
+        { color: snow.hexSelectFill + snow.hexOpacity })
 })
 
 
