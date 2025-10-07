@@ -111,7 +111,7 @@ module.exports = {
             unused: true
           },
           mangle: {
-            reserved: ['window', 'pol', 'CONFIG'] // Don't mangle these names
+            reserved: ['window', 'pol', 'CONFIG', 'snow'] // Don't mangle these names
           },
         },
         extractComments: false

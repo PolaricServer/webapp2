@@ -3,6 +3,8 @@
  * All rights reserved. See LICENSE for more detail.  
  * */ 
 
+var snow = window.snow;
+
 
 // FIXME: This could easily be converted to a class
 

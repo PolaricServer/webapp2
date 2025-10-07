@@ -3,6 +3,8 @@
  * All rights reserved. See LICENSE for more detail.
  * */
 
+var snow = window.snow;
+
 /**
  * Icons downloaded from: https://mapicons.mapsmarker.com
  * Icons licenced under Creative Commons 3.0

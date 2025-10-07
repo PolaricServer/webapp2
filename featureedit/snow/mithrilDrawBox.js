@@ -3,6 +3,8 @@
  * All rights reserved. See LICENSE for more detail.  
  * */ 
 
+var snow = window.snow;
+
 //Defines the main div of drawModule.
 snow.drawPopup = 
 {

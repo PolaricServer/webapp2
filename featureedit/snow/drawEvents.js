@@ -3,6 +3,8 @@
  * All rights reserved. See LICENSE for more detail.  
  * */ 
 
+var snow = window.snow;
+
 //OnClick handler for drawToggle.
 snow.drawToggle_click = function() 
 { 
