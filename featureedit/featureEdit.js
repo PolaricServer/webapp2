@@ -41,7 +41,6 @@ pol.features.Edit = class extends pol.core.Widget {
         const t = this;
         this.tool = snow.drawTools;
         this.icontool = snow.iconTools;
-        let timer = null;
 
         this.widget = {
             view: function() {
@@ -192,8 +191,14 @@ pol.features.Edit = class extends pol.core.Widget {
                         let f = this.obj2feature(obj.data);
                         f.index = obj.id;
                         if (f.layer && f.layer != "DRAFT") {
-                            getWIDGET("layers.List").getLayer(f.layer).getSource().addFeature(f);
-                            f.layer = NaN;
+                            const layerList = getWIDGET("layers.List");
+                            const layer = layerList ? layerList.getLayer(f.layer) : null;
+                            if (layer) {
+                                layer.getSource().addFeature(f);
+                                f.layer = NaN;
+                            }
+                            else
+                                snow.drawSource.addFeature(f);
                         }
                         else
                             snow.drawSource.addFeature(f);
@@ -221,7 +226,10 @@ pol.features.Edit = class extends pol.core.Widget {
         if (srv != null && srv.isAuth() && srv.hasDb) {
             const tag = "feature"+ (lname ? "."+lname : "");
 
-            const lr = getWIDGET("layers.List").getLayer(lname);
+            const layerList = getWIDGET("layers.List");
+            if (!layerList)
+                return;
+            const lr = layerList.getLayer(lname);
             if (lr==null)
                 return;
             const ftrs = lr.getSource().getFeatures();
@@ -344,7 +352,7 @@ pol.features.Edit = class extends pol.core.Widget {
             st.setImage(snow.getIconStyle(obj.image));
         }
         else {
-            st.setStroke(new ol.style.Stroke(obj.stroke)),
+            st.setStroke(new ol.style.Stroke(obj.stroke));
             st.setFill(obj.fill==null ? null : new ol.style.Fill(obj.fill));
         }
         return st;
