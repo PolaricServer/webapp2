@@ -11,9 +11,8 @@ var snow = window.snow;
 //initiates the array with all existing features
 snow.undoArr = null;  // Will be lazily initialized
 snow.undoCount = 0
-//sets the maximum ammount of changes kept
+//sets the maximum amount of changes kept
 snow.undoMaxCount = 20
-snow.undoMaxArr = snow.undoMaxCount -1
 
 // Lazy initialization function for undoArr
 snow.initUndo = function() {
@@ -63,7 +62,7 @@ snow.undoChange = function ()
 snow.redoChange = function()
 {
     snow.initUndo();
-    if ( snow.undoCount <= snow.undoMaxArr && snow.undoCount+1 < snow.undoArr.length )
+    if ( snow.undoCount < snow.undoMaxCount - 1 && snow.undoCount+1 < snow.undoArr.length )
     { 
         snow.undoCount++
     }
