@@ -451,8 +451,6 @@ function STYLES( st ) {
 	         x.text.stroke = new ol.style.Stroke(x.text.stroke);
 	      x.text = new ol.style.Text(x.text);
        }
-       if (x.image)
-	      x.image = x.image;
 
        CONFIG.styles[ident] = new ol.style.Style(x);
        CONFIG.styles[ident].tag = x.tag;
@@ -472,12 +470,7 @@ function getStyle(id) {
 
 
 function GETSTYLE(id) {
-  let gotit = false;
-
   return function(f,r) {
-     if (gotit==false) {
-        gotit = true;
-     }
      return getStyle(id);
   }
 }
