@@ -633,3 +633,4 @@ window.WIDGET = WIDGET;
 window.POPUP = POPUP;
 window.getWIDGET = getWIDGET;
 window.GETJSON = GETJSON;
+window.getStyle = getStyle;

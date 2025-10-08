@@ -23,7 +23,7 @@ snow.iconStyle = null
 snow.thisID = null
 
 snow.getIconStyle = function(imgsrc) {
-    return new Icon( {
+    return new ol.style.Icon( {
         anchor: [0.5, 38],
         anchorXUnits: 'fraction',
         anchorYUnits: 'pixels',
@@ -36,7 +36,6 @@ snow.getIconStyle = function(imgsrc) {
 //OnClick hanlder for icon select.
 snow.markerIcons_click = function(e)
 {
-  console.log("SNOW.DRAW", snow.draw);
   snow.drawMap.removeInteraction(snow.draw)
   $('#'+snow.thisID).removeClass('selectedIcon')
   console.log("snow.thisID", snow.thisID, "e.target.id", e.target.id);
@@ -53,12 +52,12 @@ snow.markerIcons_click = function(e)
   
   
   //Generates a style with the selected icon to be placed.
-  let iconStyle = new Style( {
+  let iconStyle = new ol.style.Style( {
       image: snow.getIconStyle(imgsrc)
   });
  
   //Enables Point drawing.
-  snow.draw = new Draw (
+  snow.draw = new ol.interaction.Draw (
   {
     source: snow.drawSource,
     type: 'Point',

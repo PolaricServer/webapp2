@@ -83,7 +83,7 @@ pol.core.AreaList = class extends pol.core.Widget {
 
         function sharing(i) {
             const obj = t.myAreas[i];
-            const w = getShareWidget();
+            const w = pol.getShareWidget();
             w.setIdent(obj.index, obj.name, "Area", null)
         }
 
@@ -170,7 +170,6 @@ pol.core.AreaList = class extends pol.core.Widget {
         /* Get areas stored on server (if logged on) */
         const srv = CONFIG.server;
         m.redraw();
-
         setTimeout(()=> {
             if (srv != null && srv.hasDb) {
                 srv.getObj("area", a => {
@@ -190,7 +189,7 @@ pol.core.AreaList = class extends pol.core.Widget {
             }
             else
                 console.warn("Not logged in to server with database plugin");
-        }, 800);
+        }, 1000);
     }
 
 

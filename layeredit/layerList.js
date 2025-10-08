@@ -39,7 +39,6 @@ pol.layers.List = class List extends pol.core.Widget {
 
         setTimeout( ()=> {
             if (CONFIG.server!=null && CONFIG.server.hasDb) {
-                console.log("Adding type");
                 t.addType("drawing", "Drawing layer", new pol.layers.Drawing(this));
                 t.addType("gpx", "GPX/GeoJSON files upload", new pol.layers.Gpx(this));
             }
@@ -115,7 +114,7 @@ pol.layers.List = class List extends pol.core.Widget {
 
         function sharing(i) {
             const obj = t.myLayerNames[i];
-            const w = getShareWidget();
+            const w = pol.getShareWidget();
             w.setIdent(obj.index, obj.name, "layer", obj.type)
         }
 

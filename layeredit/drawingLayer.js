@@ -57,11 +57,11 @@ pol.layers.Drawing = class extends pol.layers.Edit {
      * Create a OL layer.
      */
     _createLayer(name, filt, old) {
-        let src = new VectorSource();
+        let src = new ol.source.Vector();
         if (old != null)
             src = old.getSource();
 
-        const l = new VectorLayer(
+        const l = new ol.layer.Vector(
             { name: name, source: src }
         );
         l.set("drawing", true, true);

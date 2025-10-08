@@ -19,17 +19,16 @@
 */
 
 
-
-
-
-
 var pol = window.pol;
+
+
+
 /**
  *
  */
 
 var shareWidget = null;
-function getShareWidget() {
+pol.getShareWidget = function() {
     if (shareWidget == null)
         shareWidget = new pol.tracking.db.Sharing();
     if (!shareWidget.isActive())

@@ -194,7 +194,7 @@ pol.tracking.PointInfo = class extends pol.core.Widget {
                     m("div.field",
                         m("span.leftlab", "Severity: "), x.severity),
                     m("div.field",
-                        m("span.leftlab", "Valid time span: "), m("span.nobr", formatDTG(x.startTime)), nbsp, "-", nbsp, formatDTG(x.endTime)),
+                        m("span.leftlab", "Valid time span: "), m("span.nobr", pol.ui.formatDTG(x.startTime)), nbsp, "-", nbsp, pol.ui.formatDTG(x.endTime)),
                     m("div.datexcom", x.comments[0]),
                     m("div.datexcom", x.comments[1]),
                 ]

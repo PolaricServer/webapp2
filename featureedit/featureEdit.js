@@ -24,7 +24,7 @@ var pol = window.pol;
 window.pol.features = window.pol.features || {};
 var snow = window.snow || {}
 
-console.log("SNOW", snow);
+
 
 pol.features.init = function(map) {
     snow.init(map);
@@ -158,7 +158,6 @@ pol.features.Edit = class extends pol.core.Widget {
     onActivate() {
         snow.activate();
         snow.featureEdit = this;
-        console.log("draftlayer", snow.draftLayer);
         snow.draftLayer.setVisible(true);
         setTimeout(
             ()=> m.mount($("#toolbox")[0], this.tool), 100);
@@ -251,7 +250,6 @@ pol.features.Edit = class extends pol.core.Widget {
 
             const fromtag = "feature" + (!fromlayer ? "" : "."+fromlayer);
             const totag = "feature" + ((!x.layer || x.layer=="DRAFT") ? "" : "."+x.layer);
-            console.log("doUpdate", x);
             if (op=="rm")
                 srv.removeObj(fromtag, x.index);
             if (op=='add')
