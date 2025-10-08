@@ -113,7 +113,7 @@ pol.tracking.BikeWheel = class extends pol.core.Widget {
                 t.closePopup();
         });
 
-        setTimeout(()=>t.clear(), 500);
+    //    setTimeout(()=>t.clear(), 500);
 
         //Default source for drawing.
         t.src = new ol.source.Vector()
