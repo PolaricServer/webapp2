@@ -437,11 +437,6 @@
      * Helper functions used by menus.
      */
 
-    function histList_hout() {}
-    function histList_hover() {}
-
-
-
     function rmPhoto(ident) {
         ident = ident.replace(/^(__db\.)/, "");
         if (confirm("Remove photo "+ident+" - are you sure?") == false)
