@@ -234,7 +234,7 @@ pol.layers.List = class List extends pol.core.Widget {
         let lrs = [];
         t._clearMyLayers();
         const srv = CONFIG.server;
-        if (srv.hasDb) {
+        if (srv != null && srv.hasDb) {
            /*
             * If logged in, get layers stored on server.
             */
