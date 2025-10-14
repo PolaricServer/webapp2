@@ -21,9 +21,8 @@
 
 
 
-
-
 var pol = window.pol;
+
 /**
  * Reference search (in a popup window).
  */
@@ -121,6 +120,12 @@ pol.psadmin.Channels = class extends pol.core.Widget {
                     m("div.field",
                         m("span.lleftlab", "Traffic out:"),
                         m("span", t.ch.specific.sentpackets )),
+
+                    (t.type === "APRSIS" ?
+                        m("div.field",
+                            m("span.lleftlab", "Blocked pkts:"),
+                            m("span", t.ch.specific.blocked )) : null),
+
                     (t.type === "APRSIS-SRV" ?
                         m("div.field",
                           m("span.lleftlab", "Clients:"),
@@ -157,7 +162,7 @@ pol.psadmin.Channels = class extends pol.core.Widget {
             view: function() {
                 return m("div.rChannels", [t.rclist.map( x=> {
                         return m("div.field",
-                            m("span.lleftlab", "Filter '"+x.name+"' :"),
+                            m("span.lleftlab", {title: "Filter for traffic TO the channel"}, "Filter '"+x.name+"' :"),
                             m(textInput, { id:"filt"+x.name, value: x.filter, size: 29,
                                 maxLength:64, regex: /.*/i }));
                     }),
@@ -238,11 +243,11 @@ pol.psadmin.Channels = class extends pol.core.Widget {
                         m(textInput, { id:"port", value: t.port, size: 6,
                             maxLength:6, regex: /[0-9]*/i })),
                     m("div.field",
-                            m("span.lleftlab", "Input filter:"),
+                            m("span.lleftlab", {title: "Internal filter for all incoming traffic"}, "Input filter:"),
                             m(textInput, { id:"filter", value: t.filter, size: 30,
                                 maxLength:64, regex: /.*/i })),
                     m("div.field",
-                            m("span.lleftlab", "Default filter:"),
+                            m("span.lleftlab", {title: "Default for client logins (clients may override)"}, "Default filter:"),
                             m(textInput, { id:"dfilter", value: t.dfilter, size: 30,
                                 maxLength:64, regex: /.*/i })),
                     ]);
@@ -281,8 +286,12 @@ pol.psadmin.Channels = class extends pol.core.Widget {
                             m(textInput, { id:"passcode", value: t.passcode, size: 6,
                                 maxLength:6, regex: /[0-9]*/i })),
                         m("div.field",
-                            m("span.lleftlab", "Filter:"),
+                            m("span.lleftlab",{title: "Filter to be used with server"}, "Filter:"),
                             m(textInput, { id:"filter", value: t.filter, size: 29,
+                                maxLength:64, regex: /.*/i })),
+                        m("div.field",
+                            m("span.lleftlab", {title: "Internal filter"}, "Input filter:"),
+                            m(textInput, { id:"xfilter", value: t.xfilter, size: 29,
                                 maxLength:64, regex: /.*/i })),
                     ])
             }
@@ -429,7 +438,7 @@ pol.psadmin.Channels = class extends pol.core.Widget {
                 ch.specific = { port: t.serport(), baud: parseInt(t.baud()) };
             else if (t.type==='APRSIS')
                 ch.specific = { host: t.host(), port: parseInt(t.port()),
-                                pass: parseInt(t.passcode()), filter: t.filter() };
+                                pass: parseInt(t.passcode()), filter: t.filter(), xfilter: t.xfilter() };
             else if (t.type==='APRSIS-SRV')
                 ch.specific = { port: parseInt(t.port()), defaultfilt: t.dfilter() };
             else if (t.type==='AIS-TCP')
@@ -500,6 +509,7 @@ pol.psadmin.Channels = class extends pol.core.Widget {
             if (t.type === 'APRSIS') {
                 t.ch.specific.pass = parseInt(t.passcode());
                 t.ch.specific.filter = t.filter();
+                t.ch.specific.xfilter = t.xfilter();
             }
             if (t.type === 'ROUTER') {
                 t.ch.specific.channels = getRouterChannels(); // t.channels()
@@ -591,6 +601,7 @@ pol.psadmin.Channels = class extends pol.core.Widget {
         t.passcode = m.stream("");
         t.filter = m.stream("");
         t.dfilter = m.stream("");
+        t.xfilter = m.stream("");
         t.channels = m.stream("");
         t.rclist = [];
     }
@@ -631,6 +642,7 @@ pol.psadmin.Channels = class extends pol.core.Widget {
                 this.kissport(""+this.ch.specific.kissport);
                 this.passcode(""+this.ch.specific.pass);
                 this.filter(this.ch.specific.filter==null ? "*" : this.ch.specific.filter);
+                this.xfilter(this.ch.specific.xfilter==null ? "*" : this.ch.specific.xfilter);
                 this.dfilter(this.ch.specific.defaultfilt==null ? "" : this.ch.specific.defaultfilt);
                 this.activated = this.ch.active;
                 this.primary = this.ch.rfchan || this.ch.inetchan;
