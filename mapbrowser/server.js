@@ -96,7 +96,7 @@ pol.core.Server = class {
         let prefix = await CONFIG.get('ajaxprefix');
         if (prefix == null)
             prefix = '';
-        if (prefix.charAt(prefix.length - 1) != '/')
+        if (prefix.length > 0 && prefix.charAt(prefix.length - 1) != '/')
             prefix += '/';
         this.url = host + prefix;
 
@@ -104,7 +104,7 @@ pol.core.Server = class {
         prefix = await CONFIG.get('wsprefix');
         if (prefix == null)
             prefix = '';
-        if (prefix.charAt(prefix.length - 1) != '/')
+        if (prefix.length > 0 && prefix.charAt(prefix.length - 1) != '/')
             prefix += '/';
         const uparts = host.split(/:\/\//);
 
