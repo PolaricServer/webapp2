@@ -87,6 +87,7 @@ pol.tracking.db.Timemachine = class extends pol.core.Widget {
 
         let waiting=null;
         function timedSearch() {
+            t.time.tdate = $('#dtinput_date').val();
             if (waiting != null)
                 window.clearTimeout(waiting);
             waiting=setTimeout( ()=> {waiting=null; _search(false) }, 700);
@@ -115,7 +116,7 @@ pol.tracking.db.Timemachine = class extends pol.core.Widget {
 
         /* Show the trail for a given item */
         function showPoints(reset) {
-            t.time.tdate   = $('#dtinput_date').val();
+            t.time.tdate = $('#dtinput_date').val();
             var done = false;
             var scale = CONFIG.mb.getScale();
             var filt = CONFIG.tracks.filter;

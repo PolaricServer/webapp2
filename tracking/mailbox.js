@@ -91,7 +91,7 @@ pol.tracking.Mailbox = class extends pol.core.Widget {
                                 m("td", m("img", {"class":(x.outgoing ? "ticon" : "icon"),
                                     src: (x.outgoing ? 'images/32px/chatt.png':'images/32px/chatf.png')})),
                                 m("td"+(x.outgoing ? ".out" : ""), m("div", [
-                                    m("span", {"class":"header"}, [ formatDTG(x.time)+": ",
+                                    m("span", {"class":"header"}, [ pol.ui.formatDTG(x.time)+": ",
                                         ( x.outgoing ? x.from
                                             : m("span.fromaddr", {onclick: ()=> {t.recipient(x.from);}}, x.from)),
                                         nbsp, m("img", {src:"images/16px/dE.png"}), nbsp, //  > ",
@@ -233,7 +233,6 @@ pol.tracking.Mailbox = class extends pol.core.Widget {
 
 
     setStatus(st) {
-        console.log("setStatus", st);
         for (const i in this.msglist)
             if (this.msglist[i].msgId == st.msgId) {
                 this.msglist[i].status = st.status;
@@ -251,7 +250,6 @@ pol.tracking.Mailbox = class extends pol.core.Widget {
         */
         this.pscli1 = this.server.pubsub.subscribe("messages:" + this.server.auth.userid,
             x => {
-                console.log("Got message: ", x);
                 this.msglist.push(x);
                 m.redraw();
                 setTimeout(()=> this.addScroll(true), 500);

@@ -240,7 +240,7 @@ pol.tracking.db.History = class extends pol.core.Widget {
             var qstring = "?tfrom=" + toIsoString(x.from.tdate, x.from.ttime())
               + "&tto=" + toIsoString(x.to.tdate, x.to.ttime());
 
-            CONFIG.server.GET("/hist/"+x.call()+"/trail"+qstring, "",
+            CONFIG.server.GET("hist/"+x.call()+"/trail"+qstring, "",
                 x => {
                     $('#hist_back').addClass('searchMode');
                     t.searchmode = true;
@@ -418,14 +418,20 @@ pol.tracking.db.History = class extends pol.core.Widget {
         }
     }
 
-
+    _handler(x) {   
+        x.item.from.tdate = $('#hist_start_date').val();
+        x.item.to.tdate   = $('#hist_end_date').val();
+    }
+    
+    
     _restoreItem(it) {
-        const to = new pol.core.Time();
+        const to = new pol.core.Time( ()=> { this._handler(this) });
+        const frm = new pol.core.Time( ()=> { this._handler(this) });
+        
         if (it == null)
-            return {call: m.stream(""), to: to, from: new pol.core.Time(), open:false};
+            return {call: m.stream(""), to: to, from: frm, open:false};
         to.tdate = it.todate;
         to.ttime(it.totime);
-        const frm = new pol.core.Time();
         frm.tdate = it.fromdate;
         frm.ttime(it.fromtime);
         return {call: m.stream(it.call), to: to, from: frm, open:it.open};
@@ -457,8 +463,8 @@ pol.tracking.db.History = class extends pol.core.Widget {
     newItem(item) {
         return {
             call: m.stream((item? item: "")),
-            from: new pol.core.Time(),
-            to: new pol.core.Time()
+            from: new pol.core.Time( ()=> { this._handler(this) }),
+            to: new pol.core.Time( ()=> { this._handler(this) })
         };
     }
 

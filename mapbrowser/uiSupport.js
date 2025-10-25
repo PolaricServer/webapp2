@@ -239,9 +239,9 @@ const Datepick = {
         input.id=vn.attrs.id;
         input.value = vn.attrs.value;
         vn.dom.appendChild( input );
-        new Pikaday( {
-            field: input,
-            format: "YYYY-MM-DD"
+        flatpickr(input, {
+            enableTime: false,
+            dateFormat: "Y-m-d"
         });
 	},
 

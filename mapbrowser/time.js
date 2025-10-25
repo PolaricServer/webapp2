@@ -25,6 +25,7 @@ pol.core.Time = class {
         d.setDate(day);
     }
 
+    
     static incrementDay(d) {
         let day = d.getDate();
         day++;
@@ -71,12 +72,12 @@ pol.core.Time = class {
         if (newHour > 23) {
             let d = new Date(this.tdate);
             pol.core.Time.incrementDay(d);
-            this.tdate = formatDate(d);
+            this.tdate = pol.core.Time.formatDate(d);
             newHour = 0;
         } else if (newHour < 0) {
             let d = new Date(this.tdate);
             pol.core.Time.decrementDay(d);
-            this.tdate = formatDate(d);
+            this.tdate = pol.core.Time.formatDate(d);
             newHour = 23;
         }
         this.ttime(pol.core.Time.pad(newHour,2) + ':' + pol.core.Time.pad(newMinute,2));
@@ -111,7 +112,7 @@ pol.core.Time = class {
 
     setNow() {
         const now = new Date();
-        this.tdate = formatDate(now);
-        this.ttime(formatTime(now));
+        this.tdate = pol.core.Time.formatDate(now);
+        this.ttime(pol.core.Time.formatTime(now));
     }
 }
