@@ -96,7 +96,7 @@ pol.core.Server = class {
         let prefix = await CONFIG.get('ajaxprefix');
         if (prefix == null)
             prefix = '';
-        if (prefix.charAt(prefix.length != '/'))
+        if (prefix.length > 0 && prefix.charAt(prefix.length - 1) != '/')
             prefix += '/';
         this.url = host + prefix;
 
@@ -104,7 +104,7 @@ pol.core.Server = class {
         prefix = await CONFIG.get('wsprefix');
         if (prefix == null)
             prefix = '';
-        if (prefix.charAt(prefix.length != '/'))
+        if (prefix.length > 0 && prefix.charAt(prefix.length - 1) != '/')
             prefix += '/';
         const uparts = host.split(/:\/\//);
 
@@ -118,7 +118,7 @@ pol.core.Server = class {
 
     /** Full (browser) popup window */
     popup(name, url, width, height) {
-        const u = this.url+"/"+url;
+        const u = this.url+url;
         const ctrl = "left=50,top=100,width="+width+",height="+height+"resizable=1,scrollbars=1";
         eval( "this."+name+"=window.open('"+u+"','"+name+"','"+ctrl+"');" );
     }
@@ -140,6 +140,9 @@ pol.core.Server = class {
      * @param error:  Function( jqXHR jqXHR, String textStatus, String errorThrown )
      */
     ajax(type, service, data, success, error, content, hdrs) {
+        // Remove leading slash from service to avoid double slashes
+        if (service && service.charAt(0) === '/')
+            service = service.substring(1);
         this.genHeaders(data).then( (genhdrs) => {
             return $.ajax(this.url+service,  {
                 type: type,
