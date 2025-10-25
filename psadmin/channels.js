@@ -152,7 +152,7 @@ pol.psadmin.Channels = class extends pol.core.Widget {
 
         const stats = {
             view: function() {
-                return (t.type === "AIS-TCP" ? m(stats_ais) : m(stats_aprs));
+                return (t.type === "AIS-TCP" || t.type === "AIS-SERIAL" ? m(stats_ais) : m(stats_aprs));
             }
         }
 
@@ -181,7 +181,7 @@ pol.psadmin.Channels = class extends pol.core.Widget {
         /* Config specific to chennel type */
         const config = {
             view: function() {
-                if (t.type === 'KISS' || t.type === 'TNC2')
+                if (t.type === 'KISS' || t.type === 'TNC2' || t.type === 'AIS-SERIAL')
                     return m("div#config", [
                     m("div.field",
                         m("span.lleftlab", "Channel:"),
@@ -348,8 +348,10 @@ pol.psadmin.Channels = class extends pol.core.Widget {
         };
 
 
-        if (CONFIG.server.hasService('ais'))
+        if (CONFIG.server.hasService('ais')) {
             t.typelist.push( {label: "AIS-TCP"});
+            t.typelist.push( {label: "AIS-SERIAL"});
+        }
 
 
         /*
