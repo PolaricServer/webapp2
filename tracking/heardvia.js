@@ -99,13 +99,13 @@ pol.tracking.db.HeardVia = class extends pol.core.Widget {
 
 
         CONFIG.get('tracking.db.hrd').then( x=> {
-            t.list = GETJSON(x);
+            t.list = JSON.parse(x);
             if (t.list == null)
                 t.list = [];
         });
 
         CONFIG.get('tracking.db.hrd.color').then( x=> {
-            t.color = GETJSON(x);
+            t.color = JSON.parse(x);
             if (!t.color || t.color==null)
                 t.color = 0;
         });
@@ -197,10 +197,13 @@ pol.tracking.db.HeardVia = class extends pol.core.Widget {
 
         /* Show the cloud for a given item */
         function showCloud(c, color) {
+            var ext = CONFIG.mb.getExtent();
+            
             var qstring = "?tfrom=" + toIsoString(c.fromdate,"00:00") + "&tto="
                 + (c.todate=='-' ? '-/-' : toIsoString(c.todate,"23:59") );
 
-            CONFIG.server.GET("/hist/"+c.call+"/hrdvia"+qstring, "",
+            CONFIG.server.GET("/hist/"+c.call+"/hrdvia/"+roundDeg(ext[0]) + "/"+ roundDeg(ext[1]) +
+                          "/"+ roundDeg(ext[2]) + "/" + roundDeg(ext[3]) + qstring, "",
                 x => {
                     $('#hrd_back').addClass('searchMode');
                     t.searchmode = true;
@@ -226,7 +229,11 @@ pol.tracking.db.HeardVia = class extends pol.core.Widget {
             CONFIG.storeSes('tracking.db.hrd.item', JSON.stringify(t.item));
         }
 
+        function roundDeg(d) {
+            return Math.round(d*100000) / 100000;
+        }
 
+        
         function copyItem() {
             let x = Object.assign({}, t.item);
             x.call = t.item.call();

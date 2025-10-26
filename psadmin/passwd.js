@@ -42,7 +42,8 @@ pol.psadmin.Passwd = class extends pol.core.Widget {
         this.widget = {
             view: function() {
                 return m("div#pwdEdit", [
-                    m("h1", "Change your password"),
+                    m("h1", "Change your password  "),
+                    m("span.pwintro", "Please enter new password"),
                     m("div.field",
                         m("span.xsleftlab", "Password:"),
                         m(textInput, { id:"passwd1", value: t.passwd1, size: 16,
@@ -51,7 +52,7 @@ pol.psadmin.Passwd = class extends pol.core.Widget {
                     m("div.field",
                         m("span.xsleftlab", "Repeat it:"),
                         m(textInput, { id: "passwd2", value: t.passwd2, size: 16,
-                            maxLength: 32, regex: /.*/i, passwd: false })),
+                            maxLength: 32, regex: /.*/i, passwd: true })),
 
 
                     m("div.butt", [
@@ -67,6 +68,10 @@ pol.psadmin.Passwd = class extends pol.core.Widget {
         function update() {
             if (t.passwd1() != t.passwd2()) {
                 alert("Passwords do not match.");
+                return;
+            }
+            else if (t.passwd1().length < 8) {
+                alert("Too short (should be at least 8 characters)");
                 return;
             }
             const data = {

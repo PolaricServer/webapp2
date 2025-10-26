@@ -205,7 +205,7 @@
     browser.ctxMenu.addCallback("MAP", (m, ctxt)=> {
 
      m.add('Show map reference', () => browser.show_MaprefPix( [m.x, m.y] ) );
-        if (!phone && (srv.auth.sar || srv.auth.admin)) {
+        if (!phone && (srv.auth.operator || srv.auth.admin)) {
             m.add('Add APRS object', () =>
                 WIDGET("tracking.OwnObjects", [50,70], false, x=> x.setPosPix([m.x, m.y])));
 
@@ -277,7 +277,7 @@
             m.add('Find position', () => WIDGET("core.refSearch",  [50,70], true));
         }
 
-        if (!phone && (srv.auth.sar || srv.auth.admin)) {
+        if (!phone && (srv.auth.operator || srv.auth.admin)) {
             m.add('Add APRS object', () =>
                 WIDGET("tracking.OwnObjects", [50,70], false));
         }
@@ -314,7 +314,7 @@
 
         if (srv.hasDb) {
             if (!phone) {
-                if (srv.auth.sar || srv.auth.admin)
+                if (srv.auth.operator || srv.auth.admin)
                     m.add("Signs...", () => WIDGET("tracking.db.Signs", [50,70], false));
                 m.add("History...", () => WIDGET("tracking.db.History", [50,70], false));
                 m.add("Heard points via..", () => WIDGET("tracking.db.HeardVia", [50,70], false));
@@ -346,7 +346,7 @@
             m.add('Telemetry', () =>
                 WIDGET( "tracking.Telemetry", [50, 70], false,  x=> x.getItem(ctxt.ident), ctxt.ident ));
 
-        if (srv.auth.sar||srv.auth.admin) {
+        if (srv.auth.operator||srv.auth.admin) {
             m.add('Global settings', () =>
                 WIDGET("tracking.GlobalSettings", [m.x,m.y], false, x=>x.setIdent(ctxt.ident)));
 
@@ -376,7 +376,7 @@
             m.add('Hide trail', () => CONFIG.tracks.hideTrail(ctxt.ident, true) );
         m.add(null);
 
-        if ((srv.auth.sar||srv.auth.admin) && srv.hasDb && ctxt.aprs) {
+        if ((srv.auth.operator||srv.auth.admin) && srv.hasDb && ctxt.aprs) {
             m.add('Add to my trackers', () =>
                 WIDGET("tracking.db.MyTrackers", [50, 70], false, x=> x.setIdent(ctxt.ident)));
         }
@@ -402,7 +402,7 @@
     browser.ctxMenu.addCallback("SIGN", (m, ctxt)=> {
         if (srv.hasDb) {
             m.add('Show info', () => srv.infoPopup(ctxt.point, [m.x, m.y]) );
-            if (srv.auth.sar && /__db/.test(ctxt.ident) ) {
+            if (srv.auth.operator && /__db/.test(ctxt.ident) ) {
                 m.add('Edit object', () => WIDGET('tracking.db.Signs', [50,70], false, x=> x.edit(ctxt.ident)));
                 m.add('Delete object', () => getWIDGET('tracking.db.Signs').remove( ctxt.ident ));
             }
@@ -460,25 +460,28 @@
         { srv.popup('editTags', 'addtag?objid='+ident, 560, 300); }
 
 
-
-
-    // FIXME: maybe an "are you sure" dialog?
+         
     function resetInfo(ident) {
+        if (confirm("Reset info for '"+ident+"' - are you sure?") == false)
+            return;
         srv.PUT("/item/"+ident+"/reset", null,
                 () => console.log("Reset info for: "+ident),
                 x  => console.log("Reset info failed: "+x)
             );
     }
-
-
-
-    // FIXME: maybe an "are you sure" dialog?
+        
+        
+      
     function resetAllItems() {
-        srv.DELETE("/item", null,
+        if (confirm("Reset all tracking info - are you sure?") == false)
+            return;
+        srv.DELETE("item", null,
                 () => console.log("Clear items"),
                 x  => console.log("Clear items failed: "+x)
             );
     }
+    
+
 
 
     function chColor(ident) {
