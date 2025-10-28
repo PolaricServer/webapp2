@@ -49,7 +49,7 @@ pol.psadmin.TestRest = class extends pol.core.Widget {
                     t.headers.map( x => {
                         i++;
                         return m("span", [
-                            m(textInput, {value: x.name, size: 10}), " ", m(textInput, {value: x.val, size: 20}),
+                            m(pol.ui.textInput, {value: x.name, size: 10}), " ", m(pol.ui.textInput, {value: x.val, size: 20}),
                             (i < t.headers.length ? br : m("span.plus", {onclick: addHdr}, "+"))
                         ]);
                     })
@@ -66,7 +66,7 @@ pol.psadmin.TestRest = class extends pol.core.Widget {
 
                     m("div.field",
                         m("span.xsleftlab", "Method:"),
-                        m(select, {
+                        m(pol.ui.select, {
                             id: "methodSelect",
                             onchange: onMethodSelect,
                                 list: [
@@ -78,7 +78,7 @@ pol.psadmin.TestRest = class extends pol.core.Widget {
 
                     m("div.field",
                         m("span.xsleftlab", "Resource:"),
-                        m(textInput, { id:"url", value: t.url, size: 35,
+                        m(pol.ui.textInput, { id:"url", value: t.url, size: 35,
                             maxLength:35, regex: /.*/i })),
 
                     ( t.method() === "POST" || t.method() === "PUT" ?
@@ -95,12 +95,12 @@ pol.psadmin.TestRest = class extends pol.core.Widget {
 
                     m("div.field",
                         m("span.xsleftlab", "Select: "),
-                            m(checkBox, {id:"sel.json", onclick: selJson, checked: (t.sel.json),
+                            m(pol.ui.checkBox, {id:"sel.json", onclick: selJson, checked: (t.sel.json),
                                 title: "Check to parse response data as JSON" },
-                                "JSON resp", nbsp, nbsp),
-                        m(checkBox, {id:"vis.zoom", onclick: selHdrs, checked: (t.sel.hdrs),
+                                "JSON resp", pol.ui.nbsp, pol.ui.nbsp),
+                        m(pol.ui.checkBox, {id:"vis.zoom", onclick: selHdrs, checked: (t.sel.hdrs),
                             title: "Check to edit headers for request" },
-                            "Headers", nbsp, nbsp),
+                            "Headers", pol.ui.nbsp, pol.ui.nbsp),
                      ),
 
                     br,

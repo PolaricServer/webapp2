@@ -64,14 +64,14 @@ pol.tracking.OwnObjects = class extends pol.core.Widget {
 
                     m("div.field",
                         m("span.sleftlab", "Object ID: "),
-                        m(textInput, {id:"objid", value: t.obj.ident, size: 10, maxLength:9,
+                        m(pol.ui.textInput, {id:"objid", value: t.obj.ident, size: 10, maxLength:9,
                             regex: /^[a-zA-Z0-9\_\-\.\#]{1,9}$/i })) ,
 
                     m("div.field",
                         m("span.sleftlab", "Symbol: "),
-                        m(textInput, {id:"symtab", size: 1, maxLength:1, value: t.obj.symtab, regex: /[\/\\a-zA-Z]/i }),
-                        m(textInput, {id:"symbol", size: 1, maxLength:1, value: t.obj.sym, regex: /[a-zA-Z]/i }),
-                        m(select, {
+                        m(pol.ui.textInput, {id:"symtab", size: 1, maxLength:1, value: t.obj.symtab, regex: /[\/\\a-zA-Z]/i }),
+                        m(pol.ui.textInput, {id:"symbol", size: 1, maxLength:1, value: t.obj.sym, regex: /[a-zA-Z]/i }),
+                        m(pol.ui.select, {
                             id: "symSelect",
                             onchange: onSymSelect,
                                 list: [
@@ -86,15 +86,15 @@ pol.tracking.OwnObjects = class extends pol.core.Widget {
 
                     m("div.field",
                         m("span.sleftlab", "Description: "),
-                        m(textInput, {id:"descr", value: t.obj.comment, size: 32, maxLength:64, regex: /^.+$/i })),
+                        m(pol.ui.textInput, {id:"descr", value: t.obj.comment, size: 32, maxLength:64, regex: /^.+$/i })),
 
                     m("div.field",
                         m("span.sleftlab", "Pos (UTM): "),
-                        m(utmInput, {value: t.obj.pos})),
+                        m(pol.ui.utmInput, {value: t.obj.pos})),
 
                     m("div.field",
                         m("span.sleftlab", "Settings:"),
-                        m(checkBox, {id:"perm", onclick: toggleTimeless, checked: (t.obj.perm) },
+                        m(pol.ui.checkBox, {id:"perm", onclick: toggleTimeless, checked: (t.obj.perm) },
                             "Timeless (permanent)" )),
 
                     m("div.butt", [

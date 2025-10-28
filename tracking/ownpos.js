@@ -49,10 +49,10 @@ pol.tracking.OwnPos = class extends pol.core.Widget {
 
                     m("div.errmsg", errmsg),
                     m("span.sleftlab", "Symbol: "),
-                    m(textInput, {id:"symtab", size: 1, maxLength:1, value: t.symtab, regex: /[\/\\a-zA-Z]/i }),
-                    m(textInput, {id:"symbol", size: 1, maxLength:1, value: t.sym, regex: /./i }), br,
+                    m(pol.ui.textInput, {id:"symtab", size: 1, maxLength:1, value: t.symtab, regex: /[\/\\a-zA-Z]/i }),
+                    m(pol.ui.textInput, {id:"symbol", size: 1, maxLength:1, value: t.sym, regex: /./i }), pol.ui.br,
                     m("span.sleftlab", "Pos (UTM): "),
-                    m(utmInput, {value: t.posx}), br,
+                    m(pol.ui.utmInput, {value: t.posx}), pol.ui.br,
 
                     m("div.butt", [
                         m("button", { type: "button", onclick: update }, "Update"),

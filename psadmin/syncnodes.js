@@ -46,7 +46,7 @@ pol.psadmin.db.SyncNodes = class extends pol.core.Widget {
                 var i=0;
                 return m("table", m("tbody", t.parents.map(x => {
                         return m("tr", [
-                            m(removeEdit, {remove: pol.ui.apply(remove, i), edit: pol.ui.apply(editObj, i++)}),
+                            m(pol.ui.removeEdit, {remove: pol.ui.apply(remove, i), edit: pol.ui.apply(editObj, i++)}),
                             m("td", x.nodeid),
                             m("td", x.url),
                             m("td", x.items.substring(0,12)+"..."),
@@ -61,7 +61,7 @@ pol.psadmin.db.SyncNodes = class extends pol.core.Widget {
                 var i=0;
                 return m("table", m("tbody", t.children.map(x => {
                         return m("tr", [
-                            m(removeEdit, {remove: pol.ui.apply(removeChild, i++), edit: null}),
+                            m(pol.ui.removeEdit, {remove: pol.ui.apply(removeChild, i++), edit: null}),
                             m("td", x.nodeid),
                             m("td", x.items),
                             (x.active ? m("img", {src: "images/16px/ok.png"}) : null),
@@ -83,11 +83,11 @@ pol.psadmin.db.SyncNodes = class extends pol.core.Widget {
                     hr,
                     m("div.field",
                         m("span.xsleftlab", "Srv URL:"),
-                        m(textInput, { id:"nodeUrl", value: t.url, size: 30,
+                        m(pol.ui.textInput, { id:"nodeUrl", value: t.url, size: 30,
                             maxLength:64, regex: /.*/i })),
                     m("div.field",
                         m("span.xsleftlab", "Items:"),
-                        m(textInput, { id:"nodeItems", value: t.items, size: 30,
+                        m(pol.ui.textInput, { id:"nodeItems", value: t.items, size: 30,
                             maxLength:64, regex: /.*/i })),
                     m("div.butt", [
                         m("button", { id: "abutt", type: "button", onclick: add }, "Add"),

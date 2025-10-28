@@ -46,12 +46,12 @@ pol.psadmin.Passwd = class extends pol.core.Widget {
                     m("span.pwintro", "Please enter new password"),
                     m("div.field",
                         m("span.xsleftlab", "Password:"),
-                        m(textInput, { id:"passwd1", value: t.passwd1, size: 16,
+                        m(pol.ui.textInput, { id:"passwd1", value: t.passwd1, size: 16,
                             maxLength:32, regex: /.*/i, passwd: true })),
 
                     m("div.field",
                         m("span.xsleftlab", "Repeat it:"),
-                        m(textInput, { id: "passwd2", value: t.passwd2, size: 16,
+                        m(pol.ui.textInput, { id: "passwd2", value: t.passwd2, size: 16,
                             maxLength: 32, regex: /.*/i, passwd: true })),
 
 

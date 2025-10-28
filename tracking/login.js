@@ -52,11 +52,11 @@ pol.tracking.Login = class extends pol.core.Widget {
                     (t.errmsg != "" ? m("div#errmsg", t.errmsg) : null),
                     m("div.field",
                         m("span.sleftlab", "Username:"),
-                        m(textInput, { id:"username", value: t.username, size: 16,
+                        m(pol.ui.textInput, { id:"username", value: t.username, size: 16,
                             maxLength:25, regex: /.*/i })),
                     m("div.field",
                         m("span.sleftlab", "Password:"),
-                        m(textInput, { id:"passwd", value: t.passwd, size: 16,
+                        m(pol.ui.textInput, { id:"passwd", value: t.passwd, size: 16,
                             maxLength:25, regex: /.*/i, passwd: true })),
 
                     m("div.butt", [
@@ -104,7 +104,7 @@ pol.tracking.Login = class extends pol.core.Widget {
                     ( t.info.userid != null ?
                         m("div.field",
                             m("span.sleftlab", "Role:"),
-                            m(groups), m("span#selGroup", ""+t.selGroup), nbsp,
+                            m(groups), m("span#selGroup", ""+t.selGroup), pol.ui.nbsp,
                         ) : null ),
 
                     ( t.info.userid != null ?

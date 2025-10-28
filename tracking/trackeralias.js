@@ -47,21 +47,21 @@ pol.tracking.TrackerAlias = class extends pol.core.Widget {
                 return  m("form.trackerAlias", [
                     m("div.field",
                         m("span.xsleftlab", "Ident:"),
-                        m(textInput,
+                        m(pol.ui.textInput,
                             { id:"trackerId", value: t.edit.id, size: 16,
                                 maxLength:25, onchange: t.onIdEdit(), regex: /^[^\<\>\'\"]+$/i })),
 
                     m("div.field",
                         m("span.xsleftlab", "Alias:"),
-                        m(textInput,
+                        m(pol.ui.textInput,
                             { id: "alias", value: t.edit.alias, size: 16,
                                 maxLength: 32, regex: /.*/i })),
 
                     m("div.field",
                         m("span.xsleftlab", "Icon:"),
-                        m(iconPick, {value: t.edit.icon, icons: t.icons, default: t.dfl, id: "iconpick"} ),
+                        m(pol.ui.iconPick, {value: t.edit.icon, icons: t.icons, default: t.dfl, id: "iconpick"} ),
                         m("span#auto",
-                            m(checkBox, {id: "symbol-auto", onclick: auto, checked: t.edit.auto,
+                            m(pol.ui.checkBox, {id: "symbol-auto", onclick: auto, checked: t.edit.auto,
                                 title: "If checked, icon is automatically selected (from aprs symbol)" },
                                 "Automatic"))
                     )

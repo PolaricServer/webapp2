@@ -50,7 +50,7 @@ pol.tracking.db.PhotoDescr = class extends pol.core.Widget {
                     m("span#objname", "Photo: " + ident),
                     m("form.photoDescr", [
 
-                        m(textInput,
+                        m(pol.ui.textInput,
                             { id:"photoDescr", value: t.edit, size: 22,
                                 maxLength:25, regex: /^.*$/i }),
 

@@ -61,7 +61,7 @@ pol.psadmin.Channels = class extends pol.core.Widget {
                     return m("span", t.ch.specific.type);
                 else
                     return m("span.ctypeselect", [
-                    m(select, {
+                    m(pol.ui.select, {
                         id: "ctypeSelect",
                         onchange: onTypeSelect,
                         list: t.typelist
@@ -77,7 +77,7 @@ pol.psadmin.Channels = class extends pol.core.Widget {
                 for (x of t.clist)
                     if (x.specific.type == 'APRSIS' || x.specific.type == 'APRSIS-SRV')
                         lst.push({label: x.name});
-                return m(select, {
+                return m(pol.ui.select, {
                     id: "chanSelect",
                     list: lst
                 })
@@ -94,7 +94,7 @@ pol.psadmin.Channels = class extends pol.core.Widget {
                 return m("table.myChannels", m("tbody", t.clist.map( x=> {
                         return m("tr", {class: (t.editMode && x.name===t.name() ? "selected" : null) }, [
                             m("td",
-                              m(removeEdit, {remove: pol.ui.apply(remove,i), edit: pol.ui.apply(edit, i++)})),
+                              m(pol.ui.removeEdit, {remove: pol.ui.apply(remove,i), edit: pol.ui.apply(edit, i++)})),
                             m("td.flags", flags(x)),
                             m("td", (x.generic.inRouter ? m("img",{src:"images/16px/router.png", title: "Via router"})
                                             : (x.specific.type==="ROUTER" ? m("img",{src:"images/16px/router2.png"}) : null)) ),
@@ -129,7 +129,7 @@ pol.psadmin.Channels = class extends pol.core.Widget {
                     (t.type === "APRSIS-SRV" ?
                         m("div.field",
                           m("span.lleftlab", "Clients:"),
-                          m("span", t.ch.specific.nclients ),nbsp, nbsp,
+                          m("span", t.ch.specific.nclients ),nbsp, pol.ui.nbsp,
                           m("span.link_id", {onclick: showClients}, "(show)")) : null),
                 ])
             }
@@ -163,7 +163,7 @@ pol.psadmin.Channels = class extends pol.core.Widget {
                 return m("div.rChannels", [t.rclist.map( x=> {
                         return m("div.field",
                             m("span.lleftlab", {title: "Filter for traffic TO the channel"}, "Filter '"+x.name+"' :"),
-                            m(textInput, { id:"filt"+x.name, value: x.filter, size: 29,
+                            m(pol.ui.textInput, { id:"filt"+x.name, value: x.filter, size: 29,
                                 maxLength:64, regex: /.*/i }));
                     }),
 
@@ -185,24 +185,24 @@ pol.psadmin.Channels = class extends pol.core.Widget {
                     return m("div#config", [
                     m("div.field",
                         m("span.lleftlab", "Channel:"),
-                        m(checkBox, {id: "activated", onclick: toggleAct, checked: t.activated},
+                        m(pol.ui.checkBox, {id: "activated", onclick: toggleAct, checked: t.activated},
                             "Activate"),
-                        m(checkBox, {id: "activated", onclick: togglePrim, checked: t.primary},
+                        m(pol.ui.checkBox, {id: "activated", onclick: togglePrim, checked: t.primary},
                             "Primary"),
 
                     ),
                     m("div.field",
                         m("span.lleftlab", "Serial port:"),
-                        m(textInput, { id:"serport", value: t.serport, size: 15,
+                        m(pol.ui.textInput, { id:"serport", value: t.serport, size: 15,
                             maxLength:32, regex: /[a-zA-Z0-9\-\.\/]*/i })),
                     m("div.field",
                         m("span.lleftlab", "Baud:"),
-                        m(textInput, { id:"baud", value: t.baud, size: 8,
+                        m(pol.ui.textInput, { id:"baud", value: t.baud, size: 8,
                             maxLength:10, regex: /[0-9]*/i })),
                     (t.type === 'KISS' ?
                         m("div.field",
                         m("span.lleftlab", "KISS port:"),
-                        m(textInput, { id:"kissport", value: t.kissport, size: 3,
+                        m(pol.ui.textInput, { id:"kissport", value: t.kissport, size: 3,
                             maxLength:3, regex: /[0-9]*/i })) : null),
                     ]);
 
@@ -210,22 +210,22 @@ pol.psadmin.Channels = class extends pol.core.Widget {
                     return m("div#config", [
                     m("div.field",
                         m("span.lleftlab", "Channel:"),
-                        m(checkBox, {id: "activated", onclick: toggleAct, checked: t.activated},
+                        m(pol.ui.checkBox, {id: "activated", onclick: toggleAct, checked: t.activated},
                             "Activate"),
-                        m(checkBox, {id: "activated", onclick: togglePrim, checked: t.primary},
+                        m(pol.ui.checkBox, {id: "activated", onclick: togglePrim, checked: t.primary},
                             "Primary"), ),
                     m("div.field",
                         m("span.lleftlab", "Server addr:"),
-                        m(textInput, { id:"host", value: t.host, size: 15,
+                        m(pol.ui.textInput, { id:"host", value: t.host, size: 15,
                             maxLength:32, regex: /[a-zA-Z0-9\-\.]*/i })),
                     m("div.field",
                         m("span.lleftlab", "Server port:"),
-                        m(textInput, { id:"port", value: t.port, size: 6,
+                        m(pol.ui.textInput, { id:"port", value: t.port, size: 6,
                             maxLength:6, regex: /[0-9]*/i })),
                     (t.type !== 'AIS-TCP' ?
                         m("div.field",
                             m("span.lleftlab", "KISS port:"),
-                            m(textInput, { id:"kissport", value: t.kissport, size: 3,
+                            m(pol.ui.textInput, { id:"kissport", value: t.kissport, size: 3,
                                 maxLength:3, regex: /[0-9]*/i })) : null),
                     ]);
 
@@ -234,21 +234,21 @@ pol.psadmin.Channels = class extends pol.core.Widget {
                     return m("div#config", [
                     m("div.field",
                         m("span.lleftlab", "Channel:"),
-                        m(checkBox, {id: "activated", onclick: toggleAct, checked: t.activated},
+                        m(pol.ui.checkBox, {id: "activated", onclick: toggleAct, checked: t.activated},
                             "Activate"),
-                        m(checkBox, {id: "activated", onclick: togglePrim, checked: t.primary},
+                        m(pol.ui.checkBox, {id: "activated", onclick: togglePrim, checked: t.primary},
                             "Primary"), ),
                     m("div.field",
                         m("span.lleftlab", "Listen port:"),
-                        m(textInput, { id:"port", value: t.port, size: 6,
+                        m(pol.ui.textInput, { id:"port", value: t.port, size: 6,
                             maxLength:6, regex: /[0-9]*/i })),
                     m("div.field",
                             m("span.lleftlab", {title: "Internal filter for all incoming traffic"}, "Input filter:"),
-                            m(textInput, { id:"filter", value: t.filter, size: 30,
+                            m(pol.ui.textInput, { id:"filter", value: t.filter, size: 30,
                                 maxLength:64, regex: /.*/i })),
                     m("div.field",
                             m("span.lleftlab", {title: "Default for client logins (clients may override)"}, "Default filter:"),
-                            m(textInput, { id:"dfilter", value: t.dfilter, size: 30,
+                            m(pol.ui.textInput, { id:"dfilter", value: t.dfilter, size: 30,
                                 maxLength:64, regex: /.*/i })),
                     ]);
 
@@ -257,9 +257,9 @@ pol.psadmin.Channels = class extends pol.core.Widget {
                     return m("div#config", [
                     m("div.field",
                         m("span.lleftlab", "Channel:"),
-                        m(checkBox, {id: "activated", onclick: toggleAct, checked: t.activated},
+                        m(pol.ui.checkBox, {id: "activated", onclick: toggleAct, checked: t.activated},
                             "Activate"),
-                        m(checkBox, {id: "activated", onclick: togglePrim, checked: t.primary},
+                        m(pol.ui.checkBox, {id: "activated", onclick: togglePrim, checked: t.primary},
                             "Primary"), ),
                         m(routerChannels)
                     ]);
@@ -269,29 +269,29 @@ pol.psadmin.Channels = class extends pol.core.Widget {
                     return m("div#config", [
                         m("div.field",
                             m("span.lleftlab", "Channel:"),
-                            m(checkBox, {id: "activated", onclick: toggleAct, checked: t.activated},
+                            m(pol.ui.checkBox, {id: "activated", onclick: toggleAct, checked: t.activated},
                                 "Activate"),
-                            m(checkBox, {id: "activated", onclick: togglePrim, checked: t.primary},
+                            m(pol.ui.checkBox, {id: "activated", onclick: togglePrim, checked: t.primary},
                                 "Primary"), ),
                         m("div.field",
                             m("span.lleftlab", "Server addr:"),
-                            m(textInput, { id:"host", value: t.host, size: 15,
+                            m(pol.ui.textInput, { id:"host", value: t.host, size: 15,
                                 maxLength:32, regex: /[a-zA-Z0-9\-\.]*/i })),
                         m("div.field",
                             m("span.lleftlab", "Server port:"),
-                            m(textInput, { id:"port", value: t.port, size: 6,
+                            m(pol.ui.textInput, { id:"port", value: t.port, size: 6,
                                 maxLength:6, regex: /[0-9]*/i })),
                         m("div.field",
                             m("span.lleftlab", "Passcode:"),
-                            m(textInput, { id:"passcode", value: t.passcode, size: 6,
+                            m(pol.ui.textInput, { id:"passcode", value: t.passcode, size: 6,
                                 maxLength:6, regex: /[0-9]*/i })),
                         m("div.field",
                             m("span.lleftlab",{title: "Filter to be used with server"}, "Filter:"),
-                            m(textInput, { id:"filter", value: t.filter, size: 29,
+                            m(pol.ui.textInput, { id:"filter", value: t.filter, size: 29,
                                 maxLength:64, regex: /.*/i })),
                         m("div.field",
                             m("span.lleftlab", {title: "Internal filter"}, "Input filter:"),
-                            m(textInput, { id:"xfilter", value: t.xfilter, size: 29,
+                            m(pol.ui.textInput, { id:"xfilter", value: t.xfilter, size: 29,
                                 maxLength:64, regex: /.*/i })),
                     ])
             }
@@ -310,7 +310,7 @@ pol.psadmin.Channels = class extends pol.core.Widget {
 
                     m("div.field",
                         m("span.lleftlab", "Name:"),
-                        (!t.editMode || t.ch == null ? m(textInput, { id:"name", value: t.name, size: 15,
+                        (!t.editMode || t.ch == null ? m(pol.ui.textInput, { id:"name", value: t.name, size: 15,
                                          maxLength:32, regex: /[a-zA-Z0-9\-\.]*/i }) : m("span", t.ch.name))),
 
                     m("div.field",
@@ -330,12 +330,12 @@ pol.psadmin.Channels = class extends pol.core.Widget {
                     (t.type != 'ROUTER' ?
                         m("div.field",
                             m("span.lleftlab", "Visibility:"),
-                            m(checkBox, {id: "loggedinonly", onclick: toggleVis, checked: t.loggedinonly},
+                            m(pol.ui.checkBox, {id: "loggedinonly", onclick: toggleVis, checked: t.loggedinonly},
                                 "Only for logged in users")) : null),
                     (t.type != 'ROUTER' ?
                         m("div.field",
                             m("span.lleftlab", "Tag:"),
-                            m(textInput, { id:"tag", value: t.tag, size: 15,
+                            m(pol.ui.textInput, { id:"tag", value: t.tag, size: 15,
                                 maxLength:32, regex: /[a-zA-Z0-9\-\.]*/i })) : null),
 
                     m("div.butt", [
@@ -545,11 +545,13 @@ pol.psadmin.Channels = class extends pol.core.Widget {
 
 
         function showClients() {
-            if (!t.clients)
-                t.clients = new pol.psadmin.Clients();
-            if (!t.clients.isActive())
-                t.clients.activatePopup('features.Properties', [60, 60], true);
-            t.clients.getClients(t.ch.name);
+            // FIXME: Clients class not implemented yet
+            console.warn("Clients display feature not yet implemented");
+            // if (!t.clients)
+            //     t.clients = new pol.psadmin.statusInfo();
+            // if (!t.clients.isActive())
+            //     t.clients.activatePopup('features.Properties', [60, 60], true);
+            // t.clients.getClients(t.ch.name);
         }
 
 

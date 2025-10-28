@@ -72,12 +72,12 @@ pol.tracking.db.Sharing = class extends pol.core.Widget {
                                 (x.readOnly ? m("span.ulistro", x.userid) : m("span.ulistitem", x.userid))
                             ])]
                     })),
-                    m(textInput, {list: "userList", value: t.user}),
+                    m(pol.ui.textInput, {list: "userList", value: t.user}),
                     m("datalist#userList", t.userList.map( x=> {
                         return m("option", x)
                     })),
                     m("span#ro",
-                        m(checkBox, { id:"full", onclick: toggleRo, checked: t.readonly }, "Read-only ")), nbsp,
+                        m(pol.ui.checkBox, { id:"full", onclick: toggleRo, checked: t.readonly }, "Read-only ")), pol.ui.nbsp,
                     m("button", { type: "button", onclick: add }, "Add")
                 ])
             }

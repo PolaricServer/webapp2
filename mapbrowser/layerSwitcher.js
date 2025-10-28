@@ -59,7 +59,7 @@ pol.core.LayerSwitcher = class extends pol.core.Widget {
                                     onclick: handleSelect(idx),
                                     type:"radio", name:"layer", value:"layer"+ (idx),
                                     checked: (x == t.mb.map.getLayers().item(0) ? "checked" : null)
-                                }), nbsp,
+                                }), pol.ui.nbsp,
                                 x.get("name"), br])
                             : null)
                     })),
@@ -68,7 +68,7 @@ pol.core.LayerSwitcher = class extends pol.core.Widget {
                     m("h2", "Overlays"), m("form", t.mb.config.oLayers.map( x => {
                         var idx = i++;
                         return (x.predicate() ?
-                            m(checkBox, {
+                            m(pol.ui.checkBox, {
                                 id: "layer"+idx,
                                 onclick: handleToggle(idx),
                                 checked: x.getVisible()

@@ -42,12 +42,12 @@ pol.layers.Wfs = class extends pol.layers.Edit {
                 return m("div.spec", [
                     m("div.field",
                         m("span.sleftlab", "WFS URL: "),
-                        m(textInput, {id:"wfsUrl", size: 40, maxLength:160, value: t.wurl, regex: /^.+$/i })
+                        m(pol.ui.textInput, {id:"wfsUrl", size: 40, maxLength:160, value: t.wurl, regex: /^.+$/i })
                     ),
 
                     m("div.field",
                         m("span.sleftlab", "Feat. type: "),
-                          m(select, {id: "wfsFtype", list: t.ftypes.map( x => {
+                          m(pol.ui.select, {id: "wfsFtype", list: t.ftypes.map( x => {
                              return {label: x, val: x, obj: x};
                           }) }),
                           m("button#addButton",
@@ -59,19 +59,19 @@ pol.layers.Wfs = class extends pol.layers.Edit {
                         m("span.sleftlab",
                           {title: "Label text. Use $(attr) to include feature attributes"},
                           "Label: "),
-                        m(textInput, {id:"wfsLabel", size: 20, maxLength: 200, value: t.wlabel, regex: /^.+$/i })
+                        m(pol.ui.textInput, {id:"wfsLabel", size: 20, maxLength: 200, value: t.wlabel, regex: /^.+$/i })
                     ),
 
                     m("div.field",
                         m("span.sleftlab", "Style: "),
-                        m(select, {id: "wfsStyle", list: Object.keys(CONFIG.getStyles("wfs")).map( x => {
+                        m(pol.ui.select, {id: "wfsStyle", list: Object.keys(CONFIG.getStyles("wfs")).map( x => {
                             return {label: x, val: x, obj: CONFIG.styles[x]};
                         }) })
                     ),
 
                     m("div.field",
                         m("span.sleftlab", "Std version: "),
-                        m(checkBox, {id:"stdver", onclick: setVer, checked: t.version,
+                        m(pol.ui.checkBox, {id:"stdver", onclick: setVer, checked: t.version,
                             title: "Check to use old standards version (wfs 1.1.0 / gml 3.1.1)" },
                             "Use old version"))
                 ]);

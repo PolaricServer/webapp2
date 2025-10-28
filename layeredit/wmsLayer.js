@@ -49,16 +49,16 @@ pol.layers.Wms = class extends pol.layers.Edit {
 
                     m("div.field",
                         m("span.sleftlab", "Server: "),
-                        m(textInput, {id:"wmsUrl", size: 40, maxLength:160, value: t.url, regex: /^.+$/i }),
+                        m(pol.ui.textInput, {id:"wmsUrl", size: 40, maxLength:160, value: t.url, regex: /^.+$/i }),
                         m("button", { type: "button", onclick: getCap}, "Get")),
 
                     m("div.field",
                         m("span.sleftlab", "Token: "),
-                        m(textInput, {id:"wmsParams", size: 32, maxLength:64, value: t.token, regex: /^.+$/i })),
+                        m(pol.ui.textInput, {id:"wmsParams", size: 32, maxLength:64, value: t.token, regex: /^.+$/i })),
 
                     m("div.field",
                         m("span.sleftlab", "Projection:"),
-                        m(select, {id: "sel_srs", onchange: selectSRS, list: t.srs.map( x=> {
+                        m(pol.ui.select, {id: "sel_srs", onchange: selectSRS, list: t.srs.map( x=> {
                             return {label: x, val: x, obj: null};
                         })})),
 
@@ -71,7 +71,7 @@ pol.layers.Wms = class extends pol.layers.Edit {
         t.wlayers = {
             view: function() {
                   return  m("div#wlayers", t.sLayers.map( x=> {
-                        return m(checkBox, {title: (x.Abstract=="" ? x.Title:x.Abstract), checked: x.checked, id: "layer_"+x.Name,
+                        return m(pol.ui.checkBox, {title: (x.Abstract=="" ? x.Title:x.Abstract), checked: x.checked, id: "layer_"+x.Name,
                             onchange: pol.ui.apply(tagToggle, x)}, limitLen(x.Title,32));
                     }));
 

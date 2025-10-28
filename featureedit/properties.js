@@ -92,7 +92,7 @@ pol.features.Properties = class extends pol.core.Widget {
                       m("caption", "Editor features:"),
                       m("tbody", features().map( x => {
                         return m("tr", {class: (x==t.selected ? "selected" : "")}, [
-                            m("td", m(removeEdit,
+                            m("td", m(pol.ui.removeEdit,
                                 { remove: pol.ui.apply(remove, i), edit: pol.ui.apply(edit, i++) })),
                             m("td", shortType(x.getGeometry().getType())),
                             m("td", (x.label ? x.label : ""))
@@ -100,7 +100,7 @@ pol.features.Properties = class extends pol.core.Widget {
                     }))),
 
                     m("div#movebutt",
-                        m("button",{onclick: move, title: "Move feature to layer"}, ">"), br,
+                        m("button",{onclick: move, title: "Move feature to layer"}, ">"), pol.ui.br,
                         m("button", {onclick: getFrom, title: "Get features from layer for editing"}, "<")
                     ),
 
@@ -128,7 +128,7 @@ pol.features.Properties = class extends pol.core.Widget {
 
                     m("span.field", [
                         m("span.sleftlab", "Label: "),
-                        m(textInput, {id:"editLabel", size: 19, maxLength:25, value: t.label, regex: /.*$/i }),
+                        m(pol.ui.textInput, {id:"editLabel", size: 19, maxLength:25, value: t.label, regex: /.*$/i }),
                         m("button", {onclick: set, title: "Update properties"}, "Update")
                     ]),
 

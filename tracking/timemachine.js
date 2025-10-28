@@ -52,7 +52,7 @@ pol.tracking.db.Timemachine = class extends pol.core.Widget {
                     m("form.tm", [
 
                         m("span.tm",
-                            m(dateTime, {id: "dtinput", tval: t.time})),
+                            m(pol.ui.dateTime, {id: "dtinput", tval: t.time})),
 
                         m("div.statusmsg", t.message),
 
@@ -60,7 +60,7 @@ pol.tracking.db.Timemachine = class extends pol.core.Widget {
                         m("div.tmbutt", [
                             m("button#tm_b1", {type: "button",
                                 title: "Show trail - search", onclick: search}, "Go to.."),
-                            m(timeButt, {tval: t.time, hour: true}),
+                            m(pol.ui.timeButt, {tval: t.time, hour: true}),
                             m("button#tm_back", {type: "button",
                                 title: "Return to realtime tracking", onclick: goBack}, "Back")
                         ])

@@ -63,16 +63,16 @@ pol.tracking.Search = class extends pol.core.Widget {
                     m("h1", "Search stations/objects"),
                     m("div#searchform", [
                         m("form", [
-                            "Keywords (tags): ", br,
+                            "Keywords (tags): ", pol.ui.br,
                                 m("div#tags", t.tags.filter(x=> prefixSel(x)).map( x=> {
-                                    return m(checkBox, {checked: t.selected[x], id: "tag_"+x, onchange: pol.ui.apply(tagToggle, x)}, limitLen(x,20));
+                                    return m(pol.ui.checkBox, {checked: t.selected[x], id: "tag_"+x, onchange: pol.ui.apply(tagToggle, x)}, limitLen(x,20));
                                 })),
 
 
-                            "Free text search: ", m(textInput,
+                            "Free text search: ", m(pol.ui.textInput,
                                 {id: "search", size: 10, maxLength: 40,value: t.search, regex: /^.*$/i}),
                             m("button#searchbutton",
-                                {onclick: searchHandler, type: "button"}, "Search" ), nbsp,
+                                {onclick: searchHandler, type: "button"}, "Search" ), pol.ui.nbsp,
                             m("span#found", "")
                         ])],
                         br,

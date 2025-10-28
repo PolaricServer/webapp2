@@ -62,7 +62,7 @@ pol.tracking.Tags = class extends pol.core.Widget {
                                     (x.charAt(0)=='+' ? m("span.usertag", x.substring(1)) :
                                         m("span.systag", x))) ])]
                     })),
-                    m(textInput, {list: "usedTags", value: t.tag}),
+                    m(pol.ui.textInput, {list: "usedTags", value: t.tag}),
                     m("datalist#usedTags", t.usedTags.map( x=> {
                         return m("option", x)
                     })),

@@ -61,7 +61,7 @@ pol.tracking.BikeWheel = class extends pol.core.Widget {
                     m("div.itemList", t.olist.map( x=> {
                         return [ m("span", [
                             m("img",  {src: "images/edit-delete.png", onclick: pol.ui.apply(_remove, i)}),
-                            m("img",  {src: "images/edit.png", onclick: pol.ui.apply(edit, i++)}), nbsp,
+                            m("img",  {src: "images/edit.png", onclick: pol.ui.apply(edit, i++)}), pol.ui.nbsp,
                             m("span", {onclick: pol.ui.apply(zoomTo, x)}, x.ident), nbsp]
                         ), " "]
                     })),
@@ -70,27 +70,27 @@ pol.tracking.BikeWheel = class extends pol.core.Widget {
 
                     m("div.field",
                         m("span.sleftlab", "Ident: "),
-                        m(textInput, {id:"label", value: t.ident, size: 10, maxLength:15,
+                        m(pol.ui.textInput, {id:"label", value: t.ident, size: 10, maxLength:15,
                             regex: /^[a-zA-Z0-9\_\-\.\#\/]+$/i })) ,
 
                     m("div.field",
                         m("span.sleftlab", "Description: "),
-                        m(textInput, {id:"descr", value: t.descr, size: 32, maxLength:64, regex: /^.+$/i })),
+                        m(pol.ui.textInput, {id:"descr", value: t.descr, size: 32, maxLength:64, regex: /^.+$/i })),
 
                     m("div.field",
                         m("span.sleftlab", "Pos (UTM): "),
-                        m(utmInput, {value: t.pos})),
+                        m(pol.ui.utmInput, {value: t.pos})),
 
                     m("div.field",
                         m("span.sleftlab", "Rings: "),
                         m("div#rings", [
-                            m(textInput, {id: "p25", value: t.p25, size: 5, maxlength: 6, regex: /^[0-9]+(\.[0-9]+)?$/i }),
-                                m("span.km"," km"), " - 25%", br,
-                            m(textInput, {id: "p50", value: t.p50, size: 5, maxlength: 6, regex: /^[0-9]+(\.[0-9]+)?$/i }),
-                                m("span.km"," km"), " - 50%", br,
-                            m(textInput, {id: "p75", value: t.p75, size: 5, maxlength: 6, regex: /^[0-9]+(\.[0-9]+)?$/i }),
-                                m("span.km"," km"), " - 75%", br,
-                            m(textInput, {id: "p95", value: t.p95, size: 5, maxlength: 6, regex: /^[0-9]+(\.[0-9]+)?$/i }),
+                            m(pol.ui.textInput, {id: "p25", value: t.p25, size: 5, maxlength: 6, regex: /^[0-9]+(\.[0-9]+)?$/i }),
+                                m("span.km"," km"), " - 25%", pol.ui.br,
+                            m(pol.ui.textInput, {id: "p50", value: t.p50, size: 5, maxlength: 6, regex: /^[0-9]+(\.[0-9]+)?$/i }),
+                                m("span.km"," km"), " - 50%", pol.ui.br,
+                            m(pol.ui.textInput, {id: "p75", value: t.p75, size: 5, maxlength: 6, regex: /^[0-9]+(\.[0-9]+)?$/i }),
+                                m("span.km"," km"), " - 75%", pol.ui.br,
+                            m(pol.ui.textInput, {id: "p95", value: t.p95, size: 5, maxlength: 6, regex: /^[0-9]+(\.[0-9]+)?$/i }),
                                 m("span.km"," km"), " - 95%",
                          ]),
                          m("div#alternatives", [

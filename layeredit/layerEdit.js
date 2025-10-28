@@ -42,18 +42,18 @@ pol.layers.Edit = class {
                 return m("form", [
                     m("div.field",
                         m("span.sleftlab", "Name: "),
-                        m(textInput, {id:"editLayer", size: 16, maxLength:25, value: t.lName, regex: /^[^\<\>\'\"]+$/i })
+                        m(pol.ui.textInput, {id:"editLayer", size: 16, maxLength:25, value: t.lName, regex: /^[^\<\>\'\"]+$/i })
                     ),
 
                     m("div.field",
                         m("span.sleftlab", "Visibility: "),
-                            m(checkBox, {id:"vis.extent", onclick: filterExtent, checked: (t.filt.ext != null),
+                            m(pol.ui.checkBox, {id:"vis.extent", onclick: filterExtent, checked: (t.filt.ext != null),
                                 title: "Check to make layer visible only if it overlaps this extent" },
-                                "Map extent", nbsp, nbsp),
-                        m(checkBox, {id:"vis.zoom", onclick: filterZoom, checked: (t.filt.zoom != null),
+                                "Map extent", pol.ui.nbsp, pol.ui.nbsp),
+                        m(pol.ui.checkBox, {id:"vis.zoom", onclick: filterZoom, checked: (t.filt.zoom != null),
                             title: "Check to make layer visible only from this zoom level" },
-                            "Zoom level+", nbsp, nbsp),
-                        m(checkBox, {id:"vis.proj", onclick: filterProj, checked: (t.filt.proj != null),
+                            "Zoom level+", pol.ui.nbsp, pol.ui.nbsp),
+                        m(pol.ui.checkBox, {id:"vis.proj", onclick: filterProj, checked: (t.filt.proj != null),
                             title: "Check to make layer visible only with this base map projection" },
                             "Base proj.")
                      ),

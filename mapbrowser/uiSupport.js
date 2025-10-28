@@ -82,9 +82,9 @@ pol.ui.apply = function(f, id) {
 
 
 /* Some simple DOM elements */
-window.br = m("br");
-window.hr = m("hr");
-window.nbsp = m.trust("&nbsp;");
+pol.ui.br = m("br");
+pol.ui.hr = m("hr");
+pol.ui.nbsp = m.trust("&nbsp;");
 
 
 
@@ -134,7 +134,7 @@ const textInput = {
         });
    }
 }
-window.textInput = textInput; // FIXME
+pol.ui.textInput = textInput;
 
 
 
@@ -151,11 +151,11 @@ const checkBox = {
             type:"checkbox", name: vn.attrs.name, value: vn.attrs.id,
             checked: (vn.attrs.checked ? "checked" : null),
             onchange: (vn.attrs.onchange)
-         }), nbsp, vn.children);
+         }), pol.ui.nbsp, vn.children);
     }
 }
 
-window.checkBox = checkBox; // FIXME
+pol.ui.checkBox = checkBox;
 
 
 /**
@@ -172,7 +172,7 @@ const select = {
     }
 }
 
-window.select = select; // FIXME; 
+pol.ui.select = select; 
 
 
 
@@ -225,7 +225,7 @@ const iconPick = {
 
 }
 
-window.iconPick = iconPick; // FIXME
+pol.ui.iconPick = iconPick;
 
 
 
@@ -258,7 +258,7 @@ const Datepick = {
   }
 }
 
-window.Datepick = Datepick; // FIXME
+pol.ui.Datepick = Datepick;
 
 
 
@@ -271,13 +271,13 @@ window.Datepick = Datepick; // FIXME
 const dateTime = {
     view: function(vn) {
         return m("span.datetime",
-            m(Datepick, {value: vn.attrs.tval.tdate, id:vn.attrs.id+"_date"}),
-            m(textInput, {id:vn.attrs.id+"_time", size: "5", maxLength: "5",
+            m(pol.ui.Datepick, {value: vn.attrs.tval.tdate, id:vn.attrs.id+"_date"}),
+            m(pol.ui.textInput, {id:vn.attrs.id+"_time", size: "5", maxLength: "5",
                 value: vn.attrs.tval.ttime, regex: /^(([0-1][0-9])|(2[0-3]))\:[0-5][0-9]$/ }),
             m("img", {title: "Set time to now", src:"images/time.png", onclick: ()=> vn.attrs.tval.setNow()}));
     }
 }
-window.dateTime = dateTime; // FIXME
+pol.ui.dateTime = dateTime;
 
 
 
@@ -305,7 +305,7 @@ const timeButt = {
         );
     }
 }
-window.timeButt = timeButt; // FIXME
+pol.ui.timeButt = timeButt;
 
 
 /**
@@ -342,16 +342,16 @@ const mgrsInput = class {
     view() {
         return m("span",
                {onclick: function() { pol.ui.autojump("locx", "locy"); }},
-            m(textInput, {id:"mgrsprefix", size: "5", maxLength: "5",
-               regex: /^[0-9]{2}[C-X][A-Z][A-V]$/i, value: this.prefix }), nbsp,
-            m(textInput, {id:"locx", size: "3", maxLength: "3", value: this.locx, regex: /^[0-9]{3}$/ }),
-            m(textInput, {id:"locy", size: "3", maxLength: "3", value: this.locy, regex: /^[0-9]{3}$/ }), nbsp
+            m(pol.ui.textInput, {id:"mgrsprefix", size: "5", maxLength: "5",
+               regex: /^[0-9]{2}[C-X][A-Z][A-V]$/i, value: this.prefix }), pol.ui.nbsp,
+            m(pol.ui.textInput, {id:"locx", size: "3", maxLength: "3", value: this.locx, regex: /^[0-9]{3}$/ }),
+            m(pol.ui.textInput, {id:"locy", size: "3", maxLength: "3", value: this.locy, regex: /^[0-9]{3}$/ }), pol.ui.nbsp
 
         );
     }
  }
 
- window.mgrsInput = mgrsInput; // FIXME
+ pol.ui.mgrsInput = mgrsInput;
 
 
 /**
@@ -409,14 +409,14 @@ const utmInput = class {
                      pol.ui.autojump('utmnz', 'utmx');
                      pol.ui.autojump('utmx', 'utmy');
                  }},
-            m(textInput, {id:"utmz", size: "2", maxLength: "2", value: t.lngZone, regex:/^[0-9]{2}$/}),
-            m(textInput, {id:"utmnz", size: "1", maxLength: "1", value: t.latZone,
-                 contentEditable: false}), nbsp, nbsp,
-            m(textInput, {id:"utmx", size: "6", maxLength: "6", value: t.lng, regex:/^[0-9]{6}$/}),
-            m(textInput, {id:"utmy", size: "7", maxLength: "7", value: t.lat, regex:/^[0-9]{7}$/}), nbsp)
+            m(pol.ui.textInput, {id:"utmz", size: "2", maxLength: "2", value: t.lngZone, regex:/^[0-9]{2}$/}),
+            m(pol.ui.textInput, {id:"utmnz", size: "1", maxLength: "1", value: t.latZone,
+                 contentEditable: false}), pol.ui.nbsp, pol.ui.nbsp,
+            m(pol.ui.textInput, {id:"utmx", size: "6", maxLength: "6", value: t.lng, regex:/^[0-9]{6}$/}),
+            m(pol.ui.textInput, {id:"utmy", size: "7", maxLength: "7", value: t.lat, regex:/^[0-9]{7}$/}), pol.ui.nbsp)
     }
  }
- window.utmInput = utmInput; // FIXME
+ pol.ui.utmInput = utmInput;
  
  
 
@@ -464,13 +464,13 @@ const latLngInput = class {
                      pol.ui.autojump('ll_Nm', 'll_Ed');
                      pol.ui.autojump('ll_Ed', 'll_Em');
                  }},
-            m(textInput, {id:"ll_Nd", size: "2", maxLength: "2", value: this.Nd, regex:/^(([0-8]?[0-9])|90)$/}), "°", nbsp,nbsp,
-            m(textInput, {id:"ll_Nm", size: "6", maxLength: "6", value: this.Nm, regex: reg_MIN }), "\'", nbsp,
-            m("span#ll_NS",   {onclick:this.clickNS}, (center[1] < 0 ? "S":"N")), nbsp, nbsp,
+            m(pol.ui.textInput, {id:"ll_Nd", size: "2", maxLength: "2", value: this.Nd, regex:/^(([0-8]?[0-9])|90)$/}), "°", pol.ui.nbsp,pol.ui.nbsp,
+            m(pol.ui.textInput, {id:"ll_Nm", size: "6", maxLength: "6", value: this.Nm, regex: reg_MIN }), "\'", pol.ui.nbsp,
+            m("span#ll_NS",   {onclick:this.clickNS}, (center[1] < 0 ? "S":"N")), pol.ui.nbsp, pol.ui.nbsp,
 
-            m(textInput, {id:"ll_Ed", size: "3", maxLength: "3", value: this.Ed, regex:/^[0-9]{1,3}$/}), "°", nbsp,nbsp,
-            m(textInput, {id:"ll_Em", size: "6", maxLength: "6", value: this.Em, regex: reg_MIN }), "\'", nbsp,
-            m("span#ll_EW",   {onclick:this.clickEW}, (center[0] < 0 ? "W":"E")), nbsp, nbsp)
+            m(pol.ui.textInput, {id:"ll_Ed", size: "3", maxLength: "3", value: this.Ed, regex:/^[0-9]{1,3}$/}), "°", pol.ui.nbsp,pol.ui.nbsp,
+            m(pol.ui.textInput, {id:"ll_Em", size: "6", maxLength: "6", value: this.Em, regex: reg_MIN }), "\'", pol.ui.nbsp,
+            m("span#ll_EW",   {onclick:this.clickEW}, (center[0] < 0 ? "W":"E")), pol.ui.nbsp, pol.ui.nbsp)
     }
 
     onupdate (vn) {
@@ -497,7 +497,7 @@ const latLngInput = class {
     }
 }
 
-window.latLngInput = latLngInput; // FIXME
+pol.ui.latLngInput = latLngInput;
 
 
 
@@ -515,10 +515,10 @@ const latLngInputDec = class {
                  { onclick: function() {
                      pol.ui.autojump('ll_Nd', 'll_Ed');
                  }},
-            m(textInput, {id:"ll_Ndd", size: "8", maxLength: "12", value: this.Nd,
-                regex:/^\-?(([0-8]?[0-9])(\.[0-9]+)?|90(\.0+)?)?$/}), "° N", nbsp,nbsp,
-            m(textInput, {id:"ll_Edd", size: "9", maxLength: "13", value: this.Ed,
-                regex:/^\-?[0-9]{1,3}(\.[0-9]+)?$/}), "° E", nbsp,nbsp )
+            m(pol.ui.textInput, {id:"ll_Ndd", size: "8", maxLength: "12", value: this.Nd,
+                regex:/^\-?(([0-8]?[0-9])(\.[0-9]+)?|90(\.0+)?)?$/}), "° N", pol.ui.nbsp,pol.ui.nbsp,
+            m(pol.ui.textInput, {id:"ll_Edd", size: "9", maxLength: "13", value: this.Ed,
+                regex:/^\-?[0-9]{1,3}(\.[0-9]+)?$/}), "° E", pol.ui.nbsp,pol.ui.nbsp )
     }
 
     onupdate (vn) {
@@ -530,7 +530,7 @@ const latLngInputDec = class {
     }
 }
 
-window.latLngInputDec = latLngInputDec; // FIXME
+pol.ui.latLngInputDec = latLngInputDec;
 
 
 
@@ -547,7 +547,7 @@ const removeEdit = {
     }
 }
 
-window.removeEdit = removeEdit; // FIXME
+pol.ui.removeEdit = removeEdit;
 
 
 
@@ -587,7 +587,7 @@ function dragdrop(element, onchange) {
 	}
 }
 
-window.dragdrop = dragdrop; // FIXME
+pol.ui.dragdrop = dragdrop;
 
 
 

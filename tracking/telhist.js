@@ -74,9 +74,9 @@ pol.tracking.TelHist = class extends pol.core.Widget {
                 return  m("div#TelHist", [
                     m("h1", "Telemetry graph - "+t.ident),
                     m("div.graph", {id: "graph_"+t.ident}),
-                    m("button", { type: "button", onclick: ()=>t.getHist(t.ident, t.meta) }, "Next"), nbsp,
-                    m(checkBox, {onclick: selDay,  checked: t.period=="day"}, "Day"), nbsp,
-                    m(checkBox, {onclick: selWeek, checked: t.period=="week" },"Week"),
+                    m("button", { type: "button", onclick: ()=>t.getHist(t.ident, t.meta) }, "Next"), pol.ui.nbsp,
+                    m(pol.ui.checkBox, {onclick: selDay,  checked: t.period=="day"}, "Day"), pol.ui.nbsp,
+                    m(pol.ui.checkBox, {onclick: selWeek, checked: t.period=="week" },"Week"),
 
                 ] );
             }

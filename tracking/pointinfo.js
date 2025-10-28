@@ -178,7 +178,7 @@ pol.tracking.PointInfo = class extends pol.core.Widget {
 
                     (x.speed > 0 ? m("div.field",
                             m("span.leftlab", "Movement: "), [
-                                Math.round(x.speed * 0.539956) + " knots ", nbsp,
+                                Math.round(x.speed * 0.539956) + " knots ", pol.ui.nbsp,
                                 m(movement, {course:x.course, speed:x.speed})]) : null),
                 ]
             }
@@ -194,7 +194,7 @@ pol.tracking.PointInfo = class extends pol.core.Widget {
                     m("div.field",
                         m("span.leftlab", "Severity: "), x.severity),
                     m("div.field",
-                        m("span.leftlab", "Valid time span: "), m("span.nobr", pol.ui.formatDTG(x.startTime)), nbsp, "-", nbsp, pol.ui.formatDTG(x.endTime)),
+                        m("span.leftlab", "Valid time span: "), m("span.nobr", pol.ui.formatDTG(x.startTime)), pol.ui.nbsp, "-", pol.ui.nbsp, pol.ui.formatDTG(x.endTime)),
                     m("div.datexcom", x.comments[0]),
                     m("div.datexcom", x.comments[1]),
                 ]

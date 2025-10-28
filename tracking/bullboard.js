@@ -71,7 +71,7 @@ pol.tracking.BullBoard = class extends pol.core.Widget {
                     t.edit[t.selectedGroup].map( x => {
                         return m("span.mline", [
                             m("span", ""+ (t.selectedGroup==0 ? String.fromCharCode( 'A'.charCodeAt(0)+i) : ''+i)),
-                            m(textInput, { id:"edit"+(i++), value: x, size: 60,
+                            m(pol.ui.textInput, { id:"edit"+(i++), value: x, size: 60,
                                 maxLength:67, regex: /^[^\<\>\'\"]+$/i }),
                                 (i==t.edit[t.selectedGroup].length ? m("span", {onclick: addInpLine}, '+') : "")
                         ]);
@@ -98,8 +98,8 @@ pol.tracking.BullBoard = class extends pol.core.Widget {
                                 x ), " " ];
                         }),
                         (t.canSend() ?
-                            m("span", [ m(textInput, {id:"addGrp", value: addgrp, size: 5}),
-                                        m("span", {onclick: grpAdd}, nbsp, "[+]") ]) : "" )
+                            m("span", [ m(pol.ui.textInput, {id:"addGrp", value: addgrp, size: 5}),
+                                        m("span", {onclick: grpAdd}, pol.ui.nbsp, "[+]") ]) : "" )
                     ),
                     m(showGroup, {msgs: t.messages}),
                     (t.canSend() ? m(sendBull) : "")

@@ -50,7 +50,7 @@ pol.tracking.db.HeardVia = class extends pol.core.Widget {
                 return m("div.hrdvia", m("table", t.list.map( x => {
                     return m("tr",
                         m("td",
-                            m(removeEdit, {remove: pol.ui.apply(deleteItem, i), edit: pol.ui.apply(editItem, i)})),
+                            m(pol.ui.removeEdit, {remove: pol.ui.apply(deleteItem, i), edit: pol.ui.apply(editItem, i)})),
                         m("td", {onclick:pol.ui.apply(showItem, i++)}, x.call),
                         m("td", x.fromdate),
                         m("td", x.todate),
@@ -70,17 +70,17 @@ pol.tracking.db.HeardVia = class extends pol.core.Widget {
                     m("form.hrd", [
                         m("div.field",
                             m("span.sleftlab", "Callsign: "),
-                            m(textInput, {id:"hrd_call", value: t.item.call, size: 10, maxLength:20,
+                            m(pol.ui.textInput, {id:"hrd_call", value: t.item.call, size: 10, maxLength:20,
                                 regex: /^.+$/i })),
 
                         m("div.field",
                             m("span.sleftlab", "Start: "),
-                            m(Datepick, {id: "hrd_start", value: t.item.fromdate})),
+                            m(pol.ui.Datepick, {id: "hrd_start", value: t.item.fromdate})),
 
                         m("div.field",
                             m("span.sleftlab", "End: "),
-                            m(Datepick, {id: "hrd_end", value: t.item.todate}),
-                            m(checkBox, {id: "hrd_open", onclick: hOpen, checked: t.item.open,
+                            m(pol.ui.Datepick, {id: "hrd_end", value: t.item.todate}),
+                            m(pol.ui.checkBox, {id: "hrd_open", onclick: hOpen, checked: t.item.open,
                                 title: "If checked, end-date is today" }, "Open end")),
 
                         m("div.hrdbutt", [

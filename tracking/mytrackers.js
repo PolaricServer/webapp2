@@ -49,7 +49,7 @@ pol.tracking.db.MyTrackers = class extends pol.tracking.TrackerAlias {
                     m("table.mytrackers", m("tbody", t.myTrackers.map(x => {
                         return m("tr", [
                             m("td",
-                                m(removeEdit, {remove: pol.ui.apply(remove,i), edit: pol.ui.apply(edit, i++)})),
+                                m(pol.ui.removeEdit, {remove: pol.ui.apply(remove,i), edit: pol.ui.apply(edit, i++)})),
                             m("td", {onclick: pol.ui.apply(goto, x.id)}, x.id),
                             m("td", x.alias),
                             m("td", (x.icon == null || x.auto ? "" :  m("img.icon", {src:x.icon}))),
@@ -60,7 +60,7 @@ pol.tracking.db.MyTrackers = class extends pol.tracking.TrackerAlias {
 
                     m("div.field#owner",
                         m("span.xsleftlab", {title: "Optional: Move tracker to another user"}, "Owner:"),
-                        m(textInput, {list: "userList", value: t.user}),
+                        m(pol.ui.textInput, {list: "userList", value: t.user}),
                         m("datalist#userList", t.userList.map( x=> {
                             return m("option", x)
                         }))),

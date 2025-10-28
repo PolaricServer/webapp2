@@ -171,7 +171,7 @@ pol.tracking.NotifyList = class extends pol.core.Widget {
         t.sendNot = {
             view: function() {
                 return m("div#sendNot", [
-                    m(textInput,
+                    m(pol.ui.textInput,
                         { id: "notMsg", value: t.msg,
                             maxLength: 55, regex: /.*/i }),
                     m("button", { type: "button", onclick: send }, "Send"),

@@ -72,7 +72,7 @@ pol.tracking.Telemetry = class extends pol.core.Widget {
         this.widget = {
             view: function() {
                 return  m("div#Telemetry", [
-                    m("h1", (t.descr == null ? "Telemetry" : t.descr)), nbsp,nbsp,
+                    m("h1", (t.descr == null ? "Telemetry" : t.descr)), pol.ui.nbsp,nbsp,
                     m("span", t.ident+(t.current != null ? ", at "+formatTime(t.current.time) : "")),
                     m("button", { type: "button", onclick: ()=>history() }, "Graph") ,
                     (t.meta != null && t.current != null && t.current.num ? m(_telnum) : null),

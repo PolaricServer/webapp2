@@ -43,20 +43,20 @@ pol.layers.Gpx = class extends pol.layers.Edit {
                     m("span.dragdrop", [ t.files.map( x=> {
                         return m("img", {src: "images/32px/file.png", title: x.name});
                     }),
-                    (t.files.length > 1 ? "" : "Drop files here...") ]), br,
+                    (t.files.length > 1 ? "" : "Drop files here...") ]), pol.ui.br,
 
                     m("span.sleftlab", "Style: "),
-                    m(select, {id: "gpxStyle", list: Object.keys(CONFIG.getStyles("gpx")).map( x => {
+                    m(pol.ui.select, {id: "gpxStyle", list: Object.keys(CONFIG.getStyles("gpx")).map( x => {
                             return {label: x, val: x, obj: CONFIG.styles[x]};
-                        }) }), br,
+                        }) }), pol.ui.br,
 
                     m("span.sleftlab", "Label attr: "),
-                    m(textInput, {id:"gpxLabel", size: 20, maxLength: 60, value: t.gpxLab, regex: /^.+$/i }),br
+                    m(pol.ui.textInput, {id:"gpxLabel", size: 20, maxLength: 60, value: t.gpxLab, regex: /^.+$/i }),br
                 ]);
             },
 
             oncreate: ()=>
-                setTimeout( ()=> { dragdrop( $(".dragdrop").get(0), dropFile); }, 1000),
+                setTimeout( ()=> { pol.ui.dragdrop( $(".dragdrop").get(0), dropFile); }, 1000),
 
             onremove: ()=> t.cleanup()
         }

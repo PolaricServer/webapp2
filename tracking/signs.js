@@ -54,7 +54,7 @@ pol.tracking.db.Signs = class extends pol.core.Widget {
                 var i=0;
                 return m("table", m("tbody", t.mySigns.map(x => {
                         return m("tr", [
-                            m(removeEdit, {remove: pol.ui.apply(remove, i), edit: pol.ui.apply(editObj, i++)}),
+                            m(pol.ui.removeEdit, {remove: pol.ui.apply(remove, i), edit: pol.ui.apply(editObj, i++)}),
 
                             m("td", {onclick: pol.ui.apply(gotoPos, x)},  x.descr),
                             m("td", x.tname),
@@ -74,37 +74,37 @@ pol.tracking.db.Signs = class extends pol.core.Widget {
 
                     m("div.field",
                         m("span.sleftlab",{title: "Description of item"}, "Description:"),
-                        m(textInput, { id: "name", value: t.descr, size: 36,
+                        m(pol.ui.textInput, { id: "name", value: t.descr, size: 36,
                             maxLength: 40, regex: /.*/i })),
 
                     m("div.field",
                         m("span.sleftlab", {title: "URL for webpage or picture to link to"}, "URL:"),
-                        m(textInput, { id: "url", value: t.url, size: 36,
+                        m(pol.ui.textInput, { id: "url", value: t.url, size: 36,
                             maxLength: 40, regex: /.*/i })),
 
                     m("div.field",
                         m("span.sleftlab", "Pos (UTM): "),
-                        m(utmInput, {value: t.pos})),
+                        m(pol.ui.utmInput, {value: t.pos})),
 
                     m("div.field",
                         m("span.sleftlab", {title: "Max scale in which item is shown on map"}, "Scale:"),
-                        m(textInput, { id: "scale", value: t.scale, size: 12,
+                        m(pol.ui.textInput, { id: "scale", value: t.scale, size: 12,
                             maxLength: 16, regex: /^[1-9][0-9]{4,16}$/i })),
 
                     m("div.field",
                         m("span.sleftlab", {title: "Type or category of item"}, "Type:"),
-                        m(select, {
+                        m(pol.ui.select, {
                             id: "typeSelect",
                             onchange: typeSelect,
                             list: t.myTypes,
-                        }), nbsp,
+                        }), pol.ui.nbsp,
                         m("img", {src: "aprsd/icons/"+t.icon})),
 
                     m("div.field",
                         m("span.sleftlab", {title: "What objects to show in list"}, "Search:"),
-                        m(checkBox, {id: "srch_type", checked: t.typeSel, onclick: toggleTypeSel,
+                        m(pol.ui.checkBox, {id: "srch_type", checked: t.typeSel, onclick: toggleTypeSel,
                             title: "Limit list to selected type" }, "Type selection"),
-                        m(checkBox, {id: "srch_user", checked: t.userSel, onclick: toggleUserSel,
+                        m(pol.ui.checkBox, {id: "srch_user", checked: t.userSel, onclick: toggleUserSel,
                             title: "Limit list to my own objects" }, "My objects only")),
 
                     m("div.butt", [

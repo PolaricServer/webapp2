@@ -61,7 +61,7 @@ pol.layers.List = class List extends pol.core.Widget {
                             const i = indexOf(x.name);
                             return m("tr", [ m("td",
                                 (removable(i) ?
-                                    m(removeEdit, {remove: pol.ui.apply(x=>t.removeLayer(x), i), edit: pol.ui.apply(editLayer, i) })
+                                    m(pol.ui.removeEdit, {remove: pol.ui.apply(x=>t.removeLayer(x), i), edit: pol.ui.apply(editLayer, i) })
                                     : ""),
                                 (sharable(i) ?
                                     m("img", {src:"images/16px/user.png", title:"Sharing", onclick: pol.ui.apply(sharing, i)} )
@@ -73,7 +73,7 @@ pol.layers.List = class List extends pol.core.Widget {
                     m("div", [
                         m("div.field",
                             m("span.sleftlab", "Type: "),
-                            m(select, { id: "lType",
+                            m(pol.ui.select, { id: "lType",
                                 onchange: selectHandler,
                                     list: Object.keys(t.typeList)
                                         .filter( x=> {return (t.typeList[x].obj.allowed());} )

@@ -45,7 +45,7 @@ pol.core.AreaList = class extends pol.core.Widget {
                         return m("tr", [
                             m("td", [
                                 (removable(i) ?
-                                    m(removeEdit, { remove: pol.ui.apply(removeArea, i), edit: pol.ui.apply(editArea, i) })
+                                    m(pol.ui.removeEdit, { remove: pol.ui.apply(removeArea, i), edit: pol.ui.apply(editArea, i) })
                                     : ""),
                                 (sharable(i) ?
                                     m("img", {src:"images/16px/user.png", title:"Sharing", onclick: pol.ui.apply(sharing, i)} )
@@ -56,7 +56,7 @@ pol.core.AreaList = class extends pol.core.Widget {
                                  x.name)
                         ]);
                     }))),
-                    m(textInput, {id:"editArea", value: t.currName, size: 16, maxLength:25,
+                    m(pol.ui.textInput, {id:"editArea", value: t.currName, size: 16, maxLength:25,
                         regex: /^[^\<\>\'\"]+$/i }),
                     m("button", {onclick: add, disabled: !canAdd(), title: "Add area to list"}, "Add")
                 ])

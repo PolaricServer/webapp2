@@ -57,19 +57,19 @@ pol.tracking.Mailbox = class extends pol.core.Widget {
 
                     m("div.field",
                         m("span.xxsleftlab", "To:"),
-                        m(textInput,
+                        m(pol.ui.textInput,
                             { id: "recipient", value: t.recipient,
                                 maxLength: 40, regex: /.*/i }),
                             m("img#ulist", {src:"images/participant.png",
                                 title:"Show logged on users (on/off)", onclick:()=>toggleUsers()}),
-                        //  nbsp, m(checkBox,{title: "Tick to send as plain APRS"}, "@APRS")
+                        //  nbsp, m(pol.ui.checkBox,{title: "Tick to send as plain APRS"}, "@APRS")
                     ),
 
 
 
                     m("div.field",
                         m("span.xxsleftlab", "Text:"),
-                        m(textInput,
+                        m(pol.ui.textInput,
                             { id: "msg", value: t.msg,
                                 maxLength: 66, regex: /.*/i }),
                        m("img#sendmsg", {src:"images/sendmsg.png",
@@ -94,7 +94,7 @@ pol.tracking.Mailbox = class extends pol.core.Widget {
                                     m("span", {"class":"header"}, [ pol.ui.formatDTG(x.time)+": ",
                                         ( x.outgoing ? x.from
                                             : m("span.fromaddr", {onclick: ()=> {t.recipient(x.from);}}, x.from)),
-                                        nbsp, m("img", {src:"images/16px/dE.png"}), nbsp, //  > ",
+                                        nbsp, m("img", {src:"images/16px/dE.png"}), pol.ui.nbsp, //  > ",
                                         ( !x.outgoing ? x.to
                                             : m("span.fromaddr", {onclick: ()=> {t.recipient(x.to);}}, x.to)) ]),
 

@@ -49,7 +49,7 @@ pol.tracking.db.History = class extends pol.core.Widget {
                 return m("div.histt", m("table", t.list.map( x => {
                     return m("tr",
                         m("td", [
-                            m(removeEdit, {remove: pol.ui.apply(deleteItem, i), edit: pol.ui.apply(editItem, i)}), nbsp,
+                            m(pol.ui.removeEdit, {remove: pol.ui.apply(deleteItem, i), edit: pol.ui.apply(editItem, i)}), pol.ui.nbsp,
                             m("span.removeEdit",
                               m("img", {src: "images/time.png", title: "Set time (from form)", onclick: pol.ui.apply(setTime, i)})) ]
                         ),
@@ -72,20 +72,20 @@ pol.tracking.db.History = class extends pol.core.Widget {
                     m("form.hist", [
                         m("div.field",
                             m("span.sleftlab", "Callsign: "),
-                            m(textInput, {id:"hist_call", value: t.item.call, size: 10, maxLength:20,
+                            m(pol.ui.textInput, {id:"hist_call", value: t.item.call, size: 10, maxLength:20,
                                 regex: /^.+$/i })),
 
                         m("div.field",
                             m("span.sleftlab", "Start: "),
-                            m(dateTime, {id: "hist_start", tval: t.item.from}),
-                            m(timeButt, {tval: t.item.from})
+                            m(pol.ui.dateTime, {id: "hist_start", tval: t.item.from}),
+                            m(pol.ui.timeButt, {tval: t.item.from})
                         ),
 
                         m("div.field",
                             m("span.sleftlab", "End: "),
-                            m(dateTime, {id: "hist_end", tval: t.item.to}),
-                            m(timeButt, {tval: t.item.to}),
-                            m(checkBox, {id: "hist_open", onclick: hOpen, checked: t.item.open,
+                            m(pol.ui.dateTime, {id: "hist_end", tval: t.item.to}),
+                            m(pol.ui.timeButt, {tval: t.item.to}),
+                            m(pol.ui.checkBox, {id: "hist_open", onclick: hOpen, checked: t.item.open,
                                 title: "If checked, end-time is now" }, "Open end")),
 
                         m("div.histbutt", [

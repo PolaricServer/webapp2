@@ -47,25 +47,25 @@ pol.core.refSearch = class refSearch extends pol.core.Widget {
                     m("form.mapref", [
                         m("div.field",
                             m("span.sleftlab", {title: "MGRS 100x100m square"}, "MGRS ref: "),
-                            m(mgrsInput, {value: t.mgrsVal}),
-                            m("button#butt_mgrs", {type: "button", onclick: ()=> gotoPos(t.mgrsVal, "MGRS") }, "Find") ), hr,
+                            m(pol.ui.mgrsInput, {value: t.mgrsVal}),
+                            m("button#butt_mgrs", {type: "button", onclick: ()=> gotoPos(t.mgrsVal, "MGRS") }, "Find") ), pol.ui.hr,
 
                         m("div.field",
                             m("span.sleftlab", "UTM ref: "),
-                            m(utmInput, {value: t.utmVal}),
+                            m(pol.ui.utmInput, {value: t.utmVal}),
                             m("button#butt_utm", {type: "button", style: "margin-right:3.5em",
-                                onclick: ()=> gotoPos(t.utmVal, "UTM")  }, "Find")), hr,
+                                onclick: ()=> gotoPos(t.utmVal, "UTM")  }, "Find")), pol.ui.hr,
 
                         m("div.field",
                             m("span.sleftlab",
                                 {title: "Degrees, decimal-minutes (click to change hemisphere)"},
                                 "Lat Long: "),
-                            m(latLngInput, {value: t.llVal}),
-                            m("button#butt_ll", {type: "button", onclick: ()=> gotoPos(t.llVal, "LatLong") }, "Find") ), hr,
+                            m(pol.ui.latLngInput, {value: t.llVal}),
+                            m("button#butt_ll", {type: "button", onclick: ()=> gotoPos(t.llVal, "LatLong") }, "Find") ), pol.ui.hr,
 
                         m("div.field",
                             m("span.sleftlab", {title: "Decimal degrees"}, "Dec. LL: "),
-                            m(latLngInputDec, {value: t.llVal2}),
+                            m(pol.ui.latLngInputDec, {value: t.llVal2}),
                             m("button#butt_lld", {type: "button", onclick: ()=> gotoPos(t.llVal2, "LatLong") }, "Find") )
                     ])
                 ])
