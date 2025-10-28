@@ -1,1 +1,3 @@
 node_modules/
+*-min.js
+style/style-min.css
