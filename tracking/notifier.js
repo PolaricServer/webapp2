@@ -191,7 +191,7 @@ pol.tracking.NotifyList = class extends pol.core.Widget {
                                 ?  ()=> WIDGET("tracking.Mailbox",[50,70], true) : null),
                                 "class":"icon", src:icon(x.type)})),
                             m("td", m("div", [
-                                m("span.header", [x.from+", "+formatDTG(x.time)]),
+                                m("span.header", [x.from+", "+pol.ui.formatDTG(x.time)]),
                                 m("img", {src:"images/16px/close.png", onclick: pol.ui.apply(removeNot, i++) }),
                                 br, m("span.txt", {title: x.text}, limit(x.text, 32))
                             ] ))

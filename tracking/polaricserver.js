@@ -410,7 +410,7 @@ pol.tracking.PolaricServer = class extends pol.core.Server {
             else if (p.point.type === "photo") {
                 /* Show user uploaded image */
                 this.getPhoto(p.point.ident.substring(5), (ph) => {
-                    CONFIG.mb.gui.imagePopup(ph.descr+" - "+formatDTG(ph.time) +
+                    CONFIG.mb.gui.imagePopup(ph.descr+" - "+pol.ui.formatDTG(ph.time) +
                       (!this.isAuth() || this.userid !== ph.userid ? " (by "+ph.userid+")" : "") ,
                       "  data:image/jpeg;base64, "+ph.image,
                       {draggable: true,  id: "imagepopup",  pixPos: (this.mobile ? [0,0] : pixel)  } );
