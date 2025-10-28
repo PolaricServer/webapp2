@@ -1,3 +1,13 @@
+polaric-webapp2 (4.0) stable; urgency=medium
+
+  * Migrate to webpack for building/bundling - requires many adjustments.. 
+  * Migrate from pikaday to flatpickr, remove moment.js
+  * Bump OL version to 10.6.1
+  * Support extra filter in APRS-IS channel, add AIS-SERIAL choices
+  * Various fixes and adjustments
+
+ -- Oyvind Hanssen <ohanssen@acm.org>  Sun, 26 Oct 2025 19:42:09 +0100
+
 polaric-webapp2 (3.3) stable; urgency=medium
 
   * Fixes..
