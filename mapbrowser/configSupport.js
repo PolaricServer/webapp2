@@ -142,8 +142,9 @@ function TILEGRID_WMTS(proj, start, end, prefix, siz, origin) {
 
 function createLayer_MapCache(opt) {
 
-    /* FIXME: when server host is ready and when host is changed */
-    setTimeout( ()=> {
+    let _phost = null;
+    
+    setInterval( ()=> {
         let host = CONFIG.server.host;
         if (host == null) {
             let hh = window.location.host;
@@ -154,11 +155,14 @@ function createLayer_MapCache(opt) {
             if (hh)
                 host +=hh;
             else
-                host += "localhost";
+                host += (opt.default_host != null ? opt.default_host : "localhost");
         }
-        layer.getSource().setUrl(opt.url? opt.url : host + "/mapcache/wms?");
-    }, 2000);
+        if (host != _phost)
+            layer.getSource().setUrl(opt.url? opt.url : host + "/mapcache/wms?");
+        phost = host;
+    }, 4000);
 
+    
     const layer = new ol.layer.Tile({
           name: (opt.name ? opt.name : "noname"),
           preload: 2,
@@ -170,7 +174,7 @@ function createLayer_MapCache(opt) {
               projection: utmproj,
               params: {'LAYERS': opt.layers, VERSION: "1.1.1", TRANSPARENT: true},
               tilegrid: opt.tilegrid,
-              cacheSize: 4096,
+              cacheSize: 8192,
               attributions: opt.attributions
           })
        });
