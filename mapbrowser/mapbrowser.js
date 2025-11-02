@@ -106,9 +106,12 @@ pol.core.MapBrowser = class {
             t.baseLayerIdx = await t.config.get(prefix+'.p.baselayer');
         if (t.baseLayerIdx == null)
             t.baseLayerIdx = 0;
+        if (t.baseLayerIdx >= t.config.baseLayers.length)
+            t.baseLayerIdx = 0;
         else
             persistent = true
-        t.baseLayerName = this.config.baseLayers[t.baseLayerIdx].values_.name;
+            
+        t.baseLayerName = t.config.baseLayers[t.baseLayerIdx].values_.name;
 
         let resolution = await t.config.get(prefix+'.resolution');
         if (resolution==null || persistent)
