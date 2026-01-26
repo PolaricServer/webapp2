@@ -2,7 +2,7 @@
  Map browser based on OpenLayers 5. Tracking.
  Server config (igate, etc..)
 
- Copyright (C) 2023-2025 Øyvind Hanssen, LA7ECA, ohanssen@acm.org
+ Copyright (C) 2023-2026 Øyvind Hanssen, LA7ECA, ohanssen@acm.org
 
  This program is free software: you can redistribute it and/or modify
  it under the terms of the GNU Affero General Public License as published
@@ -43,10 +43,13 @@ pol.psadmin.ServerConfig = class extends pol.core.Widget {
         t.rctl_range = m.stream("");
         t.rctl_server = m.stream("");
         t.rctl_key = m.stream("");
+        t.encryptto = m.stream("");
 
         t.igate_on = false;
         t.rfgate_allow = false;
         t.obj_rfgate = false;
+        t.obj_encrypt = false; 
+        t.obj_encryptrf = false; 
         t.remotectl_on = false;
 
 
@@ -68,9 +71,9 @@ pol.psadmin.ServerConfig = class extends pol.core.Widget {
                     m("div.field",
                         m("span.wleftlab", "Callsign:"),
                         m(textInput, { id:"mycall", value: t.mycall, size: 10,
-                            maxLength:16, regex: /[A-Z0-9\-]*/i })), br,
+                            maxLength:16, regex: /[A-Z0-9\-]*/i })),
 
-                    m("div.field",
+                    m("div.field#igate",
                         m("span.wleftlab", "Igate:"),
                         m(checkBox, {id: "rfgate_allow", onclick: toggleIgate, checked: t.rfgate_on,
                             title: "RF/Internet gateway (igate)" }, "Activate") ),
@@ -81,32 +84,38 @@ pol.psadmin.ServerConfig = class extends pol.core.Widget {
                             title: "Allow igating to RF" }, "Activate"), nbsp,
                         m(checkBox, {id: "obj_rfgate", onclick: toggleObjRfgate, checked: t.obj_rfgate,
                             title: "Allow igating to RF for objects" }, "RF igating for object") ),
-
-                     m("div.field",
-                        m("span.wleftlab", "Range objects:"),
-                        m(textInput, { id:"igate_range", value: t.igate_range, size: 6,
-                            maxLength:6, regex: /0-9]*/i })),
-
                     m("div.field",
                         m("span.wleftlab", "Igate digi path:"),
                         m(textInput, { id:"ig_digipath", value: t.igate_path, size: 25,
                             maxLength:32, regex: /a-zA-Z0-9\,\-]*/i })),
-                    m("div.field",
+                    m("div.field#msgs",
                         m("span.wleftlab", "Messages digi path:"),
                         m(textInput, { id:"ig_msgpath", value: t.msg_path, size: 25,
-                            maxLength:32, regex: /a-zA-Z0-9\,\-]*/i })),
-                    m("div.field",
-                        m("span.wleftlab", "Objects digi path:"),
-                        m(textInput, { id:"ig_objpath", value: t.obj_path, size: 25,
                             maxLength:32, regex: /a-zA-Z0-9\,\-]*/i })),
                     m("div.field",
                         m("span.wleftlab",
                             {title: "Messages with DEST matching this expression will be sent on RF"},
                             "Always send on RF:"),
                         m(textInput, { id:"ig_alwaysrf", value: t.msg_alwaysrf, size: 25,
-                            maxLength:32, regex: /.*/i })), br,
-
+                            maxLength:32, regex: /.*/i })), 
+                         
+                    m("div.field#objects", 
+                        m("span.wleftlab", "Encrypt objects:"), 
+                        m(checkBox, {id: "obj_encrypt", onclick: toggleObjEncr, checked: t.obj_encrypt,
+                            title: "Encrypt object reports" }, "Encrypt"), nbsp,
+                        m(checkBox, {id: "obj_encryptrf", onclick: toggleObjEncrRf, checked: t.obj_encryptrf,
+                            title: "Encrypt object reports on RF as well" }, "Encrypt on RF") ),
                     m("div.field",
+                        m("span.wleftlab", "Range objects:"),
+                        m(textInput, { id:"igate_range", value: t.igate_range, size: 6,
+                            maxLength:6, regex: /0-9]*/i })),
+                    m("div.field",
+                        m("span.wleftlab", "Objects digi path:"),
+                        m(textInput, { id:"ig_objpath", value: t.obj_path, size: 25,
+                            maxLength:32, regex: /a-zA-Z0-9\,\-]*/i })), 
+
+
+                    m("div.field#rctl",
                         m("span.wleftlab", "Remote control:"),
                         m(checkBox, {id: "remotectl_on", onclick: toggleRemotectl, checked: t.remotectl_on,
                             title: "Coordinate with other server-instances over APRS" }, "Activated") ),
@@ -116,15 +125,22 @@ pol.psadmin.ServerConfig = class extends pol.core.Widget {
                            "Range updates:"),
                         m(textInput, { id:"rctl_range", value: t.rctl_range, size: 6,
                             maxLength:6, regex: /0-9]*/i })),
+                         
                     m("div.field",
                         m("span.wleftlab",
                            { title: "Callsign of another Polaric Server instance" }, "RC server:"),
                         m(textInput, { id:"rctl_server", value: t.rctl_server, size: 10,
                             maxLength:16, regex: /a-zA-Z0-9\-]*/i })),
+                       
+                    m("div.field", 
+                        m("span.wleftlab", 
+                           { title: "Encrypt messages to these servers (regex)" }, "Encrypt messages to:"),
+                        m(textInput, { id: "encryptto", value: t.encryptto, size: 25, 
+                            maxlength: 32, regex: /.*/i })),
                     m("div.field",
-                        m("span.wleftlab", "Authentication key:"),
-                        m(textInput, { id:"rctl_key", value: t.rctl_key, size: 25,
-                            maxLength:64, regex: /.*/i })),
+                        m("span.wleftlab", "Auth/Encryption key:"),
+                        m(textInput, { id:"rctl_key", value: t.rctl_key, size: 30,
+                            maxLength: 128, regex: /.*/i })),
 
                     m("div.butt", [
                         m("button", { type: "button", onclick: update }, "Update"),
@@ -153,7 +169,14 @@ pol.psadmin.ServerConfig = class extends pol.core.Widget {
         function toggleRemotectl() {
             t.remotectl_on = (t.remotectl_on ? false : true);
         }
-
+        
+        function toggleObjEncr() {
+            t.obj_encrypt = (t.obj_encrypt ? false : true);
+        }
+        
+        function toggleObjEncrRf() {
+            t.obj_encryptrf = (t.obj_encryptrf ? false : true);
+        }
 
 
         /* Update a user (on server) */
@@ -164,6 +187,8 @@ pol.psadmin.ServerConfig = class extends pol.core.Widget {
                 authkey: t.rctl_key(),
                 igate: t.igate_on,
                 objigate: t.obj_rfgate,
+                obj_encrypt: t.obj_encrypt,
+                obj_encryptrf: t.obj_encryptrf,
                 path_igate: t.igate_path(),
                 path_messages: t.msg_path(),
                 path_objects: t.obj_path(),
@@ -171,13 +196,14 @@ pol.psadmin.ServerConfig = class extends pol.core.Widget {
                 rc_server: t.rctl_server(),
                 remote_radius: parseInt(t.rctl_range()),
                 remotectl: t.remotectl_on,
-                rfigate: t.rfgate_allow
+                rfigate: t.rfgate_allow,
+                encryptto: t.encryptto()
             };
 
             t.server.PUT("system/adm/server", JSON.stringify(data),
                 x => {
                     console.log("Update succeeded");
-                    t.successMsg("Update succeeded. Restart of aprsd may be necessary", 10000);
+                    t.successMsg("Update succeeded.", 10000);
                     m.redraw();
 
                 },
@@ -212,7 +238,10 @@ pol.psadmin.ServerConfig = class extends pol.core.Widget {
             t.igate_on = conf.igate;
             t.rfgate_allow = conf.rfigate;
             t.obj_rfgate = conf.objigate;
+            t.obj_encrypt = conf.obj_encrypt;
+            t.obj_encryptrf = conf.obj_encryptrf;
             t.remotectl_on = conf.remotectl;
+            t.encryptto(conf.encryptto);
             m.redraw();
         } );
     }

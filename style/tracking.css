@@ -94,12 +94,13 @@ div.own   { background: #ccffcc; color: #0000cc }
 #sendNot {background: #eca; margin-top: 0.2em; padding: 0.2em; padding-top: 0.3em}
 #sendNot input {width: 75%}
 
+div#mailbox {width: 29em} 
 #mailbox img.icon {padding-left: 1px; margin-right: 10px; margin-top: -3px}
 #mailbox img.ticon {padding-left: 6px; margin-right: 7px; margin-top: -3px}
-#mailbox td+td {min-width: 25.5em; max-width: 27em; padding-left: 0.4em}
+#mailbox td+td {width: 100%; padding-left: 0.4em}
 #mailbox div#sendMsg {padding: 0.3em;; padding-top: 0.6em; padding-bottom: 0.6em; background: #eca}
 #mailbox table, #notifications table {margin-top: -0.6em}
-#mailbox input#msg {width: 19em}
+#mailbox input#msg {width: 22em; min-height: 1.5em}
 #mailbox img.status {margin-left: 1em; margin-bottom: -3px}
 #mailbox span.fromaddr {color: #049;}     
 #mailbox span.fromaddr:hover {font-weight: bold }
@@ -107,7 +108,8 @@ div.own   { background: #ccffcc; color: #0000cc }
 #mailbox td.out {background: #edd}
 #mailbox td.out:hover {background: #fea}
 #mailbox td div {padding-bottom: 0.3em}
-   
+#mailbox textarea#msg {font-family: sans-serif; font-size: 95%; width: 22em; resize: none}
+       
 #bullboard div {max-width: 52em}
 #bullboard h4 {margin-bottom: 0.3em; margin-top: 0.6em}
 #bullboard .content>table>tr  {background: #eed; border: 2px solid #778; vertical-align: top; font-size: 1.1em}
@@ -226,12 +228,13 @@ div#recipients {
    padding: 0.3em; 
    background: #cdd; 
    border: dotted 1px; 
-   max-width: 27em
+   width: 99%;
+   padding-bottom: 0.5em 
 }
 
 div#recipients span {
    display: inline-block;
-   font-size: 85%; 
+   font-size: 80%; 
    margin: 0.1em 0.3em 0.2em 0em; 
    padding: 2px 4px 0px 4px;
    border: 1px dotted;
@@ -370,3 +373,6 @@ div.indicator {width: 22px; height: 22px; border: 2px red solid; border-radius: 
 
 .pwintro {display: inline-block; color: #044;padding: 0.3em; margin-bottom: 0.7em}
 #pwdEdit {min-width: 16em}
+
+#objects, #rctl, #igate, #symselect, #gpstracking, #minpause, #defaultpos 
+   {border-top: 1px dotted; margin-top: 0.5em; padding-top: 0.3em}

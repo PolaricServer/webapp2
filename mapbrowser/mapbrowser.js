@@ -94,7 +94,7 @@ pol.core.MapBrowser = class {
         }
         counter++;
         t.config.store("_counter_", counter);
-
+        
         /*
          * Get info about resolution, center of map, etc. from session/local storage
          */
@@ -122,7 +122,6 @@ pol.core.MapBrowser = class {
             center = await t.config.get(prefix+'.p.center');
         var rotation = 0;
 
-
         if (window.location.hash !== '') {
             // try to restore center, zoom-level and rotation from the URL
             var hash = window.location.hash.replace('#map=', '');
@@ -138,20 +137,25 @@ pol.core.MapBrowser = class {
                 t.baseLayerIdx = parseInt(parts[4], 10);
             }
         }
-
+        if (center == null)
+            center = [14,66];
+        if (resolution == null) 
+            resolution = 8210;
+  
         /* OpenLayers view */
         let proj = await t.config.get(prefix+'.projection');
         if (proj == null || persistent)
             proj = await t.config.get(prefix+'.p.projection');
         if (proj == null)
             proj = 'EPSG:3857';
-
-        t.view = new ol.View({
+        
+        const _center = ol.proj.fromLonLat(center, proj);
+        
+        t.view = new ol.View ({
             projection: proj,
-            center: ol.proj.fromLonLat(center, proj),
+            center: _center,
             zoom: 2
         });
-
 
         /* Workaround issue with OL */
         if (proj=='EPSG:900913' || proj=='EPSG:3857') {
@@ -179,7 +183,7 @@ pol.core.MapBrowser = class {
             ],
             view: t.view
         });
-
+        
         t.prevGda = 1;
         t.featureInfo = new pol.core.FeatureInfo(this);
 
@@ -307,7 +311,8 @@ pol.core.MapBrowser = class {
 
 
     addContextMenu(name, func) {
-        this.ctxMenu.addMenuId("map", name, false, func);
+        if (this.ctxMenu)
+            this.ctxMenu.addMenuId("map", name, false, func);
     }
 
 

@@ -66,6 +66,8 @@ pol.psadmin.statusInfo = class extends pol.core.Widget {
 
         this.widget = {
             view: function() {
+                let offline = (CONFIG.tracks == null ? "UNKNOWN" : 
+                    (CONFIG.tracks.offline ? "OFFLINE" : "ONLINE"));
                 const d = new Date(t.data.runsince);
                 return m("div#statusinfo", [
                     m("h1", "Status Info"),
@@ -79,6 +81,8 @@ pol.psadmin.statusInfo = class extends pol.core.Widget {
                             m("span.wleftlab", "Server callsign: "), CONFIG.server.auth.servercall),
                         m("div.field",
                             m("span.wleftlab", "Server version: "), t.data.version),
+                        m("div.field", 
+                            m("span.wleftlab", "Status: "), offline),
                         m("div.field",
                             m("span.wleftlab", "Number of items: "), t.data.items ),
                         m("div.field",

@@ -101,10 +101,11 @@ const textInput = {
 
     view: function(vn) {
         var t = this;
-        var ttype = (vn.attrs.passwd==true ? "password" : "text");
+        var ttype = (vn.attrs.textarea ? null : (vn.attrs.passwd==true ? "password" : "text"));
 
-        return m("input#"+vn.attrs.id,
+        return m(  (vn.attrs.textarea ? "textarea":"input") +"#"+vn.attrs.id,
         { type: ttype, list: vn.attrs.list, config: vn.attrs.config, size: vn.attrs.size, maxLength: vn.attrs.maxLength,
+          rows: vn.attrs.rows, cols: vn.attrs.cols,  
           contentEditable: (vn.attrs.contentEditable ? vn.attrs.contentEditable : true),
 
             oninput: function(ev) {

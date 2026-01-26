@@ -3,7 +3,7 @@
  Map browser based on OpenLayers 5. Tracking.
  Messaging.
 
- Copyright (C) 2017-2025 Øyvind Hanssen, LA7ECA, ohanssen@acm.org
+ Copyright (C) 2017-2026 Øyvind Hanssen, LA7ECA, ohanssen@acm.org
 
  This program is free software: you can redistribute it and/or modify
  it under the terms of the GNU Affero General Public License as published
@@ -49,7 +49,7 @@ pol.tracking.Mailbox = class extends pol.core.Widget {
                 }))
             }
         }
-
+   
         /* Form for writing a message */
         t.sendMsg = {
             view: function() {
@@ -62,7 +62,7 @@ pol.tracking.Mailbox = class extends pol.core.Widget {
                                 maxLength: 40, regex: /.*/i }),
                             m("img#ulist", {src:"images/participant.png",
                                 title:"Show logged on users (on/off)", onclick:()=>toggleUsers()}),
-                        //  nbsp, m(checkBox,{title: "Tick to send as plain APRS"}, "@APRS")
+                        // nbsp, m(checkBox,{title: "Tick to send as plain APRS"}, "@APRS")
                     ),
 
 
@@ -70,8 +70,8 @@ pol.tracking.Mailbox = class extends pol.core.Widget {
                     m("div.field",
                         m("span.xxsleftlab", "Text:"),
                         m(textInput,
-                            { id: "msg", value: t.msg,
-                                maxLength: 66, regex: /.*/i }),
+                            { textarea: true, id: "msg", rows: 2, value: t.msg,
+                                maxLength: 128, regex: /.*/i }),
                        m("img#sendmsg", {src:"images/sendmsg.png",
                                 title:"Send message", onclick:send} ))
                 ]);
@@ -243,6 +243,7 @@ pol.tracking.Mailbox = class extends pol.core.Widget {
 
 
     onActivate() {
+        this.resizable = false; 
         console.assert(this.server.authOk, "Connection to server not established");
        /*
         * Subscribe to notifications from server using the pubsub service:

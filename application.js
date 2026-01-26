@@ -87,7 +87,7 @@
             /*********************************
              * On login to server
              *********************************/
-            srv.onLogin(
+            srv.onLogin (
 
                 /* Login success */
                 ()=> {
@@ -103,7 +103,7 @@
                      * Notifier is used only when logged in.
                      * FIXME: Do this after websocket connection is restored.
                      */
-                    CONFIG.notifier = this.not = new pol.tracking.Notifier();
+                    CONFIG.notifier = new pol.tracking.Notifier();
 
                     /*
                      * Some of the widgets have state that is needed by others so

@@ -2,7 +2,7 @@
  Map browser based on OpenLayers. Tracking.
  Manage own position and tracking
 
- Copyright (C) 2023-2025 Øyvind Hanssen, LA7ECA, ohanssen@acm.org
+ Copyright (C) 2023-2026 Øyvind Hanssen, LA7ECA, ohanssen@acm.org
 
  This program is free software: you can redistribute it and/or modify
  it under the terms of the GNU Affero General Public License as published
@@ -35,6 +35,8 @@ pol.psadmin.OwnposConfig = class extends pol.core.Widget {
         t.classname = "psadmin.OwnposConfig";
         t.txon = false;
         t.allowrf = false;
+        t.encrypt = false; 
+        t.encryptrf = false; 
         t.compress = false;
         t.symbol = m.stream("/.");
         t.digipath = m.stream("");
@@ -97,11 +99,21 @@ pol.psadmin.OwnposConfig = class extends pol.core.Widget {
                             "Activate"),
                         m(checkBox, {id: "ownpos_rf", onclick: toggleRf, checked: t.allowrf},
                             "Allow transmission on RF")),
+                         
+                    m("div.field",
+                        m("span.wleftlab", "Encryption:"),
+                        m(checkBox, {id: "ownpos_encrypt", onclick: toggleEncrypt, checked: t.encrypt},
+                            "Encrypt"),
+                        m(checkBox, {id: "ownpos_encryptrf", onclick: toggleEncryptRf, checked: t.encryptrf},
+                            "Encrypt on RF")),
+                         
                     m("div.field",
                         m("span.wleftlab", ""),
                         m(checkBox, {id: "ownpos_compress", onclick: toggleCompress, checked: t.compress},
-                            "Compress") ), br,
-                    m("div.field",
+                            "Compress") ),
+                         
+                         
+                    m("div.field#symselect",
                         m("span.wleftlab", "Symbol:"),
                         m(symSelect) ),
                     m("div.field",
@@ -111,18 +123,18 @@ pol.psadmin.OwnposConfig = class extends pol.core.Widget {
                     m("div.field",
                         m("span.wleftlab", "Description:"),
                         m(textInput, { id:"ownpos_descr", value: t.descr, size: 28,
-                            maxLength:32, regex: /.*/i })), br,
-                    m("div.field",
+                            maxLength:32, regex: /.*/i })),
+                    
+                    m("div.field#defaultpos",
                         m("span.wleftlab", "Default position: "),
-                        m(latLngInput, {value: t.pos})), br,
-
-                    m("div.field",
+                        m(latLngInput, {value: t.pos})),
+                         
+                    m("div.field#gpstracking",
                         m("span.wleftlab", "Tracking with GPS:"),
                         m(checkBox, {id: "ownpos_gpson", onclick: toggleGpsOn, checked: t.gpson},
                             "Activate"),
                         m(checkBox, {id: "ownpos_adjustclk", onclick: toggleAdjClock, checked: t.adjustclock},
                             "Adjust clock from GPS")),
-
                     m("div.field",
                         m("span.wleftlab", "GPS Port:"),
                         m(textInput, { id:"ownpos_gpsport", value: t.gpsport, size: 15,
@@ -130,9 +142,9 @@ pol.psadmin.OwnposConfig = class extends pol.core.Widget {
                     m("div.field",
                         m("span.wleftlab", "GPS Baud:"),
                         m(textInput, { id:"ownpos_gpsbaud", value: t.gpsbaud, size: 8,
-                            maxLength:10, regex: /[0-9]*/i })), br,
+                            maxLength:10, regex: /[0-9]*/i })), 
 
-                    m("div.field",
+                    m("div.field#minpause",
                         m("span.wleftlab", "Min pause:"),
                         m(textInput, { id:"ownpos_minpause", value: t.minpause, size: 5,
                             maxLength:8, regex: /[0-9]*/i })),
@@ -166,7 +178,12 @@ pol.psadmin.OwnposConfig = class extends pol.core.Widget {
         function toggleRf() {
             t.allowrf = (t.allowrf ? false : true);
         }
-
+        function toggleEncrypt() {
+            t.encrypt = (t.encrypt ? false : true);
+        }
+        function toggleEncryptRf() {
+            t.encryptrf = (t.encryptrf ? false : true);
+        }
         function toggleCompress() {
             t.compress = (t.compress ? false : true);
         }
@@ -193,6 +210,8 @@ pol.psadmin.OwnposConfig = class extends pol.core.Widget {
             const data = {
                 txon: t.txon,
                 allowrf: t.allowrf,
+                encrypt: t.encrypt,
+                encryptrf: t.encryptrf,
                 compress: t.compress,
                 symbol: "" + t.symtab().charAt(0) + t.sym().charAt(0),
                 rfpath: t.digipath(),
@@ -211,7 +230,7 @@ pol.psadmin.OwnposConfig = class extends pol.core.Widget {
             CONFIG.server.PUT("system/adm/ownpos", JSON.stringify(data),
                 x => {
                     console.log("Update succeeded");
-                    t.successMsg("Update succeeded. Reboot may be necessary", 10000);
+                    t.successMsg("Update succeeded.", 10000);
                 },
                 (xhr, st, err) => {
                     console.log("Server update failed", st, err);
@@ -237,6 +256,8 @@ pol.psadmin.OwnposConfig = class extends pol.core.Widget {
             const t = this;
             t.txon = conf.txon;
             t.allowrf = conf.allowrf;
+            t.encrypt = conf.encrypt;
+            t.encryptrf = conf.encryptrf;
             t.compress = conf.compress;
             t.sym(conf.symbol.charAt(1));
             t.symtab(conf.symbol.charAt(0));

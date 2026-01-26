@@ -66,6 +66,9 @@ pol.tracking.Tracking = class {
         t.server = srv;
         t.srch = false;
         t.tracked = null;
+        t.offline = false; 
+        
+        
         CONFIG.get("tracking.tracked").then( x=> {
             t.tracked = x;
             if (t.tracked == "null")
@@ -883,13 +886,12 @@ pol.tracking.Tracking = class {
     update(ov, srch, index) {
         let i = 0;
 
-
-
-
         if (this.srch && !srch)
             return
         if (ov == null)
             return;
+        
+        this.offline = ov.offline;
 
         if (ov.overload) {
             console.log("Overload (too many points in overlay generation)");
