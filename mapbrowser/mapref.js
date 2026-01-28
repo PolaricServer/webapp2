@@ -154,10 +154,15 @@ pol.mapref.MGRSprefix = function(x)
  * @param {string} em - Longitude decimal minutes
  * @returns {ol.Coordinate}
  */
-pol.mapref.parseDM = function(nd, nm, ed, em)
+pol.mapref.parseDM = function(nd, nm, ed, em, ddeg)
 {
-    if (!/^[0-9]{1,2}$/.test(nd) || !/^[0-9]{1,3}$/.test(ed))
-        return [0,0];
+    if (ddeg) { 
+        if (!/^[0-9]{1,2}(\.[0-9]+)$/.test(nd) || !/^[0-9]{1,3}(\.[0-9]+)$/.test(ed))
+            return [0,0];
+    }
+    else if (!/^[0-9]{1,2}$/.test(nd) || !/^[0-9]{1,3}$/.test(ed))
+       return [0,0];
+    
     const yd = parseFloat(nd, 10);
     const ym = parseFloat(nm);
     const xd = parseFloat(ed, 10);

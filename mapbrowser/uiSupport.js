@@ -523,7 +523,7 @@ const latLngInputDec = class {
     }
 
     onupdate (vn) {
-        const x = pol.mapref.parseDM(this.Nd(), 0, this.Ed(), 0)
+        const x = pol.mapref.parseDM(this.Nd(), 0, this.Ed(), 0, true)
         if (vn.attrs && vn.attrs.value) {
             vn.attrs.value[0] = x[0];
             vn.attrs.value[1] = x[1];
