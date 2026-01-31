@@ -56,6 +56,7 @@ pol.tracking.OwnPos = class extends pol.core.Widget {
 
                     m("div.butt", [
                         m("button", { type: "button", onclick: update }, "Update"),
+                        m("button", { type: "button", onclick: remove }, "Remove"),
                         m("button", { type: "button", onclick: ()=> {t.clear();} }, "Clear"),
                         m("span#confirm")
                     ])
@@ -69,19 +70,23 @@ pol.tracking.OwnPos = class extends pol.core.Widget {
                 t.closePopup();
         });
 
+        function isNullPos() {
+            return t.posx[0] == 0 && t.posx[1] == 0;
+        }
+        
+        function remove() {
+            t.clear();q
+            update();
+        }
 
         /* Update object on backend (through REST call */
         function update() {
-            if (t.posx[0]==0 && t.posx[1]==0) {
-                error("Invalid position");
-                return;
-            }
             const info = {symtab: t.symtab(), sym: t.sym, pos: t.posx};
             srv.PUT("system/ownpos", JSON.stringify(info),
                     ()=> {
-                        console.log("Own position updated ok");
-                        $("#confirm").text("Updated");
-                        setTimeout(()=> $("#confirm").text(""), 5000);
+                        console.log("Own position "+ (isNullPos() ? "removed ok" : "updated ok"));
+                        $("#confirm").text((isNullPos() ? "Removed" : "Updated"));
+                        setTimeout(()=> $("#confirm").text(""), 6000);
                     },
                     x=> {
                         error(x.responseText);
