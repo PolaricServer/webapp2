@@ -58,12 +58,22 @@ pol.psadmin.ServerConfig = class extends pol.core.Widget {
                 t.closePopup();
         });
 
+        
+        t.quickfwd = {
+            view: function() {
+                return m("span.quickfwd", 
+                    m("img", {src: "images/goleft.png", onclick: ()=>{replaceWIDGET(t,  "psadmin.Users")}}),
+                    m("img", {src: "images/goright.png", onclick: ()=>{replaceWIDGET(t, "psadmin.OwnposConfig")}})
+                )
+            }
+        }
+        
 
 
         this.widget = {
             view: function() {
                 return m("div#serverConfig", [
-                    m("h1", "Polaric-APRSD Server Config"),
+                    m("h1", "Polaric-APRSD Server Config", m(t.quickfwd)),
 
                     (t.errmsg != null ? m("div#errmsg", t.errmsg) : null),
                     (t.successmsg != null ? m("div#successmsg", t.successmsg) : null),
@@ -94,7 +104,7 @@ pol.psadmin.ServerConfig = class extends pol.core.Widget {
                             maxLength:32, regex: /a-zA-Z0-9\,\-]*/i })),
                     m("div.field",
                         m("span.wleftlab",
-                            {title: "Messages with DEST matching this expression will be sent on RF"},
+                            {title: "Messages with DEST matching this expression will be sent on RF (regex)"},
                             "Always send on RF:"),
                         m(textInput, { id:"ig_alwaysrf", value: t.msg_alwaysrf, size: 25,
                             maxLength:32, regex: /.*/i })), 
@@ -107,11 +117,11 @@ pol.psadmin.ServerConfig = class extends pol.core.Widget {
                             title: "Encrypt object reports on RF as well" }, "Encrypt on RF") ),
                     m("div.field",
                         m("span.wleftlab", "Range objects:"),
-                        m(textInput, { id:"igate_range", value: t.igate_range, size: 6,
+                        m(textInput, { title: "Gate (to RF) objects within this range", id:"igate_range", value: t.igate_range, size: 6,
                             maxLength:6, regex: /0-9]*/i })),
                     m("div.field",
                         m("span.wleftlab", "Objects digi path:"),
-                        m(textInput, { id:"ig_objpath", value: t.obj_path, size: 25,
+                        m(textInput, { title: "Optional separate digipeater path for objects",  id:"ig_objpath", value: t.obj_path, size: 25,
                             maxLength:32, regex: /a-zA-Z0-9\,\-]*/i })), 
 
 
@@ -139,7 +149,7 @@ pol.psadmin.ServerConfig = class extends pol.core.Widget {
                             maxlength: 32, regex: /.*/i })),
                     m("div.field",
                         m("span.wleftlab", "Auth/Encryption key:"),
-                        m(textInput, { id:"rctl_key", value: t.rctl_key, size: 30,
+                        m(textInput, { id:"rctl_key", value: t.rctl_key, size: 32,
                             maxLength: 128, regex: /.*/i })),
 
                     m("div.butt", [

@@ -376,3 +376,10 @@ div.indicator {width: 22px; height: 22px; border: 2px red solid; border-radius: 
 
 #objects, #rctl, #igate, #symselect, #gpstracking, #minpause, #defaultpos 
    {border-top: 1px dotted; margin-top: 0.5em; padding-top: 0.3em}
+   
+   
+
+span.quickfwd {margin-left: 1em}
+.quickfwd img {height: 1em; margin-bottom: -0.2em; margin-right: 0.5em; border: outset 1px}
+.quickfwd img:hover {border: outset 1px; background: #eee}
+

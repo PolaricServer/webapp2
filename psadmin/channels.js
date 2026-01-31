@@ -297,12 +297,20 @@ pol.psadmin.Channels = class extends pol.core.Widget {
             }
         }
 
-
+        t.quickfwd = {
+            view: function() {
+                return m("span.quickfwd", 
+                    m("img", {src: "images/goleft.png", onclick: ()=>{replaceWIDGET(t,  "psadmin.OwnposConfig")}}),
+                )
+            }
+        }
+        
+        
         this.widget = {
             view: function() {
                 var i=0;
                 return m("div#channels", [
-                    m("h1", "Data Channels Config"),
+                    m("h1", "Data Channels Config", m(t.quickfwd)),
                     m("div#chanList", m(chanList)),
 
                     (t.errmsg != null ? m("div#errmsg", t.errmsg) : null),

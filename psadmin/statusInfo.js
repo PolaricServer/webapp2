@@ -63,6 +63,13 @@ pol.psadmin.statusInfo = class extends pol.core.Widget {
 
 
 
+        t.quickfwd = {
+            view: function() {
+                return m("span.quickfwd", 
+                    m("img", {src: "images/goright.png", onclick: ()=>{replaceWIDGET(t, "psadmin.Users")}}))
+            }
+        }
+        
 
         this.widget = {
             view: function() {
@@ -70,7 +77,7 @@ pol.psadmin.statusInfo = class extends pol.core.Widget {
                     (CONFIG.tracks.offline ? "OFFLINE" : "ONLINE"));
                 const d = new Date(t.data.runsince);
                 return m("div#statusinfo", [
-                    m("h1", "Status Info"),
+                    m("h1", "Status Info", m(t.quickfwd)),
                     m("form.status", [
                         m("div.field",
                             m("span.wleftlab", "Server run since: "),

@@ -201,9 +201,9 @@ pol.core.Widget = class {
      */
     activate(w) {
         console.assert(w && w != null, "w="+w);
-        this.delement = w;
-        m.mount(this.delement, this.widget);
-        this.delement.addEventListener("unload", this.onclose);
+        this.element = w;
+        m.mount(this.element, this.widget);
+        this.element.addEventListener("unload", this.onclose);
         this.active = true;
         if (this.onActivate)
             this.onActivate();
@@ -243,7 +243,7 @@ pol.core.Widget = class {
         if (t.onActivate)
             t.onActivate();
 
-        this.popup = CONFIG.mb.gui.showPopup( {
+        this.element = this.popup = CONFIG.mb.gui.showPopup( {
             vnode: this.widget,
             pixPos: pixPos,
             draggable: true,

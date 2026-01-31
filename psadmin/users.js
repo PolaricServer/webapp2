@@ -96,10 +96,20 @@ pol.psadmin.Users = class extends pol.core.Widget {
         }
 
 
+        t.quickfwd = {
+            view: function() {
+                return m("span.quickfwd", 
+                    m("img", {src: "images/goleft.png", onclick: ()=>{replaceWIDGET(t,  "psadmin.StatusInfo")}}),
+                    m("img", {src: "images/goright.png", onclick: ()=>{replaceWIDGET(t, "psadmin.ServerConfig")}})
+                )
+            }
+        }
+        
+        
         this.widget = {
             view: function() {
                 return m("div#userEdit", [
-                    m("h1", "User Management"),
+                    m("h1", "User Management", m(t.quickfwd)),
                     m("div.field",
                         m("span.xsleftlab", "Ident:"),
                         m(textInput, { id:"userId", value: t.ident, size: 16,

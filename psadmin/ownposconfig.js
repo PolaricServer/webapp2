@@ -82,13 +82,21 @@ pol.psadmin.OwnposConfig = class extends pol.core.Widget {
                 ])
             }
         }
-
+        
+        t.quickfwd = {
+            view: function() {
+                return m("span.quickfwd", 
+                    m("img", {src: "images/goleft.png", onclick: ()=>{replaceWIDGET(t,  "psadmin.ServerConfig")}}),
+                    m("img", {src: "images/goright.png", onclick: ()=>{replaceWIDGET(t, "psadmin.Channels")}})
+                )
+            }
+        }
 
 
         this.widget = {
             view: function() {
                 return m("div#ownposConfig", [
-                    m("h1", "Tracking of own position"),
+                    m("h1", "Tracking of own position", m(t.quickfwd)),
 
                     (t.errmsg != null ? m("div#errmsg", t.errmsg) : null),
                     (t.successmsg != null ? m("div#successmsg", t.successmsg) : null),

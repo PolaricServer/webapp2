@@ -571,6 +571,9 @@ function CIRCLE(radius, opts) {
 function WIDGET(id, pos,save,f,multi) { pol.widget.start(id, pos, true, save, f, multi); }
 function POPUP(id,pos,f) {pol.widget.start(id, pos, false, false, f); }
 function getWIDGET(id) { return pol.widget.get(id); }
+function replaceWIDGET(t, id) { 
+    pol.widget.get(id).activate(t.element);
+}
 
 function GETJSON(x) {return x;}
 
@@ -629,5 +632,6 @@ window.CIRCLE = CIRCLE;
 window.WIDGET = WIDGET;
 window.POPUP = POPUP;
 window.getWIDGET = getWIDGET;
+window.replaceWIDGET = replaceWIDGET;
 window.GETJSON = GETJSON;
 window.getStyle = getStyle;
