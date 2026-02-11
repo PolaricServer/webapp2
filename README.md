@@ -40,3 +40,4 @@ Contributions and hacks are welcome. Or fell free to tell us what you think. It 
 ## Licence
 This is free software. License is GNU Affero General Public License. See <http://www.gnu.org/licenses/>.
 
+<a href="https://www.buymeacoffee.com/la7eca" target="_blank"><img src="https://cdn.buymeacoffee.com/buttons/v2/default-violet.png" alt="Buy Me A Coffee" style="height: 60px !important;width: 217px !important;" ></a>
