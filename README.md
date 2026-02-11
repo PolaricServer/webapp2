@@ -32,12 +32,12 @@ For production installations you may use `npm run build` (or `make compile`) to 
 ### Configuration
 Edit the file *'config.js'* to suit your needs. Here you can set up various map sources, backends, etc.. I am sorry little documentation at the moment but some explanations in the file. The config for aprs.no is provided as an example. 
 
-
-## Contributing
-
-Contributions and hacks are welcome. Or fell free to tell us what you think. It is based on OpenLayers and Ecmascript 6 (2015) version of Javascript and uses namespaces. The build system now uses webpack to bundle the webapp into 5 modules (mapbrowser, layeredit, tracking, featureedit, and psadmin). 
-  
 ## Licence
 This is free software. License is GNU Affero General Public License. See <http://www.gnu.org/licenses/>.
 
-<a href="https://www.buymeacoffee.com/la7eca" target="_blank"><img src="https://cdn.buymeacoffee.com/buttons/v2/default-violet.png" alt="Buy Me A Coffee" style="height: 60px !important;width: 217px !important;" ></a>
+## Contributing
+
+Contributions and hacks are welcome. Or fell free to tell us what you think. It is based on OpenLayers and Ecmascript 6 (2015) version of Javascript and uses namespaces. The build system now uses webpack to bundle the webapp into 5 modules (mapbrowser, layeredit, tracking, featureedit, and psadmin).   
+
+
+<a href="https://www.buymeacoffee.com/la7eca" target="_blank"><img src="https://cdn.buymeacoffee.com/buttons/v2/default-violet.png" alt="Buy Me A Coffee" style="height: 40px !important;width: 150px !important;" ></a>
