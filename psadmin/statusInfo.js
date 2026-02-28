@@ -161,7 +161,7 @@ pol.psadmin.statusInfo = class extends pol.core.Widget {
             st => {
                 this.clients = GETJSON(st);
                 this.clients.sort( (x,y) => (x.cid < y.cid ? -1 : (x.cid===y.cid ? 0 : 1)));
-                setTimeout(()=> this.mountList(), 200);
+                setTimeout(()=> this.mountList(), 400);
                 m.redraw();
                 this.nclients = this.clients.length;
             },
@@ -189,7 +189,10 @@ pol.psadmin.statusInfo = class extends pol.core.Widget {
 
 
     mountList() {
-        m.mount($("div#clientList").get(0), this.showClients);
+        let elem = $("div#clientList").get(0);
+        if (elem == null)
+            return;
+        m.mount(elem, this.showClients);
         this.setScrollTable("#statusinfo", "div#clientList");
     }
 

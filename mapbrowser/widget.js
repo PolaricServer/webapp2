@@ -309,7 +309,7 @@ pol.core.Widget = class {
      */
     setScrollTable(topdiv, searchresult) {
         let ht = $('#map').height() -
-            ( $(topdiv).height() - $(searchresult).height()) - this.winpos[1]- 8 ;
+            ( $(topdiv).height() - $(searchresult).height()) - (this.winpos == null ? 0 : this.winpos[1]) - 8 ;
 
         setTimeout( () => {
             if ($(searchresult).height() < ht)
