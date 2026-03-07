@@ -1,3 +1,11 @@
+polaric-webapp2 (4.1) stable; urgency=medium
+
+  * Encryption config
+  * Direct navigation between config widgets
+  * Various fixes..
+
+ -- Oyvind Hanssen <ohanssen@acm.org>  Sun, 01 Mar 2026 23:21:11 +0100
+
 polaric-webapp2 (4.0) stable; urgency=medium
 
   * Migrate to webpack for building/bundling - requires many adjustments.. 

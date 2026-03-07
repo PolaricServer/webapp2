@@ -47,8 +47,6 @@ install: mapbrowser-min.js
 		$(INSTALL_WEB)/aprsd/icons/alt $(INSTALL_WEB)/aprsd/images \
 		$(INSTALL_WEB)/lib $(INSTALL_WEB)/style $(INSTALL_WEB)/sound
 	
-	chown www-data.www-data $(INSTALL_DATA)/mapcache
-	
 	install -m 755 debian/misc/polaric-offline $(INSTALL_BIN)
 	install -m 755 debian/misc/polaric-online $(INSTALL_BIN)
 	
