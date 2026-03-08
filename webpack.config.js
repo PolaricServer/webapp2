@@ -90,7 +90,8 @@ module.exports = {
       './psadmin/ownposconfig.js',
       './psadmin/clients.js',
       './psadmin/channels.js',
-      './psadmin/testrest.js'
+      './psadmin/testrest.js',
+      './psadmin/xcode.js'
     ]
   },
   output: {

@@ -238,6 +238,11 @@ pol.psadmin.Channels = class extends pol.core.Widget {
                             "Activate"),
                         m(checkBox, {id: "activated", onclick: togglePrim, checked: t.primary},
                             "Primary"), ),
+                    m("div.field", 
+                      m("span.lleftlab", "Access control:"),
+                      m(checkBox, {id: "activated", onclick: toggleXVerify, checked: t.xverify},
+                            "Extended verification"), ),
+                      
                     m("div.field",
                         m("span.lleftlab", "Listen port:"),
                         m(textInput, { id:"port", value: t.port, size: 6,
@@ -283,8 +288,8 @@ pol.psadmin.Channels = class extends pol.core.Widget {
                                 maxLength:6, regex: /[0-9]*/i })),
                         m("div.field",
                             m("span.lleftlab", "Passcode:"),
-                            m(textInput, { id:"passcode", value: t.passcode, size: 6,
-                                maxLength:6, regex: /[0-9]*/i })),
+                            m(textInput, { id:"passcode", value: t.passcode, size: 16,
+                                maxLength:18, regex: /[0-9a-zA-Z\+\\\/]*/i })),
                         m("div.field",
                             m("span.lleftlab",{title: "Filter to be used with server"}, "Filter:"),
                             m(textInput, { id:"filter", value: t.filter, size: 29,
@@ -394,7 +399,9 @@ pol.psadmin.Channels = class extends pol.core.Widget {
             t.primary = (t.primary ? false : true);
         }
 
-
+        function toggleXVerify() {
+            t.xverify = (t.xverify ? false : true);
+        }
 
         function onTypeSelect() {
             const typ = $('#ctypeSelect').val();
@@ -450,7 +457,7 @@ pol.psadmin.Channels = class extends pol.core.Widget {
                 ch.specific = { host: t.host(), port: parseInt(t.port()),
                                 pass: parseInt(t.passcode()), filter: t.filter(), xfilter: t.xfilter() };
             else if (t.type==='APRSIS-SRV')
-                ch.specific = { port: parseInt(t.port()), defaultfilt: t.dfilter() };
+                ch.specific = { port: parseInt(t.port()), defaultfilt: t.dfilter(), xverify: t.xverify };
             else if (t.type==='AIS-TCP')
                 ch.specific = { host: t.host(), port: parseInt(t.port()) };
             else if (t.type==='ROUTER')
@@ -517,7 +524,7 @@ pol.psadmin.Channels = class extends pol.core.Widget {
                 t.ch.specific.baud = parseInt(t.baud());
             }
             if (t.type === 'APRSIS') {
-                t.ch.specific.pass = parseInt(t.passcode());
+                t.ch.specific.pass = t.passcode();
                 t.ch.specific.filter = t.filter();
                 t.ch.specific.xfilter = t.xfilter();
             }
@@ -528,6 +535,7 @@ pol.psadmin.Channels = class extends pol.core.Widget {
                 t.ch.specific.port = parseInt(t.port());
                 t.ch.specific.filter = t.filter();
                 t.ch.specific.defaultfilt = t.dfilter();
+                t.ch.specific.xverify = t.xverify;
             }
             srv.PUT("system/adm/channels/"+t.name(), JSON.stringify(t.ch),
                     ()=> {
@@ -603,6 +611,7 @@ pol.psadmin.Channels = class extends pol.core.Widget {
         t.ch = null;
         t.activated = false;
         t.primary = false;
+        t.xverify = false;
         t.host = m.stream("");
         t.port = m.stream("");
         t.serport = m.stream("");
@@ -656,6 +665,7 @@ pol.psadmin.Channels = class extends pol.core.Widget {
                 this.dfilter(this.ch.specific.defaultfilt==null ? "" : this.ch.specific.defaultfilt);
                 this.activated = this.ch.active;
                 this.primary = this.ch.rfchan || this.ch.inetchan;
+                this.xverify = this.ch.specific.xverify; 
                 this.loggedinonly = this.ch.generic.restricted;
                 this.tag(this.ch.generic.tag);
                 this.putRouterChannels(this.ch.specific.channels);

@@ -43,6 +43,7 @@ pol.psadmin.ServerConfig = class extends pol.core.Widget {
         t.rctl_range = m.stream("");
         t.rctl_server = m.stream("");
         t.rctl_key = m.stream("");
+        t.xverify_key = m.stream("");
         t.encryptto = m.stream("");
 
         t.igate_on = false;
@@ -151,7 +152,11 @@ pol.psadmin.ServerConfig = class extends pol.core.Widget {
                         m("span.wleftlab", "Auth/Encryption key:"),
                         m(textInput, { id:"rctl_key", value: t.rctl_key, size: 32,
                             maxLength: 128, regex: /.*/i })),
-
+                    m("div.field",
+                        m("span.wleftlab", "Ext verification key:"),
+                        m(textInput, { id:"xverify_key", value: t.xverify_key, size: 32,
+                            maxLength: 128, regex: /.*/i })),
+                         
                     m("div.butt", [
                         m("button", { type: "button", onclick: update }, "Update"),
                         m("button", { type: "button", onclick: ()=> {t.clear();} }, "Clear"),
@@ -195,6 +200,7 @@ pol.psadmin.ServerConfig = class extends pol.core.Widget {
                 mycall: t.mycall(),
                 always_rf: t.msg_alwaysrf(),
                 authkey: t.rctl_key(),
+                xverify_key: t.xverify_key(),
                 igate: t.igate_on,
                 objigate: t.obj_rfgate,
                 obj_encrypt: t.obj_encrypt,
@@ -245,6 +251,7 @@ pol.psadmin.ServerConfig = class extends pol.core.Widget {
             t.rctl_range(""+conf.remote_radius);
             t.rctl_server(conf.rc_server);
             t.rctl_key(conf.authkey);
+            t.xverify_key(conf.xverify_key);
             t.igate_on = conf.igate;
             t.rfgate_allow = conf.rfigate;
             t.obj_rfgate = conf.objigate;
