@@ -76,11 +76,14 @@ pol.tracking.GlobalSettings = class extends pol.tracking.TrackerAlias {
                     $("#confirm").text("Updated");
                     setTimeout(()=> $("#confirm").text(""), 5000);
                 },
-                x => {
+                x => {      
                     console.log("Update glob. settings -> "+x.status+": "+x.statusText +
                         " ("+x.responseText+")");
-                    alert("Cannot update global settings." +
-                        '\n"' + x.responseText + '"');
+                    if (x.responseText == "MANAGED")
+                        replaceWIDGET(t, "tracking.db.MyTrackers").editIdent(id);
+                    else
+                        alert("Cannot update global settings." +
+                            '\n"' + x.responseText + '"');
                 }
             );
 

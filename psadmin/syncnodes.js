@@ -50,6 +50,7 @@ pol.psadmin.db.SyncNodes = class extends pol.core.Widget {
                             m("td", x.nodeid),
                             m("td", x.url),
                             m("td", x.items.substring(0,12)+"..."),
+                            m("td", (x.ts != null ? formatDate(x.ts): "")),
                             (x.active ? m("img", {src: "images/16px/ok.png"}) : null),
                         ]);
                     })));
@@ -64,6 +65,7 @@ pol.psadmin.db.SyncNodes = class extends pol.core.Widget {
                             m(removeEdit, {remove: pol.ui.apply(removeChild, i++), edit: null}),
                             m("td", x.nodeid),
                             m("td", x.items),
+                            m("td", (x.ts != null ? formatDate(x.ts): "")),
                             (x.active ? m("img", {src: "images/16px/ok.png"}) : null),
                         ]);
                     })));
@@ -170,6 +172,16 @@ pol.psadmin.db.SyncNodes = class extends pol.core.Widget {
             m.redraw();
         }
 
+        // FIXME Move to uiSupport.js
+        const months = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
+
+        function formatDate(dt) {
+            if (dt==null)
+                return "";
+            const d = new Date(dt);
+            return "" +
+            d.getDate()+ " "+months[d.getMonth()]+ " " + d.getFullYear();
+        }
 
     } /* constructor */
 

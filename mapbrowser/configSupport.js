@@ -572,7 +572,9 @@ function WIDGET(id, pos,save,f,multi) { pol.widget.start(id, pos, true, save, f,
 function POPUP(id,pos,f) {pol.widget.start(id, pos, false, false, f); }
 function getWIDGET(id) { return pol.widget.get(id); }
 function replaceWIDGET(t, id) { 
-    pol.widget.get(id).activate(t.element);
+    const x = pol.widget.get(id); 
+    x.activate(t.element);
+    return x;
 }
 
 function GETJSON(x) {return x;}

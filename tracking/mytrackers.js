@@ -1,8 +1,8 @@
 /*
- Map browser based on OpenLayers 5. Tracking.
- Search historic data on tracker points on server.
+ Map browser based on OpenLayers. Tracking.
+ Edit managed trackers list.
 
- Copyright (C) 2018-2025 Øyvind Hanssen, LA7ECA, ohanssen@acm.org
+ Copyright (C) 2018-2026 Øyvind Hanssen, LA7ECA, ohanssen@acm.org
 
  This program is free software: you can redistribute it and/or modify
  it under the terms of the GNU Affero General Public License as published
@@ -24,9 +24,6 @@ pol.tracking.db = pol.tracking.db || {};
 
 
 
-/**
- * Reference search (in a popup window).
- */
 
 pol.tracking.db.MyTrackers = class extends pol.tracking.TrackerAlias {
 
@@ -49,7 +46,7 @@ pol.tracking.db.MyTrackers = class extends pol.tracking.TrackerAlias {
                     m("table.mytrackers", m("tbody", t.myTrackers.map(x => {
                         return m("tr", [
                             m("td",
-                                m(removeEdit, {remove: pol.ui.apply(remove,i), edit: pol.ui.apply(edit, i++)})),
+                                m(removeEdit, {remove: pol.ui.apply(remove,i), edit: pol.ui.apply(t.editItem, i++)})),
                             m("td", {onclick: pol.ui.apply(goto, x.id)}, x.id),
                             m("td", x.alias),
                             m("td", (x.icon == null || x.auto ? "" :  m("img.icon", {src:x.icon}))),
@@ -57,14 +54,14 @@ pol.tracking.db.MyTrackers = class extends pol.tracking.TrackerAlias {
                         ]);
                     }))),
 
-
+/*
                     m("div.field#owner",
                         m("span.xsleftlab", {title: "Optional: Move tracker to another user"}, "Owner:"),
                         m(textInput, {list: "userList", value: t.user}),
                         m("datalist#userList", t.userList.map( x=> {
                             return m("option", x)
                         }))),
-
+*/
                     m(t.aliasWidget),
                     m("div.butt", [
                         m("button", { type: "button", disabled: !addMode(), onclick: add }, "Add"),
@@ -90,7 +87,7 @@ pol.tracking.db.MyTrackers = class extends pol.tracking.TrackerAlias {
         getTrackers();
         setInterval( ()=> {
             if (t.isActive())
-                t.getTrackers();
+                getTrackers();
         }, 120000);
 
 
@@ -258,19 +255,6 @@ pol.tracking.db.MyTrackers = class extends pol.tracking.TrackerAlias {
         }
 
 
-        function edit(i) {
-            const tr = t.myTrackers[i];
-            t.edit.id(tr.id);
-            t.edit.alias(tr.alias);
-            t.edit.icon = tr.icon;
-            t.edit.user = tr.user;
-            t.editMode = true;
-            t.iconGrey();
-            $("#iconpick>img").attr("src", (tr.auto? t.icons[t.dfl] : tr.icon)).trigger("change");
-            m.redraw();
-        }
-
-
         function goto(id) {
             if (CONFIG.tracks)
                 CONFIG.tracks.goto_Point(id);
@@ -278,7 +262,32 @@ pol.tracking.db.MyTrackers = class extends pol.tracking.TrackerAlias {
 
     } /* constructor */
 
+    
+    editItem(i) {
+        const t = this;
+        const tr = t.myTrackers[i];
+        t.edit.id(tr.id);
+        t.edit.alias(tr.alias);
+        t.edit.icon = tr.icon;
+        t.edit.user = tr.user;
+        t.editMode = true;
+        t.iconGrey();
+        $("#iconpick>img").attr("src", (tr.auto? t.icons[t.dfl] : tr.icon)).trigger("change");
+        m.redraw();
+    }
 
+    editIdent(id) {
+        const t = this;
+        setTimeout(() => {
+            for (const i in t.myTrackers) {
+                if (id === t.myTrackers[i].id) {
+                    t.editItem(i);
+                    return;
+                }
+            }
+        }, 2000);
+    }
+        
     onIdEdit() {
         for (const x of this.myTrackers)
             if (this.edit.id() == x.id) {

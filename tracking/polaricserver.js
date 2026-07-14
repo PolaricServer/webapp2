@@ -2,7 +2,7 @@
  Map browser based on OpenLayers.
  Polaric Server connection.
 
- Copyright (C) 2017-2024 Øyvind Hanssen, LA7ECA, ohanssen@acm.org
+ Copyright (C) 2017-2026 Øyvind Hanssen, LA7ECA, ohanssen@acm.org
 
  This program is free software: you can redistribute it and/or modify
  it under the terms of the GNU Affero General Public License as published
@@ -146,14 +146,14 @@ pol.tracking.PolaricServer = class extends pol.core.Server {
         if (this.key==null)
             return null;
         if (message != null && message != "")
-            msgHash = await pol.security.Sha256_B64(message)
+            msgHash = await pol.security.Sha256_B64(message);
         return await pol.security.hmac_Sha256_B64(this.key, nonce+msgHash);
     }
 
 
     /* Set the secret key and save it in datastore */
     async setCredentials(userid, secret) {
-        const x = await pol.security.hmac_getKey(secret)
+        const x = await pol.security.hmac_getKey(secret);
         this.key = x;
         /* FIXME: How can we store the key in a more secure way?
          * This is still somewhat vulnerable to CSS attacks
@@ -182,7 +182,7 @@ pol.tracking.PolaricServer = class extends pol.core.Server {
         if (userid != null)
             this.userid = userid;
 
-        if (ktext == null || ktext.length != 64)
+        if (ktext == null || ktext.length < 40)
             this.key = null;
         else
             this.key = await pol.security.hmac_getKey(ktext);;
