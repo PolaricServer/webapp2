@@ -786,7 +786,23 @@ pol.core.MapBrowser = class {
      * distance is given in meters. 
      */
     line2points(from, to, distance) {
-        /* TBD */
+        if (!Number.isFinite(distance) || distance <= 0)
+            return [];
+        const totalDist = ol.sphere.getDistance(from, to);
+        if (totalDist === 0)
+            return [from];
+        const DEG2RAD = Math.PI / 180;
+        const lat1 = from[1] * DEG2RAD, lon1 = from[0] * DEG2RAD;
+        const lat2 = to[1] * DEG2RAD, lon2 = to[0] * DEG2RAD;
+        const dLon = lon2 - lon1;
+        const y = Math.sin(dLon) * Math.cos(lat2);
+        const x = Math.cos(lat1) * Math.sin(lat2) - Math.sin(lat1) * Math.cos(lat2) * Math.cos(dLon);
+        const bearing = Math.atan2(y, x);
+        const n = Math.ceil(totalDist / distance);
+        const points = [];
+        for (let i = 0; i <= n; i++)
+            points.push(ol.sphere.offset(from, Math.min(i * distance, totalDist), bearing));
+        return points;
     }
 
 } /* class */
