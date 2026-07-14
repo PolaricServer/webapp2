@@ -779,6 +779,15 @@ pol.core.MapBrowser = class {
                 this.gui.showImageGeo(ref);
         }, 200);
     }
+    
+    
+    /**
+     * Given two points (ol.Coodinate), return an array of points on a straight line between those two points. 
+     * distance is given in meters. 
+     */
+    line2points(from, to, distance) {
+        /* TBD */
+    }
 
 } /* class */
 
