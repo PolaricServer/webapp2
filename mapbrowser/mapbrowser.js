@@ -790,7 +790,7 @@ pol.core.MapBrowser = class {
             return [];
         const totalDist = ol.sphere.getDistance(from, to);
         if (totalDist === 0)
-            return [from];
+            return [[from[0], from[1]]];
         const DEG2RAD = Math.PI / 180;
         const lat1 = from[1] * DEG2RAD, lon1 = from[0] * DEG2RAD;
         const lat2 = to[1] * DEG2RAD, lon2 = to[0] * DEG2RAD;
@@ -799,9 +799,12 @@ pol.core.MapBrowser = class {
         const x = Math.cos(lat1) * Math.sin(lat2) - Math.sin(lat1) * Math.cos(lat2) * Math.cos(dLon);
         const bearing = Math.atan2(y, x);
         const n = Math.ceil(totalDist / distance);
-        const points = [];
-        for (let i = 0; i <= n; i++)
-            points.push(ol.sphere.offset(from, Math.min(i * distance, totalDist), bearing));
+        const points = [[from[0], from[1]]];
+        for (let i = 1; i < n; i++) {
+            const pt = ol.sphere.offset(from, i * distance, bearing);
+            points.push([pt[0], pt[1]]);
+        }
+        points.push([to[0], to[1]]);
         return points;
     }
 
