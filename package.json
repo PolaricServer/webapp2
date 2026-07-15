@@ -27,6 +27,7 @@
     "webpack-cli": "^5.1.4"
   },
   "dependencies": {
-    "flatpickr": "^4.6.13"
+    "flatpickr": "^4.6.13",
+    "jsdom": "^29.1.1"
   }
 }
