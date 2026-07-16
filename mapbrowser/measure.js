@@ -1,38 +1,3 @@
-/*
-   Map browser based on OpenLayers 5.
-   Copyright (C) 2017-2018 Øyvind Hanssen, LA7ECA, ohanssen@acm.org
-   AGPL licenced.
-   ----
-
-   This source file is based on OpenLayers examples:
-   http://openlayers.org/en/latest/examples/measure.html
-   Copyright 2005-present OpenLayers Contributors. All rights reserved.
-
-   Redistribution and use in source and binary forms, with or without modification,
-   are permitted provided that the following conditions are met:
-
-   1. Redistributions of source code must retain the above copyright notice, this
-      list of conditions and the following disclaimer.
-
-   2. Redistributions in binary form must reproduce the above copyright notice,
-      this list of conditions and the following disclaimer in the documentation and/or
-      other materials provided with the distribution.
-
-   THIS SOFTWARE IS PROVIDED BY OPENLAYERS CONTRIBUTORS ``AS IS'' AND ANY EXPRESS
-   OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
-   MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT
-   SHALL COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT,
-   INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
-   LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
-   PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF
-   LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE
-   OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
-   ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-
-   The views and conclusions contained in the software and documentation are those
-   of the authors and should not be interpreted as representing official policies,
-   either expressed or implied, of OpenLayers Contributors.
- */
 
 
 
@@ -47,7 +12,11 @@ pol.core.Measure = class {
         let sketch;
         t.tooltips = [];
 
-
+        t.coordinates = [];
+        t.points = [];
+        t.length = 0;
+        
+        
         t.vector = CONFIG.mb.addVectorLayer(
            new ol.style.Style({
               fill: new ol.style.Fill({
@@ -90,6 +59,10 @@ pol.core.Measure = class {
         t.draw.on("drawstart",  evt => {
             sketch = evt.feature;
 
+            t.coordinates = [];
+            t.points = [];
+            t.length = 0;
+            
             listener = sketch.getGeometry().on('change', evt => {
                const tooltipCoord = evt.target.getLastCoordinate();
                tooltipElement.innerHTML = formatLength(evt.target);
@@ -105,30 +78,78 @@ pol.core.Measure = class {
            sketch = null;
            // unset tooltip so that a new one can be created
            tooltipElement = null;
-           t.tooltips.push(createTooltip());
+           const tt = createTooltip(t.coordinates, t.length);
+           t.tooltips.push(tt);
            ol.Observable.unByKey(listener);
+           
+           profile(); 
         }, t);
 
 
 
         t.tooltips.push(createTooltip());
 
+        
+        
+        
+        function profile() {
+          t.points = [];
+          let dist = Math.round(t.length / 500);
+          if (dist < 2)
+            dist = 2;
 
-        function createTooltip() {
-           if (tooltipElement) {
-              tooltipElement.parentNode.removeChild(measureTooltipElement);
-           }
-           tooltipElement = document.createElement('div');
-           tooltipElement.className = 'tooltip tooltip-measure';
-           tooltip = new ol.Overlay({
+          const sourceProj = CONFIG.mb.view.getProjection();
+          for (let i = 0, ii = t.coordinates.length - 1; i < ii; ++i) {
+            const c1 = ol.proj.transform(t.coordinates[i], sourceProj, 'EPSG:4326');
+            const c2 = ol.proj.transform(t.coordinates[i + 1], sourceProj, 'EPSG:4326');
+            t.points = [...t.points, ...CONFIG.mb.line2points(c1, c2, dist)];
+          }
+          
+          let w = getWIDGET("tracking.HeightProf");
+          if (w != null && w.isActive())
+            w.showData(t.points, dist);
+        }
+        
+        
+        function highLightTooltip(element) {
+   //       element.style += "background: red";
+        }
+        
+        
+
+        function createTooltip(coord, length) {
+          if (tooltipElement) {
+            tooltipElement.parentNode.removeChild(measureTooltipElement);
+          }
+          tooltipElement = document.createElement('div');
+          tooltipElement.className = 'tooltip tooltip-measure';
+          tooltipElement.id = "MeasureTooltip";
+           
+          const tt = new ol.Overlay({
               element: tooltipElement,
               offset: [0, -15],
               positioning: 'bottom-center'
-           });
-           CONFIG.mb.map.addOverlay(tooltip);
-           return tooltip;
+          });
+          tt._coord = coord;
+          tt._length = length;
+          
+          /* Mouse event handlers */
+          tooltipElement.onclick = function(e) {
+            highLightTooltip(tt.element);
+            t.coordinates = tt._coord;
+            t.length = tt._length;
+            console.log(tt);
+            profile();
+            e.stopPropagation();
+          }
+          
+          CONFIG.mb.map.addOverlay(tt);
+          tooltip = tt;
+          return tooltip;
         }
 
+        
+        
 
         function bearing(c1, c2) {
             var cr1 = toRadians(c1[1]), cr2 = toRadians(c2[1]);
@@ -141,19 +162,28 @@ pol.core.Measure = class {
         }
 
 
+        
+        
         // Converts from degrees to radians.
         function toRadians(degrees) {
             return degrees * Math.PI / 180;
         }
 
+        
+        
+        
 
         // Converts from radians to degrees.
         function toDegrees(radians) {
             return radians * 180 / Math.PI;
         }
 
+        
+        
+        
         function formatLength(line) {
             const coordinates = line.getCoordinates();
+            t.coordinates = coordinates;
             const sourceProj = CONFIG.mb.view.getProjection();
             let length = 0;
             let c1=0, c2=0;
@@ -162,7 +192,7 @@ pol.core.Measure = class {
                 c2 = ol.proj.transform(coordinates[i + 1], sourceProj, 'EPSG:4326');
                 length += ol.sphere.getDistance(c1, c2);
             }
-
+            t.length = length;
             let brng = bearing(c1, c2);
 
 
