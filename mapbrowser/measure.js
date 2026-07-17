@@ -42,7 +42,7 @@ pol.core.Measure = class {
                   width: 2
                 }),
             image: new ol.style.Circle({
-              radius: 5,
+              radius: 6,
               stroke: new ol.style.Stroke({
                 color: 'rgba(0, 0, 0, 0.7)'
               }),
@@ -76,13 +76,22 @@ pol.core.Measure = class {
            tooltip.setOffset([0, -7]);
            // unset sketch
            sketch = null;
-           // unset tooltip so that a new one can be created
-           tooltipElement = null;
-           const tt = createTooltip(t.coordinates, t.length);
-           t.tooltips.push(tt);
-           ol.Observable.unByKey(listener);
+
+           /* Save info on current tooltip before registering a new one */
+           t.tooltips[t.tooltips.length-1]._coord = t.coordinates;
+           t.tooltips[t.tooltips.length-1]._length = t.length;
            
-           profile(); 
+           /* Show a profile if activated */
+           profile(t.tooltips[t.tooltips.length-1]); 
+                     
+           /* unset tooltip so that a new one can be created
+            * Create a new tooltip for further drawing 
+            */
+           tooltipElement = null;
+           const tt = createTooltip();
+           t.tooltips.push(tt);
+           tooltip = tt;
+           ol.Observable.unByKey(listener);
         }, t);
 
 
@@ -91,8 +100,8 @@ pol.core.Measure = class {
 
         
         
-        
-        function profile() {
+        /* Generate a height/depth profile using external services */
+        function profile(tt) {
           t.points = [];
           let dist = Math.round(t.length / 500);
           if (dist < 2)
@@ -106,43 +115,57 @@ pol.core.Measure = class {
           }
           
           let w = getWIDGET("tracking.HeightProf");
-          if (w != null && w.isActive())
-            w.showData(t.points, dist);
+          if (w != null && w.isActive()) {
+              w.showData(t.points, dist);
+              highLightTooltip(tt.element);
+              w.setCloseHandler(clearHighlight);
+          }
         }
         
         
+        /* Highlight tooltip element (when used to generate a profile) */
         function highLightTooltip(element) {
-   //       element.style += "background: red";
+          clearHighlight();
+          element.style.background = "yellow";
         }
         
         
-
-        function createTooltip(coord, length) {
+        /* Clear tooltip highlighting */
+        function clearHighlight() {
+          for (const el of t.tooltips)
+            el.element.style.background = "";
+        }
+        
+        
+        /* Create a new tooltip object for drawing */
+        function createTooltip() {
           if (tooltipElement) {
-            tooltipElement.parentNode.removeChild(measureTooltipElement);
+            tooltipElement.parentNode.removeChild(tooltipElement);
           }
           tooltipElement = document.createElement('div');
           tooltipElement.className = 'tooltip tooltip-measure';
-          tooltipElement.id = "MeasureTooltip";
            
           const tt = new ol.Overlay({
               element: tooltipElement,
               offset: [0, -15],
               positioning: 'bottom-center'
           });
-          tt._coord = coord;
-          tt._length = length;
           
           /* Mouse event handlers */
           tooltipElement.onclick = function(e) {
-            highLightTooltip(tt.element);
             t.coordinates = tt._coord;
             t.length = tt._length;
-            console.log(tt);
-            profile();
+            profile(tt);
             e.stopPropagation();
           }
           
+          tooltipElement.oncontextmenu = function(e) {
+            CONFIG.mb.ctxMenu.showOnPos(
+              { name: "MEASURE",
+                activateProf: ()=>profile(tt)
+              }, [e.clientX, e.clientY]);
+          }
+        
           CONFIG.mb.map.addOverlay(tt);
           tooltip = tt;
           return tooltip;
@@ -150,7 +173,7 @@ pol.core.Measure = class {
 
         
         
-
+        /* Compute the bearing of the line between two points in degrees */
         function bearing(c1, c2) {
             var cr1 = toRadians(c1[1]), cr2 = toRadians(c2[1]);
             var d = toRadians(c2[0]-c1[0]);
@@ -180,13 +203,18 @@ pol.core.Measure = class {
 
         
         
-        
+        /* 
+         * Recompute the length of a linestring that is being drawn.
+         * To be shown in the tooltip element.  
+         * To be called when a change is detected. 
+         */
         function formatLength(line) {
             const coordinates = line.getCoordinates();
             t.coordinates = coordinates;
             const sourceProj = CONFIG.mb.view.getProjection();
             let length = 0;
             let c1=0, c2=0;
+            let ii=0;
             for (let i = 0, ii = coordinates.length - 1; i < ii; ++i) {
                 c1 = ol.proj.transform(coordinates[i], sourceProj, 'EPSG:4326');
                 c2 = ol.proj.transform(coordinates[i + 1], sourceProj, 'EPSG:4326');
