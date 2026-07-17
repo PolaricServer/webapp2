@@ -67,14 +67,14 @@ pol.core.Toolbar = class extends ol.control.Control  {
         this.addIcon(1, "images/layers.png",  "tb_layers", null, "Layer selector");
         this.addIcon(1, "images/areaselect.png", "tb_area", null, "Area menu");
         this.addSection();
-        this.addIcon(2, "images/ruler1.png", "tb_measure", null, "Measure distance");
+        this.addIcon(2, "images/ruler1.png", "tb_measure", null, "Measure tool");
         const t = this;
 
         /* Layer selection menu */
         pol.core.addHandlerId("tb_layers", true,
             (e)=> WIDGET("core.LayerSwitcher", [e.iconX, e.iconY], true));
 
-        /* Distance measurement */
+        /* Distance measurement tool */
         let measure_on = false;
         let measure = null;
         pol.core.addHandlerId("tb_measure", true,

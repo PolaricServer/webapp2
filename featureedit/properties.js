@@ -1,8 +1,8 @@
 /*
- Map browser based on OpenLayers 5.
+ Map browser based on OpenLayers.
  Feature properties editor widget based on snowcode project.
 
- Copyright (C) 2019-2023 Øyvind Hanssen, LA7ECA, ohanssen@acm.org
+ Copyright (C) 2019-2026 Øyvind Hanssen, LA7ECA, ohanssen@acm.org
 
  This program is free software: you can redistribute it and/or modify
  it under the terms of the GNU Affero General Public License as published
@@ -72,7 +72,7 @@ pol.features.Properties = class extends pol.core.Widget {
 
         t.layers = {
             view: function(vn) {
-                return m("select#"+vn.attrs.id, {onchange: ()=>t.changeHandler} , t.layerList.getLayers()
+                return m("select#"+vn.attrs.id, {onchange: ()=>changeHandler, t.layerList.getLayers()
                     .filter( x => x.get("drawing") )
                     .map( x => m("option", {value: x.get("name") }, x.get("name")) ));
             }
@@ -178,6 +178,7 @@ pol.features.Properties = class extends pol.core.Widget {
         }
 
 
+        /* FIXME: where is select#tolayer defined? */
         function checkHide() {
             const val = $("select#tolayer").val();
             if (val && val != null)
@@ -275,6 +276,7 @@ pol.features.Properties = class extends pol.core.Widget {
         }
 
 
+        /* FIXME: where is select#tolayer defined? */
         function selectedLayer() {
             const name = $("select#tolayer").val();
             let x = null;

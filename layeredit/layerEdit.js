@@ -1,5 +1,5 @@
 /*
- Map browser based on OpenLayers 5. Layer editor.
+ Map browser based on OpenLayers. Layer editor.
 
  Copyright (C) 2017-2023 Øyvind Hanssen, LA7ECA, ohanssen@acm.org
 
@@ -123,7 +123,9 @@ pol.layers.Edit = class {
             layer.predicate = t.createFilter(t.filt);
             layer.filt = {ext:t.filt.ext, zoom:t.filt.zoom, proj:t.filt.proj};
 
-            /* IF server available and logged in, update on server as well */
+            /* IF server available and logged in, update on server. 
+             * FIXME: Is the update correctly applied locally? 
+             */
             const s = CONFIG.server;
             if (s && s != null && s.isAuth()) {
                 const obj = {type: t.typeid, name: t.lName(), data: t.layer2obj(layer)};
@@ -154,7 +156,9 @@ pol.layers.Edit = class {
             layer.predicate = t.createFilter(t.filt);
             layer.filt = {ext:t.filt.ext, zoom:t.filt.zoom, proj:t.filt.proj};
 
-            /* IF server available and logged in, store on server as well */
+            /* IF server available and logged in, store locally and on server. If not, don't store 
+             * FIXME: Is this how it is meant to work? 
+             */
             const s = CONFIG.server;
             if (s && s != null && s.isAuth()) {
                 const obj = {type: t.typeid, name: t.lName(), data: t.layer2obj(layer)};
@@ -195,7 +199,7 @@ pol.layers.Edit = class {
      * @returns {number} Index of layer, or -1 if not found
      */
     _getLayerIdx(name) {
-        for (const i in this.list.myLayerNames) {
+        for (let i=0; i<this.list.myLayerNames.length; i++) {
             if (name === this.list.myLayerNames[i].name)
                 return i;
         }

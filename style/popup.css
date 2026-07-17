@@ -317,3 +317,6 @@ div#traffic {line-height: 1em; margin-top: 0.6em }
 
 #tracking\.PointInfo {min-width: 32em}
 #tracking\.PointInfo nobr  {margin-right: 1em}
+
+div#HeightProf h2 {text-align: center; margin-top: 2em; margin-bottom: -10em; font-size: 1.2em}
+
