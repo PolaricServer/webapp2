@@ -244,6 +244,8 @@ pol.tracking.Search = class extends pol.core.Widget {
                 for (const i in tt) {
                     if (tt[i].charAt(0)=='-')
                         continue;
+                    if (tt[i].charAt(0)=='_')
+                        continue;
                     else if (tt[i].charAt(0)=='+') {
                         if (this.tagUsed(this.tags, tt[i].substring(1)))
                             continue;

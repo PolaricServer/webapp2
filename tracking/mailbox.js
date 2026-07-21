@@ -56,13 +56,14 @@ pol.tracking.Mailbox = class extends pol.core.Widget {
                 return m("div#sendMsg", [
 
                     m("div.field",
-                        m("span.xxsleftlab", "To:"),
+                        m("span.xxsleftlab", 
+                            { title: "Recipient address can be:  user@server or callsign@APRS"},  "To:"),
                         m(textInput,
                             { id: "recipient", value: t.recipient,
                                 maxLength: 40, regex: /.*/i }),
                             m("img#ulist", {src:"images/participant.png",
                                 title:"Show logged on users (on/off)", onclick:()=>toggleUsers()}),
-                        // nbsp, m(checkBox,{title: "Tick to send as plain APRS"}, "@APRS")
+                       //  nbsp, m(checkBox,{title: "Tick to send as plain APRS"}, "@APRS")
                     ),
 
 

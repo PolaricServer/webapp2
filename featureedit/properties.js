@@ -72,7 +72,7 @@ pol.features.Properties = class extends pol.core.Widget {
 
         t.layers = {
             view: function(vn) {
-                return m("select#"+vn.attrs.id, {onchange: ()=>changeHandler, t.layerList.getLayers()
+                return m("select#"+vn.attrs.id, {onchange: changeHandler}, t.layerList.getLayers()
                     .filter( x => x.get("drawing") )
                     .map( x => m("option", {value: x.get("name") }, x.get("name")) ));
             }
