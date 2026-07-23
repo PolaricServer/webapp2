@@ -45,6 +45,10 @@ pol.tracking.Tags = class extends pol.core.Widget {
         t.classname = "tracking.Tags";
         t.url = "";
 
+        t.shortcuts = [
+            {descr: "Visible for all - in 'tracking'", tagson: ["OPEN", "track"], tagsoff: [] }
+        ]
+
 
         this.widget = {
             view: function() {
@@ -79,13 +83,46 @@ pol.tracking.Tags = class extends pol.core.Widget {
         });
 
 
+        function tagIsOn(tag) {
+            for (tg of t.tagsOn) {
+                if (compare(tag, tg)) {
+                    /* Check if it is turned off by negative tag */
+                    if (t.negTags.has(tag) || t.negTags.has("+"+tag))
+                        return false;
+                    return true;
+                }
+            }
+            return false;
+
+            function compare(t1, t2) {
+                if (t1==t2 || "+"+t1 == t2 || t1 == "+"+t2)
+                    return true
+                return false;
+            }
+        }
+
+
+
+        function removeNegative(tag) {
+            console.log("RemoveNegative", tag, t.negTags)
+            if (t.negTags.has(tag)) {
+                console.log("removed=>", t.negTags)
+                t.negTags.delete(tag);
+                return true;
+            }
+            return false;
+        }
+
 
         function add() {
-            let arg = [t.tag];
-            t.server.POST(t.url, JSON.stringify(arg),
-                ()=> { t.getTags(); },
-                (x)=> { console.warn("Couldn't add tag: "+x); }
-            );
+            let arg = [t.tag()];
+            if (removeNegative(t.tag()))
+                t.remove("-"+t.tag());
+            else
+                t.server.POST(t.url, JSON.stringify(arg),
+                    ()=> { t.getTags(); },
+                    (x)=> { console.warn("Couldn't add tag: "+x); }
+                );
         }
 
     } /* constructor */
@@ -130,7 +167,7 @@ pol.tracking.Tags = class extends pol.core.Widget {
                 this.tagsOn=GETJSON(x);
                 this.tagsOn.sort((x,y)=> {return x>y});
                 for (const tt of this.tagsOn)
-                    if (tt.charAt('-'))
+                    if (tt.charAt(0) == '-')
                         this.negTags.add(tt.substring(1));
                 m.redraw()
             },
