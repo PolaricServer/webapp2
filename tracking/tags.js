@@ -1,8 +1,8 @@
 /*
  Map browser based on OpenLayers 5. Tracking.
- Search historic data on tracker points on server.
+ Tag management for tracker points on server.
 
- Copyright (C) 2020-2025 Øyvind Hanssen, LA7ECA, ohanssen@acm.org
+ Copyright (C) 2020-2026 Øyvind Hanssen, LA7ECA, ohanssen@acm.org
 
  This program is free software: you can redistribute it and/or modify
  it under the terms of the GNU Affero General Public License as published
@@ -45,9 +45,23 @@ pol.tracking.Tags = class extends pol.core.Widget {
         t.classname = "tracking.Tags";
         t.url = "";
 
-        t.shortcuts = [
-            {descr: "Visible for all - in 'tracking'", tagson: ["OPEN", "track"], tagsoff: [] }
+        t.presets = [
+            {descr: "Open, visible for all, show in 'tracking'", tagson: ["OPEN", "track"], tagsoff: [], selected: false },
+            {descr: "Show in SAR mode (Search and rescue)", tagson: ["SAR"], tagsoff: [], selected: false }
         ]
+
+
+        t.shorts = {
+            view: function() {
+                let i=0;
+                return m("div#tagpresets", t.presets.map( x=> {
+                    return m("span", [ m(checkBox, {
+                        checked: x.selected, id:"presetitem_"+i,
+                        onchange: pol.ui.apply(shortToggle, i++) }),
+                        x.descr])
+                }));
+            }
+        }
 
 
         this.widget = {
@@ -55,6 +69,7 @@ pol.tracking.Tags = class extends pol.core.Widget {
                 var i=0;
                 return m("div#itemtags", [
                     m("h1", "Tags for "+t.ident()),
+                    m(t.shorts), br,
 
                     m("div.tagList", t.tagsOn.map( x=> {
                         if (t.negTags.has(x))
@@ -66,12 +81,13 @@ pol.tracking.Tags = class extends pol.core.Widget {
                                     (x.charAt(0)=='+' ? m("span.usertag", x.substring(1)) :
                                         m("span.systag", x))) ])]
                     })),
+
                     m(textInput, {list: "usedTags", value: t.tag}),
                     m("datalist#usedTags", t.usedTags.map( x=> {
                         return m("option", x)
                     })),
 
-                    m("button", { type: "button", onclick: add }, "Add")
+                    m("button", { type: "button", onclick: ()=>add(t.tag()) }, "Add")
                 ])
             }
         };
@@ -83,30 +99,35 @@ pol.tracking.Tags = class extends pol.core.Widget {
         });
 
 
-        function tagIsOn(tag) {
-            for (tg of t.tagsOn) {
-                if (compare(tag, tg)) {
-                    /* Check if it is turned off by negative tag */
-                    if (t.negTags.has(tag) || t.negTags.has("+"+tag))
-                        return false;
-                    return true;
-                }
-            }
-            return false;
 
-            function compare(t1, t2) {
-                if (t1==t2 || "+"+t1 == t2 || t1 == "+"+t2)
-                    return true
-                return false;
+        function shortToggle(i) {
+            const item = t.presets[i];
+            item.selected = !item.selected;
+            if (item.selected) {
+                for (const x of item.tagson)
+                    add(x);
+                for (const x of item.tagsoff)
+                    t.remove(x);
             }
+            else {
+                /*
+                 * WARNING: This just cancels the tags even if they existed for other reasons. Beware of this when
+                 * designing the presets. Be extra careful when using the tagsoff list.
+                 */
+                for (const x of item.tagson)
+                    t.remove(x);
+                for (const x of item.tagsoff)
+                    t.add(x);
+            }
+            m.redraw();
         }
 
 
 
+
+
         function removeNegative(tag) {
-            console.log("RemoveNegative", tag, t.negTags)
             if (t.negTags.has(tag)) {
-                console.log("removed=>", t.negTags)
                 t.negTags.delete(tag);
                 return true;
             }
@@ -114,10 +135,10 @@ pol.tracking.Tags = class extends pol.core.Widget {
         }
 
 
-        function add() {
-            let arg = [t.tag()];
-            if (removeNegative(t.tag()))
-                t.remove("-"+t.tag());
+        function add(x) {
+            let arg = [x];
+            if (removeNegative(x))
+                t.remove("-"+x);
             else
                 t.server.POST(t.url, JSON.stringify(arg),
                     ()=> { t.getTags(); },
@@ -150,6 +171,39 @@ pol.tracking.Tags = class extends pol.core.Widget {
     }
 
 
+
+    tagIsOn(tag) {
+        for (const tg of this.tagsOn) {
+            if (compare(tag, tg)) {
+                /* Check if it is turned off by negative tag */
+                if (this.negTags.has(tag) || this.negTags.has("+"+tag))
+                    return false;
+                return true;
+            }
+        }
+        return false;
+
+        function compare(t1, t2) {
+            if (t1==t2 || "+"+t1 == t2 || t1 == "+"+t2)
+                return true
+                return false;
+        }
+    }
+
+
+
+    shortIsOn(sc) {
+        for (const x of sc.tagson)
+            if (!this.tagIsOn(x))
+                return false;
+        for (const x of sc.tagsoff)
+            if (this.tagIsOn(x))
+                return false;
+        return true;
+    }
+
+
+
     /* Get list of tags from backend server */
     getTags() {
         this.server.GET("system/tags", null,
@@ -169,6 +223,8 @@ pol.tracking.Tags = class extends pol.core.Widget {
                 for (const tt of this.tagsOn)
                     if (tt.charAt(0) == '-')
                         this.negTags.add(tt.substring(1));
+                for (const sh of this.presets)
+                    sh.selected = this.shortIsOn(sh);
                 m.redraw()
             },
             ()=> { console.warn("Couldn't get tag-list for item"); }

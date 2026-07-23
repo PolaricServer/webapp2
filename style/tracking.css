@@ -383,8 +383,9 @@ span.quickfwd {margin-left: 1em}
 .quickfwd img {height: 1em; margin-bottom: -0.2em; margin-right: 0.5em; border: outset 1px}
 .quickfwd img:hover {border: outset 1px; background: #eee}
 
-
-
 div#xcode {max-width: 20em}
 span.passcode {border: 1px red solid; padding: 2px }
 
+
+#tagpresets {border: 1px dotted; background: #ddc; padding: 0.1em}
+#tagpresets span {display: inline-block; margin-top: -0.2em}
