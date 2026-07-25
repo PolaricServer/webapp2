@@ -26,7 +26,8 @@ window.pol.tracking = window.pol.tracking || {};
 
 
 pol.tracking.isSign = function(p) {
-    return (p.getId().indexOf("__") === 0);
+    let ident = p.ident;
+    return (ident.indexOf("__") === 0);
 }
 
 
@@ -147,15 +148,7 @@ pol.tracking.Tracking = class {
                     setTimeout(()=>{t.contextOn=false}, 3000);
                     if (pts[0] == null)
                         return null;
-                    return {
-                        sarAuth: pts[0].point.sarAuth,
-                        name:  pol.tracking.ctxName(pts[0]),
-                        ident: pts[0].getId(),
-                        aprs:  pts[0].point.aprs,
-                        own:   pts[0].point.own,
-                        telemetry: pts[0].point.telemetry,
-                        point: pts[0]
-                    };
+                    return t._f2point(pts[0], pts[0].getId());
             }
             else return null;
         });
@@ -170,7 +163,7 @@ pol.tracking.Tracking = class {
                 if (points.length == 1) {
                     const pix = CONFIG.mb.lonLat2Pix(points[0].point.pos);
                     t.createFeedback(pix, 1300);
-                    t.server.infoPopup(points[0], e.pixel);
+                    t.server.infoPopup(t._f2point(points[0], points[0].getId()), e.pixel);
                 }
                 else
                     t.showList(points, e.pixel);
@@ -321,18 +314,11 @@ pol.tracking.Tracking = class {
         function showContext(e, x) {
             if (cmenu) {
                 CONFIG.mb.gui.removePopup();
-                CONFIG.mb.ctxMenu.showOnPos( {
-                    sarAuth: x.point.sarAuth,
-                    name:  pol.tracking.ctxName(x),
-                    ident: x.getId(),
-                    aprs:  x.point.aprs,
-                    own:   x.point.own,
-                    telemetry: x.point.telemetry,
-                    point: x,
-                }, pixel )
+                CONFIG.mb.ctxMenu.showOnPos( 
+                t._f2point(x, x.getId()), pixel )
             }
             else
-                t.server.infoPopup(x, pixel)
+                t.server.infoPopup(t._f2point(x, x.getId()), pixel)
         }
 
 
@@ -490,7 +476,21 @@ pol.tracking.Tracking = class {
         return lbl;
     }
 
-
+    
+    
+    _f2point(f, ident) {
+        return {
+            name: "POINT",
+            point: f.point,
+            aprs:  f.point.aprs,
+            own:   f.point.own,
+            telemetry: f.point.telemetry,
+            sarAuth: f.point.sarAuth,
+            ident: ident
+        }
+    }
+    
+    
     /**
      * Create a label. Use overlay.
      */
@@ -515,7 +515,7 @@ pol.tracking.Tracking = class {
 
         /* Mouse event handlers */
         element.onclick = function(e) {
-            t.server.infoPopup(t.source.getFeatureById(ident), [e.clientX, e.clientY]);
+            t.server.infoPopup( t._f2point(t.source.getFeatureById(ident), ident), [e.clientX, e.clientY]);
             e.stopPropagation();
         }
         element.onmouseenter = function(e) {
@@ -532,19 +532,17 @@ pol.tracking.Tracking = class {
         }
         element.oncontextmenu = function(e) {
             const f = t.source.getFeatureById(ident);
-            CONFIG.mb.ctxMenu.showOnPos(
-              { name: "POINT",
-                point: f.point,
-                aprs:  f.point.aprs,
-                own:   f.point.own,
-                telemetry: f.point.telemetry,
-                sarAuth: f.point.sarAuth,
-                ident: ident}, [e.clientX, e.clientY]);
+            CONFIG.mb.ctxMenu.showOnPos( t._f2point(f, ident), [e.clientX, e.clientY]);
         }
 
         return lbl;
     }
 
+    
+
+    
+    
+    
 
     /**
      * Return true if label is hidden.
