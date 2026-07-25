@@ -45,6 +45,7 @@ pol.tracking.Tags = class extends pol.core.Widget {
         t.classname = "tracking.Tags";
         t.url = "";
 
+        /* Default presets. It is also possible to provide a JSON file on server */
         t.presets = [
             {descr: "Open, visible for all, show in 'tracking'", tagson: ["OPEN", "track"], tagsoff: [], selected: false },
             {descr: "Show in SAR mode (Search and rescue)", tagson: ["SAR"], tagsoff: [], selected: false }
@@ -99,6 +100,9 @@ pol.tracking.Tags = class extends pol.core.Widget {
         });
 
 
+        
+        t.getPresets(); 
+        
 
         function shortToggle(i) {
             const item = t.presets[i];
@@ -231,6 +235,40 @@ pol.tracking.Tags = class extends pol.core.Widget {
         )
     }
 
+    
+    
+    getPresets() {
+        fetch("tagpresets.json")
+            .then((response) => {
+                if (!response.ok) throw new Error(`HTTP error: ${response.status}`);
+                    return response.json(); // Returns a new promise
+            })
+            .then((data) => {
+                console.log("Got tag presets config from server", data);
+                this.presets=GETJSON(data);
+                
+                /* Remove invalid records */
+                for (let i=0; i<this.presets.length; i++) {
+                    const x = this.presets[i];
+                    if (x.descr==null && x.tagson==null)
+                        this.presets.splice(i,1);
+                }
+                for (let x of this.presets) {
+                    if (x.tagsoff==null)
+                        x.tagsoff = [];
+                    if (x.selected==null)
+                        x.selected = false;
+                    console.log(x);
+                }
+                
+            })
+            
+            .catch((error) => console.error("Couldn't get 'tagpresets.json' file", error));
+    
+    }
+    
+    
+    
 
 } /* class */
 
