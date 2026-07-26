@@ -77,11 +77,16 @@ pol.psadmin.Clients = class extends pol.core.Widget {
                 return x;
         }
         
-        setInterval(()=> {if (this.serverid!=null) this.getClients(this.serverid);}, 15000);
+        t.listUpd = setInterval(()=> {if (this.serverid!=null) this.getClients(this.serverid);}, 15000);
         
     } /* constructor */
     
         
+    onclose() {
+        if (this.listUpd != null)
+            clearInterval(this.listUpd);
+    }
+
 
     getClients(ident) {
         console.assert(ident && ident != null, "Assertion failed");

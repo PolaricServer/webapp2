@@ -244,7 +244,6 @@ pol.tracking.Tags = class extends pol.core.Widget {
                     return response.json(); // Returns a new promise
             })
             .then((data) => {
-                console.log("Got tag presets config from server", data);
                 this.presets=GETJSON(data);
                 
                 /* Remove invalid records */
@@ -258,7 +257,6 @@ pol.tracking.Tags = class extends pol.core.Widget {
                         x.tagsoff = [];
                     if (x.selected==null)
                         x.selected = false;
-                    console.log(x);
                 }
                 
             })
