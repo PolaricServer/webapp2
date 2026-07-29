@@ -102,6 +102,10 @@ pol.core.Measure = class {
         
         /* Generate a height/depth profile using external services */
         function profile(tt) {
+          
+          if (typeof pol.tracking.HeightProf != 'function')
+            return;
+          
           t.points = [];
           let dist = Math.round(t.length / 500);
           if (dist < 2)
@@ -151,21 +155,25 @@ pol.core.Measure = class {
               positioning: 'bottom-center'
           });
           
-          /* Mouse event handlers */
-          tooltipElement.onclick = function(e) {
-            t.coordinates = tt._coord;
-            t.length = tt._length;
-            profile(tt);
-            e.stopPropagation();
+          if (typeof pol.tracking.HeightProf == 'function') {
+ 
+            /* Mouse event handlers */
+            tooltipElement.onclick = function(e) {
+               t.coordinates = tt._coord;
+               t.length = tt._length;
+               profile(tt);
+               e.stopPropagation();
+            }
+          
+            tooltipElement.oncontextmenu = function(e) {
+              CONFIG.mb.ctxMenu.showOnPos(
+                 { name: "MEASURE",
+                   activateProf: ()=>profile(tt)
+                 }, [e.clientX, e.clientY]);
+            }
           }
           
-          tooltipElement.oncontextmenu = function(e) {
-            CONFIG.mb.ctxMenu.showOnPos(
-              { name: "MEASURE",
-                activateProf: ()=>profile(tt)
-              }, [e.clientX, e.clientY]);
-          }
-        
+          
           CONFIG.mb.map.addOverlay(tt);
           tooltip = tt;
           return tooltip;
