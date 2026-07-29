@@ -4,7 +4,7 @@
  * Feel free to modify it to meet your needs.
  * See examples aprs.no.config.js for more examples...
  *
- * (c) 2017-2025 LA7ECA, Ø. Hanssen
+ * (c) 2017-2026 LA7ECA, Ø. Hanssen
  *************************************************************/
 
 /*
@@ -23,9 +23,9 @@
 
 
 /*
- * If using backend server directly with HTTPS, uncomment this
+ * If using backend server with HTTPS, uncomment this
  */
-//SECURE(true);
+SECURE(true);
 
 
 
@@ -216,7 +216,7 @@ LAYERS({
         layers: "kv_grunnkart",
         tilegrid: KV_grid_UTM,
         attributions: KV_ATTR,
-        seed_max_res: 30
+        seed_max_res: 50
     }),
 
     createLayer_MapCache( {
@@ -225,7 +225,7 @@ LAYERS({
         layers: "kv_grunnkart2",
         tilegrid: KV_grid_UTM,
         attributions: KV_ATTR,
-        seed_max_res: 30
+        seed_max_res: 50
     }),
 
 ]);

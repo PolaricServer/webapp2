@@ -36,10 +36,11 @@
      */
     const browser = new pol.core.MapBrowser('map', CONFIG);
     CONFIG.browser = browser;
-    CONFIG.get('logo', x=> {
-        $('#map').append('<img class="logo" src="'+x+'">"');
-    });
-
+    setTimeout(()=> {
+        CONFIG.get('logo').then( x=> {
+            $('#map').append('<img class="logo" src="'+x+'">"');
+        })
+    }, 100);
 
     let srv=null;
     setTimeout( ()=> { srv = CONFIG.server = CONFIG.srvManager.instantiate()}, 800 );
@@ -66,6 +67,10 @@
 
                 /* Add items to toolbar */
                 if (!tbar) {
+                    CONFIG.mb.toolbar.addIcon(2, "images/chat.png", "chat", 
+                        () => WIDGET("tracking.Mailbox", [260,52], true), "Short messages");
+                    CONFIG.mb.toolbar.hideDiv("chat", true);
+                    
                     CONFIG.filt.addToolbarMenu();
                     CONFIG.mb.toolbar.addSection(3);
                     CONFIG.mb.toolbar.addIcon(3, "images/locked.png", "toolbar_login",
@@ -91,6 +96,8 @@
 
                 /* Login success */
                 ()=> {
+                    CONFIG.mb.toolbar.hideDiv("chat", false);
+                    
                     CONFIG.mb.toolbar.changeIcon
                         ("toolbar_login", "images/unlocked.png",
                         () => WIDGET("tracking.Login", [320,30], true),
@@ -118,7 +125,8 @@
                 /* Login failure */
                 (err)=> {
                     console.log("Logged out or authentication failed: ", err);
-
+                    
+                    CONFIG.mb.toolbar.hideDiv("chat", true);
                     CONFIG.filt.getFilters();
                     CONFIG.tracks.reconnect();
 
@@ -204,7 +212,7 @@
 
     browser.ctxMenu.addCallback("MAP", (m, ctxt)=> {
 
-     m.add('Show map reference', () => browser.show_MaprefPix( [m.x, m.y] ) );
+        m.add('Show map reference', () => browser.show_MaprefPix( [m.x, m.y] ) );
         if (!phone && (srv.auth.operator || srv.auth.admin)) {
             m.add('Add APRS object', () =>
                 WIDGET("tracking.OwnObjects", [50,70], false, x=> x.setPosPix([m.x, m.y])));
@@ -260,8 +268,19 @@
         }
     });
 
+    
 
-
+    /*********************************************************
+     * Høyde/dybdeprofil - uncomment if using Norway addon
+     *********************************************************/
+        
+    browser.ctxMenu.addCallback("MEASURE", (m, ctxt)=> {
+   //     m.add('Høyde/dybde profil', () => 
+   //         WIDGET("tracking.HeightProf", [59,70], false, x=>ctxt.activateProf()) ); 
+    });
+    
+    
+    
     /*********************************************************
      * Toolbar menu
      *********************************************************/
@@ -304,9 +323,14 @@
 
         if (srv.isAuth()) {
             m.add("Set/change password..", () => WIDGET("psadmin.Passwd", [50,70], false));
-            m.add(null);
         }
-
+        if (!phone && (srv.auth.admin)) {
+            m.add("Extended verification code", () => WIDGET("psadmin.XCode", [50,70], false));
+        }
+        if (!phone && srv.auth.admin) 
+            m.add(null);
+        
+        
         if (srv.isAuth()) {
             if (!phone && srv.hasDb)
                 m.add("My trackers", () => WIDGET("tracking.db.MyTrackers", [50, 70], false));
@@ -338,7 +362,6 @@
     browser.ctxMenu.addCallback("POINT", (m, ctxt)=> {
 
         m.add('Show info', () => srv.infoPopup(ctxt.point, [m.x, m.y]) );
-
         m.add('Last movements', () =>
             WIDGET( "tracking.TrailInfo", [50, 70], false,  x=> x.getTrail(ctxt.ident) ) );
 
