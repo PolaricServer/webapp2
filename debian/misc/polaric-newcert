@@ -41,18 +41,8 @@ fi
 
 # If default.callsign is configured in config.xml, it overrides server.ini
 if [[ -f "$POLARIC_XML_CONF" ]]; then
-    XML_CALLSIGN=$(sed -n 's/.*default[.]callsign[^>]*value="\([^"]*\)".*/\1/p' "$POLARIC_XML_CONF" | head -1)
 
-    if [[ -z "$XML_CALLSIGN" ]]; then
-        XML_CALLSIGN=$(sed -n "s/.*default[.]callsign[^>]*value='\([^']*\)'.*/\1/p" "$POLARIC_XML_CONF" | head -1)
-    fi
-
-    if [[ -z "$XML_CALLSIGN" ]]; then
-        XML_CALLSIGN=$(sed -n 's/.*<default[.]callsign>\([^<]*\)<\/default[.]callsign>.*/\1/p' "$POLARIC_XML_CONF" | head -1)
-    fi
-
-    XML_CALLSIGN=$(echo "$XML_CALLSIGN" | tr -d '[:space:]' | tr 'A-Z' 'a-z')
-
+    XML_CALLSIGN==$(sed -nE 's|.*<entry key="default\.(my)?call(sign)?">([^<]*)</entry>.*|\3|p' "$POLARIC_XML_CONF")
     if [[ -n "$XML_CALLSIGN" ]]; then
         CALLSIGN="$XML_CALLSIGN"
     fi
@@ -78,8 +68,10 @@ CN="$CN".local
 ACN="$ACN".local
 
 
-
 echo "Generating self-signed certificate for CN=$CN ..."
+echo "CN=$CN"
+echo "ALT DNS=$ACN"
+
 
 # ---- Create certificate directory ----
 mkdir -p "$CERT_DIR"
@@ -112,4 +104,5 @@ echo "Certificate installed:"
 echo "  $CERT_FILE"
 echo "  $KEY_FILE"
 
+rm /etc/polaric-webapp2/cert
 ln -s $CERT_FILE /etc/polaric-webapp2/cert
