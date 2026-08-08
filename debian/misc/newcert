@@ -55,9 +55,10 @@ echo "Generating self-signed certificate for CN=$CN ..."
 mkdir -p "$CERT_DIR"
 chmod 750 "$CERT_DIR"
 
-# ---- Generate private key and self-signed certificate ----
-openssl req -x509 -newkey rsa:4096 -sha256 -days 3650 \
-    -nodes \
+# ---- Generate EC private key and self-signed certificate ----
+# Uses NIST P-384 (secp384r1) elliptic curve.
+openssl req -x509 -newkey ec -pkeyopt ec_paramgen_curve:P-384 -sha256 -days 3650 \
+    -noenc \
     -keyout "$KEY_FILE" \
     -out "$CERT_FILE" \
     -subj "/CN=$CN" \
