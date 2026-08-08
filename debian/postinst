@@ -21,6 +21,10 @@ case "$1" in
         a2enmod proxy_http > /dev/null 2>&1
         a2enmod headers > /dev/null 2>&1
         a2enmod proxy_wstunnel > /dev/null 2>&1
+
+        if [[ ! -f "/etc/polaric/ssl/polaric.crt" ]]; then
+            /usr/sbin/newcert
+        fi
         
         if [[ -f "/etc/apache2/sites-enabled/aprs.conf" ]]; then
             if [[ -f "/etc/apache2/sites-available/aprs.conf" ]]; then
