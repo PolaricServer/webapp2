@@ -49,6 +49,7 @@ install: mapbrowser-min.js
 	
 	install -m 755 debian/misc/polaric-offline $(INSTALL_BIN)
 	install -m 755 debian/misc/polaric-online $(INSTALL_BIN)
+	install -m 755 debian/misc/polaric-newcert $(INSTALL_BIN)
 	
 	install -m 644 images/*.png $(INSTALL_WEB)/images
 	install -m 644 images/16px/*.png $(INSTALL_WEB)/images/16px

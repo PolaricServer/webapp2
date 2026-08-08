@@ -1,2 +1,2 @@
- debian/misc/aprs_ssl.conf  etc/apache2/sites-available
-debian/misc/newcert  usr/sbin
+debian/misc/aprs_ssl.conf  etc/apache2/sites-available
+debian/misc/polaric-newcert  usr/sbin
