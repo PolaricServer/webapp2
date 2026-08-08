@@ -41,6 +41,14 @@ if [[ -z "$CN" ]]; then
     CN="$(hostname -f 2>/dev/null || hostname)"
 fi
 
+# Sanitize CN: allow only alphanumeric characters, hyphens and dots
+CN=$(echo "$CN" | tr -cd 'a-zA-Z0-9.-' | tr 'A-Z' 'a-z')
+
+# Fallback in case sanitization leaves an empty string
+if [[ -z "$CN" ]]; then
+    CN="polaric"
+fi
+
 echo "Generating self-signed certificate for CN=$CN ..."
 
 # ---- Create certificate directory ----
