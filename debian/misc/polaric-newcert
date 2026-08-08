@@ -21,21 +21,41 @@ CERT_DIR="/etc/polaric-webapp2/ssl"
 CERT_FILE="$CERT_DIR/polaric.crt"
 KEY_FILE="$CERT_DIR/polaric.key"
 APRSD_CONF="/etc/polaric-aprsd/server.ini"
+POLARIC_XML_CONF="/var/lib/polaric/config.xml"
 
 # ---- Determine the Common Name and the alternative DNS name ----
 CN=""
 ACN=""
+CALLSIGN=""
 
 
 if [[ -f "$APRSD_CONF" ]]; then
     # Look for a line like:  mycall = LA7ECA-5
-    # Strip SSID (-N suffix) and convert to lowercase
+    # Keep SSID and convert to lowercase
     CALLSIGN=$(grep -i '^\s*default\.mycall\s*=' "$APRSD_CONF" 2>/dev/null \
         | head -1 \
         | sed 's/.*=\s*//' \
         | tr -d '[:space:]' \
-        | tr 'A-Z' 'a-z' \
-        | sed 's/-[0-9]*$//')
+        | tr 'A-Z' 'a-z')
+fi
+
+# If default.callsign is configured in config.xml, it overrides server.ini
+if [[ -f "$POLARIC_XML_CONF" ]]; then
+    XML_CALLSIGN=$(sed -n 's/.*default[.]callsign[^>]*value="\([^"]*\)".*/\1/p' "$POLARIC_XML_CONF" | head -1)
+
+    if [[ -z "$XML_CALLSIGN" ]]; then
+        XML_CALLSIGN=$(sed -n "s/.*default[.]callsign[^>]*value='\([^']*\)'.*/\1/p" "$POLARIC_XML_CONF" | head -1)
+    fi
+
+    if [[ -z "$XML_CALLSIGN" ]]; then
+        XML_CALLSIGN=$(sed -n 's/.*<default[.]callsign>\([^<]*\)<\/default[.]callsign>.*/\1/p' "$POLARIC_XML_CONF" | head -1)
+    fi
+
+    XML_CALLSIGN=$(echo "$XML_CALLSIGN" | tr -d '[:space:]' | tr 'A-Z' 'a-z')
+
+    if [[ -n "$XML_CALLSIGN" ]]; then
+        CALLSIGN="$XML_CALLSIGN"
+    fi
 fi
   
 if [[ -n "$CALLSIGN" ]]; then
