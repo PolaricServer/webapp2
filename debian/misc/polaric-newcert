@@ -1,0 +1,95 @@
+#!/bin/bash
+#
+# newcert - Generate a self-signed TLS certificate for the Polaric Server
+# frontend web-server (Apache).
+#
+# If the Polaric-aprsd backend is installed and a callsign (mycall) is
+# configured in /etc/polaric-aprsd/server.ini, the certificate Common Name
+# Alternative DNS name will be set to  polaric-<callsign>.local or just polaric-server if
+# callsign cannot be found. 
+#
+# The system hostname.local is used as the CN.
+#
+# Certificate files are written to:
+#   /etc/polaric/ssl/polaric.crt   (certificate)
+#   /etc/polaric/ssl/polaric.key   (private key)
+#
+
+set -e
+
+CERT_DIR="/etc/polaric-webapp2/ssl"
+CERT_FILE="$CERT_DIR/polaric.crt"
+KEY_FILE="$CERT_DIR/polaric.key"
+APRSD_CONF="/etc/polaric-aprsd/server.ini"
+
+# ---- Determine the Common Name and the alternative DNS name ----
+CN=""
+ACN=""
+
+
+if [[ -f "$APRSD_CONF" ]]; then
+    # Look for a line like:  mycall = LA7ECA-5
+    # Strip SSID (-N suffix) and convert to lowercase
+    CALLSIGN=$(grep -i '^\s*default\.mycall\s*=' "$APRSD_CONF" 2>/dev/null \
+        | head -1 \
+        | sed 's/.*=\s*//' \
+        | tr -d '[:space:]' \
+        | tr 'A-Z' 'a-z' \
+        | sed 's/-[0-9]*$//')
+fi
+  
+if [[ -n "$CALLSIGN" ]]; then
+    ACN="polaric-${CALLSIGN}"
+else
+    ACN="polaric-server"
+fi
+
+
+
+if [[ -z "$CN" ]]; then
+    CN="$(hostname -f 2>/dev/null || hostname)"
+fi
+
+# Sanitize CN: allow only alphanumeric characters, hyphens and dots
+CN=$(echo "$CN" | tr -cd 'a-zA-Z0-9.-' | tr 'A-Z' 'a-z')
+ACN=$(echo "$ACN" | tr -cd 'a-zA-Z0-9.-' | tr 'A-Z' 'a-z')
+
+CN="$CN".local
+ACN="$ACN".local
+
+
+
+echo "Generating self-signed certificate for CN=$CN ..."
+
+# ---- Create certificate directory ----
+mkdir -p "$CERT_DIR"
+chmod 750 "$CERT_DIR"
+
+
+# ---- Generate EC private key and self-signed certificate ----
+# Uses NIST P-384 (secp384r1) elliptic curve.
+openssl req -x509 -newkey ec -pkeyopt ec_paramgen_curve:P-384 -sha256 -days 3650 \
+    -noenc \
+    -keyout "$KEY_FILE" \
+    -out "$CERT_FILE" \
+    -subj "/CN=$CN" \
+    -addext "subjectAltName=DNS:$ACN" \
+    2>/dev/null
+
+chmod 640 "$KEY_FILE"
+chmod 644 "$CERT_FILE"
+
+
+# Ensure www-data (Apache) can read the key
+if getent group ssl-cert > /dev/null 2>&1; then
+    chown root:ssl-cert "$KEY_FILE"
+else
+    chown root:root "$KEY_FILE"
+fi
+
+
+echo "Certificate installed:"
+echo "  $CERT_FILE"
+echo "  $KEY_FILE"
+
+ln -s $CERT_FILE /etc/polaric-webapp2/cert
