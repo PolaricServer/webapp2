@@ -25,9 +25,11 @@ window.pol.tracking = window.pol.tracking || {};
 
 
 
-pol.tracking.isSign = function(p) {
-    let ident = p.ident;
-    return (ident.indexOf("__") === 0);
+pol.tracking.isSign = function(p, ident) {
+    let id = ident;
+    if (id==null)
+        id = p.ident;
+    return (id.indexOf("__") === 0);
 }
 
 
@@ -35,8 +37,8 @@ pol.tracking.isSign = function(p) {
  * Return a name of the context to be used when
  * generating context-menu.
  */
-pol.tracking.ctxName = function (x) {
-    if (pol.tracking.isSign(x)) {
+pol.tracking.ctxName = function (x, ident) {
+    if (pol.tracking.isSign(x, ident)) {
         if (x.point.type === "photo")
             return "PHOTO"
         else
@@ -479,15 +481,28 @@ pol.tracking.Tracking = class {
     
     
     _f2point(f, ident) {
-        return {
-            name: "POINT",
-            point: f.point,
-            aprs:  f.point.aprs,
-            own:   f.point.own,
-            telemetry: f.point.telemetry,
-            sarAuth: f.point.sarAuth,
-            ident: ident
-        }
+        const cname = pol.tracking.ctxName(f, ident);
+        if (cname === 'PHOTO' || cname === 'SIGN')
+            return {
+                name:  cname,
+                type:  f.point.type,
+                href:  f.point.href,
+                point: f.point,
+                own:   f.point.own,
+                title: f.point.title,
+                ident: ident
+            }
+        else
+            return {
+                name: cname,
+                type:  f.point.type,
+                point: f.point,
+                aprs:  f.point.aprs,
+                own:   f.point.own,
+                telemetry: f.point.telemetry,
+                sarAuth: f.point.sarAuth,
+                ident: ident
+            }
     }
     
     

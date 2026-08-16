@@ -402,14 +402,14 @@ pol.tracking.PolaricServer = class extends pol.core.Server {
         CONFIG.mb.gui.removePopup();
 
         if (pol.tracking.isSign(p)) {
-            if (p.point.href.indexOf("P:") === 0)
+            if (p.href.indexOf("P:") === 0)
                 /* Show image */
-                CONFIG.mb.gui.imagePopup(p.point.title, p.point.href,
+                CONFIG.mb.gui.imagePopup(p.title, p.href,
                 {draggable: true, id: "imagepopup",  pixPos: (this.mobile ? [0,0] : pixel)  });
 
-            else if (p.point.type === "photo") {
+            else if (p.type === "photo") {
                 /* Show user uploaded image */
-                this.getPhoto(p.point.ident.substring(5), (ph) => {
+                this.getPhoto(p.ident.substring(5), (ph) => {
                     CONFIG.mb.gui.imagePopup(ph.descr+" - "+pol.ui.formatDTG(ph.time) +
                       (!this.isAuth() || this.userid !== ph.userid ? " (by "+ph.userid+")" : "") ,
                       "  data:image/jpeg;base64, "+ph.image,
@@ -419,8 +419,8 @@ pol.tracking.PolaricServer = class extends pol.core.Server {
             else
                 CONFIG.mb.gui.showPopup({
                     pixPos: pixel,
-                    html: (p.point.href ? '<a href="'+p.point.href+'">'+p.point.title+'</a>'
-                                       : p.point.title)
+                    html: (p.href !=='' && p.href !== 'P' ? '<a href="'+p.href+'">'+p.title+'</a>'
+                                       : p.title)
                 });
         }
         else
