@@ -11,8 +11,8 @@
 # The system hostname.local is used as the CN.
 #
 # Certificate files are written to:
-#   /etc/polaric/ssl/polaric.crt   (certificate)
-#   /etc/polaric/ssl/polaric.key   (private key)
+#   /etc/polaric-webapp2/ssl/polaric.crt   (certificate)
+#   /etc/polaric-webapp2/ssl/polaric.key   (private key)
 #   /etc/polaric-webapp2/polaric.csr (certificate signing request)
 #
 
@@ -78,7 +78,7 @@ echo "ALT DNS=$ACN"
 # ---- Create certificate directory ----
 mkdir -p "$CERT_DIR"
 chmod 750 "$CERT_DIR"
-mkdir -p /etc/polaric-webapp2
+mkdir -p "$(dirname "$CSR_FILE")"
 
 
 # ---- Generate EC private key and self-signed certificate ----
