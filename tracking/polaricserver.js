@@ -325,7 +325,7 @@ pol.tracking.PolaricServer = class extends pol.core.Server {
      * FIXME: Change to icons on toolbar could be handler-function?
      * FIXME: What is done here is also done in getting Websocket messages....
      */
-    loginStatus() {
+    loginStatus(callback) {
         this.GET("authStatus", "",
             x => {
                 if (this.authOk && this.temp_role == null)
@@ -341,6 +341,8 @@ pol.tracking.PolaricServer = class extends pol.core.Server {
                 this.doAuthCb();
                 if (this.logincb != null)
                     this.logincb();
+                if (callback!=null)
+                    callback();
             },
 
             (xhr, st, err) => {

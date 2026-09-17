@@ -147,10 +147,8 @@ pol.tracking.Login = class extends pol.core.Widget {
                      */
                     CONFIG.server.setCredentials(t.username(), x)
                         .then( ()=> {
-                            CONFIG.server.loginStatus();
-                            t.getAuth();
+                            CONFIG.server.loginStatus( t.setAuthInfo );
                             t.getGroups();
-                            // FIXME: This will generate two requests to /authStatus
                         });
                 },
                 (xhr, st, err) => {
@@ -258,19 +256,26 @@ pol.tracking.Login = class extends pol.core.Widget {
      * Get authorization information from server
      */
     getAuth() {
-        const t = this;
         CONFIG.server.GET("authStatus" , "",
             x => {
-                t.info = GETJSON(x);
-                t.group = t.info.groupid;
-                if (CONFIG.server.temp_role != null)
-                    t.group = CONFIG.server.temp_role;
-                t.getLevel();
-                setTimeout(()=>$("select#group").val(t.group).trigger("change"), 300);
-                m.redraw();
+                this.setAuthInfo(x);
             });
     }
 
+    
+    
+    setAuthInfo(x) {
+        const t = this;
+        t.info = GETJSON(x);
+        t.group = t.info.groupid;
+        if (CONFIG.server.temp_role != null)
+            t.group = CONFIG.server.temp_role;
+        t.getLevel();
+        setTimeout(()=>$("select#group").val(t.group).trigger("change"), 300);
+        m.redraw();
+    }
+    
+    
 
     reload() {
         if (this.isActive())
