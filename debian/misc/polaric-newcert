@@ -13,6 +13,7 @@
 # Certificate files are written to:
 #   /etc/polaric/ssl/polaric.crt   (certificate)
 #   /etc/polaric/ssl/polaric.key   (private key)
+#   /etc/polaric-webapp2/polaric.csr (certificate signing request)
 #
 
 set -e
@@ -20,6 +21,7 @@ set -e
 CERT_DIR="/etc/polaric-webapp2/ssl"
 CERT_FILE="$CERT_DIR/polaric.crt"
 KEY_FILE="$CERT_DIR/polaric.key"
+CSR_FILE="/etc/polaric-webapp2/polaric.csr"
 APRSD_CONF="/etc/polaric-aprsd/server.ini"
 POLARIC_XML_CONF="/var/lib/polaric/config.xml"
 
@@ -76,6 +78,7 @@ echo "ALT DNS=$ACN"
 # ---- Create certificate directory ----
 mkdir -p "$CERT_DIR"
 chmod 750 "$CERT_DIR"
+mkdir -p /etc/polaric-webapp2
 
 
 # ---- Generate EC private key and self-signed certificate ----
@@ -88,8 +91,16 @@ openssl req -x509 -newkey ec -pkeyopt ec_paramgen_curve:P-384 -sha256 -days 3650
     -addext "subjectAltName=DNS:$ACN" \
     2>/dev/null
 
+openssl req -new -sha256 \
+    -key "$KEY_FILE" \
+    -out "$CSR_FILE" \
+    -subj "/CN=$CN" \
+    -addext "subjectAltName=DNS:$ACN" \
+    2>/dev/null
+
 chmod 640 "$KEY_FILE"
 chmod 644 "$CERT_FILE"
+chmod 644 "$CSR_FILE"
 
 
 # Ensure www-data (Apache) can read the key
@@ -103,6 +114,7 @@ fi
 echo "Certificate installed:"
 echo "  $CERT_FILE"
 echo "  $KEY_FILE"
+echo "  $CSR_FILE"
 
 rm /etc/polaric-webapp2/cert
 ln -s $CERT_FILE /etc/polaric-webapp2/cert
