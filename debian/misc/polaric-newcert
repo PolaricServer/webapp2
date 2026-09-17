@@ -116,5 +116,4 @@ echo "  $CERT_FILE"
 echo "  $KEY_FILE"
 echo "  $CSR_FILE"
 
-rm /etc/polaric-webapp2/cert
-ln -s $CERT_FILE /etc/polaric-webapp2/cert
+ln -sfn "$CERT_FILE" /etc/polaric-webapp2/cert
