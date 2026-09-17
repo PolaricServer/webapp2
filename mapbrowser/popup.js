@@ -1,8 +1,8 @@
 /*
-  Map browser based on OpenLayers 5.
+  Map browser based on OpenLayers.
   Popup windows
 
-  Copyright (C) 2017-2021 Øyvind Hanssen, LA7ECA, ohanssen@acm.org
+  Copyright (C) 2017-2026 Øyvind Hanssen, LA7ECA, ohanssen@acm.org
 
   This program is free software: you can redistribute it and/or modify
   it under the terms of the GNU Affero General Public License as published
@@ -24,6 +24,17 @@ var pol = window.pol;
 pol.core.isMobile = false;
 
 
+pol.core.imageclick_handler = null;
+
+
+pol.core._imageclick = (x) => {
+    if (typeof pol.core.imageclick_handler === 'function')
+        pol.core.imageclick_handler(x); 
+}
+    
+
+
+    
 /**
  * @classdesc
  * Popup window manager class.
@@ -244,7 +255,8 @@ pol.core.Popup = class {
     {
         props.html = '<h1 class="popupimg">'+title+'</h1>' +
                      (heading!=null ? heading : "") +
-                     '<img class="popupimg" src="'+href.substring(2)+'"/>';
+                     '<img class="popupimg" src="' + href.substring(2)+'"/>';
+                
         const d =  this.showPopup(props);
         return d;
     }

@@ -81,7 +81,7 @@ pol.tracking.db.HeardVia = class extends pol.core.Widget {
                             m("span.sleftlab", "End: "),
                             m(Datepick, {id: "hrd_end", value: t.item.todate}),
                             m(checkBox, {id: "hrd_open", onclick: hOpen, checked: t.item.open,
-                                title: "If checked, end-date is today" }, "Open end")),
+                                title: "If checked, end-date is today" }, "Open")),
 
                         m("div.hrdbutt", [
                             m("button#hrd_b1", {type: "button", onclick: search}, "Search"),

@@ -16,5 +16,4 @@ $PROG -c $CONFIG -t $1 -e $2,$3,$4,$5 -z $ZOOMLEVELS -o "$expire" -n 8 >& $LOG
 res=$?
 
 [ $res -eq 0 ] && echo "Tile download success!" || echo "Tile download failed!"
-
 exit $res

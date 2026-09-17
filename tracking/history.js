@@ -77,17 +77,21 @@ pol.tracking.db.History = class extends pol.core.Widget {
 
                         m("div.field",
                             m("span.sleftlab", "Start: "),
-                            m(dateTime, {id: "hist_start", tval: t.item.from}),
-                            m(timeButt, {tval: t.item.from})
+                            m("span.field", [
+                                m(dateTime, {id: "hist_start", tval: t.item.from}),
+                                m(timeButt, {tval: t.item.from})
+                            ])
                         ),
 
                         m("div.field",
                             m("span.sleftlab", "End: "),
-                            m(dateTime, {id: "hist_end", tval: t.item.to}),
-                            m(timeButt, {tval: t.item.to}),
-                            m(checkBox, {id: "hist_open", onclick: hOpen, checked: t.item.open,
-                                title: "If checked, end-time is now" }, "Open end")),
-
+                            m("span.field", [
+                                m(dateTime, {id: "hist_end", tval: t.item.to}),
+                                m(timeButt, {tval: t.item.to}), br,
+                                m(checkBox, {id: "hist_open", onclick: hOpen, checked: t.item.open,
+                                    title: "If checked, end-time is now" }, "Open")
+                            ])),
+                            
                         m("div.histbutt", [
                             m("button#hist_b1", {type: "button",
                                 title: "Show trail - search", onclick: search}, "Trail"),

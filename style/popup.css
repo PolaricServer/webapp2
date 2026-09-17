@@ -305,7 +305,6 @@ div#iconlist>img:hover
 
 
 
-
 div#traffic {line-height: 1em; margin-top: 0.6em }
 
 .featureInfo {
@@ -319,4 +318,11 @@ div#traffic {line-height: 1em; margin-top: 0.6em }
 #tracking\.PointInfo nobr  {margin-right: 1em}
 
 div#HeightProf h2 {text-align: center; margin-top: 2em; margin-bottom: -10em; font-size: 1.2em}
+
+div#mapref .field {white-space: nowrap; margin-right: 0.3em}
+div#mapref .sleftlab {width: 4.7em}
+form.hist span.field {white-space: nowrap}
+form.hist .sleftlab  {width: 4.8em}
+form.hrd  .sleftlab  {width: 4.6em}
+
 

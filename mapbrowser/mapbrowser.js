@@ -733,7 +733,7 @@ pol.core.MapBrowser = class {
 
         const mapRef = {
             view: () => {
-                return m("div", [
+                return m("div#mapref", [
                     m("div.field", m("span.sleftlab", "UTM: "), m.trust( pol.mapref.formatUTM(coord))),
                     m("div.field",
                        m("span.sleftlab", {onclick:()=>{showDD = !showDD; m.redraw()}}, "LatLong: " ),
