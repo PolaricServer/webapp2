@@ -21,7 +21,7 @@ set -e
 CERT_DIR="/etc/polaric-webapp2/ssl"
 CERT_FILE="$CERT_DIR/polaric.crt"
 KEY_FILE="$CERT_DIR/polaric.key"
-CSR_FILE="/etc/polaric-webapp2/polaric.csr"
+CSR_FILE="$CERT_DIR/polaric.csr"
 APRSD_CONF="/etc/polaric-aprsd/server.ini"
 POLARIC_XML_CONF="/var/lib/polaric/config.xml"
 
@@ -29,6 +29,12 @@ POLARIC_XML_CONF="/var/lib/polaric/config.xml"
 CN=""
 ACN=""
 CALLSIGN=""
+
+
+if [ "$EUID" -ne 0 ]; then
+  echo "Error: You must run this program as root." >&2
+  exit 1
+fi
 
 
 if [[ -f "$APRSD_CONF" ]]; then
@@ -41,10 +47,11 @@ if [[ -f "$APRSD_CONF" ]]; then
         | tr 'A-Z' 'a-z')
 fi
 
+
 # If default.callsign is configured in config.xml, it overrides server.ini
 if [[ -f "$POLARIC_XML_CONF" ]]; then
 
-    XML_CALLSIGN==$(sed -nE 's|.*<entry key="default\.(my)?call(sign)?">([^<]*)</entry>.*|\3|p' "$POLARIC_XML_CONF")
+    XML_CALLSIGN=$(sed -nE 's|.*<entry key="default\.(my)?call(sign)?">([^<]*)</entry>.*|\3|p' "$POLARIC_XML_CONF")
     if [[ -n "$XML_CALLSIGN" ]]; then
         CALLSIGN="$XML_CALLSIGN"
     fi
@@ -58,21 +65,21 @@ fi
 
 
 
-if [[ -z "$CN" ]]; then
-    CN="$(hostname -f 2>/dev/null || hostname)"
+# Get MAC address 
+IFACE=$(ip route show default | awk '/default/ {print $5}')
+if [ -n "$IFACE" ]; then
+    CN=$(cat /sys/class/net/"$IFACE"/address | cut -d':' -f4-6 | tr -d ':')
 fi
+
 
 # Sanitize CN: allow only alphanumeric characters, hyphens and dots
 CN=$(echo "$CN" | tr -cd 'a-zA-Z0-9.-' | tr 'A-Z' 'a-z')
 ACN=$(echo "$ACN" | tr -cd 'a-zA-Z0-9.-' | tr 'A-Z' 'a-z')
 
-CN="$CN".local
+CN="Polaric $CN:$(hostname)"
 ACN="$ACN".local
 
 
-echo "Generating self-signed certificate for CN=$CN ..."
-echo "CN=$CN"
-echo "ALT DNS=$ACN"
 
 
 # ---- Create certificate directory ----
@@ -81,20 +88,33 @@ chmod 750 "$CERT_DIR"
 mkdir -p "$(dirname "$CSR_FILE")"
 
 
+SUBJ_PREFIX=""
+SUBJ="$SUBJ_PREFIX"
+if [[ -n "$CALLSIGN" ]]; then
+    SUBJ="$SUBJ/OU=$CALLSIGN" 
+fi
+SUBJ="$SUBJ/CN=$CN"
+
+
+echo "Generating self-signed certificate for CN=$CN ..."
+echo "Subject: $SUBJ"
+echo "ALT DNS: $ACN"
+
+
 # ---- Generate EC private key and self-signed certificate ----
 # Uses NIST P-384 (secp384r1) elliptic curve.
-openssl req -x509 -newkey ec -pkeyopt ec_paramgen_curve:P-384 -sha256 -days 3650 \
+openssl req -x509 -newkey ec -pkeyopt ec_paramgen_curve:P-256 -sha256 -days 3650 \
     -noenc \
     -keyout "$KEY_FILE" \
     -out "$CERT_FILE" \
-    -subj "/CN=$CN" \
+    -subj "$SUBJ" \
     -addext "subjectAltName=DNS:$ACN" \
     2>/dev/null
 
 openssl req -new -sha256 \
     -key "$KEY_FILE" \
     -out "$CSR_FILE" \
-    -subj "/CN=$CN" \
+    -subj "$SUBJ" \
     -addext "subjectAltName=DNS:$ACN" \
     2>/dev/null
 
