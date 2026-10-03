@@ -24,4 +24,5 @@ fi
 
 
 $CERTCLIENT $CSR_FILE $CERT_FILE
-
+echo ""
+apache2ctl restart

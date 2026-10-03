@@ -39,6 +39,7 @@ install: mapbrowser-min.js
 	install -d $(INSTALL_SCPLUG)
 	install -d $(INSTALL_SCDIR)
 	install -m 755 scripts/seed.sh $(INSTALL_SCDIR)
+	install -m 755 scripts/changecall.sh $(INSTALL_SCDIR)
 	install -m 644 scripts/webapp.conf $(INSTALL_SCPLUG)
 	
 	install -d $(INSTALL_WEB)/images $(INSTALL_WEB)/images/16px  $(INSTALL_WEB)/images/32px \
