@@ -147,7 +147,8 @@ pol.tracking.Login = class extends pol.core.Widget {
                      */
                     CONFIG.server.setCredentials(t.username(), x)
                         .then( ()=> {
-                            CONFIG.server.loginStatus( t.setAuthInfo );
+                            const tt = t;
+                            CONFIG.server.loginStatus( (ainfo)=>tt.setAuthInfo(ainfo) );
                             t.getGroups();
                         });
                 },
@@ -271,7 +272,7 @@ pol.tracking.Login = class extends pol.core.Widget {
         if (CONFIG.server.temp_role != null)
             t.group = CONFIG.server.temp_role;
         t.getLevel();
-        setTimeout(()=>$("select#group").val(t.group).trigger("change"), 300);
+        setTimeout(()=>$("select#group").val(t.group).trigger("change"), 400);
         m.redraw();
     }
     

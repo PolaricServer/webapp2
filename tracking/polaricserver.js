@@ -342,7 +342,7 @@ pol.tracking.PolaricServer = class extends pol.core.Server {
                 if (this.logincb != null)
                     this.logincb();
                 if (callback!=null)
-                    callback();
+                    callback(this.auth);
             },
 
             (xhr, st, err) => {
